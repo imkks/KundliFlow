@@ -1,0 +1,2450 @@
+version: 1.0.0
+rules:
+  - id: lord.1.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 1
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 1 placed in house 1 traditionally links self-identity, vitality, and personal presence with
+        self-identity, vitality, and personal presence.
+  - id: lord.1.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 2
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 1 placed in house 2 traditionally links self-identity, vitality, and personal presence with
+        accumulated resources, speech, and family values.
+  - id: lord.1.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 3
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 1 placed in house 3 traditionally links self-identity, vitality, and personal presence with
+        courage, communication, and self-initiated projects.
+  - id: lord.1.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 4
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 1 placed in house 4 traditionally links self-identity, vitality, and personal presence with
+        home life, emotional roots, and inner peace.
+  - id: lord.1.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 5
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 1 placed in house 5 traditionally links self-identity, vitality, and personal presence with
+        creative intelligence, learning, and discernment.
+  - id: lord.1.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 6
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 1 placed in house 6 traditionally links self-identity, vitality, and personal presence with
+        daily routine, service, and overcoming obstacles.
+  - id: lord.1.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 7
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 1 placed in house 7 traditionally links self-identity, vitality, and personal presence with
+        committed partnerships and public dealings.
+  - id: lord.1.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 8
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 1 placed in house 8 traditionally links self-identity, vitality, and personal presence with
+        deep transformation, research, and shared resources.
+  - id: lord.1.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 9
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 1 placed in house 9 traditionally links self-identity, vitality, and personal presence with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.1.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 10
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 1 placed in house 10 traditionally links self-identity, vitality, and personal presence with
+        career, reputation, and worldly contribution.
+  - id: lord.1.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 11
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 1 placed in house 11 traditionally links self-identity, vitality, and personal presence with
+        gains, networks, and long-term aspirations.
+  - id: lord.1.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 12
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 1 placed in house 12 traditionally links self-identity, vitality, and personal presence with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.2.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 1
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 2 placed in house 1 traditionally links accumulated resources, speech, and family values with
+        self-identity, vitality, and personal presence.
+  - id: lord.2.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 2
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 2 placed in house 2 traditionally links accumulated resources, speech, and family values with
+        accumulated resources, speech, and family values.
+  - id: lord.2.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 3
+    effect:
+      theme: money_speech
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 2 placed in house 3 traditionally links accumulated resources, speech, and family values with
+        courage, communication, and self-initiated projects.
+  - id: lord.2.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 4
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 2 placed in house 4 traditionally links accumulated resources, speech, and family values with
+        home life, emotional roots, and inner peace.
+  - id: lord.2.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 5
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 2 placed in house 5 traditionally links accumulated resources, speech, and family values with
+        creative intelligence, learning, and discernment.
+  - id: lord.2.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 6
+    effect:
+      theme: money_speech
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 2 placed in house 6 traditionally links accumulated resources, speech, and family values with
+        daily routine, service, and overcoming obstacles.
+  - id: lord.2.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 7
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 2 placed in house 7 traditionally links accumulated resources, speech, and family values with
+        committed partnerships and public dealings.
+  - id: lord.2.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 8
+    effect:
+      theme: money_speech
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 2 placed in house 8 traditionally links accumulated resources, speech, and family values with
+        deep transformation, research, and shared resources.
+  - id: lord.2.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 9
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 2 placed in house 9 traditionally links accumulated resources, speech, and family values with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.2.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 10
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 2 placed in house 10 traditionally links accumulated resources, speech, and family values with
+        career, reputation, and worldly contribution.
+  - id: lord.2.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 11
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 2 placed in house 11 traditionally links accumulated resources, speech, and family values with
+        gains, networks, and long-term aspirations.
+  - id: lord.2.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 2
+          placedHouseLagna: 12
+    effect:
+      theme: money_speech
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 2 placed in house 12 traditionally links accumulated resources, speech, and family values with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.3.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 1
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 3 placed in house 1 traditionally links courage, communication, and self-initiated projects
+        with self-identity, vitality, and personal presence.
+  - id: lord.3.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 2
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 3 placed in house 2 traditionally links courage, communication, and self-initiated projects
+        with accumulated resources, speech, and family values.
+  - id: lord.3.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 3
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 3 placed in house 3 traditionally links courage, communication, and self-initiated projects
+        with courage, communication, and self-initiated projects.
+  - id: lord.3.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 4
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 3 placed in house 4 traditionally links courage, communication, and self-initiated projects
+        with home life, emotional roots, and inner peace.
+  - id: lord.3.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 5
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 3 placed in house 5 traditionally links courage, communication, and self-initiated projects
+        with creative intelligence, learning, and discernment.
+  - id: lord.3.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 6
+    effect:
+      theme: courage_siblings
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 3 placed in house 6 traditionally links courage, communication, and self-initiated projects
+        with daily routine, service, and overcoming obstacles.
+  - id: lord.3.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 7
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 3 placed in house 7 traditionally links courage, communication, and self-initiated projects
+        with committed partnerships and public dealings.
+  - id: lord.3.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 8
+    effect:
+      theme: courage_siblings
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 3 placed in house 8 traditionally links courage, communication, and self-initiated projects
+        with deep transformation, research, and shared resources.
+  - id: lord.3.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 9
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 3 placed in house 9 traditionally links courage, communication, and self-initiated projects
+        with dharma, mentorship, higher learning, and fortune.
+  - id: lord.3.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 10
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 3 placed in house 10 traditionally links courage, communication, and self-initiated projects
+        with career, reputation, and worldly contribution.
+  - id: lord.3.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 11
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 3 placed in house 11 traditionally links courage, communication, and self-initiated projects
+        with gains, networks, and long-term aspirations.
+  - id: lord.3.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 3
+          placedHouseLagna: 12
+    effect:
+      theme: courage_siblings
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 3 placed in house 12 traditionally links courage, communication, and self-initiated projects
+        with solitude, reflection, expenses, and distant horizons.
+  - id: lord.4.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 1
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 4 placed in house 1 traditionally links home life, emotional roots, and inner peace with
+        self-identity, vitality, and personal presence.
+  - id: lord.4.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 2
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 4 placed in house 2 traditionally links home life, emotional roots, and inner peace with
+        accumulated resources, speech, and family values.
+  - id: lord.4.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 3
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 4 placed in house 3 traditionally links home life, emotional roots, and inner peace with
+        courage, communication, and self-initiated projects.
+  - id: lord.4.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 4 placed in house 4 traditionally links home life, emotional roots, and inner peace with home
+        life, emotional roots, and inner peace.
+  - id: lord.4.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 5
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 4 placed in house 5 traditionally links home life, emotional roots, and inner peace with
+        creative intelligence, learning, and discernment.
+  - id: lord.4.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 6
+    effect:
+      theme: home_mother
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 4 placed in house 6 traditionally links home life, emotional roots, and inner peace with daily
+        routine, service, and overcoming obstacles.
+  - id: lord.4.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 7
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 4 placed in house 7 traditionally links home life, emotional roots, and inner peace with
+        committed partnerships and public dealings.
+  - id: lord.4.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 8
+    effect:
+      theme: home_mother
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 4 placed in house 8 traditionally links home life, emotional roots, and inner peace with deep
+        transformation, research, and shared resources.
+  - id: lord.4.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 9
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 4 placed in house 9 traditionally links home life, emotional roots, and inner peace with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.4.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 10
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 4 placed in house 10 traditionally links home life, emotional roots, and inner peace with
+        career, reputation, and worldly contribution.
+  - id: lord.4.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 11
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 4 placed in house 11 traditionally links home life, emotional roots, and inner peace with
+        gains, networks, and long-term aspirations.
+  - id: lord.4.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 12
+    effect:
+      theme: home_mother
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 4 placed in house 12 traditionally links home life, emotional roots, and inner peace with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.5.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 1
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 5 placed in house 1 traditionally links creative intelligence, learning, and discernment with
+        self-identity, vitality, and personal presence.
+  - id: lord.5.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 2
+    effect:
+      theme: education_children
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 5 placed in house 2 traditionally links creative intelligence, learning, and discernment with
+        accumulated resources, speech, and family values.
+  - id: lord.5.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 3
+    effect:
+      theme: education_children
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 5 placed in house 3 traditionally links creative intelligence, learning, and discernment with
+        courage, communication, and self-initiated projects.
+  - id: lord.5.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 4
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 5 placed in house 4 traditionally links creative intelligence, learning, and discernment with
+        home life, emotional roots, and inner peace.
+  - id: lord.5.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 5
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 5 placed in house 5 traditionally links creative intelligence, learning, and discernment with
+        creative intelligence, learning, and discernment.
+  - id: lord.5.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 6
+    effect:
+      theme: education_children
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 5 placed in house 6 traditionally links creative intelligence, learning, and discernment with
+        daily routine, service, and overcoming obstacles.
+  - id: lord.5.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 7
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 5 placed in house 7 traditionally links creative intelligence, learning, and discernment with
+        committed partnerships and public dealings.
+  - id: lord.5.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 8
+    effect:
+      theme: education_children
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 5 placed in house 8 traditionally links creative intelligence, learning, and discernment with
+        deep transformation, research, and shared resources.
+  - id: lord.5.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 9
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 5 placed in house 9 traditionally links creative intelligence, learning, and discernment with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.5.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 10
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 5 placed in house 10 traditionally links creative intelligence, learning, and discernment with
+        career, reputation, and worldly contribution.
+  - id: lord.5.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 11
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 5 placed in house 11 traditionally links creative intelligence, learning, and discernment with
+        gains, networks, and long-term aspirations.
+  - id: lord.5.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 5
+          placedHouseLagna: 12
+    effect:
+      theme: education_children
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 5 placed in house 12 traditionally links creative intelligence, learning, and discernment with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.6.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 1
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 6 placed in house 1 traditionally links daily routine, service, and overcoming obstacles with
+        self-identity, vitality, and personal presence.
+  - id: lord.6.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 2
+    effect:
+      theme: health_routine
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 6 placed in house 2 traditionally links daily routine, service, and overcoming obstacles with
+        accumulated resources, speech, and family values.
+  - id: lord.6.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 3
+    effect:
+      theme: health_routine
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 6 placed in house 3 traditionally links daily routine, service, and overcoming obstacles with
+        courage, communication, and self-initiated projects.
+  - id: lord.6.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 4
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 6 placed in house 4 traditionally links daily routine, service, and overcoming obstacles with
+        home life, emotional roots, and inner peace.
+  - id: lord.6.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 5
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 6 placed in house 5 traditionally links daily routine, service, and overcoming obstacles with
+        creative intelligence, learning, and discernment.
+  - id: lord.6.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 6
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 6 placed in house 6 traditionally links daily routine, service, and overcoming obstacles with
+        daily routine, service, and overcoming obstacles.
+  - id: lord.6.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 7
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 6 placed in house 7 traditionally links daily routine, service, and overcoming obstacles with
+        committed partnerships and public dealings.
+  - id: lord.6.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 8
+    effect:
+      theme: health_routine
+      polarity: mixed
+      base_strength: 54
+      statement: >-
+        The lord of house 6 placed in house 8 traditionally links daily routine, service, and overcoming obstacles with
+        deep transformation, research, and shared resources.
+  - id: lord.6.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 9
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 6 placed in house 9 traditionally links daily routine, service, and overcoming obstacles with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.6.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 10
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 6 placed in house 10 traditionally links daily routine, service, and overcoming obstacles with
+        career, reputation, and worldly contribution.
+  - id: lord.6.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 11
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 6 placed in house 11 traditionally links daily routine, service, and overcoming obstacles with
+        gains, networks, and long-term aspirations.
+  - id: lord.6.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 6
+          placedHouseLagna: 12
+    effect:
+      theme: health_routine
+      polarity: mixed
+      base_strength: 54
+      statement: >-
+        The lord of house 6 placed in house 12 traditionally links daily routine, service, and overcoming obstacles with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.7.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 1
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 7 placed in house 1 traditionally links committed partnerships and public dealings with
+        self-identity, vitality, and personal presence.
+  - id: lord.7.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 2
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 7 placed in house 2 traditionally links committed partnerships and public dealings with
+        accumulated resources, speech, and family values.
+  - id: lord.7.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 3
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 7 placed in house 3 traditionally links committed partnerships and public dealings with
+        courage, communication, and self-initiated projects.
+  - id: lord.7.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 4
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 7 placed in house 4 traditionally links committed partnerships and public dealings with home
+        life, emotional roots, and inner peace.
+  - id: lord.7.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 5
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 7 placed in house 5 traditionally links committed partnerships and public dealings with
+        creative intelligence, learning, and discernment.
+  - id: lord.7.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 6
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 7 placed in house 6 traditionally links committed partnerships and public dealings with daily
+        routine, service, and overcoming obstacles.
+  - id: lord.7.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 7
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 7 placed in house 7 traditionally links committed partnerships and public dealings with
+        committed partnerships and public dealings.
+  - id: lord.7.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 8
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 7 placed in house 8 traditionally links committed partnerships and public dealings with deep
+        transformation, research, and shared resources.
+  - id: lord.7.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 9
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 7 placed in house 9 traditionally links committed partnerships and public dealings with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.7.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 10
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 7 placed in house 10 traditionally links committed partnerships and public dealings with
+        career, reputation, and worldly contribution.
+  - id: lord.7.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 11
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 7 placed in house 11 traditionally links committed partnerships and public dealings with
+        gains, networks, and long-term aspirations.
+  - id: lord.7.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 12
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 7 placed in house 12 traditionally links committed partnerships and public dealings with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.8.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 1
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 8 placed in house 1 traditionally links deep transformation, research, and shared resources
+        with self-identity, vitality, and personal presence.
+  - id: lord.8.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 2
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 8 placed in house 2 traditionally links deep transformation, research, and shared resources
+        with accumulated resources, speech, and family values.
+  - id: lord.8.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 3
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 8 placed in house 3 traditionally links deep transformation, research, and shared resources
+        with courage, communication, and self-initiated projects.
+  - id: lord.8.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 4
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 8 placed in house 4 traditionally links deep transformation, research, and shared resources
+        with home life, emotional roots, and inner peace.
+  - id: lord.8.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 5
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 8 placed in house 5 traditionally links deep transformation, research, and shared resources
+        with creative intelligence, learning, and discernment.
+  - id: lord.8.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 6
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 54
+      statement: >-
+        The lord of house 8 placed in house 6 traditionally links deep transformation, research, and shared resources
+        with daily routine, service, and overcoming obstacles.
+  - id: lord.8.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 7
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 8 placed in house 7 traditionally links deep transformation, research, and shared resources
+        with committed partnerships and public dealings.
+  - id: lord.8.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 8
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 8 placed in house 8 traditionally links deep transformation, research, and shared resources
+        with deep transformation, research, and shared resources.
+  - id: lord.8.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 9
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 8 placed in house 9 traditionally links deep transformation, research, and shared resources
+        with dharma, mentorship, higher learning, and fortune.
+  - id: lord.8.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 10
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 8 placed in house 10 traditionally links deep transformation, research, and shared resources
+        with career, reputation, and worldly contribution.
+  - id: lord.8.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 11
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 8 placed in house 11 traditionally links deep transformation, research, and shared resources
+        with gains, networks, and long-term aspirations.
+  - id: lord.8.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 8
+          placedHouseLagna: 12
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 54
+      statement: >-
+        The lord of house 8 placed in house 12 traditionally links deep transformation, research, and shared resources
+        with solitude, reflection, expenses, and distant horizons.
+  - id: lord.9.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 1
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 9 placed in house 1 traditionally links dharma, mentorship, higher learning, and fortune with
+        self-identity, vitality, and personal presence.
+  - id: lord.9.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 2
+    effect:
+      theme: luck_dharma
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 9 placed in house 2 traditionally links dharma, mentorship, higher learning, and fortune with
+        accumulated resources, speech, and family values.
+  - id: lord.9.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 3
+    effect:
+      theme: luck_dharma
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 9 placed in house 3 traditionally links dharma, mentorship, higher learning, and fortune with
+        courage, communication, and self-initiated projects.
+  - id: lord.9.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 4
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 9 placed in house 4 traditionally links dharma, mentorship, higher learning, and fortune with
+        home life, emotional roots, and inner peace.
+  - id: lord.9.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 5
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 9 placed in house 5 traditionally links dharma, mentorship, higher learning, and fortune with
+        creative intelligence, learning, and discernment.
+  - id: lord.9.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 6
+    effect:
+      theme: luck_dharma
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 9 placed in house 6 traditionally links dharma, mentorship, higher learning, and fortune with
+        daily routine, service, and overcoming obstacles.
+  - id: lord.9.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 7
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 9 placed in house 7 traditionally links dharma, mentorship, higher learning, and fortune with
+        committed partnerships and public dealings.
+  - id: lord.9.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 8
+    effect:
+      theme: luck_dharma
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 9 placed in house 8 traditionally links dharma, mentorship, higher learning, and fortune with
+        deep transformation, research, and shared resources.
+  - id: lord.9.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 9
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 9 placed in house 9 traditionally links dharma, mentorship, higher learning, and fortune with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.9.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 10
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 9 placed in house 10 traditionally links dharma, mentorship, higher learning, and fortune with
+        career, reputation, and worldly contribution.
+  - id: lord.9.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 11
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 9 placed in house 11 traditionally links dharma, mentorship, higher learning, and fortune with
+        gains, networks, and long-term aspirations.
+  - id: lord.9.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 12
+    effect:
+      theme: luck_dharma
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 9 placed in house 12 traditionally links dharma, mentorship, higher learning, and fortune with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.10.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 1
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 10 placed in house 1 traditionally links career, reputation, and worldly contribution with
+        self-identity, vitality, and personal presence.
+  - id: lord.10.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 2
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 10 placed in house 2 traditionally links career, reputation, and worldly contribution with
+        accumulated resources, speech, and family values.
+  - id: lord.10.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 3
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 10 placed in house 3 traditionally links career, reputation, and worldly contribution with
+        courage, communication, and self-initiated projects.
+  - id: lord.10.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 4
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 10 placed in house 4 traditionally links career, reputation, and worldly contribution with
+        home life, emotional roots, and inner peace.
+  - id: lord.10.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 5
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 10 placed in house 5 traditionally links career, reputation, and worldly contribution with
+        creative intelligence, learning, and discernment.
+  - id: lord.10.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 6
+    effect:
+      theme: career_status
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 10 placed in house 6 traditionally links career, reputation, and worldly contribution with
+        daily routine, service, and overcoming obstacles.
+  - id: lord.10.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 7
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 10 placed in house 7 traditionally links career, reputation, and worldly contribution with
+        committed partnerships and public dealings.
+  - id: lord.10.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 8
+    effect:
+      theme: career_status
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 10 placed in house 8 traditionally links career, reputation, and worldly contribution with
+        deep transformation, research, and shared resources.
+  - id: lord.10.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 9
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 10 placed in house 9 traditionally links career, reputation, and worldly contribution with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.10.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 10 placed in house 10 traditionally links career, reputation, and worldly contribution with
+        career, reputation, and worldly contribution.
+  - id: lord.10.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 11
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 10 placed in house 11 traditionally links career, reputation, and worldly contribution with
+        gains, networks, and long-term aspirations.
+  - id: lord.10.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 12
+    effect:
+      theme: career_status
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 10 placed in house 12 traditionally links career, reputation, and worldly contribution with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.11.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 1
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 11 placed in house 1 traditionally links gains, networks, and long-term aspirations with
+        self-identity, vitality, and personal presence.
+  - id: lord.11.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 2
+    effect:
+      theme: gains_network
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 11 placed in house 2 traditionally links gains, networks, and long-term aspirations with
+        accumulated resources, speech, and family values.
+  - id: lord.11.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 3
+    effect:
+      theme: gains_network
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 11 placed in house 3 traditionally links gains, networks, and long-term aspirations with
+        courage, communication, and self-initiated projects.
+  - id: lord.11.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 4
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 11 placed in house 4 traditionally links gains, networks, and long-term aspirations with home
+        life, emotional roots, and inner peace.
+  - id: lord.11.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 5
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 11 placed in house 5 traditionally links gains, networks, and long-term aspirations with
+        creative intelligence, learning, and discernment.
+  - id: lord.11.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 6
+    effect:
+      theme: gains_network
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 11 placed in house 6 traditionally links gains, networks, and long-term aspirations with daily
+        routine, service, and overcoming obstacles.
+  - id: lord.11.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 7
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 11 placed in house 7 traditionally links gains, networks, and long-term aspirations with
+        committed partnerships and public dealings.
+  - id: lord.11.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 8
+    effect:
+      theme: gains_network
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 11 placed in house 8 traditionally links gains, networks, and long-term aspirations with deep
+        transformation, research, and shared resources.
+  - id: lord.11.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 9
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 11 placed in house 9 traditionally links gains, networks, and long-term aspirations with
+        dharma, mentorship, higher learning, and fortune.
+  - id: lord.11.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 10
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 11 placed in house 10 traditionally links gains, networks, and long-term aspirations with
+        career, reputation, and worldly contribution.
+  - id: lord.11.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 11
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 11 placed in house 11 traditionally links gains, networks, and long-term aspirations with
+        gains, networks, and long-term aspirations.
+  - id: lord.11.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 11
+          placedHouseLagna: 12
+    effect:
+      theme: gains_network
+      polarity: challenging
+      base_strength: 52
+      statement: >-
+        The lord of house 11 placed in house 12 traditionally links gains, networks, and long-term aspirations with
+        solitude, reflection, expenses, and distant horizons.
+  - id: lord.12.in.1
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 1
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 12 placed in house 1 traditionally links solitude, reflection, expenses, and distant horizons
+        with self-identity, vitality, and personal presence.
+  - id: lord.12.in.2
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 2
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 12 placed in house 2 traditionally links solitude, reflection, expenses, and distant horizons
+        with accumulated resources, speech, and family values.
+  - id: lord.12.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 3
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 52
+      statement: >-
+        The lord of house 12 placed in house 3 traditionally links solitude, reflection, expenses, and distant horizons
+        with courage, communication, and self-initiated projects.
+  - id: lord.12.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 4
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 12 placed in house 4 traditionally links solitude, reflection, expenses, and distant horizons
+        with home life, emotional roots, and inner peace.
+  - id: lord.12.in.5
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 5
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 12 placed in house 5 traditionally links solitude, reflection, expenses, and distant horizons
+        with creative intelligence, learning, and discernment.
+  - id: lord.12.in.6
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 6
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 54
+      statement: >-
+        The lord of house 12 placed in house 6 traditionally links solitude, reflection, expenses, and distant horizons
+        with daily routine, service, and overcoming obstacles.
+  - id: lord.12.in.7
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 7
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 12 placed in house 7 traditionally links solitude, reflection, expenses, and distant horizons
+        with committed partnerships and public dealings.
+  - id: lord.12.in.8
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 8
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 54
+      statement: >-
+        The lord of house 12 placed in house 8 traditionally links solitude, reflection, expenses, and distant horizons
+        with deep transformation, research, and shared resources.
+  - id: lord.12.in.9
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 9
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 12 placed in house 9 traditionally links solitude, reflection, expenses, and distant horizons
+        with dharma, mentorship, higher learning, and fortune.
+  - id: lord.12.in.10
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 10
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 12 placed in house 10 traditionally links solitude, reflection, expenses, and distant horizons
+        with career, reputation, and worldly contribution.
+  - id: lord.12.in.11
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 11
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 57
+      statement: >-
+        The lord of house 12 placed in house 11 traditionally links solitude, reflection, expenses, and distant horizons
+        with gains, networks, and long-term aspirations.
+  - id: lord.12.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS Bhavesha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 12
+          placedHouseLagna: 12
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 62
+      statement: >-
+        The lord of house 12 placed in house 12 traditionally links solitude, reflection, expenses, and distant horizons
+        with solitude, reflection, expenses, and distant horizons.

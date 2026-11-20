@@ -1,0 +1,303 @@
+{
+  "scoring": {
+    "version": "1.0.0",
+    "bands": {
+      "flowing": {
+        "minScore": 3,
+        "label": "Flowing",
+        "color": "#5fc2b3"
+      },
+      "steady": {
+        "minScore": -1,
+        "label": "Steady",
+        "color": "#e3ad46"
+      },
+      "go_gently": {
+        "minScore": -7,
+        "label": "Go gently",
+        "color": "#d97736"
+      }
+    },
+    "weights": {
+      "chandra_bala": {
+        "benefic_houses": [
+          1,
+          3,
+          6,
+          7,
+          10,
+          11
+        ],
+        "benefic_val": 2,
+        "neutral_houses": [
+          2,
+          4,
+          5,
+          9,
+          12
+        ],
+        "neutral_val": -1,
+        "chandrashtama_house": 8,
+        "chandrashtama_val": -2
+      },
+      "tara_bala": {
+        "benefic_taras": [
+          2,
+          4,
+          6,
+          8,
+          9
+        ],
+        "benefic_val": 2,
+        "malefic_taras": [
+          3,
+          5,
+          7
+        ],
+        "malefic_val": -2,
+        "janma_val": 0
+      },
+      "sav_moon_sign": {
+        "high_threshold": 30,
+        "high_val": 1,
+        "medium_threshold": 25,
+        "medium_val": 0,
+        "low_val": -1
+      },
+      "hora": {
+        "friend_val": 1,
+        "neutral_val": 0,
+        "enemy_val": -1
+      },
+      "dasha_hora": {
+        "match_val": 1,
+        "no_match_val": 0
+      },
+      "window": {
+        "active_val": -1,
+        "inactive_val": 0
+      }
+    }
+  },
+  "cards": [
+    {
+      "id": "chandra_bala.good",
+      "when": {
+        "factor": "chandra_bala",
+        "gte": 2
+      },
+      "variants": [
+        "In Jyotish tradition, the transit Moon in your {{moon_house_from_moon}}th house from birth Moon favors practical momentum and steady progress.",
+        "The Moon transits {{moon_house_from_moon}} signs from your natal Moon, a placement traditionally read as supportive for daily activities."
+      ],
+      "factors": [
+        "chandra_bala"
+      ]
+    },
+    {
+      "id": "chandra_bala.chandrashtama",
+      "when": {
+        "factor": "chandra_bala",
+        "lte": -2
+      },
+      "variants": [
+        "The Moon moves through your 8th house from birth Moon (Chandrashtama). Tradition suggests pacing yourself and avoiding hasty decisions.",
+        "Chandrashtama is active as the Moon traverses your 8th house. A gentle rhythm and reflective focus are traditionally encouraged."
+      ],
+      "factors": [
+        "chandra_bala"
+      ]
+    },
+    {
+      "id": "chandra_bala.neutral",
+      "when": {
+        "factor": "chandra_bala",
+        "eq": -1
+      },
+      "variants": [
+        "The Moon occupies your {{moon_house_from_moon}}th house from natal Moon, suggesting mindful expenditure of mental energy."
+      ],
+      "factors": [
+        "chandra_bala"
+      ]
+    },
+    {
+      "id": "tara_bala.benefic",
+      "when": {
+        "factor": "tara_bala",
+        "gte": 2
+      },
+      "variants": [
+        "Tara Bala is auspicious (Tara {{tara_index}}, {{tara_name}}), supporting well-aligned efforts.",
+        "The lunar constellation alignment ({{tara_name}} Tara) brings harmonious flow to ongoing pursuits."
+      ],
+      "factors": [
+        "tara_bala"
+      ]
+    },
+    {
+      "id": "tara_bala.malefic",
+      "when": {
+        "factor": "tara_bala",
+        "lte": -2
+      },
+      "variants": [
+        "The current constellation reflects {{tara_name}} Tara. Tradition recommends taking measured steps and double-checking details."
+      ],
+      "factors": [
+        "tara_bala"
+      ]
+    },
+    {
+      "id": "sav_moon_sign.high",
+      "when": {
+        "factor": "sav_moon_sign",
+        "gte": 1
+      },
+      "variants": [
+        "The Moon activates a sign strong in your natal Ashtakvarga ({{bindus}} bindus), lending resilience."
+      ],
+      "factors": [
+        "sav_moon_sign"
+      ]
+    },
+    {
+      "id": "sav_moon_sign.low",
+      "when": {
+        "factor": "sav_moon_sign",
+        "lte": -1
+      },
+      "variants": [
+        "The Moon traverses an Ashtakvarga zone with fewer points ({{bindus}} bindus). Pacing and restorative attention are helpful."
+      ],
+      "factors": [
+        "sav_moon_sign"
+      ]
+    },
+    {
+      "id": "hora.favorable",
+      "when": {
+        "factor": "hora",
+        "gte": 1
+      },
+      "variants": [
+        "The current {{hora_lord}} hora aligns harmoniously with your Lagna lord ({{lagna_lord}})."
+      ],
+      "factors": [
+        "hora"
+      ]
+    },
+    {
+      "id": "dasha_hora.active",
+      "when": {
+        "factor": "dasha_hora",
+        "gte": 1
+      },
+      "variants": [
+        "The hour is ruled by {{hora_lord}}, resonating with your running dasha period."
+      ],
+      "factors": [
+        "dasha_hora"
+      ]
+    },
+    {
+      "id": "inauspicious_window.active",
+      "when": {
+        "factor": "window",
+        "lte": -1
+      },
+      "variants": [
+        "{{window_name}} is active. Tradition favors routine maintenance over initiating critical ventures."
+      ],
+      "factors": [
+        "window"
+      ]
+    }
+  ],
+  "friendship": {
+    "sun": {
+      "moon": "friend",
+      "mars": "friend",
+      "jupiter": "friend",
+      "mercury": "neutral",
+      "venus": "enemy",
+      "saturn": "enemy"
+    },
+    "moon": {
+      "sun": "friend",
+      "mercury": "friend",
+      "mars": "neutral",
+      "jupiter": "neutral",
+      "venus": "neutral",
+      "saturn": "neutral"
+    },
+    "mars": {
+      "sun": "friend",
+      "moon": "friend",
+      "jupiter": "friend",
+      "venus": "neutral",
+      "saturn": "neutral",
+      "mercury": "enemy"
+    },
+    "mercury": {
+      "sun": "friend",
+      "venus": "friend",
+      "mars": "neutral",
+      "jupiter": "neutral",
+      "saturn": "neutral",
+      "moon": "enemy"
+    },
+    "jupiter": {
+      "sun": "friend",
+      "moon": "friend",
+      "mars": "friend",
+      "saturn": "neutral",
+      "mercury": "enemy",
+      "venus": "enemy"
+    },
+    "venus": {
+      "mercury": "friend",
+      "saturn": "friend",
+      "mars": "neutral",
+      "jupiter": "neutral",
+      "sun": "enemy",
+      "moon": "enemy"
+    },
+    "saturn": {
+      "mercury": "friend",
+      "venus": "friend",
+      "jupiter": "neutral",
+      "sun": "enemy",
+      "moon": "enemy",
+      "mars": "enemy"
+    }
+  },
+  "safety": {
+    "banned_words": [
+      "death",
+      "die",
+      "dying",
+      "dead",
+      "accident",
+      "illness",
+      "disease",
+      "cursed",
+      "curse",
+      "doom",
+      "doomed",
+      "guaranteed",
+      "guarantee",
+      "will happen",
+      "disaster",
+      "bankrupt",
+      "bankruptcy",
+      "pregnant",
+      "pregnancy",
+      "cancer",
+      "surgery",
+      "injury",
+      "lottery",
+      "stock market profit"
+    ]
+  }
+}

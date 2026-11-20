@@ -1,0 +1,59 @@
+# Permanent Friendship Table (Brihat Parashara Hora Shastra)
+# Each planet's natural relation to the other 6 planets:
+# friend, neutral, enemy
+
+sun:
+  moon: friend
+  mars: friend
+  jupiter: friend
+  mercury: neutral
+  venus: enemy
+  saturn: enemy
+
+moon:
+  sun: friend
+  mercury: friend
+  mars: neutral
+  jupiter: neutral
+  venus: neutral
+  saturn: neutral
+
+mars:
+  sun: friend
+  moon: friend
+  jupiter: friend
+  venus: neutral
+  saturn: neutral
+  mercury: enemy
+
+mercury:
+  sun: friend
+  venus: friend
+  mars: neutral
+  jupiter: neutral
+  saturn: neutral
+  moon: enemy
+
+jupiter:
+  sun: friend
+  moon: friend
+  mars: friend
+  saturn: neutral
+  mercury: enemy
+  venus: enemy
+
+venus:
+  mercury: friend
+  saturn: friend
+  mars: neutral
+  jupiter: neutral
+  sun: enemy
+  moon: enemy
+
+saturn:
+  mercury: friend
+  venus: friend
+  jupiter: neutral
+  sun: enemy
+  moon: enemy
+  mars: enemy

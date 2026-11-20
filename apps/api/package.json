@@ -1,0 +1,24 @@
+{
+  "name": "@astro/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "build": "../../node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/bin/esbuild src/index.ts --bundle --platform=node --format=esm --external:better-sqlite3 --external:js-yaml --external:zod --alias:@swisseph/browser=./src/noop-swisseph.ts --outfile=dist/index.js",
+    "dev": "corepack pnpm build && node dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@astro/agent": "workspace:*",
+    "@astro/content": "workspace:*",
+    "@astro/engine": "workspace:*",
+    "@astro/facts": "workspace:*",
+    "@astro/kb": "workspace:*",
+    "@astro/rules": "workspace:*",
+    "@astro/tools": "workspace:*",
+    "better-sqlite3": "^11.5.0",
+    "js-yaml": "^5.5.0",
+    "zod": "^3.23.0"
+  }
+}

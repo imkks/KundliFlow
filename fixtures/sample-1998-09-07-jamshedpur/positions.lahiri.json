@@ -1,0 +1,136 @@
+{
+  "ayanamsa": "lahiri",
+  "ayanamsaValue": "23-50-17",
+  "positions": {
+    "ascendant": {
+      "sign": "taurus",
+      "signIndex": 1,
+      "degreeInSign": "27-40-54",
+      "absoluteDegree": 57.68166666666667,
+      "nakshatra": "mrigashira",
+      "nakshatraIndex": 4,
+      "pada": 2,
+      "retrograde": false
+    },
+    "sun": {
+      "sign": "leo",
+      "signIndex": 4,
+      "degreeInSign": "21-04-23",
+      "absoluteDegree": 141.07305555555556,
+      "nakshatra": "purva_phalguni",
+      "nakshatraIndex": 10,
+      "pada": 3,
+      "retrograde": false
+    },
+    "moon": {
+      "sign": "pisces",
+      "signIndex": 11,
+      "degreeInSign": "08-36-57",
+      "absoluteDegree": 338.61583333333334,
+      "nakshatra": "uttara_bhadrapada",
+      "nakshatraIndex": 25,
+      "pada": 2,
+      "retrograde": false
+    },
+    "mars": {
+      "sign": "cancer",
+      "signIndex": 3,
+      "degreeInSign": "17-37-34",
+      "absoluteDegree": 107.62611111111112,
+      "nakshatra": "ashlesha",
+      "nakshatraIndex": 8,
+      "pada": 1,
+      "retrograde": false
+    },
+    "mercury": {
+      "sign": "leo",
+      "signIndex": 4,
+      "degreeInSign": "05-36-58",
+      "absoluteDegree": 125.61611111111111,
+      "nakshatra": "magha",
+      "nakshatraIndex": 9,
+      "pada": 2,
+      "retrograde": false
+    },
+    "jupiter": {
+      "sign": "pisces",
+      "signIndex": 11,
+      "degreeInSign": "00-20-49",
+      "absoluteDegree": 330.34694444444446,
+      "nakshatra": "purva_bhadrapada",
+      "nakshatraIndex": 24,
+      "pada": 4,
+      "retrograde": true
+    },
+    "venus": {
+      "sign": "leo",
+      "signIndex": 4,
+      "degreeInSign": "07-19-48",
+      "absoluteDegree": 127.33,
+      "nakshatra": "magha",
+      "nakshatraIndex": 9,
+      "pada": 3,
+      "retrograde": false
+    },
+    "saturn": {
+      "sign": "aries",
+      "signIndex": 0,
+      "degreeInSign": "09-19-04",
+      "absoluteDegree": 9.317777777777778,
+      "nakshatra": "ashwini",
+      "nakshatraIndex": 0,
+      "pada": 3,
+      "retrograde": true
+    },
+    "rahu": {
+      "sign": "leo",
+      "signIndex": 4,
+      "degreeInSign": "06-39-35",
+      "absoluteDegree": 126.65972222222223,
+      "nakshatra": "magha",
+      "nakshatraIndex": 9,
+      "pada": 2,
+      "retrograde": true
+    },
+    "ketu": {
+      "sign": "aquarius",
+      "signIndex": 10,
+      "degreeInSign": "06-39-35",
+      "absoluteDegree": 306.65972222222223,
+      "nakshatra": "dhanishta",
+      "nakshatraIndex": 22,
+      "pada": 4,
+      "retrograde": true
+    },
+    "uranus": {
+      "sign": "capricorn",
+      "signIndex": 9,
+      "degreeInSign": "15-43-11",
+      "absoluteDegree": 285.7197222222222,
+      "nakshatra": "shravana",
+      "nakshatraIndex": 21,
+      "pada": 2,
+      "retrograde": true
+    },
+    "neptune": {
+      "sign": "capricorn",
+      "signIndex": 9,
+      "degreeInSign": "05-46-34",
+      "absoluteDegree": 275.7761111111111,
+      "nakshatra": "uttara_ashadha",
+      "nakshatraIndex": 20,
+      "pada": 3,
+      "retrograde": true
+    },
+    "pluto": {
+      "sign": "scorpio",
+      "signIndex": 7,
+      "degreeInSign": "11-31-42",
+      "absoluteDegree": 221.52833333333334,
+      "nakshatra": "anuradha",
+      "nakshatraIndex": 16,
+      "pada": 3,
+      "retrograde": false
+    }
+  }
+}

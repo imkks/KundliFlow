@@ -1,0 +1,17 @@
+{
+  "name": "@astro/store",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "better-sqlite3": "^11.5.0",
+    "@types/better-sqlite3": "^7.6.11"
+  }
+}

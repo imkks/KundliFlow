@@ -1,0 +1,35 @@
+{
+  "profile": {
+    "name": "Krishna Kumar Singh",
+    "sex": "male",
+    "birth": {
+      "local": "1998-09-07T23:20:34",
+      "date": "1998-09-07",
+      "time": "23:20:34",
+      "tzId": "Asia/Kolkata",
+      "tzOffsetHours": 5.5,
+      "utcInstant": "1998-09-07T17:50:34Z",
+      "gmtTime": "17:50:34",
+      "lmtTime": "23:35:14",
+      "localTimeCorrection": "+00:14:40",
+      "warTimeCorrection": "+00:00:00",
+      "dayOfWeek": "Monday",
+      "timeCertainty": "exact"
+    },
+    "place": {
+      "name": "Jamshedpur",
+      "lat": 22.8,
+      "lon": 86.16666666666667,
+      "latDms": "22:48:N",
+      "lonDms": "86:10:E"
+    }
+  },
+  "astronomy": {
+    "julianDayInteger": 2451064,
+    "julianDayUt": 2451064.243449074,
+    "siderealTime": "22:41:37",
+    "obliquity": "23:26:22",
+    "ayanamsaLahiri": "23:50:17",
+    "ayanamsaKpNew": "23:44:53"
+  }
+}

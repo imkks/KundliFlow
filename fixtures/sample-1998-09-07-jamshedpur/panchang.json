@@ -1,0 +1,19 @@
+{
+  "tithi": {
+    "name": "Dvitiya",
+    "paksha": "Krishna",
+    "index": 17
+  },
+  "yoga": {
+    "name": "Shula",
+    "index": 9
+  },
+  "karana": {
+    "name": "Taitila",
+    "index": 32
+  },
+  "vara": "Monday",
+  "sunrise": "05:29:25",
+  "sunset": "17:57:31",
+  "dayDuration": "12:28:05"
+}

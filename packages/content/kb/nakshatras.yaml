@@ -1,0 +1,244 @@
+version: "1.0.0"
+items:
+  - id: nak.ashwini
+    type: concept_note
+    text: "Ashwini (0°-13°20' Aries, Ketu-ruled): Deity Ashwini Kumaras; symbol Horse's Head. Swiftness, healing, pioneering initiative, and spontaneous vitality."
+    planets: "ketu"
+    signs: "aries"
+    school: parashari
+    source: "Taittiriya Brahmana / Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.bharani
+    type: concept_note
+    text: "Bharani (13°20'-26°40' Aries, Venus-ruled): Deity Yama; symbol Yoni. Endurance, transformation, creative gestation, and deep sense of responsibility."
+    planets: "venus"
+    signs: "aries"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.krittika
+    type: concept_note
+    text: "Krittika (26°40' Aries-10° Taurus, Sun-ruled): Deity Agni; symbol Razor/Flame. Sharp discernment, purification, leadership, and protective strength."
+    planets: "sun"
+    signs: "aries,taurus"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.rohini
+    type: concept_note
+    text: "Rohini (10°-23°20' Taurus, Moon-ruled): Deity Brahma; symbol Chariot. Creativity, growth, fertility, aesthetic charm, and material abundance."
+    planets: "moon"
+    signs: "taurus"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.mrigashira
+    type: concept_note
+    text: "Mrigashira (23°20' Taurus-6°40' Gemini, Mars-ruled): Deity Soma; symbol Deer's Head. Curiosity, gentle seeking, research, and versatile intellect."
+    planets: "mars"
+    signs: "taurus,gemini"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.ardra
+    type: concept_note
+    text: "Ardra (6°40'-20° Gemini, Rahu-ruled): Deity Rudra; symbol Teardrop/Diamond. Deep emotional catharsis, analytical storm-clearing, and breakthrough clarity."
+    planets: "rahu"
+    signs: "gemini"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.punarvasu
+    type: concept_note
+    text: "Punarvasu (20° Gemini-3°20' Cancer, Jupiter-ruled): Deity Aditi; symbol Quiver of Arrows. Renewal, resilience, philosophical optimism, and safe return."
+    planets: "jupiter"
+    signs: "gemini,cancer"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.pushya
+    type: concept_note
+    text: "Pushya (3°20'-16°40' Cancer, Saturn-ruled): Deity Brihaspati; symbol Cow's Udder/Lotus. Nourishment, ethical duty, steady abundance, and spiritual mentorship."
+    planets: "saturn"
+    signs: "cancer"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.ashlesha
+    type: concept_note
+    text: "Ashlesha (16°40'-30° Cancer, Mercury-ruled): Deity Nagas; symbol Coiled Serpent. Penetrating psychology, kundalini insight, strategic depth, and protective instincts."
+    planets: "mercury"
+    signs: "cancer"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.magha
+    type: concept_note
+    text: "Magha (0°-13°20' Leo, Ketu-ruled): Deity Pitris (Ancestors); symbol Royal Throne. Lineage pride, quiet authority, respect for tradition, and magnanimous leadership."
+    planets: "ketu"
+    signs: "leo"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.purva_phalguni
+    type: concept_note
+    text: "Purva Phalguni (13°20'-26°40' Leo, Venus-ruled): Deity Bhaga; symbol Hammock/Couch. Creative enjoyment, romance, artistic charisma, and generous warmth."
+    planets: "venus"
+    signs: "leo"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.uttara_phalguni
+    type: concept_note
+    text: "Uttara Phalguni (26°40' Leo-10° Virgo, Sun-ruled): Deity Aryaman; symbol Bedposts. Patronage, reliable partnerships, structured generosity, and social contracts."
+    planets: "sun"
+    signs: "leo,virgo"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.hasta
+    type: concept_note
+    text: "Hasta (10°-23°20' Virgo, Moon-ruled): Deity Savitar; symbol Open Hand. Craftsmanship, manual skill, clever wit, and practical manifestation."
+    planets: "moon"
+    signs: "virgo"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.chitra
+    type: concept_note
+    text: "Chitra (23°20' Virgo-6°40' Libra, Mars-ruled): Deity Vishwakarma; symbol Bright Jewel. Architectural design, aesthetic precision, charisma, and creative brilliance."
+    planets: "mars"
+    signs: "virgo,libra"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.swati
+    type: concept_note
+    text: "Swati (6°40'-20° Libra, Rahu-ruled): Deity Vayu; symbol Young Shoot in the Wind. Independence, diplomacy, trade adaptability, and flexible movement."
+    planets: "rahu"
+    signs: "libra"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.vishakha
+    type: concept_note
+    text: "Vishakha (20° Libra-3°20' Scorpio, Jupiter-ruled): Deity Indra-Agni; symbol Triumphal Arch. Single-minded determination, goal orientation, and transformative ambition."
+    planets: "jupiter"
+    signs: "libra,scorpio"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.anuradha
+    type: concept_note
+    text: "Anuradha (3°20'-16°40' Scorpio, Saturn-ruled): Deity Mitra; symbol Lotus. Loyal friendship, devotion, organizational skill, and thriving in foreign lands."
+    planets: "saturn"
+    signs: "scorpio"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.jyeshtha
+    type: concept_note
+    text: "Jyeshtha (16°40'-30° Scorpio, Mercury-ruled): Deity Indra; symbol Earring/Umbrella. Seniority, protective authority, sharp intellect, and overcoming adversity."
+    planets: "mercury"
+    signs: "scorpio"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.mula
+    type: concept_note
+    text: "Mula (0°-13°20' Sagittarius, Ketu-ruled): Deity Nirriti; symbol Tied Roots. Root-cause investigation, dismantling illusions, research, and philosophical depth."
+    planets: "ketu"
+    signs: "sagittarius"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.purva_ashadha
+    type: concept_note
+    text: "Purva Ashadha (13°20'-26°40' Sagittarius, Venus-ruled): Deity Apah (Waters); symbol Fan/Winnowing Basket. Invincible conviction, persuasion, and continuous renewal."
+    planets: "venus"
+    signs: "sagittarius"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.uttara_ashadha
+    type: concept_note
+    text: "Uttara Ashadha (26°40' Sagittarius-10° Capricorn, Sun-ruled): Deity Vishvadevas; symbol Elephant Tusk. Enduring victory, integrity, patient leadership, and universal dharma."
+    planets: "sun"
+    signs: "sagittarius,capricorn"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.shravana
+    type: concept_note
+    text: "Shravana (10°-23°20' Capricorn, Moon-ruled): Deity Vishnu; symbol Ear/Three Footprints. Deep listening, preserving knowledge, counsel, and steady connection."
+    planets: "moon"
+    signs: "capricorn"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.dhanishta
+    type: concept_note
+    text: "Dhanishta (23°20' Capricorn-6°40' Aquarius, Mars-ruled): Deity Eight Vasus; symbol Drum/Flute. Rhythm, resourcefulness, wealth through teamwork, and public acclaim."
+    planets: "mars"
+    signs: "capricorn,aquarius"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.shatabhisha
+    type: concept_note
+    text: "Shatabhisha (6°40'-20° Aquarius, Rahu-ruled): Deity Varuna; symbol Empty Circle/100 Physicians. Healing, scientific systems, privacy, and unconventional problem-solving."
+    planets: "rahu"
+    signs: "aquarius"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.purva_bhadrapada
+    type: concept_note
+    text: "Purva Bhadrapada (20° Aquarius-3°20' Pisces, Jupiter-ruled): Deity Aja Ekapada; symbol Sword/Two-faced Man. Fierce idealism, spiritual fire, and deep transformation."
+    planets: "jupiter"
+    signs: "aquarius,pisces"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.uttara_bhadrapada
+    type: concept_note
+    text: "Uttara Bhadrapada (3°20'-16°40' Pisces, Saturn-ruled): Deity Ahir Budhnya; symbol Twins/Back of Cot. Quiet wisdom, emotional composure, compassion, and enduring steadiness."
+    planets: "saturn"
+    signs: "pisces"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1
+
+  - id: nak.revati
+    type: concept_note
+    text: "Revati (16°40'-30° Pisces, Mercury-ruled): Deity Pushan; symbol Fish/Drum. Safe journeys, gentle nourishment, completion, and creative empathy."
+    planets: "mercury"
+    signs: "pisces"
+    school: parashari
+    source: "Classical Nakshatra Lore"
+    reviewed: 1

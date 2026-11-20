@@ -1,0 +1,1169 @@
+version: 1.0.0
+rules:
+  - id: dignity.sun.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: sun
+          state:
+            - exalted
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Sun is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.sun.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: sun
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Sun sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.sun.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: sun
+          state:
+            - friendly
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Sun occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.sun.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: sun
+          state:
+            - enemy
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Sun occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.sun.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: sun
+          state:
+            - debilitated
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Sun is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.moon.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: moon
+          state:
+            - exalted
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Moon is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.moon.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: moon
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Moon sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.moon.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: moon
+          state:
+            - friendly
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Moon occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.moon.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: moon
+          state:
+            - enemy
+    effect:
+      theme: mind_emotion
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Moon occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.moon.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: moon
+          state:
+            - debilitated
+    effect:
+      theme: mind_emotion
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Moon is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.mars.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mars
+          state:
+            - exalted
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Mars is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.mars.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mars
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Mars sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.mars.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mars
+          state:
+            - friendly
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Mars occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.mars.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mars
+          state:
+            - enemy
+    effect:
+      theme: courage_siblings
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Mars occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.mars.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mars
+          state:
+            - debilitated
+    effect:
+      theme: courage_siblings
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Mars is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.mercury.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mercury
+          state:
+            - exalted
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Mercury is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.mercury.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mercury
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Mercury sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.mercury.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mercury
+          state:
+            - friendly
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Mercury occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.mercury.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mercury
+          state:
+            - enemy
+    effect:
+      theme: education_children
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Mercury occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.mercury.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: mercury
+          state:
+            - debilitated
+    effect:
+      theme: education_children
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Mercury is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.jupiter.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: jupiter
+          state:
+            - exalted
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Jupiter is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.jupiter.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: jupiter
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Jupiter sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.jupiter.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: jupiter
+          state:
+            - friendly
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Jupiter occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.jupiter.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: jupiter
+          state:
+            - enemy
+    effect:
+      theme: luck_dharma
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Jupiter occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.jupiter.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: jupiter
+          state:
+            - debilitated
+    effect:
+      theme: luck_dharma
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Jupiter is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.venus.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: venus
+          state:
+            - exalted
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Venus is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.venus.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: venus
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Venus sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.venus.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: venus
+          state:
+            - friendly
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Venus occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.venus.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: venus
+          state:
+            - enemy
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Venus occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.venus.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: venus
+          state:
+            - debilitated
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Venus is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.saturn.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: saturn
+          state:
+            - exalted
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Saturn is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.saturn.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: saturn
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Saturn sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.saturn.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: saturn
+          state:
+            - friendly
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Saturn occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.saturn.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: saturn
+          state:
+            - enemy
+    effect:
+      theme: career_status
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Saturn occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.saturn.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: saturn
+          state:
+            - debilitated
+    effect:
+      theme: career_status
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Saturn is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.rahu.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: rahu
+          state:
+            - exalted
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Rahu is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.rahu.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: rahu
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Rahu sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.rahu.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: rahu
+          state:
+            - friendly
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Rahu occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.rahu.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: rahu
+          state:
+            - enemy
+    effect:
+      theme: transformation_secrets
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Rahu occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.rahu.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: rahu
+          state:
+            - debilitated
+    effect:
+      theme: transformation_secrets
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Rahu is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: dignity.ketu.exalted
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: ketu
+          state:
+            - exalted
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 68
+      statement: In this chart, Ketu is exalted, expressing its highest clarity, confidence, and constructive capacity.
+  - id: dignity.ketu.own
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: ketu
+          state:
+            - own
+            - mooltrikona
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 64
+      statement: In this chart, Ketu sits in its own or Mooltrikona sign, giving steady, self-reliant results.
+  - id: dignity.ketu.friendly
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: ketu
+          state:
+            - friendly
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 56
+      statement: In this chart, Ketu occupies a friendly sign, cooperating smoothly with its dispositor.
+  - id: dignity.ketu.enemy
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: ketu
+          state:
+            - enemy
+    effect:
+      theme: losses_retreat
+      polarity: challenging
+      base_strength: 52
+      statement: In this chart, Ketu occupies an inimical sign, requiring extra patience and conscious adaptation.
+  - id: dignity.ketu.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS Planetary Dignities (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: ketu
+          state:
+            - debilitated
+    effect:
+      theme: losses_retreat
+      polarity: challenging
+      base_strength: 56
+      statement: In this chart, Ketu is debilitated, inviting humility and inner growth—check for Neecha Bhanga cancellation.
+  - id: conj.sun.mercury.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: sun
+          planet2: mercury
+          orb_lte: 15
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 56
+      statement: Sun and Mercury together form Budhaditya Yoga, sharpening analytical intellect and articulate expression.
+  - id: conj.sun.venus.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: sun
+          planet2: venus
+          orb_lte: 15
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 52
+      statement: Sun and Venus together blend creative warmth with pride, calling for balance between ego and harmony.
+  - id: conj.sun.saturn.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: sun
+          planet2: saturn
+          orb_lte: 15
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 56
+      statement: Sun and Saturn together create tension between authority and duty, building resilience through patience.
+  - id: conj.sun.rahu.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: sun
+          planet2: rahu
+          orb_lte: 15
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 54
+      statement: Sun with Rahu amplifies worldly ambition and unconventional drive while testing ego clarity.
+  - id: conj.moon.jupiter.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: moon
+          planet2: jupiter
+          orb_lte: 15
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 62
+      statement: Moon and Jupiter together (Gaja-Kesari alignment) nurture wisdom, emotional generosity, and respected counsel.
+  - id: conj.moon.venus.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: moon
+          planet2: venus
+          orb_lte: 15
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 60
+      statement: Moon and Venus together bring artistic sensitivity, warmth, and appreciation for comfort.
+  - id: conj.moon.saturn.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: moon
+          planet2: saturn
+          orb_lte: 15
+    effect:
+      theme: mind_emotion
+      polarity: challenging
+      base_strength: 56
+      statement: >-
+        Moon and Saturn together (Vish/Sade-like sobriety) deepen emotional realism and endurance, though mood needs
+        gentle care.
+  - id: conj.moon.rahu.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: moon
+          planet2: rahu
+          orb_lte: 15
+    effect:
+      theme: mind_emotion
+      polarity: challenging
+      base_strength: 55
+      statement: Moon with Rahu intensifies imagination and restless curiosity, benefiting from grounding routines.
+  - id: conj.mars.jupiter.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mars
+          planet2: jupiter
+          orb_lte: 15
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 58
+      statement: Mars and Jupiter together (Guru-Mangala) channel courage through ethical principle and decisive action.
+  - id: conj.mars.venus.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mars
+          planet2: venus
+          orb_lte: 15
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 54
+      statement: Mars and Venus together heighten passion, artistic drive, and directness in relationships.
+  - id: conj.mars.saturn.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mars
+          planet2: saturn
+          orb_lte: 15
+    effect:
+      theme: courage_siblings
+      polarity: challenging
+      base_strength: 58
+      statement: >-
+        Mars and Saturn together pair intense drive with restraint—powerful for engineering and endurance when paced
+        well.
+  - id: conj.mercury.venus.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mercury
+          planet2: venus
+          orb_lte: 15
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 58
+      statement: Mercury and Venus together (Lakshmi-Narayana) blend refined speech, design sense, and diplomatic intellect.
+  - id: conj.mercury.jupiter.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mercury
+          planet2: jupiter
+          orb_lte: 15
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 60
+      statement: Mercury and Jupiter together support teaching, scholarship, advisory work, and broad synthesis.
+  - id: conj.mercury.rahu.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mercury
+          planet2: rahu
+          orb_lte: 15
+    effect:
+      theme: education_children
+      polarity: mixed
+      base_strength: 54
+      statement: Mercury with Rahu sparks inventive, out-of-the-box thinking and technical curiosity.
+  - id: conj.jupiter.venus.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: jupiter
+          planet2: venus
+          orb_lte: 15
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 58
+      statement: Jupiter and Venus together unite philosophical grace with aesthetic and relational harmony.
+  - id: conj.jupiter.saturn.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: jupiter
+          planet2: saturn
+          orb_lte: 15
+    effect:
+      theme: luck_dharma
+      polarity: mixed
+      base_strength: 56
+      statement: >-
+        Jupiter and Saturn together (Brahma/Dharma-Karma) balance expansion with realism and long-term institution
+        building.
+  - id: conj.venus.saturn.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: venus
+          planet2: saturn
+          orb_lte: 15
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 54
+      statement: Venus and Saturn together bring loyalty, mature commitment, and enduring artistic discipline.
+  - id: conj.venus.rahu.general
+    kind: conjunction
+    school: parashari
+    source: Classical Samyoga Lore (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: venus
+          planet2: rahu
+          orb_lte: 15
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 55
+      statement: Venus with Rahu heightens magnetic desires, unconventional tastes, and strong aesthetic ambition.
+  - id: dasha.maha.sun
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: sun
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Sun Dasha period brings Sun's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.moon
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: moon
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Moon Dasha period brings Moon's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.mars
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: mars
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Mars Dasha period brings Mars's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.mercury
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: mercury
+    effect:
+      theme: education_children
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Mercury Dasha period brings Mercury's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.jupiter
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: jupiter
+    effect:
+      theme: luck_dharma
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Jupiter Dasha period brings Jupiter's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.venus
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: venus
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Venus Dasha period brings Venus's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.saturn
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: saturn
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Saturn Dasha period brings Saturn's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.rahu
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: rahu
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Rahu Dasha period brings Rahu's natal house, lordships, and dignity to the foreground of daily
+        experience.
+  - id: dasha.maha.ketu
+    kind: dasha
+    school: parashari
+    source: BPHS Dasha Phala (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: dasha
+          planet: ketu
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 55
+      statement: >-
+        An active Ketu Dasha period brings Ketu's natal house, lordships, and dignity to the foreground of daily
+        experience.

@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/engine" },
+    { "path": "packages/content" },
+    { "path": "packages/app-core" },
+    { "path": "packages/store" },
+    { "path": "packages/facts" },
+    { "path": "packages/rules" },
+    { "path": "packages/kb" },
+    { "path": "packages/tools" },
+    { "path": "packages/agent" }
+  ]
+}

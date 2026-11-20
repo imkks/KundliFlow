@@ -1,0 +1,45 @@
+name: CI — Test, Build & Thin-Client Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit & ephemeris conformance tests
+        run: pnpm test
+
+      - name: Build Backend API (@astro/api)
+        run: pnpm --filter @astro/api build
+
+      - name: Build Thin Frontend (@astro/web)
+        run: pnpm --filter @astro/web build
+
+      - name: Verify ultra-light frontend (0 WASM bundles)
+        run: |
+          if ls apps/web/dist/assets/*.wasm 1> /dev/null 2>&1; then
+            echo "ERROR: WASM ephemeris leaked into frontend bundle!"
+            exit 1
+          fi
+          echo "Verified: 0 WASM files in apps/web/dist/assets/"
+          ls -lh apps/web/dist/assets/

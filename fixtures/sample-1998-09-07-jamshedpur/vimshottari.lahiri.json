@@ -1,0 +1,15 @@
+{
+  "balanceAtBirth": "Sat 11 Y 5 M 20 D",
+  "startingLord": "saturn",
+  "mahadashas": [
+    { "lord": "saturn", "years": 19, "startDate": "1998-09-07", "endDate": "2010-02-28" },
+    { "lord": "mercury", "years": 17, "startDate": "2010-02-28", "endDate": "2027-02-28" },
+    { "lord": "ketu", "years": 7, "startDate": "2027-02-28", "endDate": "2034-02-28" },
+    { "lord": "venus", "years": 20, "startDate": "2034-02-28", "endDate": "2054-02-28" },
+    { "lord": "sun", "years": 6, "startDate": "2054-02-28", "endDate": "2060-02-28" },
+    { "lord": "moon", "years": 10, "startDate": "2060-02-28", "endDate": "2070-02-28" },
+    { "lord": "mars", "years": 7, "startDate": "2070-02-28", "endDate": "2077-02-28" },
+    { "lord": "rahu", "years": 18, "startDate": "2077-02-28", "endDate": "2095-02-28" },
+    { "lord": "jupiter", "years": 16, "startDate": "2095-02-28", "endDate": "2111-02-28" }
+  ]
+}

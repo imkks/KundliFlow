@@ -1,0 +1,69 @@
+version: "1.0.0"
+
+# Hourly Scoring Heuristics (spec §4.1, §4.2)
+# Range is -7 to +7 (spec erratum acknowledged in DECISIONS.md)
+bands:
+  flowing:
+    minScore: 3
+    label: "Flowing"
+    color: "#5fc2b3" # Teal
+  steady:
+    minScore: -1
+    label: "Steady"
+    color: "#e3ad46" # Gold / Sand
+  go_gently:
+    minScore: -7
+    label: "Go gently"
+    color: "#d97736" # Soft amber (never red)
+
+weights:
+  chandra_bala:
+    # Transit Moon's house counted from the natal Moon sign
+    # Houses 1, 3, 6, 7, 10, 11: +2
+    # Houses 2, 4, 5, 9, 12: -1
+    # House 8 (Chandrashtama): -2
+    benefic_houses: [1, 3, 6, 7, 10, 11]
+    benefic_val: 2
+    neutral_houses: [2, 4, 5, 9, 12]
+    neutral_val: -1
+    chandrashtama_house: 8
+    chandrashtama_val: -2
+
+  tara_bala:
+    # Count from natal nakshatra to current Moon nakshatra mod 9 (1 Janma .. 9 Parama Mitra)
+    # Taras 2 (Sampat), 4 (Kshema), 6 (Sadhana), 8 (Mitra), 9 (Parama Mitra): +2
+    # Taras 3 (Vipat), 5 (Pratyari), 7 (Naidhana): -2
+    # Tara 1 (Janma): 0
+    benefic_taras: [2, 4, 6, 8, 9]
+    benefic_val: 2
+    malefic_taras: [3, 5, 7]
+    malefic_val: -2
+    janma_val: 0
+
+  sav_moon_sign:
+    # Sarva Ashtakvarga bindus in the sign currently occupied by the Moon
+    # 30 or more: +1
+    # 25 to 29: 0
+    # 24 or fewer: -1
+    high_threshold: 30
+    high_val: 1
+    medium_threshold: 25
+    medium_val: 0
+    low_val: -1
+
+  hora:
+    # Hora lord vs natal Lagna lord natural friendship:
+    # Friend: +1, Neutral: 0, Enemy: -1
+    friend_val: 1
+    neutral_val: 0
+    enemy_val: -1
+
+  dasha_hora:
+    # Hora lord equals running Mahadasha or Antardasha lord: +1, else 0
+    match_val: 1
+    no_match_val: 0
+
+  window:
+    # Rahu Kalam, Yamaganda or Gulika active: take worst (-1), else 0
+    active_val: -1
+    inactive_val: 0

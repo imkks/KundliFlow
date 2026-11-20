@@ -1,0 +1,28 @@
+# Banned words and concepts under §7.1 and §9.2 of the spec
+# Text generator and polish output must NEVER contain any of these.
+
+banned_words:
+  - death
+  - die
+  - dying
+  - dead
+  - accident
+  - illness
+  - disease
+  - cursed
+  - curse
+  - doom
+  - doomed
+  - guaranteed
+  - guarantee
+  - will happen
+  - disaster
+  - bankrupt
+  - bankruptcy
+  - pregnant
+  - pregnancy
+  - cancer
+  - surgery
+  - injury
+  - lottery
+  - stock market profit

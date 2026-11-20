@@ -1,0 +1,20 @@
+{
+  "name": "@astro/agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@astro/facts": "workspace:*",
+    "@astro/kb": "workspace:*",
+    "@astro/rules": "workspace:*",
+    "@astro/tools": "workspace:*",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@astro/engine": "workspace:*"
+  }
+}

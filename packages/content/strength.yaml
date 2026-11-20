@@ -1,0 +1,17 @@
+# Heuristic strength modifier weights (0-100 scale, versioned)
+version: "1.0.0"
+modifiers:
+  exalted_or_own: 15
+  debilitated: -15
+  shadbala_above_1: 10
+  shadbala_below_1: -10
+  sav_bindus_30_plus: 5
+  sav_bindus_22_or_less: -5
+  benefic_aspect_each: 5
+  benefic_aspect_cap: 10
+  malefic_aspect_each: -5
+  malefic_aspect_cap: -10
+  combust: -10
+  functional_benefic: 10
+  functional_malefic: -10
+  tight_conjunction_emphasis: 5

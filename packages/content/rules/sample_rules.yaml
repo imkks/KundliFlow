@@ -1,0 +1,361 @@
+# 20 Illustrative Sample Rules for L2-M2 Golden Testing
+# All statements are placeholders marked reviewed: false until expert astrologer sign-off.
+version: "0.1.0"
+rules:
+  - id: pih.rahu.4
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          house: 4
+    effect:
+      theme: home_mother
+      polarity: challenging
+      base_strength: 55
+      statement: Rahu in the 4th house is traditionally read as restlessness or unusual circumstances around home and inner peace.
+      modifiers:
+        - when:
+            fact: conjunction
+            planet: rahu
+            with: [venus, mercury, sun]
+            orb_lte: 3
+          strength: 5
+          phrase: The conjunction sits close, so the themes of the joined planet are colored by Rahu.
+        - when:
+            fact: dignity
+            planet: rahu
+            state: [own, exalted]
+          strength: 8
+
+  - id: lord.4.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 4
+          placedHouseLagna: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 62
+      statement: The lord of the 4th in the 4th house is traditionally read as a strong foundation for home, property, and emotional security.
+      modifiers:
+        - when:
+            fact: dignity
+            subject_from: lord
+            state: [own, exalted, mooltrikona]
+          strength: 10
+          phrase: Placed in its own or exalted sign, this grounding is especially steady.
+
+  - id: conj.venus.rahu.4
+    kind: conjunction
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: rahu
+          planet2: venus
+          house: 4
+          orb_lte: 10
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 53
+      statement: Venus close to Rahu in the 4th house colors comfort, relationships, and the sense of home with intensity and unconventional tastes.
+      modifiers:
+        - when:
+            fact: conjunction
+            planet1: rahu
+            planet2: venus
+            orb_lte: 3
+          strength: 5
+          phrase: With an orb under 3 degrees, the blending of desire and aesthetics is pronounced.
+
+  - id: pih.sun.4
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          house: 4
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 52
+      statement: The Sun in the 4th house can bring pride in lineage and domestic authority, alongside a need for personal space at home.
+
+  - id: pih.mercury.4
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          house: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 55
+      statement: Mercury in the 4th house favors an intellectually lively home, study, writing, and practical organization of domestic affairs.
+
+  - id: pih.venus.4
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          house: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 60
+      statement: Venus in the 4th house traditionally supports comfort, harmonious surroundings, aesthetic taste, and warmth in family life.
+
+  - id: pih.moon.11
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          house: 11
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 56
+      statement: The Moon in the 11th house is traditionally associated with receptive social circles, supportive friendships, and fluctuating yet active gains.
+
+  - id: pih.jupiter.11
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          house: 11
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 62
+      statement: Jupiter in the 11th house is traditionally read as favoring steady networks, principled mentors, and long-term fulfillment of aspirations.
+
+  - id: pih.saturn.12
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          house: 12
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 52
+      statement: Saturn in the 12th house encourages solitude, disciplined introspection, and careful management of expenses or distant work.
+
+  - id: pih.mars.3
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          house: 3
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 58
+      statement: Mars in the 3rd house is traditionally read as strong initiative, physical courage, and decisive communication.
+
+  - id: pih.ketu.10
+    kind: planet_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          house: 10
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 50
+      statement: Ketu in the 10th house often steers work toward specialized, independent, or research-oriented paths rather than conventional status.
+
+  - id: dignity.sun.own
+    kind: dignity
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: sun
+          state: [own, exalted, mooltrikona]
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 60
+      statement: A dignified Sun strengthens vitality, clarity of purpose, and steady self-respect.
+
+  - id: dignity.saturn.debilitated
+    kind: dignity
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: dignity
+          planet: saturn
+          state: [debilitated]
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 54
+      statement: Saturn in debilitation can feel impatient with slow structure, asking for deliberate pacing and realistic boundaries.
+
+  - id: lord.1.in.4
+    kind: lord_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 1
+          placedHouseLagna: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 58
+      statement: With the Lagna lord in the 4th house, personal identity and wellbeing are closely tied to home, roots, and emotional peace.
+
+  - id: lord.9.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 9
+          placedHouseLagna: 12
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 50
+      statement: The 9th lord in the 12th house often connects higher learning, dharma, or long journeys with foreign places or quiet retreat.
+
+  - id: lord.10.in.12
+    kind: lord_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 10
+          placedHouseLagna: 12
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 50
+      statement: The 10th lord in the 12th house can link profession with behind-the-scenes work, international roles, or research.
+
+  - id: lord.7.in.3
+    kind: lord_in_house
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: lordship
+          house: 7
+          placedHouseLagna: 3
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 50
+      statement: The 7th lord in the 3rd house highlights communication, shared projects, and active effort inside partnerships.
+
+  - id: yoga.budhaditya.4
+    kind: yoga
+    school: parashari
+    source: Classical Yoga (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          house: 4
+        - fact: placement
+          planet: mercury
+          house: 4
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 56
+      statement: Sun and Mercury together in the 4th house form a Budhaditya combination supporting analytical learning and clear expression.
+
+  - id: yoga.lakshmi_narayana.4
+    kind: yoga
+    school: parashari
+    source: Classical Yoga (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          house: 4
+        - fact: placement
+          planet: venus
+          house: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 58
+      statement: Mercury and Venus together in the 4th house blend intellect with aesthetic refinement in domestic and creative pursuits.
+
+  - id: conj.mercury.rahu.4
+    kind: conjunction
+    school: parashari
+    source: BPHS (verify chapter); authored paraphrase
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mercury
+          planet2: rahu
+          house: 4
+          orb_lte: 5
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 52
+      statement: Mercury close to Rahu sharpens inventive, unconventional thinking, though mental restlessness benefits from grounding habits.

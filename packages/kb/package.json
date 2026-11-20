@@ -1,0 +1,21 @@
+{
+  "name": "@astro/kb",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@astro/content": "workspace:*",
+    "@astro/rules": "workspace:*",
+    "better-sqlite3": "^11.5.0",
+    "js-yaml": "^5.5.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/js-yaml": "^4.0.9"
+  }
+}

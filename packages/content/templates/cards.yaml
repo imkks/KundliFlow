@@ -1,0 +1,62 @@
+- id: chandra_bala.good
+  when: { factor: chandra_bala, gte: 2 }
+  variants:
+    - "In Jyotish tradition, the transit Moon in your {{moon_house_from_moon}}th house from birth Moon favors practical momentum and steady progress."
+    - "The Moon transits {{moon_house_from_moon}} signs from your natal Moon, a placement traditionally read as supportive for daily activities."
+  factors: [chandra_bala]
+
+- id: chandra_bala.chandrashtama
+  when: { factor: chandra_bala, lte: -2 }
+  variants:
+    - "The Moon moves through your 8th house from birth Moon (Chandrashtama). Tradition suggests pacing yourself and avoiding hasty decisions."
+    - "Chandrashtama is active as the Moon traverses your 8th house. A gentle rhythm and reflective focus are traditionally encouraged."
+  factors: [chandra_bala]
+
+- id: chandra_bala.neutral
+  when: { factor: chandra_bala, eq: -1 }
+  variants:
+    - "The Moon occupies your {{moon_house_from_moon}}th house from natal Moon, suggesting mindful expenditure of mental energy."
+  factors: [chandra_bala]
+
+- id: tara_bala.benefic
+  when: { factor: tara_bala, gte: 2 }
+  variants:
+    - "Tara Bala is auspicious (Tara {{tara_index}}, {{tara_name}}), supporting well-aligned efforts."
+    - "The lunar constellation alignment ({{tara_name}} Tara) brings harmonious flow to ongoing pursuits."
+  factors: [tara_bala]
+
+- id: tara_bala.malefic
+  when: { factor: tara_bala, lte: -2 }
+  variants:
+    - "The current constellation reflects {{tara_name}} Tara. Tradition recommends taking measured steps and double-checking details."
+  factors: [tara_bala]
+
+- id: sav_moon_sign.high
+  when: { factor: sav_moon_sign, gte: 1 }
+  variants:
+    - "The Moon activates a sign strong in your natal Ashtakvarga ({{bindus}} bindus), lending resilience."
+  factors: [sav_moon_sign]
+
+- id: sav_moon_sign.low
+  when: { factor: sav_moon_sign, lte: -1 }
+  variants:
+    - "The Moon traverses an Ashtakvarga zone with fewer points ({{bindus}} bindus). Pacing and restorative attention are helpful."
+  factors: [sav_moon_sign]
+
+- id: hora.favorable
+  when: { factor: hora, gte: 1 }
+  variants:
+    - "The current {{hora_lord}} hora aligns harmoniously with your Lagna lord ({{lagna_lord}})."
+  factors: [hora]
+
+- id: dasha_hora.active
+  when: { factor: dasha_hora, gte: 1 }
+  variants:
+    - "The hour is ruled by {{hora_lord}}, resonating with your running dasha period."
+  factors: [dasha_hora]
+
+- id: inauspicious_window.active
+  when: { factor: window, lte: -1 }
+  variants:
+    - "{{window_name}} is active. Tradition favors routine maintenance over initiating critical ventures."
+  factors: [window]

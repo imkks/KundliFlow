@@ -1,0 +1,207 @@
+version: "1.0.0"
+items:
+  # 12 Houses (Bhavas)
+  - id: lore.house1
+    type: concept_note
+    text: "1st House (Tanu Bhava / Lagna): physical body, vitality, appearance, temperament, self-identity, and overall life direction."
+    houses: "1"
+    themes: "self"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house2
+    type: concept_note
+    text: "2nd House (Dhana Bhava): accumulated wealth, family of origin, speech, values, food, and early nourishment."
+    houses: "2"
+    themes: "money_speech"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house3
+    type: concept_note
+    text: "3rd House (Sahaja Bhava): courage, willpower, younger siblings, short journeys, hands-on skills, communication, and media."
+    houses: "3"
+    themes: "courage_siblings"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house5
+    type: concept_note
+    text: "5th House (Putra Bhava): creative intelligence, education, mantra, romance, children, speculative discernment, and purva punya (past merit)."
+    houses: "5"
+    themes: "education_children"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house6
+    type: concept_note
+    text: "6th House (Ripu Bhava): daily work routine, service, competition, debts, obstacles, digestive health, and disciplined problem-solving."
+    houses: "6"
+    themes: "health_routine"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house7
+    type: concept_note
+    text: "7th House (Kalatra Bhava): marriage, committed partnerships, business alliances, public dealings, and mirror of the self."
+    houses: "7"
+    themes: "partnership"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house8
+    type: concept_note
+    text: "8th House (Randhra Bhava): deep transformation, longevity, occult research, shared resources, inheritance, and sudden life shifts."
+    houses: "8"
+    themes: "transformation_secrets"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house9
+    type: concept_note
+    text: "9th House (Dharma Bhava): luck, higher philosophy, teachers, father, long-distance travel, ethics, and spiritual grace."
+    houses: "9"
+    themes: "luck_dharma"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.house11
+    type: concept_note
+    text: "11th House (Labha Bhava): gains, income, elder siblings, social networks, fulfillment of aspirations, and community."
+    houses: "11"
+    themes: "gains_network"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  # 9 Planets (Grahas)
+  - id: lore.planet.sun
+    type: concept_note
+    text: "Sun (Surya): Atma (soul), authority, father, government, vitality, confidence, and leadership. Strong in 10th house (Dig Bala) and Aries/Leo."
+    planets: "sun"
+    themes: "self,career_status"
+    school: parashari
+    source: "BPHS Ch. 3 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.planet.moon
+    type: concept_note
+    text: "Moon (Chandra): Manas (mind), emotions, mother, public receptivity, fluids, and adaptability. Strong in 4th house (Dig Bala) and Taurus/Cancer."
+    planets: "moon"
+    themes: "mind_emotion,home_mother"
+    school: parashari
+    source: "BPHS Ch. 3 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.planet.mars
+    type: concept_note
+    text: "Mars (Mangala): courage, drive, engineering, land/property, siblings, and protective energy. Casts special 4th and 8th aspects; Dig Bala in 10th."
+    planets: "mars"
+    themes: "courage_siblings"
+    school: parashari
+    source: "BPHS Ch. 3 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.planet.mercury
+    type: concept_note
+    text: "Mercury (Budha): intellect, analytical speech, commerce, writing, mathematics, and adaptability. Dig Bala in 1st house; adapts to planets it joins."
+    planets: "mercury"
+    themes: "education_children,money_speech"
+    school: parashari
+    source: "BPHS Ch. 3 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.planet.jupiter
+    type: concept_note
+    text: "Jupiter (Guru): wisdom, dharma, expansion, mentors, children, and financial grace. Casts 5th and 9th protective aspects; Dig Bala in 1st house."
+    planets: "jupiter"
+    themes: "luck_dharma,education_children"
+    school: parashari
+    source: "BPHS Ch. 3 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.planet.venus
+    type: concept_note
+    text: "Venus (Shukra): harmony, relationships, spouse, arts, comfort, vehicles, and refined aesthetics. Dig Bala in 4th house; exalted in Pisces."
+    planets: "venus"
+    themes: "partnership,home_mother"
+    school: parashari
+    source: "BPHS Ch. 3 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.planet.saturn
+    type: concept_note
+    text: "Saturn (Shani): discipline, endurance, time, service, reality checks, and karmic maturity. Casts 3rd and 10th aspects; Dig Bala in 7th house."
+    planets: "saturn"
+    themes: "career_status,losses_retreat"
+    school: parashari
+    source: "BPHS Ch. 3 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.planet.rahu
+    type: concept_note
+    text: "Rahu (North Node): intense worldly ambition, unconventional paths, foreign connections, technology, and amplification of the sign/planets it joins."
+    planets: "rahu"
+    themes: "transformation_secrets"
+    school: parashari
+    source: "Classical Jyotish Tradition"
+    reviewed: 1
+
+  - id: lore.planet.ketu
+    type: concept_note
+    text: "Ketu (South Node): detachment, spiritual insight, past-life mastery, research, and liberation from superficial ego attachments."
+    planets: "ketu"
+    themes: "losses_retreat"
+    school: parashari
+    source: "Classical Jyotish Tradition"
+    reviewed: 1
+
+  # Key Concepts, Vargas & Yogas
+  - id: lore.varga.d9
+    type: concept_note
+    text: "D9 Navamsha reveals inner planetary strength, soul purpose (Karakamsa), marriage partner dynamics, and how chart promises mature after age 30."
+    themes: "partnership,luck_dharma"
+    school: parashari
+    source: "BPHS Ch. 6 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.varga.d10
+    type: concept_note
+    text: "D10 Dashamsha is the primary divisional chart for career, professional authority, work environment, and public achievements."
+    themes: "career_status"
+    school: parashari
+    source: "BPHS Ch. 6 (paraphrase)"
+    reviewed: 1
+
+  - id: lore.jaimini.karakas
+    type: concept_note
+    text: "Jaimini Chara Karakas rank the 7 planets by degree: Atmakaraka (AK) is the soul significator, Amatyakaraka (AmK) drives career, Darakaraka (DK) signifies spouse."
+    themes: "self,career_status,partnership"
+    school: jaimini
+    source: "Jaimini Sutras (paraphrase)"
+    reviewed: 1
+
+  - id: lore.double_transit
+    type: concept_note
+    text: "Double Transit Principle: major life events manifest when both slow-moving Saturn and Jupiter simultaneously aspect or transit a house or its lord."
+    planets: "saturn,jupiter"
+    themes: "career_status,partnership"
+    school: parashari
+    source: "Classical Gochar Tradition"
+    reviewed: 1
+
+  - id: lore.neecha_bhanga
+    type: concept_note
+    text: "Neecha Bhanga Raja Yoga cancels debilitation when the debilitation lord or exaltation lord occupies a Kendra from Lagna or Moon, turning early struggle into late mastery."
+    themes: "self,career_status"
+    school: parashari
+    source: "Phaladeepika (paraphrase)"
+    reviewed: 1

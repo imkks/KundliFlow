@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%" style="font-family: serif, sans-serif;">
+  <style>
+    .bg { fill: #15132b; }
+    .line { stroke: #e3ad46; stroke-width: 1.5; fill: none; }
+    .house-num { fill: #5fc2b3; font-size: 11px; font-weight: bold; }
+    .graha-text { fill: #f3eee2; font-size: 11px; }
+    .retro { fill: #e3ad46; font-size: 9px; }
+  </style>
+
+  <!-- Background -->
+  <rect width="400" height="400" class="bg" />
+
+  <!-- Outer Border -->
+  <rect x="10" y="10" width="380" height="380" class="line" />
+
+  <!-- Diagonals -->
+  <line x1="10" y1="10" x2="390" y2="390" class="line" />
+  <line x1="390" y1="10" x2="10" y2="390" class="line" />
+
+  <!-- Inner Diamond -->
+  <polygon points="200,10 390,200 200,390 10,200" class="line" />
+
+  <!-- House Numbers & Sample Placements for D1 Lagna Taurus -->
+  <!-- 1st House (Top Diamond) -->
+  <text x="200" y="80" text-anchor="middle" class="house-num">2 (Taurus)</text>
+  <text x="200" y="110" text-anchor="middle" class="graha-text">Asc</text>
+
+  <!-- 4th House (Left Diamond) -->
+  <text x="90" y="200" text-anchor="middle" class="house-num">5 (Leo)</text>
+  <text x="90" y="220" text-anchor="middle" class="graha-text">Su Me Ve Ra</text>
+
+  <!-- 7th House (Bottom Diamond) -->
+  <text x="200" y="320" text-anchor="middle" class="house-num">8 (Scorpio)</text>
+
+  <!-- 10th House (Right Diamond) -->
+  <text x="310" y="200" text-anchor="middle" class="house-num">11 (Aquarius)</text>
+  <text x="310" y="220" text-anchor="middle" class="graha-text">Ke</text>
+
+  <!-- 11th House (Top Right Triangle) -->
+  <text x="290" y="100" text-anchor="middle" class="house-num">12 (Pisces)</text>
+  <text x="290" y="120" text-anchor="middle" class="graha-text">Mo Ju <tspan class="retro">[R]</tspan></text>
+
+  <!-- 12th House (Top Triangle) -->
+  <text x="200" y="30" text-anchor="middle" class="house-num">1 (Aries)</text>
+  <text x="200" y="45" text-anchor="middle" class="graha-text">Sa <tspan class="retro">[R]</tspan></text>
+</svg>

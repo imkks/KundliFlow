@@ -1,0 +1,159 @@
+version: "1.0.0"
+topics:
+  - id: career
+    description: "Work, profession, public status, authority, career transitions, and income from effort."
+    themes: [career_status, gains_network]
+    houses: [10, 6, 2, 11, 7]
+    karakas: [sun, saturn, mercury, jupiter]
+    vargas: [d10]
+    checklist:
+      - { path: /houses/10, weight: 3 }
+      - { path: /houses/10/lord, weight: 3 }
+      - { path: /planets/saturn, weight: 2 }
+      - { path: /vargas/d10/houses/10, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=saturn,jupiter, weight: 2 }
+      - { path: /houses/6, weight: 1 }
+      - { path: /houses/11, weight: 1 }
+    timing: { activate_houses: [10, 6, 11] }
+    sensitive: false
+
+  - id: home_family
+    description: "Home life, living environment, property, mother, roots, and inner peace."
+    themes: [home_mother, mind_emotion]
+    houses: [4, 2, 12]
+    karakas: [moon, venus, mars]
+    vargas: [d4]
+    checklist:
+      - { path: /houses/4, weight: 3 }
+      - { path: /houses/4/lord, weight: 3 }
+      - { path: /planets/moon, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=saturn,jupiter, weight: 2 }
+      - { path: /houses/2, weight: 1 }
+      - { path: /houses/12, weight: 1 }
+    timing: { activate_houses: [4, 2, 12] }
+    sensitive: false
+
+  - id: self_personality
+    description: "Core temperament, identity, vitality, physical constitution, and life direction."
+    themes: [self, mind_emotion]
+    houses: [1, 9, 5]
+    karakas: [sun, moon]
+    vargas: [d9]
+    checklist:
+      - { path: /houses/1, weight: 3 }
+      - { path: /houses/1/lord, weight: 3 }
+      - { path: /planets/sun, weight: 2 }
+      - { path: /planets/moon, weight: 2 }
+      - { path: /vargas/d9/houses/1, weight: 2 }
+      - { path: /periods/current, weight: 2 }
+    timing: { activate_houses: [1, 5, 9] }
+    sensitive: false
+
+  - id: money
+    description: "Savings, accumulated wealth, speech, cash flow, and financial stability."
+    themes: [money_speech, gains_network]
+    houses: [2, 11, 5, 9]
+    karakas: [jupiter, venus, mercury]
+    vargas: [d2]
+    checklist:
+      - { path: /houses/2, weight: 3 }
+      - { path: /houses/2/lord, weight: 3 }
+      - { path: /houses/11, weight: 2 }
+      - { path: /planets/jupiter, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=jupiter,saturn, weight: 2 }
+    timing: { activate_houses: [2, 11, 9] }
+    sensitive: false
+
+  - id: relationships
+    description: "Marriage, committed partnerships, business alliances, and interpersonal harmony."
+    themes: [partnership, gains_network]
+    houses: [7, 2, 11, 4]
+    karakas: [venus, jupiter]
+    vargas: [d9]
+    checklist:
+      - { path: /houses/7, weight: 3 }
+      - { path: /houses/7/lord, weight: 3 }
+      - { path: /planets/venus, weight: 2 }
+      - { path: /vargas/d9/planets/venus, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=jupiter,saturn, weight: 2 }
+    timing: { activate_houses: [7, 2, 11] }
+    sensitive: false
+
+  - id: education
+    description: "Study, higher learning, creative intelligence, exams, and mentorship."
+    themes: [education_children, luck_dharma]
+    houses: [5, 4, 9, 2]
+    karakas: [mercury, jupiter]
+    vargas: [d24]
+    checklist:
+      - { path: /houses/5, weight: 3 }
+      - { path: /houses/4, weight: 2 }
+      - { path: /houses/9, weight: 2 }
+      - { path: /planets/mercury, weight: 2 }
+      - { path: /planets/jupiter, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+    timing: { activate_houses: [5, 4, 9] }
+    sensitive: false
+
+  - id: health_routine
+    description: "Daily habits, vitality, stress balance, and routine wellbeing (non-diagnostic)."
+    themes: [health_routine, self]
+    houses: [6, 1, 8, 12]
+    karakas: [sun, moon, saturn]
+    vargas: [d1]
+    checklist:
+      - { path: /houses/6, weight: 3 }
+      - { path: /houses/1, weight: 2 }
+      - { path: /planets/sun, weight: 2 }
+      - { path: /planets/moon, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+    timing: { activate_houses: [6, 1, 12] }
+    sensitive: true
+
+  - id: year_ahead
+    description: "Overall themes, active dashas, and major slow-planet transits over the coming 12 months."
+    themes: [self, career_status, home_mother, partnership, gains_network]
+    houses: [1, 10, 4, 7, 11]
+    karakas: [saturn, jupiter, rahu, ketu]
+    vargas: [d1]
+    checklist:
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=saturn,jupiter,rahu,ketu, weight: 3 }
+      - { path: /houses/1, weight: 2 }
+      - { path: /houses/10, weight: 2 }
+      - { path: /strength/houses, weight: 1 }
+    timing: { activate_houses: [1, 10, 11, 9] }
+    sensitive: false
+
+  - id: decision_timing
+    description: "Timing windows and thematic emphasis for upcoming choices or transitions."
+    themes: [career_status, self, luck_dharma]
+    houses: [1, 9, 10, 11]
+    karakas: [jupiter, saturn, mercury]
+    vargas: [d1]
+    checklist:
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=jupiter,saturn, weight: 3 }
+      - { path: /houses/9, weight: 2 }
+      - { path: /houses/10, weight: 2 }
+    timing: { activate_houses: [9, 10, 11] }
+    sensitive: false
+
+  - id: spirituality
+    description: "Contemplation, dharma, inner growth, detachment, and philosophical inquiry."
+    themes: [losses_retreat, luck_dharma, transformation_secrets]
+    houses: [9, 12, 8, 5]
+    karakas: [jupiter, ketu, saturn]
+    vargas: [d20]
+    checklist:
+      - { path: /houses/9, weight: 3 }
+      - { path: /houses/12, weight: 3 }
+      - { path: /planets/ketu, weight: 2 }
+      - { path: /planets/jupiter, weight: 2 }
+      - { path: /periods/current, weight: 2 }
+    timing: { activate_houses: [9, 12, 5] }
+    sensitive: false

@@ -1,0 +1,53 @@
+version: "1.0.0"
+items:
+  - id: concept.house4
+    type: concept_note
+    text: "In Jyotish, the 4th house (Sukha Bhava) signifies home, inner peace, mother, emotional roots, property, and foundational comfort."
+    houses: "4"
+    themes: "home_mother,mind_emotion"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: concept.house10
+    type: concept_note
+    text: "The 10th house (Karma Bhava) governs career, public reputation, authority, work ethic, and visible worldly contribution."
+    houses: "10"
+    themes: "career_status"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: concept.house12
+    type: concept_note
+    text: "The 12th house (Vyaya Bhava) relates to solitude, foreign lands, expenses, behind-the-scenes effort, rest, and spiritual release."
+    houses: "12"
+    themes: "losses_retreat"
+    school: parashari
+    source: "BPHS Ch. 11 (paraphrase)"
+    reviewed: 1
+
+  - id: concept.dasha_hierarchy
+    type: concept_note
+    text: "Vimshottari Dasha works in nested layers: Mahadasha sets the multi-year backdrop, Antardasha shapes the months, and Pratyantar tunes shorter weeks."
+    themes: "self"
+    school: parashari
+    source: "BPHS Dasha Chapters (paraphrase)"
+    reviewed: 1
+
+  - id: concept.ashtakvarga_sav
+    type: concept_note
+    text: "Sarva Ashtakvarga (SAV) sums planetary support per sign out of 337 total bindus; 28 is average, 30 or more indicates strong transit support."
+    themes: "self"
+    school: parashari
+    source: "BPHS Ashtakvarga (paraphrase)"
+    reviewed: 1
+
+  - id: concept.sade_sati
+    type: concept_note
+    text: "Sade Sati occurs when Saturn transits the 12th, 1st, and 2nd signs from the natal Moon, emphasizing discipline, restructuring, and maturity."
+    planets: "saturn,moon"
+    themes: "mind_emotion,self"
+    school: parashari
+    source: "Classical Gochar Tradition"
+    reviewed: 1

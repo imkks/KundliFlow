@@ -1,0 +1,184 @@
+version: "1.0.0"
+items:
+  # 12 Signs (Rashis)
+  - id: sign.aries
+    type: concept_note
+    text: "Aries (Mesha): Movable Fire sign ruled by Mars. Pioneering, direct, energetic, and action-first."
+    signs: "aries"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.taurus
+    type: concept_note
+    text: "Taurus (Vrishabha): Fixed Earth sign ruled by Venus. Steadfast, sensory, patient, and value-building."
+    signs: "taurus"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.gemini
+    type: concept_note
+    text: "Gemini (Mithuna): Dual Air sign ruled by Mercury. Communicative, curious, analytical, and adaptable."
+    signs: "gemini"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.cancer
+    type: concept_note
+    text: "Cancer (Karka): Movable Water sign ruled by Moon. Nurturing, protective, emotionally intuitive, and home-centered."
+    signs: "cancer"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.leo
+    type: concept_note
+    text: "Leo (Simha): Fixed Fire sign ruled by Sun. Dignified, expressive, authoritative, and heart-led."
+    signs: "leo"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.virgo
+    type: concept_note
+    text: "Virgo (Kanya): Dual Earth sign ruled by Mercury. Detail-oriented, service-minded, discriminating, and practical."
+    signs: "virgo"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.libra
+    type: concept_note
+    text: "Libra (Tula): Movable Air sign ruled by Venus. Diplomatic, balanced, relationship-focused, and justice-seeking."
+    signs: "libra"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.scorpio
+    type: concept_note
+    text: "Scorpio (Vrishchika): Fixed Water sign ruled by Mars/Ketu. Intense, investigative, resilient, and deeply transformative."
+    signs: "scorpio"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.sagittarius
+    type: concept_note
+    text: "Sagittarius (Dhanu): Dual Fire sign ruled by Jupiter. Philosophical, principled, expansive, and truth-seeking."
+    signs: "sagittarius"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.capricorn
+    type: concept_note
+    text: "Capricorn (Makara): Movable Earth sign ruled by Saturn. Ambitious, structured, patient, and mastery-driven."
+    signs: "capricorn"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.aquarius
+    type: concept_note
+    text: "Aquarius (Kumbha): Fixed Air sign ruled by Saturn/Rahu. Systemic, humanitarian, unconventional, and detached."
+    signs: "aquarius"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  - id: sign.pisces
+    type: concept_note
+    text: "Pisces (Meena): Dual Water sign ruled by Jupiter. Compassionate, imaginative, spiritual, and boundary-transcending."
+    signs: "pisces"
+    school: parashari
+    source: "BPHS Ch. 4 (paraphrase)"
+    reviewed: 1
+
+  # Major Yogas, Doshas & Technical Principles
+  - id: principle.gajakesari
+    type: concept_note
+    text: "Gajakesari Yoga forms when Jupiter is in a Kendra (1, 4, 7, 10) from the Moon, supporting wisdom, respected reputation, and resilience."
+    planets: "jupiter,moon"
+    themes: "career_status,luck_dharma"
+    school: parashari
+    source: "BPHS / Phaladeepika (paraphrase)"
+    reviewed: 1
+
+  - id: principle.budhaditya
+    type: concept_note
+    text: "Budhaditya Yoga (Sun + Mercury conjunction) sharpens intellect, analytical clarity, and communication—strongest when Mercury is not deeply combust."
+    planets: "sun,mercury"
+    themes: "education_children,career_status"
+    school: parashari
+    source: "Classical Yoga Lore"
+    reviewed: 1
+
+  - id: principle.pancha_mahapurusha
+    type: concept_note
+    text: "Pancha Mahapurusha Yogas (Ruchaka-Mars, Bhadra-Mercury, Hamsa-Jupiter, Malavya-Venus, Shasha-Saturn) occur when a planet is in own/exalted sign in a Kendra from Lagna."
+    themes: "self,career_status"
+    school: parashari
+    source: "BPHS Ch. 75 (paraphrase)"
+    reviewed: 1
+
+  - id: principle.viparita_raja
+    type: concept_note
+    text: "Viparita Raja Yoga occurs when Dusthana lords (6, 8, 12) occupy Dusthana houses, turning crises or unexpected setbacks into sudden breakthroughs."
+    houses: "6,8,12"
+    themes: "transformation_secrets"
+    school: parashari
+    source: "Phaladeepika (paraphrase)"
+    reviewed: 1
+
+  - id: principle.manglik_dosha
+    type: concept_note
+    text: "Manglik (Kuja) Dosha occurs when Mars sits in 1, 2, 4, 7, 8, or 12, signaling directness and high drive in partnership; often mitigated by own/exalted sign or Jupiter aspect."
+    planets: "mars"
+    houses: "1,2,4,7,8,12"
+    themes: "partnership"
+    school: parashari
+    source: "Classical Muhurta & Vivaha Tradition"
+    reviewed: 1
+
+  - id: principle.shadbala_digbala
+    type: concept_note
+    text: "Shadbala measures 6-fold planetary potency in Rupas. Dig Bala (Directional Strength) peaks for Jupiter/Mercury in 1st, Moon/Venus in 4th, Saturn in 7th, and Sun/Mars in 10th."
+    themes: "self,career_status"
+    school: parashari
+    source: "BPHS Shadbala Chapters (paraphrase)"
+    reviewed: 1
+
+  - id: principle.avasthas
+    type: concept_note
+    text: "Baladi Avasthas (Bala, Kumar, Yuva, Vradha, Mrita) gauge planetary maturity by degree in odd/even signs; Yuva (12°-18°) delivers full results, while Mrita relies on its dispositor."
+    themes: "self"
+    school: parashari
+    source: "BPHS Avastha Chapters (paraphrase)"
+    reviewed: 1
+
+  - id: principle.kp_sublord
+    type: concept_note
+    text: "In KP (Krishnamurti Padhdhati), a planet gives the results of its Nakshatra (Star) Lord, while its Sub-Lord determines whether the house promise manifests favorably or is blocked."
+    themes: "self,decision_timing"
+    school: kp
+    source: "KP Reader Tradition (paraphrase)"
+    reviewed: 1
+
+  - id: principle.chalit_shift
+    type: concept_note
+    text: "In Sripati Bhava Chalit, a planet near a house boundary may shift into an adjacent Bhava; it keeps its Rashi sign psychology while delivering events in its Chalit Bhava."
+    themes: "self"
+    school: parashari
+    source: "Sripati Paddhati (paraphrase)"
+    reviewed: 1
+
+  - id: principle.ghatak_muhurta
+    type: concept_note
+    text: "Ghatak Chakra identifies personal weekday, tithi, nakshatra, and rashi windows of higher friction relative to natal Moon, used as timing guardrails for major launches."
+    themes: "decision_timing"
+    school: parashari
+    source: "Muhurta Chintamani (paraphrase)"
+    reviewed: 1

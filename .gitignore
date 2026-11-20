@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+coverage/
+.env*
+!.env.example
+# Local SQLite database & WAL files
+data/*.db
+data/*.db-wal
+data/*.db-shm
+*.sqlite*
+# Personal reports stay local (contain name + birth data)
+fixtures/**/*.pdf
