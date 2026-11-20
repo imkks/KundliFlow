@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # 1. Test, build API & thin web frontend, verify 0 WASM, and upload artifacts
+  # 1. Test everything & build standalone Oracle Cloud API artifact
   build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -41,22 +41,6 @@ jobs:
 
       - name: Build Backend API (@astro/api)
         run: pnpm --filter @astro/api build
-
-      - name: Build Thin Frontend (@astro/web)
-        env:
-          VITE_BASE_PATH: /KundliFlow/
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || vars.VITE_API_URL || 'http://localhost:8787' }}
-          VITE_API_URL: ${{ vars.VITE_API_BASE_URL || vars.VITE_API_URL || 'http://localhost:8787' }}
-        run: pnpm --filter @astro/web build
-
-      - name: Verify ultra-light frontend (0 WASM bundles)
-        run: |
-          if ls apps/web/dist/assets/*.wasm 1> /dev/null 2>&1; then
-            echo "ERROR: WASM ephemeris leaked into frontend bundle!"
-            exit 1
-          fi
-          echo "Verified: 0 WASM files in apps/web/dist/assets/"
-          ls -lh apps/web/dist/assets/
 
       - name: Package standalone Oracle Cloud API bundle
         run: |
@@ -109,18 +93,61 @@ jobs:
 
           tar -czf build-artifacts/kundliflow-api-bundle.tar.gz -C build-artifacts kundliflow-api
 
-      - name: Package thin Frontend Web bundle
-        run: |
-          mkdir -p build-artifacts/kundliflow-web
-          cp -r apps/web/dist/* build-artifacts/kundliflow-web/
-          tar -czf build-artifacts/kundliflow-web-bundle.tar.gz -C build-artifacts kundliflow-web
-
       - name: Upload Backend API Artifact
         uses: actions/upload-artifact@v4
         with:
           name: kundliflow-api-bundle
           path: build-artifacts/kundliflow-api-bundle.tar.gz
           retention-days: 30
+
+  # 2. Build & deploy thin frontend inside 'github-pages' environment (reads both github-pages env vars & repo vars!)
+  deploy-pages:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Thin Frontend (@astro/web)
+        env:
+          VITE_BASE_PATH: /KundliFlow/
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || vars.VITE_API_URL || 'http://localhost:8787' }}
+          VITE_API_URL: ${{ vars.VITE_API_BASE_URL || vars.VITE_API_URL || 'http://localhost:8787' }}
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID || '' }}
+        run: |
+          echo "Building frontend with API URL: $VITE_API_BASE_URL"
+          pnpm --filter @astro/web build
+
+      - name: Verify ultra-light frontend (0 WASM bundles)
+        run: |
+          if ls apps/web/dist/assets/*.wasm 1> /dev/null 2>&1; then
+            echo "ERROR: WASM ephemeris leaked into frontend bundle!"
+            exit 1
+          fi
+          echo "Verified: 0 WASM files in apps/web/dist/assets/"
+          ls -lh apps/web/dist/assets/
+
+      - name: Package & Upload Frontend Web Artifact
+        run: |
+          mkdir -p build-artifacts/kundliflow-web
+          cp -r apps/web/dist/* build-artifacts/kundliflow-web/
+          tar -czf build-artifacts/kundliflow-web-bundle.tar.gz -C build-artifacts kundliflow-web
 
       - name: Upload Frontend Web Artifact
         uses: actions/upload-artifact@v4
@@ -130,24 +157,13 @@ jobs:
           retention-days: 30
 
       - name: Setup Pages
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: apps/web/dist
 
-  # 2. Deploy thin frontend to GitHub Pages
-  deploy-pages:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
@@ -185,7 +201,6 @@ jobs:
           ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
           ORACLE_USER: ${{ secrets.ORACLE_USER || 'ubuntu' }}
           ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
-          ORACLE_DEPLOY_DIR: ${{ vars.ORACLE_DEPLOY_DIR || '~/kundliflow-api' }}
         run: |
           mkdir -p ~/.ssh
           printf "%s\n" "$ORACLE_SSH_KEY" > ~/.ssh/oracle_key
@@ -196,7 +211,6 @@ jobs:
           ssh -i ~/.ssh/oracle_key "${ORACLE_USER}@${ORACLE_HOST}" bash -s <<'REMOTE'
             set -euo pipefail
             mkdir -p ~/kundliflow-api
-            # Preserve existing .env and SQLite data/ across deployments
             tar -xzf /tmp/kundliflow-api-bundle.tar.gz -C ~
             rm -f /tmp/kundliflow-api-bundle.tar.gz
             cd ~/kundliflow-api

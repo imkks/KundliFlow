@@ -82,10 +82,16 @@ function sendJson(res: http.ServerResponse, status: number, body: unknown) {
   res.writeHead(status, {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Accept',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, If-None-Match',
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   });
   res.end(JSON.stringify(body));
+}
+
+function canAccessProfile(profile: { userId?: string | null } | null, authUser: { sub: string } | null): boolean {
+  if (!profile) return false;
+  if (!profile.userId) return true; // unowned local profile
+  return Boolean(authUser && authUser.sub === profile.userId);
 }
 
 export function createApiServer() {
@@ -317,7 +323,7 @@ export function createApiServer() {
       res.writeHead(204, {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, If-None-Match',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
       });
       res.end();
       return;
@@ -369,9 +375,25 @@ export function createApiServer() {
       return;
     }
 
+    // --- Current Authenticated User & Their Profile History ---
+    if (req.method === 'GET' && url === '/api/auth/me') {
+      if (!authUser) {
+        sendJson(res, 401, { error: 'Not authenticated' });
+        return;
+      }
+      const user = appDb.getUserById(authUser.sub);
+      if (!user) {
+        sendJson(res, 401, { error: 'User not found' });
+        return;
+      }
+      const profiles = appDb.listProfilesForUser(user.id);
+      sendJson(res, 200, { user, profiles });
+      return;
+    }
+
     // --- Profiles & Aggregated Snapshots ---
     if (req.method === 'GET' && url === '/api/profiles') {
-      const profiles = authUser ? appDb.listProfilesForUser(authUser.sub) : appDb.listProfiles();
+      const profiles = authUser ? appDb.listProfilesForUser(authUser.sub) : appDb.listUnownedProfiles();
       sendJson(res, 200, { profiles });
       return;
     }
@@ -379,9 +401,16 @@ export function createApiServer() {
     if (req.method === 'POST' && url === '/api/profiles') {
       try {
         const body = await readJsonBody(req);
+        const ownerPrefix = authUser ? `${authUser.sub}_` : '';
         const id =
           body.id ||
-          `${String(body.name || 'native').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_${body.birthDate}_${String(body.birthTime).replace(/:/g, '')}`;
+          `${ownerPrefix}${String(body.name || 'native').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_${body.birthDate}_${String(body.birthTime).replace(/:/g, '')}`;
+
+        const existing = appDb.getProfile(id);
+        if (existing && !canAccessProfile(existing, authUser)) {
+          sendJson(res, 403, { error: 'Forbidden: profile belongs to another account' });
+          return;
+        }
 
         const profile = {
           id,
@@ -413,6 +442,51 @@ export function createApiServer() {
       return;
     }
 
+    // --- Activate a Profile for the Current User ---
+    const activateMatch = url.match(/^\/api\/profiles\/([^/]+)\/activate$/);
+    if (req.method === 'POST' && activateMatch) {
+      const profileId = decodeURIComponent(activateMatch[1]!);
+      const profile = appDb.getProfile(profileId);
+      if (!profile) {
+        sendJson(res, 404, { error: 'Profile not found' });
+        return;
+      }
+      if (!canAccessProfile(profile, authUser)) {
+        sendJson(res, 403, { error: 'Forbidden' });
+        return;
+      }
+      if (!canAccessProfile(profile, authUser)) {
+        sendJson(res, 403, { error: 'Forbidden' });
+        return;
+      }
+      const updated = appDb.setActiveProfile(profileId, profile.userId ?? null);
+      sendJson(res, 200, { ok: true, profile: updated });
+      return;
+    }
+
+    // --- Delete a Profile (and its cached snapshots, journals, chats) ---
+    const deleteProfileMatch = url.match(/^\/api\/profiles\/([^/]+)$/);
+    if (req.method === 'DELETE' && deleteProfileMatch) {
+      const profileId = decodeURIComponent(deleteProfileMatch[1]!);
+      const profile = appDb.getProfile(profileId);
+      if (!profile) {
+        sendJson(res, 404, { error: 'Profile not found' });
+        return;
+      }
+      if (!canAccessProfile(profile, authUser)) {
+        sendJson(res, 403, { error: 'Forbidden' });
+        return;
+      }
+      if (!canAccessProfile(profile, authUser)) {
+        sendJson(res, 403, { error: 'Forbidden' });
+        return;
+      }
+      appDb.deleteProfile(profileId);
+      const profiles = authUser ? appDb.listProfilesForUser(authUser.sub) : appDb.listUnownedProfiles();
+      sendJson(res, 200, { ok: true, profiles });
+      return;
+    }
+
     // --- Static Natal Bundle (1-Time Pull with ETag / 304 Support for Web & Android) ---
     const bundleMatch = url.match(/^\/api\/profiles\/([^/]+)\/bundle$/);
     if (req.method === 'GET' && bundleMatch) {
@@ -420,6 +494,10 @@ export function createApiServer() {
       const profile = appDb.getProfile(profileId);
       if (!profile) {
         sendJson(res, 404, { error: 'Profile not found' });
+        return;
+      }
+      if (!canAccessProfile(profile, authUser)) {
+        sendJson(res, 403, { error: 'Forbidden' });
         return;
       }
       const etag = `"bundle-${profile.id}-v${profile.bundleVersion ?? 1}"`;
@@ -663,6 +741,10 @@ export function createApiServer() {
         sendJson(res, 404, { error: 'Profile not found' });
         return;
       }
+      if (!canAccessProfile(profile, authUser)) {
+        sendJson(res, 403, { error: 'Forbidden' });
+        return;
+      }
       let snap = appDb.getSnapshot(profileId);
       if (!snap) {
         const agg = await aggregateLevel1And2(profile);
@@ -741,6 +823,11 @@ export function createApiServer() {
     const convMatch = url.match(/^\/api\/conversations\/([^/]+)$/);
     if (req.method === 'GET' && convMatch) {
       const profileId = decodeURIComponent(convMatch[1]!);
+      const profile = appDb.getProfile(profileId);
+      if (profile && !canAccessProfile(profile, authUser)) {
+        sendJson(res, 403, { error: 'Forbidden' });
+        return;
+      }
       sendJson(res, 200, { messages: appDb.getQaMessages(profileId) });
       return;
     }
@@ -757,6 +844,13 @@ export function createApiServer() {
         }
 
         const profileId = body.profileId ? String(body.profileId) : null;
+        if (profileId) {
+          const prof = appDb.getProfile(profileId);
+          if (prof && !canAccessProfile(prof, authUser)) {
+            sendJson(res, 403, { error: 'Forbidden: profile belongs to another account' });
+            return;
+          }
+        }
         const snap = profileId ? appDb.getSnapshot(profileId) : null;
 
         const level1Data = snap?.level1 ?? {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { NatalChart } from '@astro/engine';
 import { API_BASE_URL } from '../config.ts';
+import { authHeaders } from '../services/apiClient.ts';
 
 export type MainTab = 'today' | 'kundli' | 'timing' | 'strengths' | 'journal';
 export type ReadingDepth = 'simple' | 'standard' | 'detailed';
@@ -165,7 +166,7 @@ export const ReadingProvider: React.FC<ReadingProviderProps> = ({
 
     fetch(`${apiBaseUrl}/api/reading`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(
         profileId
           ? { profileId, level: depth }

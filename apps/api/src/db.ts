@@ -229,11 +229,46 @@ export function createAppDatabase(dbFilePath: string) {
       return rows.map(mapProfile);
     },
 
+    listUnownedProfiles(): StoredProfile[] {
+      const rows = db
+        .prepare('SELECT * FROM profiles WHERE user_id IS NULL ORDER BY is_active DESC, created_at DESC')
+        .all() as any[];
+      return rows.map(mapProfile);
+    },
+
     listProfilesForUser(userId: string): StoredProfile[] {
       const rows = db
         .prepare('SELECT * FROM profiles WHERE user_id = ? ORDER BY is_active DESC, created_at DESC')
         .all(userId) as any[];
       return rows.map(mapProfile);
+    },
+
+    setActiveProfile(profileId: string, userId?: string | null): StoredProfile | null {
+      const target = db.prepare('SELECT * FROM profiles WHERE id = ?').get(profileId) as any;
+      if (!target) return null;
+      const tx = db.transaction(() => {
+        if (userId) {
+          db.prepare('UPDATE profiles SET is_active = 0 WHERE user_id = ?').run(userId);
+        } else {
+          db.prepare('UPDATE profiles SET is_active = 0 WHERE user_id IS NULL').run();
+        }
+        db.prepare('UPDATE profiles SET is_active = 1 WHERE id = ?').run(profileId);
+      });
+      tx();
+      const updated = db.prepare('SELECT * FROM profiles WHERE id = ?').get(profileId) as any;
+      return updated ? mapProfile(updated) : null;
+    },
+
+    deleteProfile(profileId: string): boolean {
+      const tx = db.transaction(() => {
+        db.prepare('DELETE FROM chart_snapshots WHERE profile_id = ?').run(profileId);
+        db.prepare('DELETE FROM journal_entries WHERE profile_id = ?').run(profileId);
+        db.prepare('DELETE FROM chat_history WHERE profile_id = ?').run(profileId);
+        db.prepare('DELETE FROM life_events WHERE profile_id = ?').run(profileId);
+        const info = db.prepare('DELETE FROM profiles WHERE id = ?').run(profileId);
+        return info.changes > 0;
+      });
+      return tx();
     },
 
     getProfile(id: string): StoredProfile | null {
@@ -248,7 +283,11 @@ export function createAppDatabase(dbFilePath: string) {
       const ownerId = p.userId ?? existing?.user_id ?? null;
       const tx = db.transaction(() => {
         if (p.isActive) {
-          db.prepare('UPDATE profiles SET is_active = 0').run();
+          if (ownerId) {
+            db.prepare('UPDATE profiles SET is_active = 0 WHERE user_id = ?').run(ownerId);
+          } else {
+            db.prepare('UPDATE profiles SET is_active = 0 WHERE user_id IS NULL').run();
+          }
         }
         db.prepare(`
           INSERT OR REPLACE INTO profiles

@@ -1,12 +1,37 @@
 import { API_BASE_URL } from '../config.ts';
-import type { UserProfileInput } from '../components/OnboardingModal.tsx';
 
-const BUNDLE_CACHE_KEY = 'astro_bundle_cache_v1';
-const TODAY_CACHE_KEY = 'astro_today_cache_v1';
-const LAST_SYNC_KEY = 'astro_last_sync_iso_v1';
+const AUTH_TOKEN_KEY = 'astro_auth_token_v1';
+const BUNDLE_CACHE_PREFIX = 'astro_server_bundle_v2_';
+const TODAY_CACHE_KEY = 'astro_server_today_v1';
+const LAST_SYNC_KEY = 'astro_last_sync_at_v1';
+
+export interface AuthUser {
+  id: string;
+  googleSub: string;
+  email: string;
+  name: string;
+  picture?: string;
+}
+
+export interface ServerProfileSummary {
+  id: string;
+  userId?: string | null;
+  bundleVersion?: number;
+  name: string;
+  birthDate: string;
+  birthTime: string;
+  tzId: string;
+  cityName: string;
+  lat: number;
+  lon: number;
+  timeCertainty: string;
+  ayanamsa: string;
+  isActive: boolean;
+  createdAt?: string;
+}
 
 export interface StaticBundleResponse {
-  profile: any;
+  profile: ServerProfileSummary;
   bundleVersion: number;
   computedAt: string;
   level1Static: any;
@@ -27,97 +52,198 @@ export interface TodayPayloadResponse {
   extendedDashas: any;
 }
 
-function profileSignature(p: UserProfileInput): string {
-  return `${p.name}|${p.birthDate}|${p.birthTime}|${p.cityName}|${p.lat}|${p.lon}|${p.tzId}|${p.ayanamsa}`;
+export function getAuthToken(): string | null {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
 }
 
-export async function fetchOrCreateStaticBundle(
-  profile: UserProfileInput,
-): Promise<{ profileId: string; bundle: StaticBundleResponse }> {
-  const sig = profileSignature(profile);
-  let cached: { sig: string; profileId: string; etag?: string; bundle: StaticBundleResponse } | null = null;
+export function setAuthToken(token: string | null) {
   try {
-    const raw = localStorage.getItem(BUNDLE_CACHE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed?.sig === sig && parsed?.profileId && parsed?.bundle) {
-        cached = parsed;
-      }
-    }
+    if (token) localStorage.setItem(AUTH_TOKEN_KEY, token);
+    else localStorage.removeItem(AUTH_TOKEN_KEY);
   } catch {
-    // ignore storage errors
+    // ignore
   }
+}
 
-  // 1. If we already have a cached bundle for this exact birth profile, revalidate with ETag (304 = 0 bytes!)
-  if (cached) {
-    try {
-      const headers: Record<string, string> = {};
-      if (cached.etag) headers['If-None-Match'] = cached.etag;
-      const res = await fetch(`${API_BASE_URL}/api/profiles/${encodeURIComponent(cached.profileId)}/bundle`, {
-        headers,
-      });
-      if (res.status === 304) {
-        return { profileId: cached.profileId, bundle: cached.bundle };
-      }
-      if (res.ok) {
-        const bundle = (await res.json()) as StaticBundleResponse;
-        const etag = res.headers.get('etag') ?? undefined;
-        try {
-          localStorage.setItem(
-            BUNDLE_CACHE_KEY,
-            JSON.stringify({ sig, profileId: cached.profileId, etag, bundle }),
-          );
-        } catch {
-          // ignore
-        }
-        return { profileId: cached.profileId, bundle };
-      }
-    } catch {
-      // Server unreachable: return locally cached static bundle immediately!
-      return { profileId: cached.profileId, bundle: cached.bundle };
-    }
-  }
+export function authHeaders(extra?: Record<string, string>): Record<string, string> {
+  const token = getAuthToken();
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(extra ?? {}),
+  };
+}
 
-  // 2. Otherwise compute ONCE on server by sending only birth details (~250 bytes)
-  const createRes = await fetch(`${API_BASE_URL}/api/profiles`, {
+export async function loginWithGoogleIdToken(idToken: string): Promise<{
+  token: string;
+  user: AuthUser;
+  profiles: ServerProfileSummary[];
+}> {
+  const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: profile.name,
-      birthDate: profile.birthDate,
-      birthTime: profile.birthTime,
-      tzId: profile.tzId,
-      cityName: profile.cityName,
-      lat: profile.lat,
-      lon: profile.lon,
-      timeCertainty: profile.timeCertainty,
-      ayanamsa: profile.ayanamsa,
-      isActive: true,
-    }),
+    body: JSON.stringify({ idToken }),
   });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error || `Google sign-in failed (HTTP ${res.status})`);
+  setAuthToken(data.token);
+  return data;
+}
 
-  if (!createRes.ok) {
-    throw new Error(`Server profile creation failed (HTTP ${createRes.status})`);
+export async function loginWithDevEmail(devEmail: string, devName: string): Promise<{
+  token: string;
+  user: AuthUser;
+  profiles: ServerProfileSummary[];
+}> {
+  const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ devEmail, devName }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error || `Dev sign-in failed (HTTP ${res.status})`);
+  setAuthToken(data.token);
+  return data;
+}
+
+export async function fetchAuthMe(): Promise<{
+  user: AuthUser;
+  profiles: ServerProfileSummary[];
+} | null> {
+  const token = getAuthToken();
+  if (!token) return null;
+  const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+    headers: authHeaders(),
+  });
+  if (res.status === 401) {
+    setAuthToken(null);
+    return null;
+  }
+  if (!res.ok) return null;
+  return await res.json();
+}
+
+export function logoutAuth() {
+  setAuthToken(null);
+  try {
+    localStorage.removeItem(TODAY_CACHE_KEY);
+    localStorage.removeItem('astro_backend_profile_id_v1');
+  } catch {
+    // ignore
+  }
+}
+
+export async function activateProfileOnServer(profileId: string): Promise<ServerProfileSummary | null> {
+  const res = await fetch(`${API_BASE_URL}/api/profiles/${encodeURIComponent(profileId)}/activate`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.profile ?? null;
+}
+
+export async function deleteProfileOnServer(profileId: string): Promise<ServerProfileSummary[]> {
+  const res = await fetch(`${API_BASE_URL}/api/profiles/${encodeURIComponent(profileId)}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error || `Delete failed (HTTP ${res.status})`);
+  try {
+    localStorage.removeItem(`${BUNDLE_CACHE_PREFIX}${profileId}`);
+  } catch {
+    // ignore
+  }
+  return Array.isArray(data.profiles) ? data.profiles : [];
+}
+
+/**
+ * Fetches an existing profile's static bundle by ID with ETag / 304 local caching.
+ */
+export async function fetchProfileBundleById(profileId: string): Promise<StaticBundleResponse> {
+  const cacheKey = `${BUNDLE_CACHE_PREFIX}${profileId}`;
+  let cached: { etag?: string; bundle: StaticBundleResponse } | null = null;
+  try {
+    const raw = localStorage.getItem(cacheKey);
+    if (raw) cached = JSON.parse(raw);
+  } catch {
+    cached = null;
   }
 
-  const created = await createRes.json();
-  const profileId: string = created.profile.id;
-  const bundle: StaticBundleResponse = {
-    profile: created.profile,
-    bundleVersion: created.profile.bundleVersion ?? 1,
-    computedAt: new Date().toISOString(),
-    level1Static: created.dashboard.level1,
-    level2Static: created.dashboard.level2,
-  };
-  const etag = `"bundle-${profileId}-v${bundle.bundleVersion}"`;
-
+  const res = await fetch(`${API_BASE_URL}/api/profiles/${encodeURIComponent(profileId)}/bundle`, {
+    headers: authHeaders(cached?.etag ? { 'If-None-Match': cached.etag } : undefined),
+  });
+  if (res.status === 304 && cached?.bundle) {
+    return cached.bundle;
+  }
+  if (!res.ok) {
+    throw new Error(`Bundle fetch failed (HTTP ${res.status})`);
+  }
+  const bundle = (await res.json()) as StaticBundleResponse;
+  const etag = res.headers.get('ETag') ?? undefined;
   try {
-    localStorage.setItem(BUNDLE_CACHE_KEY, JSON.stringify({ sig, profileId, etag, bundle }));
+    localStorage.setItem(cacheKey, JSON.stringify({ etag, bundle }));
     localStorage.setItem('astro_backend_profile_id_v1', profileId);
   } catch {
     // ignore
   }
+  return bundle;
+}
 
+/**
+ * Creates (or updates) a profile on the server (server computes Level 1 + Level 2 once),
+ * then caches its static bundle locally keyed by profileId.
+ */
+export async function fetchOrCreateStaticBundle(profileInput: {
+  id?: string;
+  name: string;
+  birthDate: string;
+  birthTime: string;
+  cityName: string;
+  lat: number;
+  lon: number;
+  tzId: string;
+  timeCertainty: string;
+  ayanamsa: string;
+}): Promise<{ profileId: string; bundle: StaticBundleResponse }> {
+  // If we already have a server profileId, fetch via ETag/304 first!
+  if (profileInput.id) {
+    try {
+      const bundle = await fetchProfileBundleById(profileInput.id);
+      return { profileId: profileInput.id, bundle };
+    } catch {
+      // fall through to POST /api/profiles
+    }
+  }
+
+  const createRes = await fetch(`${API_BASE_URL}/api/profiles`, {
+    method: 'POST',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({
+      ...(profileInput.id ? { id: profileInput.id } : {}),
+      name: profileInput.name,
+      birthDate: profileInput.birthDate,
+      birthTime: profileInput.birthTime,
+      tzId: profileInput.tzId,
+      cityName: profileInput.cityName,
+      lat: profileInput.lat,
+      lon: profileInput.lon,
+      timeCertainty: profileInput.timeCertainty,
+      ayanamsa: profileInput.ayanamsa,
+      isActive: true,
+    }),
+  });
+  if (!createRes.ok) {
+    const errBody = await createRes.json().catch(() => ({}));
+    throw new Error(errBody?.error || `Server profile calculation failed (HTTP ${createRes.status})`);
+  }
+  const created = await createRes.json();
+  const profileId = String(created.profile.id);
+  const bundle = await fetchProfileBundleById(profileId);
   return { profileId, bundle };
 }
 
@@ -149,6 +275,7 @@ export async function fetchTodaySky(
 
   const res = await fetch(
     `${API_BASE_URL}/api/profiles/${encodeURIComponent(profileId)}/today?${params.toString()}`,
+    { headers: authHeaders() },
   );
   if (!res.ok) {
     throw new Error(`Daily sky fetch failed (HTTP ${res.status})`);
@@ -175,23 +302,22 @@ export async function syncDeltaWithServer(profileId: string): Promise<{
 
     const res = await fetch(`${API_BASE_URL}/api/sync`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         profileId,
         lastSyncedAt,
-        journalEntries: Array.isArray(localJournals) ? localJournals : [],
-        lifeEvents: Array.isArray(localEvents) ? localEvents : [],
+        push: {
+          journalEntries: Array.isArray(localJournals) ? localJournals : [],
+          lifeEvents: Array.isArray(localEvents) ? localEvents : [],
+        },
       }),
     });
     if (!res.ok) return null;
     const data = await res.json();
-    if (data.serverTime) {
+    if (data?.serverTime) {
       localStorage.setItem(LAST_SYNC_KEY, data.serverTime);
     }
-    return {
-      journalEntries: Array.isArray(data.journalEntries) ? data.journalEntries : [],
-      lifeEvents: Array.isArray(data.lifeEvents) ? data.lifeEvents : [],
-    };
+    return data?.pull ?? null;
   } catch {
     return null;
   }

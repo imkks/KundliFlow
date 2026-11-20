@@ -3,6 +3,7 @@ import { Bot, X, Sparkles, Send, Loader2, Trash2, PenLine, CheckCircle2, Clock }
 import type { NatalChart } from '@astro/engine';
 import { useReading, type MainTab } from '../context/ReadingContext.tsx';
 import { API_BASE_URL } from '../config.ts';
+import { authHeaders } from '../services/apiClient.ts';
 
 const CONTEXT_SUGGESTIONS: Record<MainTab, string[]> = {
   today: [
@@ -40,11 +41,12 @@ interface ChatMessage {
   error?: boolean;
 }
 
-const CHAT_STORAGE_KEY = 'astro_copilot_chat_v2';
+const CHAT_STORAGE_PREFIX = 'astro_copilot_chat_v2_';
 
 interface AskCopilotDrawerProps {
   apiBaseUrl?: string;
   profileId: string | null;
+  profileName?: string;
   natalChart: NatalChart;
   shadbala: any;
   ashtakvarga: any;
@@ -55,6 +57,7 @@ interface AskCopilotDrawerProps {
 export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
   apiBaseUrl = API_BASE_URL,
   profileId,
+  profileName,
   natalChart,
   shadbala,
   ashtakvarga,
@@ -65,15 +68,43 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
   const [input, setInput] = useState('');
   const [deepMode, setDeepMode] = useState(false);
   const [sending, setSending] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  const storageKey = `${CHAT_STORAGE_PREFIX}${profileId ?? 'guest'}`;
+
+  // Load strictly this profile's chat history (local cache + server history) whenever profileId changes
+  useEffect(() => {
+    let cancelled = false;
     try {
-      const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+      const raw = localStorage.getItem(storageKey);
       const parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
+      setMessages(Array.isArray(parsed) ? parsed : []);
     } catch {
-      return [];
+      setMessages([]);
     }
-  });
+
+    if (profileId) {
+      fetch(`${apiBaseUrl}/api/conversations/${encodeURIComponent(profileId)}`, {
+        headers: authHeaders(),
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (cancelled || !data || !Array.isArray(data.messages) || data.messages.length === 0) return;
+          const serverMsgs: ChatMessage[] = data.messages.map((m: any, idx: number) => ({
+            id: m.id ?? `srv-${idx}`,
+            role: m.role === 'user' ? 'user' : 'assistant',
+            text: m.content ?? '',
+            timestamp: m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+          }));
+          setMessages(serverMsgs);
+        })
+        .catch(() => {});
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profileId, apiBaseUrl, storageKey]);
 
   const endRef = useRef<HTMLDivElement | null>(null);
 
@@ -83,11 +114,11 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
 
   useEffect(() => {
     try {
-      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages.slice(-30)));
+      localStorage.setItem(storageKey, JSON.stringify(messages.slice(-30)));
     } catch {
       // ignore
     }
-  }, [messages]);
+  }, [messages, storageKey]);
 
   useEffect(() => {
     if (askOpen) {
@@ -113,7 +144,7 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
     try {
       const res = await fetch(`${apiBaseUrl}/api/ask`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(
           profileId
             ? { profileId, question: q, deepMode }
@@ -214,7 +245,12 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
                 Jyotish AI Copilot
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                Verified chart tools • Viewing <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{activeTab}</strong>
+                {profileName ? (
+                  <>
+                    Chart: <strong style={{ color: 'var(--teal)' }}>{profileName}</strong> •{' '}
+                  </>
+                ) : null}
+                Viewing <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{activeTab}</strong>
               </div>
             </div>
           </div>

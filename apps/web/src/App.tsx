@@ -17,6 +17,11 @@ import {
   Share2,
   X,
   Search,
+  LogIn,
+  LogOut,
+  Plus,
+  Trash2,
+  Users,
 } from 'lucide-react';
 import {
   degToDms,
@@ -47,6 +52,8 @@ import { PlainEnglishExplainerModal } from './components/PlainEnglishExplainerMo
 import { AskCopilotDrawer } from './components/AskCopilotDrawer.tsx';
 import { ShareBlueprintModal } from './components/ShareBlueprintModal.tsx';
 import { CommandPaletteModal } from './components/CommandPaletteModal.tsx';
+import { GoogleAuthModal } from './components/GoogleAuthModal.tsx';
+import { AuthOnboardingGate } from './components/AuthOnboardingGate.tsx';
 import { type JournalEntry } from './components/JournalExplorer.tsx';
 import { ReadingProvider, useReading, type MainTab } from './context/ReadingContext.tsx';
 import { TodayTab } from './tabs/TodayTab.tsx';
@@ -55,7 +62,17 @@ import { TimingTab } from './tabs/TimingTab.tsx';
 import { StrengthsTab } from './tabs/StrengthsTab.tsx';
 import { JournalTab } from './tabs/JournalTab.tsx';
 import { API_BASE_URL } from './config.ts';
-import { fetchOrCreateStaticBundle, fetchTodaySky, syncDeltaWithServer } from './services/apiClient.ts';
+import {
+  fetchOrCreateStaticBundle,
+  fetchTodaySky,
+  syncDeltaWithServer,
+  fetchAuthMe,
+  logoutAuth,
+  activateProfileOnServer,
+  deleteProfileOnServer,
+  type AuthUser,
+  type ServerProfileSummary,
+} from './services/apiClient.ts';
 
 type ChartStyle = 'north' | 'south';
 
@@ -115,6 +132,12 @@ interface AppShellProps {
   onOpenLlmDossier: () => void;
   onOpenDataVault: () => void;
   onOpenPlainGuide: (cat: string) => void;
+  authUser: AuthUser | null;
+  savedProfiles: ServerProfileSummary[];
+  onOpenAuthModal: () => void;
+  onLogout: () => void;
+  onSwitchProfile: (p: ServerProfileSummary) => void;
+  onDeleteProfile: (id: string) => void;
 }
 
 const AppShell: React.FC<AppShellProps> = (props) => {
@@ -127,11 +150,15 @@ const AppShell: React.FC<AppShellProps> = (props) => {
     activeTab,
     setActiveTab,
     setSelectedHouse,
+    askOpen,
     setAskOpen,
   } = useReading();
 
   const [showShareBlueprint, setShowShareBlueprint] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [chartsMenuOpen, setChartsMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [avatarBroken, setAvatarBroken] = useState(false);
   const [welcomeDismissed, setWelcomeDismissed] = useState<boolean>(() => {
     try {
       return localStorage.getItem('astro_welcome_dismissed_v1') === '1';
@@ -139,6 +166,10 @@ const AppShell: React.FC<AppShellProps> = (props) => {
       return false;
     }
   });
+
+  useEffect(() => {
+    setAvatarBroken(false);
+  }, [props.authUser?.picture]);
 
   // Global Cmd+K / Ctrl+K shortcut for Quick Search
   useEffect(() => {
@@ -267,31 +298,241 @@ const AppShell: React.FC<AppShellProps> = (props) => {
 
           <button
             onClick={() => setAskOpen(true)}
-            style={{
-              background: 'var(--teal)',
-              color: '#15132b',
-              fontWeight: 700,
-              fontSize: 12,
-              borderRadius: 8,
-              padding: '7px 13px',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              cursor: 'pointer',
-            }}
+            className="ask-ai-cta"
+            title={`Ask Jyotish AI Copilot about ${props.userName}`}
           >
-            <Bot size={14} /> Ask AI
+            <Sparkles size={14} />
+            <span>Ask AI</span>
+            <span className="ask-ai-pulse" />
           </button>
 
-          <button
-            onClick={props.onOpenOnboarding}
-            className="btn btn-outline"
-            style={{ fontSize: 12 }}
-            title="Switch or edit birth profile"
-          >
-            <User size={13} style={{ color: 'var(--gold)' }} /> {props.userName.split(' ')[0]}
-          </button>
+          {/* 1. Saved Charts / Active Profile Switcher (Separate from Account Photo) */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => {
+                setChartsMenuOpen((o) => !o);
+                setAccountMenuOpen(false);
+              }}
+              className="btn btn-outline"
+              style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}
+              title="Switch saved birth charts or add a new chart"
+            >
+              <Users size={13} style={{ color: 'var(--gold)' }} />
+              <span style={{ maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {props.userName.split(' ')[0]}
+              </span>
+              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>▾</span>
+            </button>
+
+            {chartsMenuOpen && (
+              <>
+                <div onClick={() => setChartsMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 90 }} />
+                <div
+                  className="card"
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    width: 270,
+                    padding: 12,
+                    zIndex: 100,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                    boxShadow: '0 14px 36px rgba(0, 0, 0, 0.55)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                      Saved Charts ({props.savedProfiles.length})
+                    </span>
+                    <button
+                      onClick={() => {
+                        setChartsMenuOpen(false);
+                        props.onOpenOnboarding();
+                      }}
+                      style={{ fontSize: 11, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}
+                    >
+                      <Plus size={12} /> Add Chart
+                    </button>
+                  </div>
+
+                  {props.savedProfiles.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 200, overflowY: 'auto' }}>
+                      {props.savedProfiles.map((sp) => {
+                        const isCurrent = sp.id === props.backendProfileId;
+                        return (
+                          <div
+                            key={sp.id}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: 4,
+                              padding: '6px 8px',
+                              borderRadius: 8,
+                              background: isCurrent ? 'rgba(95, 194, 179, 0.16)' : 'var(--surface-alt)',
+                              border: isCurrent ? '1px solid rgba(95, 194, 179, 0.45)' : '1px solid transparent',
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                props.onSwitchProfile(sp);
+                                setChartsMenuOpen(false);
+                              }}
+                              style={{ flex: 1, textAlign: 'left', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', overflow: 'hidden' }}
+                            >
+                              <div style={{ fontSize: 12, fontWeight: isCurrent ? 700 : 600, color: isCurrent ? 'var(--teal)' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {isCurrent ? '✓ ' : ''}{sp.name}
+                              </div>
+                              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                                {sp.birthDate} • {sp.cityName}
+                              </div>
+                            </button>
+                            {props.savedProfiles.length > 1 && (
+                              <button
+                                onClick={() => props.onDeleteProfile(sp.id)}
+                                title={`Delete ${sp.name}`}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 3 }}
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>Saving chart…</div>
+                  )}
+
+                  <div style={{ paddingTop: 6, borderTop: '1px solid var(--border-subtle)' }}>
+                    <button
+                      onClick={() => {
+                        setChartsMenuOpen(false);
+                        props.onOpenOnboarding();
+                      }}
+                      className="btn btn-outline"
+                      style={{ width: '100%', fontSize: 11.5, justifyContent: 'center' }}
+                    >
+                      <User size={12} /> Edit Current Chart Details
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* 2. Separate Google Account Photo Button */}
+          {props.authUser && (
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => {
+                  setAccountMenuOpen((o) => !o);
+                  setChartsMenuOpen(false);
+                }}
+                aria-label="Account menu"
+                title={`${props.authUser.name} (${props.authUser.email})`}
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  padding: 0,
+                  overflow: 'hidden',
+                  border: '2px solid var(--gold)',
+                  background: 'var(--surface-alt)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                {props.authUser.picture && !avatarBroken ? (
+                  <img
+                    src={props.authUser.picture}
+                    alt={props.authUser.name}
+                    referrerPolicy="no-referrer"
+                    onError={() => setAvatarBroken(true)}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--gold)' }}>
+                    {(props.authUser.name || 'U').charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </button>
+
+              {accountMenuOpen && (
+                <>
+                  <div onClick={() => setAccountMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 90 }} />
+                  <div
+                    className="card"
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      right: 0,
+                      width: 245,
+                      padding: 12,
+                      zIndex: 100,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 10,
+                      boxShadow: '0 14px 36px rgba(0, 0, 0, 0.55)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      {props.authUser.picture && !avatarBroken ? (
+                        <img
+                          src={props.authUser.picture}
+                          alt={props.authUser.name}
+                          referrerPolicy="no-referrer"
+                          onError={() => setAvatarBroken(true)}
+                          style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--gold)' }}
+                        />
+                      ) : (
+                        <span
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: '50%',
+                            background: 'var(--gold)',
+                            color: '#15132b',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 15,
+                            fontWeight: 800,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {(props.authUser.name || 'U').charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                      <div style={{ overflow: 'hidden' }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {props.authUser.name}
+                        </div>
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {props.authUser.email}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setAccountMenuOpen(false);
+                        props.onLogout();
+                      }}
+                      className="btn btn-outline"
+                      style={{ width: '100%', justifyContent: 'center', fontSize: 12, color: 'var(--amber)', borderColor: 'rgba(217, 119, 54, 0.35)' }}
+                    >
+                      <LogOut size={13} /> Sign out
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -328,6 +569,94 @@ const AppShell: React.FC<AppShellProps> = (props) => {
                 Moon: {props.natalChart.grahas.moon.sign}
               </span>
             </div>
+          </div>
+
+          {/* Saved Profiles History Switcher (Per Google Account) */}
+          <div style={{ padding: 10, borderRadius: 12, background: 'var(--surface)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
+                <Users size={12} style={{ color: 'var(--teal)' }} />
+                {props.authUser ? `Saved Charts (${props.savedProfiles.length})` : 'Account Sync'}
+              </span>
+              {props.authUser ? (
+                <button
+                  onClick={props.onOpenOnboarding}
+                  style={{ fontSize: 10.5, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}
+                  title="Add another birth chart under your account"
+                >
+                  <Plus size={11} /> Add
+                </button>
+              ) : (
+                <button
+                  onClick={props.onOpenAuthModal}
+                  style={{ fontSize: 10.5, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700 }}
+                >
+                  Sign in
+                </button>
+              )}
+            </div>
+
+            {props.authUser ? (
+              props.savedProfiles.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 165, overflowY: 'auto' }}>
+                  {props.savedProfiles.map((sp) => {
+                    const isCurrent = sp.id === props.backendProfileId;
+                    return (
+                      <div
+                        key={sp.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 4,
+                          padding: '5px 7px',
+                          borderRadius: 8,
+                          background: isCurrent ? 'rgba(95, 194, 179, 0.14)' : 'var(--surface-alt)',
+                          border: isCurrent ? '1px solid rgba(95, 194, 179, 0.45)' : '1px solid transparent',
+                        }}
+                      >
+                        <button
+                          onClick={() => props.onSwitchProfile(sp)}
+                          style={{
+                            flex: 1,
+                            textAlign: 'left',
+                            background: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div style={{ fontSize: 12, fontWeight: isCurrent ? 700 : 600, color: isCurrent ? 'var(--teal)' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {sp.name}
+                          </div>
+                          <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                            {sp.birthDate} • {sp.cityName}
+                          </div>
+                        </button>
+                        {props.savedProfiles.length > 1 && (
+                          <button
+                            onClick={() => props.onDeleteProfile(sp.id)}
+                            title={`Delete ${sp.name}`}
+                            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 2 }}
+                          >
+                            <Trash2 size={11} />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  No saved charts yet — click <strong>+ Add</strong> to save your first chart.
+                </div>
+              )
+            ) : (
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                Sign in with Google to save multiple charts &amp; switch profiles with isolated AI chats.
+              </div>
+            )}
           </div>
 
           {/* Primary Navigation Links */}
@@ -562,9 +891,23 @@ const AppShell: React.FC<AppShellProps> = (props) => {
         </main>
       </div>
 
-      {/* Modern Chatbot Ask AI Drawer */}
+      {/* Floating Bottom-Right Ask AI Pill (always reachable while scrolling) */}
+      {!askOpen && (
+        <button
+          onClick={() => setAskOpen(true)}
+          className="ask-ai-cta ask-ai-fab"
+          aria-label={`Ask AI about ${props.userName}`}
+        >
+          <Sparkles size={15} />
+          <span>Ask AI · {props.userName.split(' ')[0]}</span>
+          <span className="ask-ai-pulse" />
+        </button>
+      )}
+
+      {/* Modern Chatbot Ask AI Drawer (Strictly scoped to active profile) */}
       <AskCopilotDrawer
         profileId={props.backendProfileId}
+        profileName={props.userName}
         natalChart={props.natalChart}
         shadbala={props.shadbala}
         ashtakvarga={props.ashtakvarga}
@@ -676,6 +1019,11 @@ export default function App() {
   const [showLlmDossier, setShowLlmDossier] = useState(false);
   const [showPlainEnglishModal, setShowPlainEnglishModal] = useState(false);
   const [plainEnglishCategory, setPlainEnglishCategory] = useState<string>('kundli');
+  const [authChecked, setAuthChecked] = useState(false);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [savedProfiles, setSavedProfiles] = useState<ServerProfileSummary[]>([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [selectedServerProfileId, setSelectedServerProfileId] = useState<string | null>(null);
   const [backendProfileId, setBackendProfileId] = useState<string | null>(() => {
     try {
       return localStorage.getItem('astro_backend_profile_id_v1');
@@ -706,7 +1054,126 @@ export default function App() {
     }
   }, []);
 
+  const applyServerProfileToState = (sp: ServerProfileSummary) => {
+    const p: UserProfileInput = {
+      name: sp.name,
+      birthDate: sp.birthDate,
+      birthTime: sp.birthTime,
+      cityName: sp.cityName,
+      lat: sp.lat,
+      lon: sp.lon,
+      tzId: sp.tzId,
+      timeCertainty: (sp.timeCertainty as any) || 'exact',
+      ayanamsa: (sp.ayanamsa as AyanamsaId) || 'lahiri',
+    };
+    setSelectedServerProfileId(sp.id);
+    setBackendProfileId(sp.id);
+    setSavedProfile(p);
+    setUserName(p.name);
+    setBirthDate(p.birthDate);
+    setBirthTime(p.birthTime);
+    setCityName(p.cityName);
+    setLat(p.lat);
+    setLon(p.lon);
+    setTzId(p.tzId);
+    setTimeCertainty(p.timeCertainty);
+    setAyanamsa(p.ayanamsa);
+    try {
+      localStorage.setItem(ACTIVE_PROFILE_KEY, JSON.stringify(p));
+      localStorage.setItem('astro_backend_profile_id_v1', sp.id);
+    } catch {
+      // ignore
+    }
+  };
+
+  // Restore Google-authenticated session & user's saved profile history on mount
+  useEffect(() => {
+    let cancelled = false;
+    fetchAuthMe()
+      .then((res) => {
+        if (cancelled) return;
+        if (res) {
+          setAuthUser(res.user);
+          setSavedProfiles(res.profiles);
+          if (res.profiles.length > 0) {
+            const active = res.profiles.find((p) => p.isActive) ?? res.profiles[0]!;
+            applyServerProfileToState(active);
+          } else {
+            // Logged in but no saved charts yet -> show Step 2 birth details onboarding
+            setSavedProfile(null);
+            setSelectedServerProfileId(null);
+          }
+        } else {
+          setAuthUser(null);
+          setSavedProfiles([]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setAuthChecked(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleAuthSuccess = (payload: { token: string; user: AuthUser; profiles: ServerProfileSummary[] }) => {
+    setAuthUser(payload.user);
+    setSavedProfiles(payload.profiles);
+    if (payload.profiles.length > 0) {
+      // Returning user: pick active saved profile immediately
+      const active = payload.profiles.find((p) => p.isActive) ?? payload.profiles[0]!;
+      applyServerProfileToState(active);
+    } else {
+      // New user with 0 saved profiles: show Step 2 onboarding card to enter birth details
+      setSelectedServerProfileId(null);
+      setBackendProfileId(null);
+      setNatalChart(null);
+      setSavedProfile(null);
+    }
+  };
+
+  const handleSwitchProfile = async (sp: ServerProfileSummary) => {
+    applyServerProfileToState(sp);
+    activateProfileOnServer(sp.id).catch(() => {});
+  };
+
+  const handleDeleteProfile = async (profileIdToDelete: string) => {
+    try {
+      const remaining = await deleteProfileOnServer(profileIdToDelete);
+      setSavedProfiles(remaining);
+      if (backendProfileId === profileIdToDelete) {
+        if (remaining.length > 0) {
+          applyServerProfileToState(remaining[0]!);
+        } else {
+          setSelectedServerProfileId(null);
+          setBackendProfileId(null);
+          setSavedProfile(null);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleLogout = () => {
+    logoutAuth();
+    setAuthUser(null);
+    setSavedProfiles([]);
+    setSelectedServerProfileId(null);
+    setBackendProfileId(null);
+    setNatalChart(null);
+    setSavedProfile(null);
+    try {
+      localStorage.removeItem(ACTIVE_PROFILE_KEY);
+    } catch {
+      // ignore
+    }
+  };
+
   const handleSaveProfile = (p: UserProfileInput) => {
+    // Creating/editing a profile clears pinned server ID so POST /api/profiles creates/updates cleanly under current user
+    setSelectedServerProfileId(null);
     setSavedProfile(p);
     setUserName(p.name);
     setBirthDate(p.birthDate);
@@ -794,7 +1261,7 @@ export default function App() {
   }, [todayCityName]);
 
   useEffect(() => {
-    if (!savedProfile) {
+    if (!authUser || !savedProfile) {
       setLoading(false);
       return;
     }
@@ -808,6 +1275,7 @@ export default function App() {
 
       try {
         const { profileId, bundle } = await fetchOrCreateStaticBundle({
+          ...(selectedServerProfileId ? { id: selectedServerProfileId } : {}),
           name: userName,
           birthDate,
           birthTime,
@@ -821,6 +1289,14 @@ export default function App() {
         if (cancelled) return;
 
         setBackendProfileId(profileId);
+        // Refresh saved profiles list if signed in so new/updated chart appears immediately in sidebar
+        if (authUser) {
+          fetchAuthMe()
+            .then((me) => {
+              if (!cancelled && me) setSavedProfiles(me.profiles);
+            })
+            .catch(() => {});
+        }
         const l1 = bundle.level1Static;
         setServerLevel1(l1);
         setNatalChart(l1.natal);
@@ -862,7 +1338,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [savedProfile, userName, birthDate, birthTime, cityName, lat, lon, tzId, timeCertainty, ayanamsa, retryTick]);
+  }, [savedProfile, selectedServerProfileId, authUser?.id, userName, birthDate, birthTime, cityName, lat, lon, tzId, timeCertainty, ayanamsa, retryTick]);
 
   // Refresh ONLY /today when the user changes their current location city (never mutates birth profile!)
   useEffect(() => {
@@ -939,12 +1415,62 @@ export default function App() {
   }, [natalChart]);
 
   // First-visit onboarding screen (no hardcoded chart forced on new visitors)
+  // Step 0: Restoring existing session
+  if (!authChecked) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: 16 }}>
+        <Sparkles style={{ color: 'var(--gold)', animation: 'spin 3s linear infinite', width: 34, height: 34 }} />
+        <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>Checking your account…</p>
+      </div>
+    );
+  }
+
+  // Step 1 (Mandatory): Sign In / Create Account Gate
+  if (!authUser) {
+    return <AuthOnboardingGate onSuccess={handleAuthSuccess} />;
+  }
+
+  // Step 2: Signed in, but no saved chart found under this account -> Enter Birth Details
   if (!savedProfile) {
     return (
-      <FirstVisitOnboarding
-        onComplete={(p) => handleSaveProfile(p)}
-        onUseDemo={() => handleSaveProfile(DEMO_PROFILE)}
-      />
+      <>
+        <FirstVisitOnboarding
+          onComplete={(p) => handleSaveProfile(p)}
+          onUseDemo={() => handleSaveProfile(DEMO_PROFILE)}
+        />
+        <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 50, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '5px 12px 5px 6px',
+              borderRadius: 20,
+              background: 'rgba(20, 17, 41, 0.92)',
+              border: '1px solid rgba(95, 194, 179, 0.45)',
+              fontSize: 12,
+              color: 'var(--teal)',
+              fontWeight: 600,
+            }}
+          >
+            {authUser.picture && (
+              <img
+                src={authUser.picture}
+                alt={authUser.name}
+                referrerPolicy="no-referrer"
+                style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
+              />
+            )}
+            <span>{authUser.name.split(' ')[0]}</span>
+            <button
+              onClick={handleLogout}
+              style={{ background: 'transparent', border: 'none', color: 'var(--amber)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: '0 2px' }}
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+      </>
     );
   }
 
@@ -1026,6 +1552,18 @@ export default function App() {
           setPlainEnglishCategory(cat);
           setShowPlainEnglishModal(true);
         }}
+        authUser={authUser}
+        savedProfiles={savedProfiles}
+        onOpenAuthModal={() => setShowAuthModal(true)}
+        onLogout={handleLogout}
+        onSwitchProfile={handleSwitchProfile}
+        onDeleteProfile={handleDeleteProfile}
+      />
+
+      <GoogleAuthModal
+        open={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
       />
 
       <OnboardingModal
