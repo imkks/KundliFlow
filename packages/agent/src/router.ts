@@ -2,7 +2,7 @@ import type { KnowledgeBase } from '@astro/kb';
 import type { RouterResult } from './types.js';
 
 const GREETING_RE =
-  /^(hi|hii+|hello|hey|namaste|good morning|good afternoon|good evening|thanks|thank you|ok|okay|what can you do|who are you|help)[!?. ,\s]*$/i;
+  /^(hi+|hii+|hey+|hello+|namaste|namaskar|hola|yo|sup|good\s+(morning|afternoon|evening|night)|how\s+are\s+you|hi\s+there|hey\s+there|hello\s+there|thanks|thank\s+you(\s+so\s+much)?|thx|ok|okay|cool|great|awesome|got\s+it|bye|goodbye|what\s+can\s+you\s+do|who\s+are\s+you|help)[!?. ,\s]*$/i;
 const DISTRESS_RE = /\b(suicide|kill myself|end my life|self[- ]?harm|don'?t want to live|want to die)\b/i;
 const DECLINED_RE =
   /\b(when will i die|time of death|lifespan|lottery|gambl|jackpot|stock tip|which stock|crypto trade|accident|miscarriage|boy or girl|gender of baby)\b/i;

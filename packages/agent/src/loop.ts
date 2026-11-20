@@ -3,6 +3,7 @@ import type { KnowledgeBase } from '@astro/kb';
 import { renderHouse, type Finding } from '@astro/rules';
 import { EngineSession, ToolServer, type ToolResult } from '@astro/tools';
 import { DEEP_AGENT_SYSTEM_PROMPT, extractJsonObject } from './llm.js';
+import { routeQuestion } from './router.js';
 import { verifyComposedAnswer } from './verifier.js';
 import {
   ComposedAnswerSchema,
@@ -36,6 +37,18 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
       type: 'object',
       properties: { path: { type: 'string' } },
       required: ['path'],
+    },
+  },
+  {
+    name: 'find',
+    description: 'Search across chart facts and rule findings by keyword (e.g. "career", "exalted", "retrograde", "saturn").',
+    parameters: {
+      type: 'object',
+      properties: {
+        text: { type: 'string', description: 'Keyword to search for' },
+        scope: { type: 'string', enum: ['all', 'facts', 'findings'] },
+      },
+      required: ['text'],
     },
   },
   {
@@ -312,6 +325,60 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
     trace.push(message);
     onTrace?.({ type, message, step, data });
   };
+
+  // Fast-path: handle greetings, small talk, and safety guardrails immediately with ZERO tool calls & ZERO LLM latency
+  const routed = routeQuestion(question, kb);
+  if (routed.riskClass === 'greeting') {
+    const qLower = question.trim().toLowerCase();
+    const isThanks = /^(thanks|thank|thx|ok|okay|cool|great|awesome|got\s+it|bye|goodbye)/.test(qLower);
+    const isHelp = /(what\s+can\s+you\s+do|who\s+are\s+you|help)/.test(qLower);
+    const answer = isThanks
+      ? "You're very welcome! Whenever you'd like to explore another part of your chart, timing, or daily energy, just ask."
+      : isHelp
+      ? "I'm your KundliFlow Jyotish guide. I can explain your birth chart in plain English — including career, relationships, strengths & Yogas, Dosha checks, current Dashas (life chapters), daily transits, and upcoming favorable windows."
+      : "Namaste! I'm your KundliFlow Jyotish guide, ready to explore your active chart in simple, everyday language. What would you like to look into today?";
+
+    emitTrace('answer', 'Fast-path conversational greeting (0 tool calls)');
+    return {
+      mode: 'conversational',
+      trace,
+      observedEvidenceIds: [],
+      response: {
+        responseType: 'conversational',
+        answer,
+        because: [],
+        timing: [],
+        uncertainty: '',
+        reflect: '',
+        followUps: [
+          'What does my current life chapter (Dasha) focus on?',
+          'What are my biggest career strengths in this chart?',
+          'Do I have any important Yogas or Doshas I should know about?',
+        ],
+      },
+    };
+  }
+
+  if (routed.declineMessage) {
+    emitTrace('answer', `Fast-path guardrail (${routed.riskClass})`);
+    return {
+      mode: 'declined',
+      trace,
+      observedEvidenceIds: [],
+      response: {
+        responseType: 'conversational',
+        answer: routed.declineMessage,
+        because: [],
+        timing: [],
+        uncertainty: '',
+        reflect: '',
+        followUps: [
+          'What are the main themes of my year ahead?',
+          'How can I best use my current planetary period?',
+        ],
+      },
+    };
+  }
 
   const maxTurns = deep ? 10 : 7;
   const server = new ToolServer(ws, kb, { maxSteps: maxTurns * 4, maxTokens: 12000 }, engineSession);
