@@ -1,13 +1,14 @@
-name: CI — Test, Build & Thin-Client Check
+name: CI — Test, Build & Package Artifacts
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
-  build-and-test:
+  build-and-package:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,6 +34,8 @@ jobs:
         run: pnpm --filter @astro/api build
 
       - name: Build Thin Frontend (@astro/web)
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'http://localhost:8787' }}
         run: pnpm --filter @astro/web build
 
       - name: Verify ultra-light frontend (0 WASM bundles)
@@ -43,3 +46,74 @@ jobs:
           fi
           echo "Verified: 0 WASM files in apps/web/dist/assets/"
           ls -lh apps/web/dist/assets/
+
+      - name: Package standalone Oracle Cloud API bundle
+        run: |
+          mkdir -p build-artifacts/kundliflow-api/apps/api/dist
+          mkdir -p build-artifacts/kundliflow-api/packages/content
+          mkdir -p build-artifacts/kundliflow-api/data
+          cp apps/api/dist/index.js build-artifacts/kundliflow-api/apps/api/dist/index.js
+          cp -r packages/content/strength.yaml packages/content/rules packages/content/topics packages/content/kb build-artifacts/kundliflow-api/packages/content/
+          cp .env.example build-artifacts/kundliflow-api/.env.example
+
+          cat <<'EOF' > build-artifacts/kundliflow-api/package.json
+          {
+            "name": "kundliflow-api-runtime",
+            "version": "1.0.0",
+            "private": true,
+            "type": "module",
+            "scripts": {
+              "start": "node apps/api/dist/index.js"
+            },
+            "dependencies": {
+              "better-sqlite3": "^11.5.0",
+              "js-yaml": "^5.5.0",
+              "zod": "^3.23.0"
+            }
+          }
+          EOF
+
+          cat <<'EOF' > build-artifacts/kundliflow-api/start.sh
+          #!/usr/bin/env bash
+          set -euo pipefail
+          cd "$(dirname "$0")"
+          mkdir -p data
+          [ -f .env ] || cp .env.example .env
+          if [ ! -d node_modules ]; then
+            echo "Installing 3 runtime packages (better-sqlite3, js-yaml, zod)..."
+            npm install --omit=dev
+          fi
+          if command -v pm2 >/dev/null 2>&1; then
+            pm2 describe kundliflow-api >/dev/null 2>&1 \
+              && pm2 restart kundliflow-api --update-env \
+              || pm2 start apps/api/dist/index.js --name kundliflow-api --cwd "$(pwd)"
+            pm2 save
+            echo "KundliFlow API running via PM2 on http://0.0.0.0:${PORT:-8787}"
+          else
+            echo "Starting KundliFlow API on http://0.0.0.0:${PORT:-8787}..."
+            node apps/api/dist/index.js
+          fi
+          EOF
+          chmod +x build-artifacts/kundliflow-api/start.sh
+
+          tar -czf build-artifacts/kundliflow-api-bundle.tar.gz -C build-artifacts kundliflow-api
+
+      - name: Package thin Frontend Web bundle
+        run: |
+          mkdir -p build-artifacts/kundliflow-web
+          cp -r apps/web/dist/* build-artifacts/kundliflow-web/
+          tar -czf build-artifacts/kundliflow-web-bundle.tar.gz -C build-artifacts kundliflow-web
+
+      - name: Upload Backend API Artifact (Oracle Cloud ready)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kundliflow-api-bundle
+          path: build-artifacts/kundliflow-api-bundle.tar.gz
+          retention-days: 30
+
+      - name: Upload Frontend Web Artifact (Ultra-light static bundle)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kundliflow-web-bundle
+          path: build-artifacts/kundliflow-web-bundle.tar.gz
+          retention-days: 30

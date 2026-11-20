@@ -3,43 +3,54 @@
 A full-stack **Vedic Astrology (Jyotish)** platform built with a **Server-Compute-Once + Ultra-Light Thin Client** architecture — ready for Web, PWA, and Android.
 
 - **100% Server-Side Engine (`apps/api`)**: Natal D1–D60 Vargas, Panchang, Avakahada, Shadbala, Ashtakvarga (BAV/SAV), Vimshottari / Yogini / Jaimini Chara Dashas, Chalit, KP, Varshaphal, Arudha Padas, Upagrahas, Bhavas, Aspects, Ghatak, and Yogas/Doshas with Bhanga cancellations. Cached with **`ETag` / `304 Not Modified`**.
-- **Ultra-Light Thin Frontend (`apps/web`)**: **~157 kB gzipped JS, 0 WASM files** (enforced automatically by CI).
+- **Ultra-Light Thin Frontend (`apps/web`)**: **~157 kB gzipped JS, 0 WASM files** (verified automatically by GitHub Actions).
 
 ---
 
-## Simple 3-Step Free-Tier Deployment (`$0/mo`)
+## Simple Free-Tier Deployment (Pre-Compiled Artifacts, No Domain / No HTTPS Needed)
 
-### Step 1 — Deploy the Backend API (Pick Option A or B)
+Every push to `main` automatically builds and uploads **2 ready-to-run artifacts** in **GitHub Actions → CI — Test, Build & Package Artifacts**:
+1. **`kundliflow-api-bundle.tar.gz`** — compiled single-file Node.js backend + YAML rules/KB (no `git clone`, no `pnpm`, no compiling on the server).
+2. **`kundliflow-web-bundle.tar.gz`** — compiled ultra-light static frontend (`index.html` + `assets/`, 0 WASM).
 
-#### Option A: Render.com Free Tier (Easiest — No SSH, 2 mins)
-1. Go to [Render Dashboard](https://dashboard.render.com) → **New + → Blueprint**.
-2. Connect **`imkks/KundliFlow`** — Render reads [`render.yaml`](render.yaml) automatically.
-3. Click **Apply** and copy your live HTTPS URL (e.g. `https://kundliflow-api.onrender.com`).
+---
 
-#### Option B: Oracle Cloud Always-Free ARM VM (Always-On, 0 Cold Starts, 24 GB RAM)
-1. Create an Always-Free Ubuntu VM in Oracle Cloud and open ports **80** & **443**.
-2. SSH in and run our **1-command deploy script**:
+### Step 1 — Run the Compiled API Artifact on Oracle Cloud Always-Free VM (HTTP)
+
+1. In Oracle Cloud (OCI), open ingress port **`8787`** in your VCN Security List (and on the VM: `sudo ufw allow 8787` or `sudo iptables -I INPUT 6 -p tcp --dport 8787 -j ACCEPT`).
+2. Install Node.js 20 once on your Ubuntu VM:
    ```bash
-   git clone https://github.com/imkks/KundliFlow.git && cd KundliFlow
-   bash scripts/deploy-oracle.sh api.yourdomain.com
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt-get install -y nodejs build-essential
+   sudo npm install -g pm2
    ```
-   *(Installs Node 20, pnpm, PM2, builds `@astro/api`, starts it, and sets up free automatic HTTPS via Caddy.)*
+3. Download **`kundliflow-api-bundle.tar.gz`** from the latest GitHub Actions run, copy it to your VM (`scp`), and run:
+   ```bash
+   tar -xzf kundliflow-api-bundle.tar.gz
+   cd kundliflow-api
+   bash start.sh
+   ```
+   Your API is now live over HTTP at **`http://<YOUR_ORACLE_VM_IP>:8787`**!
+   *(Optional: edit `.env` to add `GOOGLE_CLIENT_ID` or `ANTHROPIC_AUTH_TOKEN`, then re-run `bash start.sh`.)*
 
 ---
 
-### Step 2 — Connect Frontend to Backend in GitHub
+### Step 2 — Deploy the Compiled Frontend Bundle
 
-In **`https://github.com/imkks/KundliFlow`**:
-1. **Settings → Pages → Source** → select **GitHub Actions**.
-2. **Settings → Secrets and variables → Actions → Variables** → add:
-   - `VITE_API_URL` = your backend HTTPS URL from Step 1.
+Set your backend URL in GitHub **Settings → Secrets and variables → Actions → Variables**:
+- `VITE_API_URL` = `http://<YOUR_ORACLE_VM_IP>:8787`
 
----
-
-### Step 3 — Go Live!
-
-Push to `main` (or click **Actions → Deploy Thin Frontend to GitHub Pages → Run workflow**).
-Your app will be live at **`https://imkks.github.io/KundliFlow/`**.
+Then choose either:
+- **Option A — Host the Frontend Artifact on the Same Oracle VM over HTTP** (recommended while using HTTP API, avoids browser HTTPS→HTTP mixed-content blocks):
+  ```bash
+  # Download kundliflow-web-bundle.tar.gz from GitHub Actions to your VM:
+  tar -xzf kundliflow-web-bundle.tar.gz
+  npx serve -s kundliflow-web -l 80
+  ```
+  Open **`http://<YOUR_ORACLE_VM_IP>`** in your browser!
+- **Option B — GitHub Pages / Cloudflare Pages / S3**:
+  - Enable **Settings → Pages → Source: GitHub Actions** (auto-deploys to `https://imkks.github.io/KundliFlow/`), or upload `kundliflow-web-bundle.tar.gz` to Cloudflare Pages / Vercel / S3.
+  - *(Note: HTTPS frontends require an HTTPS API URL — when you're ready for HTTPS later without buying a domain, you can use `bash scripts/deploy-oracle.sh <VM-IP>.nip.io` or Render's free [`render.yaml`](render.yaml).)*
 
 ---
 
