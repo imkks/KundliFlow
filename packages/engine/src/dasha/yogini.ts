@@ -59,7 +59,7 @@ export const computeYoginiDashas = (
   moonNakshatraIndex: number, // 0 = Ashwini .. 25 = Uttarabhadrapada .. 26 = Revati
   elapsedFraction: number, // 0..1 fraction traversed in nakshatra
   birthLocalIso: string,
-  totalCycles = 2, // 2 cycles = 72 years
+  totalCycles = 3, // 3 cycles = 108 years (full lifespan coverage)
 ): YoginiDashaTree => {
   // Nakshatra number (1-based): Ashwini = 1, Uttarabhadrapada = 26
   const nakNumber = (moonNakshatraIndex % 27) + 1;

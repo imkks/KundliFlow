@@ -179,6 +179,7 @@ export class EngineSession {
       this._chara = computeCharaDashas(
         this.natal.lagna?.signIndex ?? 0,
         this.natal.time.birthLocal,
+        this.natal.grahas,
       );
     }
     return this._chara;

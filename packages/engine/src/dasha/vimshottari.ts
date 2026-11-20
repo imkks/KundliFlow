@@ -170,13 +170,31 @@ export const computeVimshottariDashas = (
     };
 
     if (depth >= 2) {
-      mahaNode.subPeriods = buildSubPeriods(
-        lord,
-        currentStart,
-        durationDays,
-        2,
-        depth,
-      );
+      if (i === 0) {
+        // First Mahadasha started BEFORE birth; Antardashas run over the FULL
+        // Mahadasha duration from trueMahaStart, not compressed into the balance!
+        const fullMahaDays = isCalendar
+          ? currentEnd.diff(currentEnd.minus({ years: fullYears }), 'days').days
+          : fullYears * effectiveYearDays;
+        const trueMahaStart = isCalendar
+          ? currentEnd.minus({ years: fullYears })
+          : currentEnd.minus({ days: fullMahaDays });
+        mahaNode.subPeriods = buildSubPeriods(
+          lord,
+          trueMahaStart,
+          fullMahaDays,
+          2,
+          depth,
+        );
+      } else {
+        mahaNode.subPeriods = buildSubPeriods(
+          lord,
+          currentStart,
+          durationDays,
+          2,
+          depth,
+        );
+      }
     }
 
     periods.push(mahaNode);

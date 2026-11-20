@@ -120,6 +120,13 @@ describe('M2 Natal Calculations Suite (Panchang, Dashas, Vargas, Chalit, Digest)
       expect(saturnMaha.subPeriods).toBeDefined();
       expect(saturnMaha.subPeriods!.length).toBe(9);
 
+      // Verify first Mahadasha Antardashas span the full 19y cycle (not compressed into balance):
+      // At birth (1998-09-07), ~7.5y of Saturn Mahadasha had elapsed -> Venus Antardasha is active
+      const birthAntar = saturnMaha.subPeriods!.find(
+        (a) => '1998-09-07' >= a.startDateIso && '1998-09-07' < a.endDateIso,
+      );
+      expect(birthAntar?.lord).toBe('venus');
+
       const firstAntar = saturnMaha.subPeriods![0]!;
       expect(firstAntar.subPeriods).toBeDefined();
       expect(firstAntar.subPeriods!.length).toBe(9);
@@ -307,7 +314,7 @@ describe('M2 Natal Calculations Suite (Panchang, Dashas, Vargas, Chalit, Digest)
     });
 
     it('computes Jaimini Chara Dasha matching pages 5-6 of report', () => {
-      const chara = computeCharaDashas(natal.lagna!.signIndex, natal.time.birthLocal);
+      const chara = computeCharaDashas(natal.lagna!.signIndex, natal.time.birthLocal, natal.grahas);
       expect(chara.periods.length).toBe(12);
       // Taurus 3y (7/9/98 - 7/9/01)
       expect(chara.periods[0]!.sign).toBe('TAU 03 Year');

@@ -327,16 +327,16 @@ export function buildLevel2Extras(
   };
 
   // 6. Extended Dashas: Yogini & Chara
-  const nowIso = new Date().toISOString();
+  const nowDate = new Date().toISOString().slice(0, 10);
   const yoginiRes =
     level1.yogini ?? computeYoginiDashas(moonNakIdx, natal.grahas.moon.elapsedInNakshatra, natal.time.birthLocal);
-  const charaRes = level1.chara ?? computeCharaDashas(lagnaIdx, natal.time.birthLocal);
+  const charaRes = level1.chara ?? computeCharaDashas(lagnaIdx, natal.time.birthLocal, natal.grahas);
   const yoginiPeriods = yoginiRes?.periods ?? [];
   const charaPeriods = charaRes?.periods ?? [];
-  const activeYoginiMaha = yoginiPeriods.find((m: any) => nowIso >= m.startDateIso && nowIso < m.endDateIso);
-  const activeYoginiAntar = activeYoginiMaha?.subPeriods?.find((a: any) => nowIso >= a.startDateIso && nowIso < a.endDateIso);
-  const activeCharaMaha = charaPeriods.find((m: any) => nowIso >= m.startDateIso && nowIso < m.endDateIso);
-  const activeCharaAntar = activeCharaMaha?.subPeriods?.find((a: any) => nowIso >= a.startDateIso && nowIso < a.endDateIso);
+  const activeYoginiMaha = yoginiPeriods.find((m: any) => nowDate >= m.startDateIso && nowDate < m.endDateIso);
+  const activeYoginiAntar = activeYoginiMaha?.subPeriods?.find((a: any) => nowDate >= a.startDateIso && nowDate < a.endDateIso);
+  const activeCharaMaha = charaPeriods.find((m: any) => nowDate >= m.startDateIso && nowDate < m.endDateIso);
+  const activeCharaAntar = activeCharaMaha?.subPeriods?.find((a: any) => nowDate >= a.startDateIso && nowDate < a.endDateIso);
 
   const extendedDashas = {
     yogini: activeYoginiMaha
@@ -427,8 +427,8 @@ export function buildLevel2Extras(
   const ak = specials.karakas.find((k: any) => k.code === 'AK');
   const amk = specials.karakas.find((k: any) => k.code === 'AmK');
   const topPlanet = [...strengths.planets].sort((a: any, b: any) => a.rank - b.rank)[0];
-  const topYoga = yogas.find((y: any) => y.category !== 'dosha');
-  const topDosha = yogas.find((y: any) => y.category === 'dosha');
+  const topYoga = yogas.find((y: any) => y.presence === true && y.category !== 'dosha');
+  const topDosha = yogas.find((y: any) => y.presence === true && y.category === 'dosha');
 
   const overview = {
     coreNature: `Your rising sign is ${lagnaSign.toUpperCase()} with Moon in ${moonSign.toUpperCase()} (${moonNak}), blending practical direction with ${moonNak} emotional instincts.`,

@@ -168,7 +168,7 @@ export function createApiServer() {
       const m = natal.grahas.moon;
       const dashas = computeVimshottariDashas(m.nakshatraIndex, m.elapsedInNakshatra, timeRes.resolved.birthLocal, 3);
       const yogini = computeYoginiDashas(m.nakshatraIndex, m.elapsedInNakshatra, timeRes.resolved.birthLocal);
-      const chara = computeCharaDashas(natal.lagna?.signIndex ?? 0, timeRes.resolved.birthLocal);
+      const chara = computeCharaDashas(natal.lagna?.signIndex ?? 0, timeRes.resolved.birthLocal, natal.grahas);
       const chalit = natal.lagna ? computeSripatiChalit(natal.lagna.lon, (natal.lagna.lon + 270) % 360) : null;
       const now = new Date();
       const nowJd = julianDayUt(
