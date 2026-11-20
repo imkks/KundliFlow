@@ -1,116 +1,69 @@
 # KundliFlow (MyAstro)
 
-A modern, full-stack **Vedic Astrology (Jyotish)** platform built with a **Server-Compute-Once + Ultra-Light Thin Client** architecture — ready for Web, PWA, and future Android apps.
+A full-stack **Vedic Astrology (Jyotish)** platform built with a **Server-Compute-Once + Ultra-Light Thin Client** architecture — ready for Web, PWA, and Android.
+
+- **100% Server-Side Engine (`apps/api`)**: Natal D1–D60 Vargas, Panchang, Avakahada, Shadbala, Ashtakvarga (BAV/SAV), Vimshottari / Yogini / Jaimini Chara Dashas, Chalit, KP, Varshaphal, Arudha Padas, Upagrahas, Bhavas, Aspects, Ghatak, and Yogas/Doshas with Bhanga cancellations. Cached with **`ETag` / `304 Not Modified`**.
+- **Ultra-Light Thin Frontend (`apps/web`)**: **~157 kB gzipped JS, 0 WASM files** (enforced automatically by CI).
 
 ---
 
-## Architecture Highlights
+## Simple 3-Step Free-Tier Deployment (`$0/mo`)
 
-- **100% Server-Side Astrological Engine (`apps/api`)**:
-  - All astronomical & Parashara calculations run on the server: Natal Chart (D1–D60 Vargas), Panchang, Avakahada, Shadbala & Bhavabala, Ashtakvarga (BAV/SAV), Vimshottari / Yogini / Jaimini Chara Dashas, Sripati Chalit, KP System, Tajika Varshaphal, Arudha Padas (12), Upagrahas (7), Bhava Analysis (12), Mutual Aspects, Planetary Avasthas, Ghatak Guardrails, and classical Yogas & Doshas (with Bhanga cancellations).
-  - Static birth bundles are **computed once**, stored in SQLite, and served with **`ETag` / `304 Not Modified`** so Web and Android clients cache them locally and never recompute or re-download static data.
-  - Only lightweight **daily sky** (`/today` — hourly scores, live Panchang, Rahu Kalam, Horas, transits, monthly peak/caution dates) and **delta sync** (`/sync` — journals, check-ins, saved chats) are fetched periodically.
-- **Ultra-Light Thin Frontend (`apps/web`)**:
-  - **0 WASM files** in `apps/web/dist` (~157 kB gzipped JS total; 425 kB Swiss Ephemeris WASM completely removed from the browser).
-  - Interactive North & South Indian SVG charts, 24-hour energy curve, live Gochar cards, Muhurta calendar heatmap, Past Life Event Dasha validator, and grounded AI Astrologer Copilot.
+### Step 1 — Deploy the Backend API (Pick Option A or B)
+
+#### Option A: Render.com Free Tier (Easiest — No SSH, 2 mins)
+1. Go to [Render Dashboard](https://dashboard.render.com) → **New + → Blueprint**.
+2. Connect **`imkks/KundliFlow`** — Render reads [`render.yaml`](render.yaml) automatically.
+3. Click **Apply** and copy your live HTTPS URL (e.g. `https://kundliflow-api.onrender.com`).
+
+#### Option B: Oracle Cloud Always-Free ARM VM (Always-On, 0 Cold Starts, 24 GB RAM)
+1. Create an Always-Free Ubuntu VM in Oracle Cloud and open ports **80** & **443**.
+2. SSH in and run our **1-command deploy script**:
+   ```bash
+   git clone https://github.com/imkks/KundliFlow.git && cd KundliFlow
+   bash scripts/deploy-oracle.sh api.yourdomain.com
+   ```
+   *(Installs Node 20, pnpm, PM2, builds `@astro/api`, starts it, and sets up free automatic HTTPS via Caddy.)*
 
 ---
 
-## Free-Tier Deployment Guide (`$0/month`)
+### Step 2 — Connect Frontend to Backend in GitHub
 
-| Layer | Free-Tier Host | Cost | Role |
-| :--- | :--- | :--- | :--- |
-| **Frontend (Thin UI)** | **GitHub Pages** (auto-deployed via `.github/workflows/deploy-pages.yml`) or Cloudflare Pages / Vercel | `$0` | Serves the ~157 kB static React SPA |
-| **Backend API** | **Oracle Cloud Always-Free ARM Ampere VM** (up to 4 OCPU, 24 GB RAM, 200 GB storage) | `$0` | Runs `apps/api` (Node 20 + PM2 + Caddy HTTPS) |
-| **Database** | **SQLite** on Oracle Cloud VM (built-in) — or **MongoDB Atlas M0** (512 MB free) | `$0` | Stores profiles, cached birth bundles, journals, chats |
-
----
-
-### Step 1: Deploy the Backend API on Oracle Cloud Always-Free VM
-
-1. **Create an Always-Free Ubuntu 22.04/24.04 ARM VM** in Oracle Cloud Infrastructure (OCI):
-   - Open ingress ports **80** and **443** in the OCI VCN Security List (and `ufw` if enabled).
-2. **SSH into the VM and install Node.js 20, pnpm, PM2, and Caddy**:
-   ```bash
-   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-   sudo apt-get install -y nodejs git caddy build-essential
-   sudo corepack enable
-   sudo npm install -g pm2
-   ```
-3. **Clone, build, and configure `.env`**:
-   ```bash
-   git clone https://github.com/imkks/KundliFlow.git
-   cd KundliFlow
-   pnpm install --frozen-lockfile
-   pnpm --filter @astro/api build
-   cp .env.example .env
-   nano .env   # Set PORT=8787, GOOGLE_CLIENT_ID, and optional ANTHROPIC_* keys
-   ```
-4. **Start the API with PM2 (auto-restart on reboot)**:
-   ```bash
-   pm2 start apps/api/dist/index.js --name kundliflow-api --cwd /home/ubuntu/KundliFlow
-   pm2 save
-   pm2 startup
-   ```
-5. **Enable Free Automatic HTTPS with Caddy** (`/etc/caddy/Caddyfile`):
-   ```caddy
-   api.yourdomain.com {
-       reverse_proxy localhost:8787
-   }
-   ```
-   ```bash
-   sudo systemctl reload caddy
-   ```
-   *(No custom domain? You can use a free subdomain from DuckDNS or nip.io with Caddy!)*
+In **`https://github.com/imkks/KundliFlow`**:
+1. **Settings → Pages → Source** → select **GitHub Actions**.
+2. **Settings → Secrets and variables → Actions → Variables** → add:
+   - `VITE_API_URL` = your backend HTTPS URL from Step 1.
 
 ---
 
-### Step 2: Deploy the Thin Frontend on GitHub Pages (Automated)
+### Step 3 — Go Live!
 
-1. In your GitHub repository (`https://github.com/imkks/KundliFlow`):
-   - Go to **Settings → Pages → Build and deployment → Source** and select **GitHub Actions**.
-   - Go to **Settings → Secrets and variables → Actions → Variables** and add:
-     - `VITE_API_URL` = `https://api.yourdomain.com` (your Oracle Cloud API URL).
-2. Push to `main` (or trigger **Actions → Deploy Thin Frontend to GitHub Pages → Run workflow**).
-3. Your ultra-light frontend will be live at `https://imkks.github.io/KundliFlow/`.
+Push to `main` (or click **Actions → Deploy Thin Frontend to GitHub Pages → Run workflow**).
+Your app will be live at **`https://imkks.github.io/KundliFlow/`**.
 
 ---
 
 ## Local Development
 
 ```bash
-# Install dependencies
 corepack pnpm install
-
-# Run all 15 test suites (74 tests)
-corepack pnpm test
-
-# Build & start the backend API (http://localhost:8787)
+corepack pnpm test                      # 15 test suites, 74 tests
 corepack pnpm --filter @astro/api build
-corepack pnpm --filter @astro/api start
-
-# In a second terminal, start the thin web frontend (http://localhost:5173)
-corepack pnpm --filter @astro/web dev
+corepack pnpm --filter @astro/api start # http://localhost:8787
+corepack pnpm --filter @astro/web dev   # http://localhost:5173
 ```
 
 ---
 
 ## Key REST Endpoints (Web & Android Ready)
 
-| Method & Path | Purpose |
+| Endpoint | Purpose |
 | :--- | :--- |
-| `POST /api/auth/google` | Verify Google ID token & return user session + synced profiles |
-| `POST /api/profiles` | Compute full static birth chart bundle once on server & persist |
-| `GET /api/profiles/:id/bundle` | Fetch cached static bundle (supports `ETag` / `304 Not Modified`) |
-| `GET /api/profiles/:id/today` | Daily sky: hourly scores, Panchang, Horas, Rahu Kalam, live transits, month peaks |
-| `GET /api/profiles/:id/calendar` | Month heatmap, year overview & date-specific transits |
-| `GET /api/profiles/:id/varshaphal` | Tajika Varshaphal, 12 Arudha Padas & 7 Upagrahas |
-| `POST /api/sync` | Bidirectional delta sync for journal check-ins & saved chats |
-| `POST /api/ask` | Grounded AI Astrologer Copilot backed by server-side chart tools |
-
----
-
-## CI/CD Workflows
-
-- **[`.github/workflows/ci.yml`](.github/workflows/ci.yml)**: Runs `pnpm test`, builds `@astro/api` and `@astro/web`, and **fails the build if any `.wasm` file leaks into `apps/web/dist/assets/`**.
-- **[`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml)**: Builds and publishes the thin frontend to GitHub Pages on every push to `main`.
+| `POST /api/auth/google` | Google Sign-In & synced profiles |
+| `POST /api/profiles` | Compute static birth bundle once & persist |
+| `GET /api/profiles/:id/bundle` | Fetch cached static bundle (`ETag` / `304`) |
+| `GET /api/profiles/:id/today` | Hourly scores, Panchang, Horas, Rahu Kalam, transits, month peaks |
+| `GET /api/profiles/:id/calendar` | Month heatmap, year overview & date transits |
+| `GET /api/profiles/:id/varshaphal` | Tajika Varshaphal, 12 Arudhas & 7 Upagrahas |
+| `POST /api/sync` | Bidirectional delta sync for journals & chats |
+| `POST /api/ask` | Grounded AI Astrologer Copilot |

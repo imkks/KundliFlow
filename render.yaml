@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: kundliflow-api
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @astro/api build
+    startCommand: node apps/api/dist/index.js
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: PORT
+        value: "8787"
+      - key: DB_PATH
+        value: "./data/myastro.db"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: ANTHROPIC_BASE_URL
+        sync: false
+      - key: ANTHROPIC_AUTH_TOKEN
+        sync: false
