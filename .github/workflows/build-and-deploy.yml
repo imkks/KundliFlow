@@ -1,4 +1,4 @@
-name: CI — Test, Build & Package Artifacts
+name: Build, Test & Deploy (with Server Approval)
 
 on:
   push:
@@ -7,10 +7,19 @@ on:
     branches: [main]
   workflow_dispatch:
 
-jobs:
-  build-and-package:
-    runs-on: ubuntu-latest
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
+concurrency:
+  group: kundliflow-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # 1. Test, build API & thin web frontend, verify 0 WASM, and upload artifacts
+  build-and-test:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,6 +44,7 @@ jobs:
 
       - name: Build Thin Frontend (@astro/web)
         env:
+          VITE_BASE_PATH: /KundliFlow/
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || vars.VITE_API_URL || 'http://localhost:8787' }}
           VITE_API_URL: ${{ vars.VITE_API_BASE_URL || vars.VITE_API_URL || 'http://localhost:8787' }}
         run: pnpm --filter @astro/web build
@@ -105,16 +115,90 @@ jobs:
           cp -r apps/web/dist/* build-artifacts/kundliflow-web/
           tar -czf build-artifacts/kundliflow-web-bundle.tar.gz -C build-artifacts kundliflow-web
 
-      - name: Upload Backend API Artifact (Oracle Cloud ready)
+      - name: Upload Backend API Artifact
         uses: actions/upload-artifact@v4
         with:
           name: kundliflow-api-bundle
           path: build-artifacts/kundliflow-api-bundle.tar.gz
           retention-days: 30
 
-      - name: Upload Frontend Web Artifact (Ultra-light static bundle)
+      - name: Upload Frontend Web Artifact
         uses: actions/upload-artifact@v4
         with:
           name: kundliflow-web-bundle
           path: build-artifacts/kundliflow-web-bundle.tar.gz
           retention-days: 30
+
+      - name: Setup Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  # 2. Deploy thin frontend to GitHub Pages
+  deploy-pages:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # 3. Deploy API artifact to Oracle Cloud Server (waits for manual approval via 'production-server' environment)
+  deploy-server:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: production-server
+    steps:
+      - name: Download Backend API Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kundliflow-api-bundle
+          path: ./release
+
+      - name: Check Oracle SSH secrets
+        id: check
+        env:
+          ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+          ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+        run: |
+          if [ -z "$ORACLE_HOST" ] || [ -z "$ORACLE_SSH_KEY" ]; then
+            echo "ORACLE_HOST or ORACLE_SSH_KEY secret not set — skipping SSH push (artifact is ready for manual download)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload & restart API on Oracle Cloud VM
+        if: steps.check.outputs.ready == 'true'
+        env:
+          ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+          ORACLE_USER: ${{ secrets.ORACLE_USER || 'ubuntu' }}
+          ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+          ORACLE_DEPLOY_DIR: ${{ vars.ORACLE_DEPLOY_DIR || '~/kundliflow-api' }}
+        run: |
+          mkdir -p ~/.ssh
+          printf "%s\n" "$ORACLE_SSH_KEY" > ~/.ssh/oracle_key
+          chmod 600 ~/.ssh/oracle_key
+          ssh-keyscan -H "$ORACLE_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          scp -i ~/.ssh/oracle_key ./release/kundliflow-api-bundle.tar.gz "${ORACLE_USER}@${ORACLE_HOST}:/tmp/kundliflow-api-bundle.tar.gz"
+          ssh -i ~/.ssh/oracle_key "${ORACLE_USER}@${ORACLE_HOST}" bash -s <<'REMOTE'
+            set -euo pipefail
+            mkdir -p ~/kundliflow-api
+            # Preserve existing .env and SQLite data/ across deployments
+            tar -xzf /tmp/kundliflow-api-bundle.tar.gz -C ~
+            rm -f /tmp/kundliflow-api-bundle.tar.gz
+            cd ~/kundliflow-api
+            bash start.sh
+          REMOTE
