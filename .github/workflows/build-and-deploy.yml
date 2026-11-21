@@ -74,6 +74,11 @@ jobs:
           cd "$(dirname "$0")"
           mkdir -p data
           [ -f .env ] || cp .env.example .env
+          if [ -f .env ]; then
+            set -a
+            source .env
+            set +a
+          fi
           if [ ! -d node_modules ]; then
             echo "Installing 3 runtime packages (better-sqlite3, js-yaml, zod)..."
             npm install --omit=dev
@@ -200,11 +205,34 @@ jobs:
           ORACLE_HOST: ${{ secrets.ORACLE_HOST || vars.ORACLE_HOST }}
           ORACLE_USER: ${{ secrets.ORACLE_USER || vars.ORACLE_USER || 'ubuntu' }}
           ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+          PORT: ${{ vars.PORT || '8787' }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'kundliflow-session-prod-key' }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || vars.GOOGLE_CLIENT_ID || vars.VITE_GOOGLE_CLIENT_ID || '654362464468-7sdsra0madqrhmpntsamcbiuc707qccn.apps.googleusercontent.com' }}
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN || secrets.DEEPSEEK_API_KEY || secrets.ANTHROPIC_API_KEY || '' }}
+          ANTHROPIC_BASE_URL: ${{ vars.ANTHROPIC_BASE_URL || 'https://api.deepseek.com/anthropic' }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'deepseek-flash' }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.GEMINI_API_KEY || secrets.OPENAI_API_KEY || '' }}
+          LLM_BASE_URL: ${{ vars.LLM_BASE_URL || '' }}
+          LLM_MODEL: ${{ vars.LLM_MODEL || '' }}
         run: |
           mkdir -p ~/.ssh
           printf "%s\n" "$ORACLE_SSH_KEY" > ~/.ssh/oracle_key
           chmod 600 ~/.ssh/oracle_key
           ssh-keyscan -H "$ORACLE_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
+          # Create production .env file on runner with secrets injected
+          printf "%s\n" \
+            "PORT=${PORT}" \
+            "JWT_SECRET=${JWT_SECRET}" \
+            "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
+            "ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL}" \
+            "ANTHROPIC_AUTH_TOKEN=${ANTHROPIC_AUTH_TOKEN}" \
+            "ANTHROPIC_MODEL=${ANTHROPIC_MODEL}" \
+            "LLM_API_KEY=${LLM_API_KEY}" \
+            "LLM_BASE_URL=${LLM_BASE_URL}" \
+            "LLM_MODEL=${LLM_MODEL}" > /tmp/deploy.env
+
           scp -i ~/.ssh/oracle_key ./release/kundliflow-api-bundle.tar.gz "${ORACLE_USER}@${ORACLE_HOST}:/tmp/kundliflow-api-bundle.tar.gz"
-          ssh -i ~/.ssh/oracle_key "${ORACLE_USER}@${ORACLE_HOST}" "mkdir -p ~/kundliflow-api && tar -xzf /tmp/kundliflow-api-bundle.tar.gz -C ~ && rm -f /tmp/kundliflow-api-bundle.tar.gz && cd ~/kundliflow-api && bash start.sh"
+          scp -i ~/.ssh/oracle_key /tmp/deploy.env "${ORACLE_USER}@${ORACLE_HOST}:/tmp/deploy.env"
+
+          ssh -i ~/.ssh/oracle_key "${ORACLE_USER}@${ORACLE_HOST}" "mkdir -p ~/kundliflow-api && tar -xzf /tmp/kundliflow-api-bundle.tar.gz -C ~ && rm -f /tmp/kundliflow-api-bundle.tar.gz && mv /tmp/deploy.env ~/kundliflow-api/.env && cd ~/kundliflow-api && bash start.sh"
