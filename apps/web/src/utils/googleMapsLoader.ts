@@ -1,9 +1,8 @@
 // apps/web/src/utils/googleMapsLoader.ts
 // Utility to ensure Google Maps JavaScript API with Places library is loaded
 
-const DEFAULT_MAPS_KEY =
-  (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined) ||
-  'AIzaSyCeEleJEIqT-vIs6QuuH6HbfX4N76Q22hA';
+const MAPS_API_KEY =
+  (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined)?.trim() || '';
 
 let loadPromise: Promise<typeof google.maps> | null = null;
 
@@ -14,6 +13,13 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
 
   if (window.google?.maps?.places) {
     return Promise.resolve(window.google.maps);
+  }
+
+  if (!MAPS_API_KEY) {
+    const errorMsg =
+      'Google Maps API key missing. Please configure VITE_GOOGLE_MAPS_API_KEY in your environment.';
+    console.warn(errorMsg);
+    return Promise.reject(new Error(errorMsg));
   }
 
   if (loadPromise) return loadPromise;
@@ -41,7 +47,7 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
 
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
-      DEFAULT_MAPS_KEY,
+      MAPS_API_KEY,
     )}&libraries=places&v=weekly`;
     script.async = true;
     script.defer = true;

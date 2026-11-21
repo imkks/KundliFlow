@@ -119,7 +119,7 @@ export function createApiServer() {
       return createAnthropicCompatibleLlmClient({
         baseUrl: anthropicUrl,
         authToken: anthropicToken,
-        model: process.env.ANTHROPIC_MODEL || 'deepseek-chat',
+        model: process.env.ANTHROPIC_MODEL || 'deepseek-flash',
       });
     }
 
