@@ -263,7 +263,7 @@ export function createAppDatabase(dbFilePath: string) {
       const tx = db.transaction(() => {
         db.prepare('DELETE FROM chart_snapshots WHERE profile_id = ?').run(profileId);
         db.prepare('DELETE FROM journal_entries WHERE profile_id = ?').run(profileId);
-        db.prepare('DELETE FROM chat_history WHERE profile_id = ?').run(profileId);
+        db.prepare('DELETE FROM qa_messages WHERE profile_id = ?').run(profileId);
         db.prepare('DELETE FROM life_events WHERE profile_id = ?').run(profileId);
         const info = db.prepare('DELETE FROM profiles WHERE id = ?').run(profileId);
         return info.changes > 0;

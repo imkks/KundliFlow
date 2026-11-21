@@ -17,9 +17,9 @@ export const FirstVisitOnboarding: React.FC<FirstVisitOnboardingProps> = ({
   const [birthTime, setBirthTime] = useState('09:30:00');
   const [timeCertainty, setTimeCertainty] = useState<'exact' | 'approx' | 'unknown'>('exact');
   const [place, setPlace] = useState<{ cityName: string; lat: number; lon: number; tzId: string }>({
-    cityName: 'Bengaluru, Karnataka, India',
-    lat: 12.9716,
-    lon: 77.5946,
+    cityName: 'New Delhi, Delhi, India',
+    lat: 28.6139,
+    lon: 77.209,
     tzId: 'Asia/Kolkata',
   });
 

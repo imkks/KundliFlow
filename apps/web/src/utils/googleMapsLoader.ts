@@ -42,14 +42,14 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
       DEFAULT_MAPS_KEY,
-    )}&libraries=places`;
+    )}&libraries=places&v=weekly`;
     script.async = true;
     script.defer = true;
     script.onload = () => {
-      if (window.google?.maps?.places) {
+      if (window.google?.maps) {
         resolve(window.google.maps);
       } else {
-        reject(new Error('Google Maps script loaded but places library missing'));
+        reject(new Error('Google Maps script loaded but google.maps missing'));
       }
     };
     script.onerror = () => {

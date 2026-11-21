@@ -371,3 +371,17 @@ button {
   margin-right: 8px !important;
 }
 
+/* Modern Google PlaceAutocompleteElement Web Component Styling */
+gmp-place-autocomplete {
+  width: 100% !important;
+  display: block !important;
+  --gmp-mat-color-surface: #2a2652 !important;
+  --gmp-mat-color-on-surface: #f3eee2 !important;
+  --gmp-mat-color-primary: #5fc2b3 !important;
+  --gmp-mat-color-outline: rgba(227, 173, 70, 0.35) !important;
+  --gmp-mat-sys-color-surface-container: #201d40 !important;
+  --gmp-mat-sys-color-surface-container-high: #2a2652 !important;
+  font-family: inherit !important;
+}
+
+

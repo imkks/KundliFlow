@@ -10,8 +10,10 @@ export function getUserDeviceTimezone(): string {
 }
 
 interface AddressComponent {
-  long_name: string;
-  short_name: string;
+  long_name?: string;
+  short_name?: string;
+  longText?: string;
+  shortText?: string;
   types: string[];
 }
 
@@ -157,7 +159,7 @@ export function resolveTimezoneFromPlace(
   }
 
   const countryComp = components.find((c) => c.types.includes('country'));
-  const countryCode = countryComp?.short_name?.toUpperCase();
+  const countryCode = (countryComp?.short_name || countryComp?.shortText || '').toUpperCase();
 
   if (countryCode && SINGLE_TIMEZONE_COUNTRIES[countryCode]) {
     return SINGLE_TIMEZONE_COUNTRIES[countryCode]!;
@@ -166,7 +168,7 @@ export function resolveTimezoneFromPlace(
   const stateComp = components.find((c) =>
     c.types.includes('administrative_area_level_1'),
   );
-  const stateCode = stateComp?.short_name?.toUpperCase() || '';
+  const stateCode = (stateComp?.short_name || stateComp?.shortText || '').toUpperCase();
 
   if (countryCode === 'US') {
     if (stateCode && US_STATE_TIMEZONES[stateCode]) {

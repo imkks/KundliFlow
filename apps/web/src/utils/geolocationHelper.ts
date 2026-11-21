@@ -16,66 +16,58 @@ export async function requestCurrentLocation(): Promise<ResolvedLocation> {
     throw new Error('Geolocation is not supported by your browser');
   }
 
-  // Ensure Google Maps is loaded before requesting GPS so reverse-geocoding is instantaneous
   await loadGoogleMaps();
 
   return new Promise<ResolvedLocation>((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
+      (pos) => {
         const lat = Number(pos.coords.latitude.toFixed(4));
         const lon = Number(pos.coords.longitude.toFixed(4));
         const tzId = getUserDeviceTimezone();
 
-        try {
-          if (window.google?.maps?.Geocoder) {
-            const geocoder = new window.google.maps.Geocoder();
-            geocoder.geocode({ location: { lat, lng: lon } }, (results, status) => {
-              if (status === 'OK' && results && results[0]) {
-                const first = results[0];
-                // Try to find locality or sublocality
-                let locality = '';
-                let adminArea = '';
-                let country = '';
+        if (window.google?.maps?.Geocoder) {
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode({ location: { lat, lng: lon } }, (results, status) => {
+            if (status === 'OK' && results && results[0]) {
+              const first = results[0];
+              let locality = '';
+              let adminArea = '';
+              let country = '';
 
-                for (const comp of first.address_components) {
-                  if (comp.types.includes('locality')) {
-                    locality = comp.long_name;
-                  } else if (comp.types.includes('administrative_area_level_1')) {
-                    adminArea = comp.short_name;
-                  } else if (comp.types.includes('country')) {
-                    country = comp.long_name;
-                  }
+              for (const comp of first.address_components) {
+                if (comp.types.includes('locality')) {
+                  locality = comp.long_name;
+                } else if (comp.types.includes('administrative_area_level_1')) {
+                  adminArea = comp.short_name;
+                } else if (comp.types.includes('country')) {
+                  country = comp.long_name;
                 }
-
-                const parts = [locality, adminArea, country].filter(Boolean);
-                const cityName = parts.length > 0 ? parts.join(', ') : first.formatted_address.split(',')[0] || 'Current Location';
-
-                resolve({
-                  cityName,
-                  lat,
-                  lon,
-                  tzId,
-                });
-              } else {
-                resolve({
-                  cityName: `Lat: ${lat}, Lon: ${lon}`,
-                  lat,
-                  lon,
-                  tzId,
-                });
               }
-            });
-          } else {
-            resolve({
-              cityName: `Lat: ${lat}, Lon: ${lon}`,
-              lat,
-              lon,
-              tzId,
-            });
-          }
-        } catch {
+
+              const parts = [locality, adminArea, country].filter(Boolean);
+              const cityName =
+                parts.length > 0
+                  ? parts.join(', ')
+                  : first.formatted_address || `Current Location (${lat}°, ${lon}°)`;
+
+              resolve({
+                cityName,
+                lat,
+                lon,
+                tzId,
+              });
+            } else {
+              resolve({
+                cityName: `Current Location (${lat}°, ${lon}°)`,
+                lat,
+                lon,
+                tzId,
+              });
+            }
+          });
+        } else {
           resolve({
-            cityName: `Lat: ${lat}, Lon: ${lon}`,
+            cityName: `Current Location (${lat}°, ${lon}°)`,
             lat,
             lon,
             tzId,
