@@ -909,6 +909,7 @@ export function createApiServer() {
               'Cache-Control': 'no-cache',
               Connection: 'keep-alive',
               'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
             });
           }
 
@@ -920,7 +921,7 @@ export function createApiServer() {
             findings,
             llm: getLlmClient(),
             engineSession,
-            deep: Boolean(body.deep),
+            deep: Boolean(body.deep ?? body.deepMode),
             onTrace: (ev) => {
               if (wantsSse) {
                 res.write(`event: ${ev.type}\ndata: ${JSON.stringify(ev)}\n\n`);

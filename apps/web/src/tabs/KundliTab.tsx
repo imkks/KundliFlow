@@ -71,7 +71,7 @@ export const KundliTab: React.FC<KundliTabProps> = ({
   const [teachStep, setTeachStep] = useState<number | null>(null);
   const [expandedRuleId, setExpandedRuleId] = useState<string | null>(null);
   const [inspectorMode, setInspectorMode] = useState<'houses' | 'planets'>('houses');
-  const [showPositionsTable, setShowPositionsTable] = useState(false);
+  const [activeInsightCard, setActiveInsightCard] = useState<null | 'summary' | 'elements' | 'conditions' | 'positions'>(null);
   const [showAllFindings, setShowAllFindings] = useState(false);
   const [showTechDetails, setShowTechDetails] = useState(false);
 
@@ -305,58 +305,148 @@ export const KundliTab: React.FC<KundliTabProps> = ({
         </button>
       </div>
 
-      {/* Interactive Teach Me Guided Tour */}
-      {teachStep !== null && (
-        <div className="card" style={{ background: 'rgba(95, 194, 179, 0.06)', border: '1px solid rgba(95, 194, 179, 0.3)', display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-            <strong style={{ fontSize: 13.5, color: 'var(--teal)' }}>
-              🎓 Guided Lesson {teachStep} of 3 — Learning Jyotish Using Your Chart
-            </strong>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {[1, 2, 3].map((step) => (
+      {/* Interactive 6-Step Teach Me Guided Tour */}
+      {teachStep !== null && (() => {
+        const goToStep = (step: number) => {
+          setTeachStep(step);
+          setSubMode('charts');
+          if (step === 1) { setSelectedHouse(1); setInspectorMode('houses'); }
+          if (step === 2) { setSelectedHouse(10); setInspectorMode('houses'); }
+          if (step === 3) { onVargaChange('D9'); }
+          if (step === 4) { setInspectorMode('planets'); setSelectedPlanet('moon'); }
+          if (step === 5) { setActiveInsightCard('summary'); }
+          if (step === 6) { setActiveInsightCard('conditions'); }
+        };
+        const lessons = [
+          {
+            title: 'Your Big 3 — Ascendant, Moon & Sun',
+            body: (
+              <>
+                In Vedic astrology, the top center diamond (<strong>House 1</strong>, <strong style={{ color: 'var(--gold)' }}>{natalChart.lagna?.sign.toUpperCase()}</strong>) is your <em>Lagna (Rising Sign)</em> — your outer path, personality style, and how life approaches you. Your <strong>Moon</strong> in <strong style={{ color: 'var(--teal)' }}>{natalChart.grahas.moon.sign.toUpperCase()} ({natalChart.grahas.moon.nakshatra})</strong> shows your emotional core, while your <strong>Sun</strong> in <strong style={{ color: 'var(--gold)' }}>{natalChart.grahas.sun.sign.toUpperCase()}</strong> reflects your inner purpose and confidence.
+              </>
+            ),
+            ask: 'Explain my Ascendant, Moon sign, and Sun sign together in simple everyday language.',
+          },
+          {
+            title: 'Click Any House & Follow the Dashed Lord Line',
+            body: (
+              <>
+                Every diamond on your chart rules a life area (like <strong>House 10 = Career &amp; Reputation</strong>, highlighted now). Click any house on the SVG chart — it turns gold, and a <strong>dashed teal line</strong> points to where its <strong>House Lord</strong> sits, showing <em>where</em> that area of life expresses itself in real life.
+              </>
+            ),
+            ask: 'Explain how my 10th house and its house lord shape my career in plain English.',
+          },
+          {
+            title: 'D1 Birth Chart (The Tree) vs. D9 Navamsha (The Fruit)',
+            body: (
+              <>
+                Your main chart (<strong>D1</strong>) shows raw potential and outer circumstances. The second chart (<strong>D9 Navamsha</strong>, selected now) reveals inner maturity, long-term stamina, and committed relationships as you grow. Any planet marked <strong>★ Vargottama</strong> sits in the exact same sign in both charts — giving it extra staying power.
+              </>
+            ),
+            ask: 'Compare my D1 birth chart and D9 Navamsha in simple terms.',
+          },
+          {
+            title: 'Planetary Strength, Retrograde & Dignity',
+            body: (
+              <>
+                Click any planet abbreviation on the chart (or switch to <strong>Planets</strong> in the inspector). A planet&apos;s <em>Dignity</em> (Exalted, Own, Friendly) shows how comfortably it works. <strong>Retrograde (Rx)</strong> planets aren&apos;t bad — they simply work more inwardly, making you rethink and master that theme on your own terms.
+              </>
+            ),
+            ask: 'Which planets are strongest in my chart and how do my retrograde or special placements feel in daily life?',
+          },
+          {
+            title: 'Dashas — Why Timing Changes Everything',
+            body: (
+              <>
+                Your birth chart is a map, but <strong>Dashas (Planetary Life Chapters)</strong> are the spotlight showing <em>which</em> parts of the map are active right now. Even a quieter planet in your chart comes alive when its Mahadasha or Antardasha runs.
+              </>
+            ),
+            ask: 'What is my current Mahadasha and Antardasha activating in my life right now?',
+          },
+          {
+            title: 'Yogas, Doshas & Free Will',
+            body: (
+              <>
+                <strong>Yogas</strong> are supportive planetary teamwork patterns; <strong>Doshas</strong> simply highlight areas of intensity that ask for awareness (many are classically cancelled by <em>Bhanga</em>). Jyotish is a weather forecast, never a prison — knowing the terrain helps you act wisely.
+              </>
+            ),
+            ask: 'Summarize my active Yogas and Doshas calmly in plain English.',
+          },
+        ];
+        const cur = lessons[teachStep - 1] ?? lessons[0]!;
+        return (
+          <div className="card" style={{ background: 'rgba(95, 194, 179, 0.06)', border: '1px solid rgba(95, 194, 179, 0.35)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <strong style={{ fontSize: 13.5, color: 'var(--teal)' }}>
+                🎓 Interactive Lesson {teachStep} of {lessons.length} — {cur.title}
+              </strong>
+              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                {lessons.map((_, idx) => {
+                  const s = idx + 1;
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => goToStep(s)}
+                      style={{
+                        padding: '3px 8px',
+                        borderRadius: 6,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        background: teachStep === s ? 'var(--teal)' : 'var(--surface-alt)',
+                        color: teachStep === s ? '#15132b' : 'var(--text-main)',
+                        border: '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: 'var(--text-main)' }}>
+              {cur.body}
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, paddingTop: 4 }}>
+              <button
+                onClick={() => openAskDrawer(cur.ask)}
+                style={{ background: 'transparent', border: 'none', padding: 0, fontSize: 11.5, fontWeight: 700, color: 'var(--gold)', cursor: 'pointer' }}
+              >
+                ✨ Ask AI about this lesson →
+              </button>
+              <div style={{ display: 'flex', gap: 6 }}>
                 <button
-                  key={step}
-                  onClick={() => {
-                    setTeachStep(step);
-                    setSubMode('charts');
-                    if (step === 1) { setSelectedHouse(1); setInspectorMode('houses'); }
-                    if (step === 2) { setSelectedHouse(10); setInspectorMode('houses'); }
-                    if (step === 3) { onVargaChange('D9'); }
-                  }}
-                  style={{
-                    padding: '3px 9px',
-                    borderRadius: 6,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    background: teachStep === step ? 'var(--teal)' : 'var(--surface-alt)',
-                    color: teachStep === step ? '#15132b' : 'var(--text-main)',
-                    border: '1px solid var(--border-subtle)',
-                  }}
+                  disabled={teachStep <= 1}
+                  onClick={() => goToStep(Math.max(1, teachStep - 1))}
+                  className="btn btn-outline"
+                  style={{ fontSize: 11, padding: '4px 10px', opacity: teachStep <= 1 ? 0.45 : 1 }}
                 >
-                  Step {step}
+                  ← Prev
                 </button>
-              ))}
+                {teachStep < lessons.length ? (
+                  <button
+                    onClick={() => goToStep(teachStep + 1)}
+                    className="btn btn-primary"
+                    style={{ fontSize: 11, padding: '4px 12px' }}
+                  >
+                    Next Lesson →
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setTeachStep(null)}
+                    className="btn btn-primary"
+                    style={{ fontSize: 11, padding: '4px 12px' }}
+                  >
+                    ✓ Finish Tour
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-
-          {teachStep === 1 && (
-            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
-              <strong>1. Your Big 3 (Boat, Mind, Current):</strong> In your chart, the top diamond (<strong>House 1</strong>, <strong style={{ color: 'var(--gold)' }}>{natalChart.lagna?.sign.toUpperCase()}</strong>) is your <em>Lagna</em> — your vehicle &amp; physical path. Your <strong>Moon</strong> in <strong style={{ color: 'var(--teal)' }}>{natalChart.grahas.moon.sign.toUpperCase()} ({natalChart.grahas.moon.nakshatra})</strong> shows your emotional instinct and natural temperament.
-            </p>
-          )}
-          {teachStep === 2 && (
-            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
-              <strong>2. Click Any House &amp; Watch the Dashed Line:</strong> Click any house polygon inside the chart SVG (like <strong>House 10 Career</strong>). The house turns gold, and a dashed teal line points to where its <strong>House Lord</strong> sits — showing <em>where</em> that area of life expresses itself.
-            </p>
-          )}
-          {teachStep === 3 && (
-            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
-              <strong>3. D1 (The Tree) vs D9 Navamsha (The Fruit):</strong> The first chart (D1) shows raw potential and outer circumstances. The second chart (<strong>D9 Navamsha</strong>) reveals inner maturity, long-term stamina, and partnerships over time. Any planet marked ★ <em>Vargottama</em> sits in the exact same sign in both.
-            </p>
-          )}
-        </div>
-      )}
+        );
+      })()}
 
       {/* Essentials vs Advanced Sub-mode Switcher */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10 }}>
@@ -456,21 +546,70 @@ export const KundliTab: React.FC<KundliTabProps> = ({
       {/* 1. CHARTS & STICKY LEVEL 2 INSPECTOR */}
       {subMode === 'charts' && (
         <>
-          {/* Your Chart in 60 Seconds */}
-          {overview && (
+          {/* Compact Click-to-Understand Pop-in Insight Bar (Replaces Stacked Clutter) */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              Understanding Cards:
+            </span>
+            {(
+              [
+                { id: 'summary', label: '✨ 60-Second Summary', show: Boolean(overview) },
+                { id: 'elements', label: `🔥 Elemental Makeup (${chartMakeup.dominantElem})`, show: true },
+                {
+                  id: 'conditions',
+                  label: `⚡ Special Conditions (${chartMakeup.exaltedOwn.length + chartMakeup.retro.length + chartMakeup.vargottama.length})`,
+                  show: true,
+                },
+                { id: 'positions', label: '📋 Planetary Degrees Table', show: true },
+              ] as const
+            )
+              .filter((c) => c.show)
+              .map((card) => {
+                const isOpen = activeInsightCard === card.id;
+                return (
+                  <button
+                    key={card.id}
+                    onClick={() => setActiveInsightCard(isOpen ? null : card.id)}
+                    style={{
+                      padding: '5px 11px',
+                      borderRadius: 16,
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      background: isOpen ? 'rgba(212, 175, 55, 0.2)' : 'var(--surface-alt)',
+                      color: isOpen ? 'var(--gold)' : 'var(--text-main)',
+                      border: isOpen ? '1px solid var(--gold)' : '1px solid var(--border-subtle)',
+                    }}
+                  >
+                    {card.label} {isOpen ? '▴' : '▾'}
+                  </button>
+                );
+              })}
+          </div>
+
+          {/* Pop-in Understanding Card: 60-Second Summary */}
+          {activeInsightCard === 'summary' && overview && (
             <div
               className="card"
               style={{
-                padding: '12px 16px',
-                background: 'rgba(212, 175, 55, 0.05)',
-                border: '1px solid rgba(212, 175, 55, 0.22)',
+                padding: '14px 16px',
+                background: 'rgba(212, 175, 55, 0.06)',
+                border: '1px solid rgba(212, 175, 55, 0.3)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 8,
+                gap: 10,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>
-                <Sparkles size={14} /> Your Chart in 60 Seconds
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13.5, fontWeight: 700, color: 'var(--gold)' }}>
+                  <Sparkles size={14} /> Your Chart in 60 Seconds
+                </div>
+                <button
+                  onClick={() => setActiveInsightCard(null)}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                >
+                  ✕ Close
+                </button>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10, fontSize: 12.5, lineHeight: 1.55 }}>
                 <div><strong style={{ color: 'var(--teal)' }}>Core Nature:</strong> {overview.coreNature}</div>
@@ -478,6 +617,99 @@ export const KundliTab: React.FC<KundliTabProps> = ({
                 <div><strong style={{ color: 'var(--gold)' }}>Current Chapter:</strong> {overview.currentChapter}</div>
                 <div><strong style={{ color: 'var(--gold)' }}>Key Drivers:</strong> {overview.topStrengthAndWatch}</div>
               </div>
+            </div>
+          )}
+
+          {/* Pop-in Understanding Card: Elemental & Modality Makeup */}
+          {activeInsightCard === 'elements' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10, border: '1px solid rgba(212, 175, 55, 0.3)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Flame size={15} /> Elemental &amp; Modality Balance ({chartMakeup.dominantElem} • {chartMakeup.dominantMod})
+                </h3>
+                <button
+                  onClick={() => setActiveInsightCard(null)}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                >
+                  ✕ Close
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {(Object.entries(chartMakeup.elems) as [string, number][]).map(([name, count]) => {
+                  const pct = Math.round((count / chartMakeup.total) * 100);
+                  const barColor =
+                    name === 'Fire' ? 'var(--amber)' : name === 'Earth' ? 'var(--gold)' : name === 'Air' ? 'var(--teal)' : '#7aa2f7';
+                  return (
+                    <div key={name} style={{ display: 'grid', gridTemplateColumns: '55px 1fr 56px', alignItems: 'center', gap: 8, fontSize: 12 }}>
+                      <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{name}</span>
+                      <div style={{ height: 8, borderRadius: 6, background: 'var(--surface-alt)', overflow: 'hidden' }}>
+                        <div style={{ width: `${pct}%`, height: '100%', background: barColor, borderRadius: 6 }} />
+                      </div>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>{count} ({pct}%)</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {(Object.entries(chartMakeup.mods) as [string, number][]).map(([name, count]) => (
+                  <span key={name} className="gold-badge" style={{ fontSize: 10.5 }}>
+                    {name}: {count}
+                  </span>
+                ))}
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.55 }}>
+                <strong style={{ color: 'var(--teal)' }}>Plain English:</strong> Dominant <strong style={{ color: 'var(--text-main)' }}>{chartMakeup.dominantElem}</strong> energy drives your natural instinct (Fire = action &amp; passion, Earth = stability &amp; results, Air = ideas &amp; people, Water = intuition &amp; depth), while <strong style={{ color: 'var(--text-main)' }}>{chartMakeup.dominantMod}</strong> shows how you handle change.
+              </div>
+            </div>
+          )}
+
+          {/* Pop-in Understanding Card: Special Natal Conditions & Aspects */}
+          {activeInsightCard === 'conditions' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10, border: '1px solid rgba(95, 194, 179, 0.35)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Zap size={15} style={{ color: 'var(--teal)' }} /> Special Natal Conditions &amp; Mutual Aspects
+                </h3>
+                <button
+                  onClick={() => setActiveInsightCard(null)}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                >
+                  ✕ Close
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, fontSize: 11 }}>
+                {chartMakeup.exaltedOwn.length > 0 && (
+                  <span className="teal-badge" style={{ textTransform: 'capitalize' }}>★ Strong (Own/Exalted): {chartMakeup.exaltedOwn.join(', ')}</span>
+                )}
+                {chartMakeup.vargottama.length > 0 && (
+                  <span className="gold-badge" style={{ textTransform: 'capitalize' }}>★ Vargottama (D1=D9): {chartMakeup.vargottama.join(', ')}</span>
+                )}
+                {chartMakeup.retro.length > 0 && (
+                  <span className="amber-badge" style={{ textTransform: 'capitalize' }}>↺ Retrograde: {chartMakeup.retro.join(', ')}</span>
+                )}
+                {chartMakeup.combust.length > 0 && (
+                  <span className="amber-badge" style={{ textTransform: 'capitalize' }}>☀ Combust (near Sun): {chartMakeup.combust.join(', ')}</span>
+                )}
+                {chartMakeup.debilitated.length > 0 && (
+                  <span className="amber-badge" style={{ textTransform: 'capitalize' }}>⚠ Growth Planet (Debilitated): {chartMakeup.debilitated.join(', ')}</span>
+                )}
+              </div>
+              {chartMakeup.aspects.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                    Key Planetary Aspects (Drishti — Planets Influencing Each Other)
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 6 }}>
+                    {chartMakeup.aspects.map((a: any, idx: number) => (
+                      <div key={idx} style={{ padding: '6px 9px', borderRadius: 7, background: 'var(--surface-alt)', fontSize: 11.5 }}>
+                        <strong style={{ color: 'var(--teal)', textTransform: 'capitalize' }}>{a.from}</strong> →{' '}
+                        <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{a.to}</strong>{' '}
+                        <span style={{ color: 'var(--text-muted)' }}>({a.type})</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -1045,128 +1277,21 @@ export const KundliTab: React.FC<KundliTabProps> = ({
             </div>
           </div>
 
-          {/* Elemental Balance & Special Natal Conditions Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
-            {/* Elemental & Modality Balance */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Pop-in Understanding Card: Planetary Positions & Degrees Table */}
+          {activeInsightCard === 'positions' && (
+            <div className="card" style={{ border: '1px solid rgba(212, 175, 55, 0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Flame size={15} /> Elemental &amp; Modality Balance
-                </h3>
-                <span className="teal-badge" style={{ fontSize: 10 }}>
-                  {chartMakeup.dominantElem} • {chartMakeup.dominantMod}
+                <span className="serif-title" style={{ fontSize: 14, color: 'var(--gold)' }}>
+                  Planetary Positions &amp; Degrees (Nirayana)
                 </span>
+                <button
+                  onClick={() => setActiveInsightCard(null)}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                >
+                  ✕ Close
+                </button>
               </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {(Object.entries(chartMakeup.elems) as [string, number][]).map(([name, count]) => {
-                  const pct = Math.round((count / chartMakeup.total) * 100);
-                  const barColor =
-                    name === 'Fire' ? 'var(--amber)' : name === 'Earth' ? 'var(--gold)' : name === 'Air' ? 'var(--teal)' : '#7aa2f7';
-                  return (
-                    <div key={name} style={{ display: 'grid', gridTemplateColumns: '55px 1fr 48px', alignItems: 'center', gap: 8, fontSize: 12 }}>
-                      <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{name}</span>
-                      <div style={{ height: 8, borderRadius: 6, background: 'var(--surface-alt)', overflow: 'hidden' }}>
-                        <div style={{ width: `${pct}%`, height: '100%', background: barColor, borderRadius: 6 }} />
-                      </div>
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>{count} ({pct}%)</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', paddingTop: 4 }}>
-                {(Object.entries(chartMakeup.mods) as [string, number][]).map(([name, count]) => (
-                  <span key={name} className="gold-badge" style={{ fontSize: 10.5 }}>
-                    {name}: {count}
-                  </span>
-                ))}
-              </div>
-              <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                Dominant <strong style={{ color: 'var(--text-main)' }}>{chartMakeup.dominantElem}</strong> &amp;{' '}
-                <strong style={{ color: 'var(--text-main)' }}>{chartMakeup.dominantMod}</strong> energy shapes how you initiate, sustain, and adapt to life changes.
-              </div>
-            </div>
-
-            {/* Special Natal Conditions & Mutual Aspects */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Zap size={15} style={{ color: 'var(--teal)' }} /> Special Natal Conditions &amp; Aspects
-              </h3>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, fontSize: 11 }}>
-                {chartMakeup.exaltedOwn.length > 0 && (
-                  <span className="teal-badge" style={{ textTransform: 'capitalize' }}>
-                    ★ Strong: {chartMakeup.exaltedOwn.join(', ')}
-                  </span>
-                )}
-                {chartMakeup.vargottama.length > 0 && (
-                  <span className="gold-badge" style={{ textTransform: 'capitalize' }}>
-                    ★ Vargottama: {chartMakeup.vargottama.join(', ')}
-                  </span>
-                )}
-                {chartMakeup.retro.length > 0 && (
-                  <span className="amber-badge" style={{ textTransform: 'capitalize' }}>
-                    ↺ Retrograde: {chartMakeup.retro.join(', ')}
-                  </span>
-                )}
-                {chartMakeup.combust.length > 0 && (
-                  <span className="amber-badge" style={{ textTransform: 'capitalize' }}>
-                    ☀ Combust: {chartMakeup.combust.join(', ')}
-                  </span>
-                )}
-                {chartMakeup.debilitated.length > 0 && (
-                  <span className="amber-badge" style={{ textTransform: 'capitalize' }}>
-                    ⚠ Debilitated: {chartMakeup.debilitated.join(', ')}
-                  </span>
-                )}
-              </div>
-
-              {chartMakeup.aspects.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                    Key Planetary Aspects (Drishti)
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 6 }}>
-                    {chartMakeup.aspects.map((a: any, idx: number) => (
-                      <div key={idx} style={{ padding: '6px 9px', borderRadius: 7, background: 'var(--surface-alt)', fontSize: 11.5 }}>
-                        <strong style={{ color: 'var(--teal)', textTransform: 'capitalize' }}>{a.from}</strong> →{' '}
-                        <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{a.to}</strong>{' '}
-                        <span style={{ color: 'var(--text-muted)' }}>({a.type})</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Collapsible Planetary Positions Table ("Show calculation") */}
-          <div className="card">
-            <button
-              onClick={() => setShowPositionsTable((v) => !v)}
-              style={{
-                width: '100%',
-                background: 'transparent',
-                border: 'none',
-                padding: 0,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                cursor: 'pointer',
-                color: 'var(--gold)',
-              }}
-            >
-              <span className="serif-title" style={{ fontSize: 14 }}>
-                Planetary Positions &amp; Degrees (Nirayana)
-              </span>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                {showPositionsTable ? 'Hide table' : 'Show calculation table'}
-                {showPositionsTable ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
-              </span>
-            </button>
-
-            {showPositionsTable && (
+              {true && (
               <div style={{ overflowX: 'auto', marginTop: 12 }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, textAlign: 'left' }}>
                   <thead>
@@ -1236,8 +1361,9 @@ export const KundliTab: React.FC<KundliTabProps> = ({
                   </tbody>
                 </table>
               </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </>
       )}
 

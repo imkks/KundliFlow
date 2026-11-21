@@ -221,6 +221,111 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
 ];
 
+const HOUSE_LABELS_FRIENDLY: Record<number, string> = {
+  1: 'Self, Vitality & Path',
+  2: 'Wealth, Family & Speech',
+  3: 'Courage, Skills & Siblings',
+  4: 'Home, Peace & Foundations',
+  5: 'Creativity, Focus & Learning',
+  6: 'Work, Routines & Health',
+  7: 'Partnerships & Marriage',
+  8: 'Deep Shifts & Research',
+  9: 'Wisdom, Mentors & Luck',
+  10: 'Career & Public Reputation',
+  11: 'Gains, Goals & Community',
+  12: 'Rest, Reflection & Foreign Links',
+};
+
+function describeToolForUser(tc: NativeToolCall): string {
+  const a = tc.args ?? {};
+  switch (tc.name) {
+    case 'read': {
+      const p = String(a.path ?? '/overview');
+      if (p === '/overview') return 'Reading your chart overview (Ascendant, Moon & core placements)';
+      const hMatch = p.match(/^\/houses\/(\d+)/);
+      if (hMatch) {
+        const h = Number(hMatch[1]);
+        return `Inspecting House ${h} (${HOUSE_LABELS_FRIENDLY[h] ?? 'life area'})`;
+      }
+      const pMatch = p.match(/^\/planets\/([a-z]+)/i);
+      if (pMatch) {
+        const pl = pMatch[1]!.charAt(0).toUpperCase() + pMatch[1]!.slice(1);
+        return `Inspecting ${pl}'s sign, house & dignity`;
+      }
+      if (p.includes('periods')) return 'Checking your active planetary life chapters (Dashas)';
+      if (p.includes('transits')) return 'Checking live planetary transits (Gochar)';
+      if (p.includes('strength')) return 'Checking planetary & house strength metrics';
+      return `Reading chart section ${p}`;
+    }
+    case 'inspect_varga': {
+      const v = String(a.varga ?? 'D9').toUpperCase();
+      const vDesc =
+        v === 'D9' ? 'Navamsha (inner maturity & partnerships)' :
+        v === 'D10' ? 'Dashamsha (career & status)' :
+        v === 'D2' ? 'Hora (wealth & resources)' :
+        v === 'D4' ? 'Chaturthamsha (home & assets)' :
+        v === 'D7' ? 'Saptamsha (creativity & children)' : `${v} divisional chart`;
+      return `Analyzing your ${v} — ${vDesc}`;
+    }
+    case 'inspect_dashas': {
+      const sys = String(a.system ?? 'vimshottari');
+      const label = sys === 'yogini' ? 'Yogini' : sys === 'chara' ? 'Jaimini Chara' : 'Vimshottari';
+      return `Checking your ${label} Dasha timeline${a.from ? ` (${a.from} onward)` : ''}`;
+    }
+    case 'inspect_transits':
+      return 'Scanning live planetary transits (Gochar) & Sade Sati status';
+    case 'inspect_natal_lore': {
+      const kind = String(a.kind ?? 'yogas');
+      const labels: Record<string, string> = {
+        yogas: 'Checking classical Yogas in your chart',
+        doshas: 'Checking Doshas & classical Bhanga cancellations',
+        aspects: 'Checking planetary mutual aspects (Drishti)',
+        karakas: 'Checking Jaimini Chara Karakas (Atmakaraka & soul drivers)',
+        avakahada: 'Checking Avakahada & birth star temperament',
+        ghatak: 'Checking favourable amplifiers & Ghatak guardrails',
+        upagrahas: 'Checking subtle Upagraha placements',
+        arudha: 'Checking Arudha Padas (public image & perception)',
+      };
+      return labels[kind] ?? `Inspecting ${kind}`;
+    }
+    case 'inspect_strengths': {
+      const kind = String(a.kind ?? 'shadbala');
+      const labels: Record<string, string> = {
+        shadbala: 'Measuring planetary stamina (Shadbala)',
+        bhavabala: 'Measuring 12-house strength (Bhavabala)',
+        ashtakvarga: 'Checking Ashtakvarga bindu cushion (BAV/SAV)',
+        avasthas: 'Checking planetary vitality & mood (Avasthas)',
+        friendship: 'Checking 5-fold planetary friendship matrix',
+      };
+      return labels[kind] ?? `Checking ${kind}`;
+    }
+    case 'inspect_kp_chalit':
+      return 'Checking KP Sub-Lords & Sripati Bhava Chalit house shifts';
+    case 'inspect_panchang':
+      return 'Checking birth Panchang (Tithi, Yoga, Karana & weekday)';
+    case 'inspect_bhavas':
+      return a.house ? `Analyzing House ${a.house} Bhava dossier` : 'Analyzing all 12 house dossiers';
+    case 'inspect_varshaphal':
+      return `Computing annual Varshaphal (Solar Return) & Muntha${a.year ? ` for ${a.year}` : ''}`;
+    case 'inspect_muhurta':
+      return `Checking Panchang, Rahu Kalam & favorable windows${a.date ? ` for ${a.date}` : ''}`;
+    case 'inspect_journal_insights':
+      return 'Reviewing your recent journal check-ins & sky snapshots';
+    case 'compare_perspectives':
+      return `Comparing House ${a.house ?? 1} from Lagna, Moon, Sun & Karakamsa`;
+    case 'trace_dispositor_chain':
+      return `Tracing the dispositor chain for ${String(a.planetOrHouse ?? 'chart')}`;
+    case 'window_scan':
+      return `Scanning upcoming favorable timing windows for ${String(a.theme ?? 'your focus')}`;
+    case 'search_knowledge':
+      return `Consulting Jyotish reference library ("${String(a.query ?? '').slice(0, 36)}")`;
+    case 'find':
+      return `Searching chart facts for "${String(a.text ?? '')}"`;
+    default:
+      return `Running ${tc.name}`;
+  }
+}
+
 async function executeToolCall(server: ToolServer, tc: NativeToolCall): Promise<ToolResult> {
   const a = tc.args ?? {};
   switch (tc.name) {
@@ -399,6 +504,12 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
     let lastVerifierErrors: string[] = [];
 
     for (let turn = 1; turn <= maxTurns; turn++) {
+      if (turn === 1) {
+        emitTrace('trace', 'Understanding your question & picking the right chart tools…', turn);
+      } else {
+        emitTrace('trace', 'Synthesizing chart insights into plain English…', turn);
+      }
+
       const result = await llm.runAgentTurn({
         systemPrompt: DEEP_AGENT_SYSTEM_PROMPT,
         messages,
@@ -414,7 +525,7 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
 
         // Execute all parallel tool calls requested in this turn (with per-tool error isolation)
         for (const tc of result.toolCalls) {
-          emitTrace('tool_call', `${tc.name}(${JSON.stringify(tc.args)})`, turn, tc);
+          emitTrace('tool_call', describeToolForUser(tc), turn, { name: tc.name, args: tc.args });
           let compactText: string;
           try {
             const toolOut = await executeToolCall(server, tc);

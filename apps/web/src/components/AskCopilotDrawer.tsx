@@ -38,6 +38,7 @@ interface ChatMessage {
   timing?: { windowId: string; startUtc: string; endUtc: string; summary: string }[];
   reflect?: string;
   followUps?: string[];
+  steps?: string[];
   error?: boolean;
 }
 
@@ -68,6 +69,8 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
   const [input, setInput] = useState('');
   const [deepMode, setDeepMode] = useState(false);
   const [sending, setSending] = useState(false);
+  const [liveSteps, setLiveSteps] = useState<Array<{ id: string; text: string; kind: string }>>([]);
+  const [expandedStepsId, setExpandedStepsId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const storageKey = `${CHAT_STORAGE_PREFIX}${profileId ?? 'guest'}`;
@@ -140,19 +143,78 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setSending(true);
+    setLiveSteps([{ id: 'init', text: 'Connecting to KundliFlow Jyotish engine…', kind: 'trace' }]);
+
+    const collectedToolSteps: string[] = [];
 
     try {
       const res = await fetch(`${apiBaseUrl}/api/ask`, {
         method: 'POST',
-        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        headers: authHeaders({
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream',
+        }),
         body: JSON.stringify(
           profileId
-            ? { profileId, question: q, deepMode }
-            : { natal: natalChart, shadbala, ashtakvarga, dashas, transits, question: q, deepMode },
+            ? { profileId, question: q, deepMode, deep: deepMode }
+            : { natal: natalChart, shadbala, ashtakvarga, dashas, transits, question: q, deepMode, deep: deepMode },
         ),
       });
       if (!res.ok) throw new Error(`API HTTP ${res.status}`);
-      const data = await res.json();
+
+      let finalData: any = null;
+      const contentType = res.headers.get('content-type') || '';
+
+      if (contentType.includes('text/event-stream') && res.body) {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let currentEvent = 'message';
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const rawLine of lines) {
+            const line = rawLine.trim();
+            if (!line) {
+              currentEvent = 'message';
+              continue;
+            }
+            if (line.startsWith('event:')) {
+              currentEvent = line.slice(6).trim();
+            } else if (line.startsWith('data:')) {
+              const jsonStr = line.slice(5).trim();
+              try {
+                const payload = JSON.parse(jsonStr);
+                if (currentEvent === 'result') {
+                  finalData = payload;
+                } else if (currentEvent === 'error') {
+                  throw new Error(payload?.error || 'Stream error');
+                } else if (payload?.message) {
+                  if (currentEvent === 'tool_call') {
+                    collectedToolSteps.push(String(payload.message));
+                  }
+                  setLiveSteps((prev) => {
+                    const filtered = prev.filter((s) => s.id !== 'init');
+                    if (filtered.some((s) => s.text === payload.message)) return filtered;
+                    return [...filtered, { id: `${Date.now()}-${Math.random()}`, text: String(payload.message), kind: currentEvent }];
+                  });
+                }
+              } catch (parseErr: any) {
+                if (currentEvent === 'error') throw parseErr;
+              }
+            }
+          }
+        }
+      } else {
+        finalData = await res.json();
+      }
+
+      const data = finalData ?? {};
       const resp = data.response ?? {};
       const assistantMsg: ChatMessage = {
         id: `a-${Date.now()}`,
@@ -164,6 +226,7 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
         timing: resp.timing,
         reflect: resp.reflect,
         followUps: resp.followUps,
+        steps: collectedToolSteps.length > 0 ? collectedToolSteps : undefined,
       };
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err: any) {
@@ -172,13 +235,14 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
         {
           id: `e-${Date.now()}`,
           role: 'assistant',
-          text: `Could not reach MyAstro AI (${err?.message ?? 'offline'}). Make sure @astro/api is running on localhost:8787.`,
+          text: `Could not reach MyAstro AI (${err?.message ?? 'offline'}). Make sure @astro/api is running.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           error: true,
         },
       ]);
     } finally {
       setSending(false);
+      setLiveSteps([]);
     }
   };
 
@@ -412,6 +476,32 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
                   </div>
                 )}
 
+                {m.steps && m.steps.length > 0 && (
+                  <div style={{ marginTop: 2 }}>
+                    <button
+                      onClick={() => setExpandedStepsId(expandedStepsId === m.id ? null : m.id)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        padding: 0,
+                        fontSize: 10.5,
+                        color: 'var(--teal)',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                      }}
+                    >
+                      ✓ Checked {m.steps.length} chart source{m.steps.length === 1 ? '' : 's'} {expandedStepsId === m.id ? '▴' : '▾'}
+                    </button>
+                    {expandedStepsId === m.id && (
+                      <div style={{ marginTop: 5, padding: '6px 9px', borderRadius: 7, background: 'rgba(95, 194, 179, 0.07)', border: '1px solid rgba(95, 194, 179, 0.2)', display: 'flex', flexDirection: 'column', gap: 3, fontSize: 11, color: 'var(--text-muted)' }}>
+                        {m.steps.map((st, sIdx) => (
+                          <div key={sIdx}>✓ {st}</div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {m.reflect && (
                   <div style={{ padding: '8px 10px', borderRadius: 8, background: 'rgba(227, 173, 70, 0.08)', border: '1px solid rgba(227, 173, 70, 0.25)', fontSize: 11.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                     <span><strong style={{ color: 'var(--gold)' }}>Reflect:</strong> {m.reflect}</span>
@@ -451,9 +541,46 @@ export const AskCopilotDrawer: React.FC<AskCopilotDrawerProps> = ({
           ))}
 
           {sending && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 12, background: 'var(--surface)', border: '1px solid var(--border-subtle)', fontSize: 12.5, color: 'var(--teal)', alignSelf: 'flex-start' }}>
-              <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
-              Reading your chart &amp; verifying placements…
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+                padding: '11px 14px',
+                borderRadius: 12,
+                background: 'var(--surface)',
+                border: '1px solid rgba(95, 194, 179, 0.3)',
+                fontSize: 12,
+                alignSelf: 'flex-start',
+                maxWidth: '92%',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: 'var(--teal)', fontWeight: 700, fontSize: 11.5 }}>
+                <Loader2 size={13} style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
+                <span>Thinking &amp; checking your chart…</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 4 }}>
+                {liveSteps.slice(-6).map((step, idx, arr) => {
+                  const isLatest = idx === arr.length - 1;
+                  return (
+                    <div
+                      key={step.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        fontSize: 11.5,
+                        color: isLatest ? 'var(--text-main)' : 'var(--text-muted)',
+                      }}
+                    >
+                      <span style={{ color: isLatest ? 'var(--gold)' : 'var(--teal)', fontWeight: 700 }}>
+                        {isLatest ? '›' : '✓'}
+                      </span>
+                      <span>{step.text}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
