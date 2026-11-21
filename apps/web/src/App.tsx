@@ -97,6 +97,7 @@ interface AppShellProps {
   tzId: string;
   cityName: string;
   onCityChange: (c: string) => void;
+  onLocationChange?: (loc: { name: string; lat: number; lon: number; tzId: string }) => void;
   lat: number;
   lon: number;
   natalChart: NatalChart;
@@ -810,6 +811,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
             <TodayTab
               cityName={props.cityName}
               onCityChange={props.onCityChange}
+              onLocationChange={props.onLocationChange}
               dayView={props.dayView}
               currentScore={props.currentScore}
               activeCityName={props.activeCityName}
@@ -985,10 +987,14 @@ export default function App() {
 
   const [userName, setUserName] = useState(activeProfile.name);
   const [cityName, setCityName] = useState(activeProfile.cityName);
-  const [todayCityName, setTodayCityName] = useState(() => {
+  const [todayLocation, setTodayLocation] = useState<{ name: string; lat: number; lon: number; tzId: string }>(() => {
     const matched = CITIES.find((c) => c.name.toLowerCase() === activeProfile.cityName.toLowerCase());
-    return matched ? matched.name : CITIES[0]!.name;
+    if (matched) {
+      return { name: matched.name, lat: matched.lat, lon: matched.lon, tzId: matched.tzId };
+    }
+    return { name: activeProfile.cityName, lat: activeProfile.lat, lon: activeProfile.lon, tzId: activeProfile.tzId };
   });
+  const [todayCityName, setTodayCityName] = useState(() => todayLocation.name);
   const [lat, setLat] = useState(activeProfile.lat);
   const [lon, setLon] = useState(activeProfile.lon);
   const [birthDate, setBirthDate] = useState(activeProfile.birthDate);
@@ -1073,6 +1079,8 @@ export default function App() {
     setBirthDate(p.birthDate);
     setBirthTime(p.birthTime);
     setCityName(p.cityName);
+    setTodayCityName(p.cityName);
+    setTodayLocation({ name: p.cityName, lat: p.lat, lon: p.lon, tzId: p.tzId });
     setLat(p.lat);
     setLon(p.lon);
     setTzId(p.tzId);
@@ -1179,6 +1187,8 @@ export default function App() {
     setBirthDate(p.birthDate);
     setBirthTime(p.birthTime);
     setCityName(p.cityName);
+    setTodayCityName(p.cityName);
+    setTodayLocation({ name: p.cityName, lat: p.lat, lon: p.lon, tzId: p.tzId });
     setLat(p.lat);
     setLon(p.lon);
     setTzId(p.tzId);
@@ -1257,8 +1267,8 @@ export default function App() {
   ]);
 
   const activeCity = useMemo(() => {
-    return CITIES.find((c) => c.name.toLowerCase() === todayCityName.toLowerCase()) || CITIES[0]!;
-  }, [todayCityName]);
+    return todayLocation;
+  }, [todayLocation]);
 
   useEffect(() => {
     if (!authUser || !savedProfile) {
@@ -1514,6 +1524,10 @@ export default function App() {
         tzId={tzId}
         cityName={todayCityName}
         onCityChange={setTodayCityName}
+        onLocationChange={(loc) => {
+          setTodayLocation(loc);
+          setTodayCityName(loc.name);
+        }}
         lat={lat}
         lon={lon}
         natalChart={natalChart}

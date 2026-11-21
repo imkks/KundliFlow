@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Sparkles, Calendar, Clock, MapPin, User, ShieldCheck, ArrowRight } from 'lucide-react';
-import { CITIES } from '@astro/content';
 import type { UserProfileInput } from './OnboardingModal.tsx';
+import { GooglePlaceAutocomplete } from './GooglePlaceAutocomplete.tsx';
 
 interface FirstVisitOnboardingProps {
   onComplete: (profile: UserProfileInput) => void;
@@ -16,20 +16,12 @@ export const FirstVisitOnboarding: React.FC<FirstVisitOnboardingProps> = ({
   const [birthDate, setBirthDate] = useState('1995-08-15');
   const [birthTime, setBirthTime] = useState('09:30:00');
   const [timeCertainty, setTimeCertainty] = useState<'exact' | 'approx' | 'unknown'>('exact');
-  const [citySearch, setCitySearch] = useState('Bengaluru');
-  const [selectedCityName, setSelectedCityName] = useState('Bengaluru');
-
-  const filteredCities = useMemo(() => {
-    const q = citySearch.trim().toLowerCase();
-    if (!q) return CITIES.slice(0, 12);
-    return CITIES.filter(
-      (c) => c.name.toLowerCase().includes(q) || c.country.toLowerCase().includes(q),
-    ).slice(0, 12);
-  }, [citySearch]);
-
-  const activeCity = useMemo(() => {
-    return CITIES.find((c) => c.name === selectedCityName) ?? CITIES[0]!;
-  }, [selectedCityName]);
+  const [place, setPlace] = useState<{ cityName: string; lat: number; lon: number; tzId: string }>({
+    cityName: 'Bengaluru, Karnataka, India',
+    lat: 12.9716,
+    lon: 77.5946,
+    tzId: 'Asia/Kolkata',
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,10 +29,10 @@ export const FirstVisitOnboarding: React.FC<FirstVisitOnboardingProps> = ({
       name: name.trim() || 'My Natal Chart',
       birthDate,
       birthTime: timeCertainty === 'unknown' ? '12:00:00' : birthTime.length === 5 ? `${birthTime}:00` : birthTime,
-      cityName: activeCity.name,
-      lat: activeCity.lat,
-      lon: activeCity.lon,
-      tzId: activeCity.tzId ?? 'Asia/Kolkata',
+      cityName: place.cityName,
+      lat: place.lat,
+      lon: place.lon,
+      tzId: place.tzId || 'Asia/Kolkata',
       timeCertainty,
       ayanamsa: 'lahiri',
     });
@@ -180,37 +172,22 @@ export const FirstVisitOnboarding: React.FC<FirstVisitOnboardingProps> = ({
 
           <div>
             <label style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--gold)', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
-              <MapPin size={12} /> Birth City ({activeCity.name}, {activeCity.country})
+              <MapPin size={12} /> Birth City / Location
             </label>
-            <input
-              type="text"
-              value={citySearch}
-              onChange={(e) => setCitySearch(e.target.value)}
-              placeholder="Search city..."
-              style={{ width: '100%', padding: '8px 10px', borderRadius: 8, background: 'var(--surface-alt)', border: '1px solid var(--border)', color: 'var(--text-main)', fontSize: 12.5, marginBottom: 6 }}
+            <GooglePlaceAutocomplete
+              value={place.cityName}
+              onPlaceSelect={(p) => setPlace(p)}
+              onTextChange={(txt) => setPlace((prev) => ({ ...prev, cityName: txt }))}
+              placeholder="Search birth city, town, or use GPS…"
+              showCurrentLocationBtn={true}
+              autoRequestLocation={false}
             />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, maxHeight: 84, overflowY: 'auto' }}>
-              {filteredCities.map((c) => (
-                <button
-                  type="button"
-                  key={`${c.name}-${c.country}`}
-                  onClick={() => {
-                    setSelectedCityName(c.name);
-                    setCitySearch(c.name);
-                  }}
-                  style={{
-                    padding: '4px 9px',
-                    borderRadius: 12,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    background: selectedCityName === c.name ? 'var(--gold)' : 'var(--surface-alt)',
-                    color: selectedCityName === c.name ? '#15132b' : 'var(--text-main)',
-                    border: '1px solid var(--border-subtle)',
-                  }}
-                >
-                  {c.name}
-                </button>
-              ))}
+            <div style={{ display: 'flex', gap: 10, marginTop: 6, fontSize: 10.5, color: 'var(--text-muted)' }}>
+              <span>Lat: <strong style={{ color: 'var(--teal)' }}>{place.lat.toFixed(2)}°</strong></span>
+              <span>•</span>
+              <span>Lon: <strong style={{ color: 'var(--teal)' }}>{place.lon.toFixed(2)}°</strong></span>
+              <span>•</span>
+              <span>Timezone: <strong style={{ color: 'var(--teal)' }}>{place.tzId}</strong></span>
             </div>
           </div>
 

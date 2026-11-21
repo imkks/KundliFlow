@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { CITIES, type Place } from '@astro/content';
 import type { AyanamsaId } from '@astro/engine';
+import { GooglePlaceAutocomplete } from './GooglePlaceAutocomplete.tsx';
 
 export interface UserProfileInput {
   name: string;
@@ -300,28 +301,19 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)', marginBottom: 4, display: 'block' }}>
               Birth Place / City:
             </label>
-            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-alt)', border: '1px solid var(--border)', borderRadius: 8, padding: '0 10px', marginBottom: 8 }}>
-              <MapPin size={15} style={{ color: 'var(--teal)', marginRight: 8 }} />
-              <select
+            <div style={{ marginBottom: 10 }}>
+              <GooglePlaceAutocomplete
                 value={cityName}
-                onChange={(e) => handleCitySelect(e.target.value)}
-                style={{
-                  flex: 1,
-                  background: 'transparent',
-                  border: 'none',
-                  padding: '10px 0',
-                  color: 'var(--text-main)',
-                  fontSize: 13,
-                  outline: 'none',
-                  cursor: 'pointer',
+                onPlaceSelect={(place) => {
+                  setCityName(place.cityName);
+                  setLat(place.lat);
+                  setLon(place.lon);
+                  setTzId(place.tzId);
                 }}
-              >
-                {CITIES.map((c) => (
-                  <option key={c.id} value={c.name} style={{ background: '#201d40', color: '#f3eee2' }}>
-                    {c.name}, {c.admin} ({c.country}) — {c.lat.toFixed(2)}°N, {c.lon.toFixed(2)}°E
-                  </option>
-                ))}
-              </select>
+                onTextChange={(txt) => setCityName(txt)}
+                placeholder="Search birth city, town, or district worldwide…"
+                showCurrentLocationBtn={true}
+              />
             </div>
 
             {/* Custom Coordinates & Timezone Inputs */}

@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { Clock, ShieldAlert, MapPin, Sparkles, ChevronDown, ChevronRight, HelpCircle, CheckCircle2, PenLine } from 'lucide-react';
-import { CITIES } from '@astro/content';
 import type { DayView, HourScore } from '@astro/engine';
 import { useReading } from '../context/ReadingContext.tsx';
 import { GlossaryTerm } from '../components/GlossaryTerm.tsx';
 import { API_BASE_URL } from '../config.ts';
+import { GooglePlaceAutocomplete } from '../components/GooglePlaceAutocomplete.tsx';
+
+export interface TodayLocation {
+  name: string;
+  lat: number;
+  lon: number;
+  tzId: string;
+}
 
 interface TodayTabProps {
   cityName: string;
-  onCityChange: (city: string) => void;
+  onCityChange?: (city: string) => void;
+  onLocationChange?: (loc: TodayLocation) => void;
   dayView: DayView | null;
   currentScore: HourScore | null;
   activeCityName: string;
@@ -61,6 +69,7 @@ function computeDashaProgress(startIso?: string, endIso?: string): { pct: number
 export const TodayTab: React.FC<TodayTabProps> = ({
   cityName,
   onCityChange,
+  onLocationChange,
   dayView,
   currentScore,
   activeCityName,
@@ -176,29 +185,29 @@ export const TodayTab: React.FC<TodayTabProps> = ({
           padding: '12px 16px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <MapPin size={15} style={{ color: 'var(--teal)' }} />
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-main)' }}>Your location today:</span>
-          <select
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <MapPin size={15} style={{ color: 'var(--teal)' }} />
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
+              Your location today:
+            </span>
+          </div>
+          <GooglePlaceAutocomplete
             value={cityName}
-            onChange={(e) => onCityChange(e.target.value)}
-            aria-label="Your location today"
-            style={{
-              background: 'var(--surface-alt)',
-              color: 'var(--text-main)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              padding: '4px 10px',
-              fontSize: 12,
-              cursor: 'pointer',
+            onPlaceSelect={(place) => {
+              onLocationChange?.({
+                name: place.cityName,
+                lat: place.lat,
+                lon: place.lon,
+                tzId: place.tzId,
+              });
+              onCityChange?.(place.cityName);
             }}
-          >
-            {CITIES.map((c) => (
-              <option key={c.name} value={c.name}>
-                {c.name} ({c.country})
-              </option>
-            ))}
-          </select>
+            onTextChange={(txt) => onCityChange?.(txt)}
+            placeholder="Search city worldwide or use GPS…"
+            showCurrentLocationBtn={true}
+            style={{ width: 'auto', minWidth: 260, maxWidth: 380 }}
+          />
           <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
             Used for sunrise, Hora &amp; Rahu Kalam
           </span>
