@@ -105,14 +105,11 @@ jobs:
           path: build-artifacts/kundliflow-api-bundle.tar.gz
           retention-days: 30
 
-  # 2. Build & deploy thin frontend inside 'github-pages' environment (reads both github-pages env vars & repo vars!)
-  deploy-pages:
+  # 2. Build thin frontend & upload Pages artifact
+  build-pages:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build-and-test
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -149,19 +146,6 @@ jobs:
           echo "Verified: 0 WASM files in apps/web/dist/assets/"
           ls -lh apps/web/dist/assets/
 
-      - name: Package & Upload Frontend Web Artifact
-        run: |
-          mkdir -p build-artifacts/kundliflow-web
-          cp -r apps/web/dist/* build-artifacts/kundliflow-web/
-          tar -czf build-artifacts/kundliflow-web-bundle.tar.gz -C build-artifacts kundliflow-web
-
-      - name: Upload Frontend Web Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: kundliflow-web-bundle
-          path: build-artifacts/kundliflow-web-bundle.tar.gz
-          retention-days: 30
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -170,11 +154,20 @@ jobs:
         with:
           path: apps/web/dist
 
+  # 3. Deploy to GitHub Pages (Separate job ensures artifact metadata is fully indexed)
+  deploy-pages:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build-pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # 3. Deploy API artifact to Oracle Cloud Server
+  # 4. Deploy API artifact to Oracle Cloud Server
   deploy-server:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build-and-test

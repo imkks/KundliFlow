@@ -82,12 +82,28 @@ export async function loginWithGoogleIdToken(idToken: string): Promise<{
   user: AuthUser;
   profiles: ServerProfileSummary[];
 }> {
-  const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken }),
-  });
-  const data = await res.json();
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/api/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken }),
+    });
+  } catch (err: any) {
+    throw new Error(
+      `Cannot connect to API at ${API_BASE_URL}. Check if your backend server and Cloudflare tunnel are active.`,
+    );
+  }
+
+  let data: any;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(
+      `Backend returned HTTP ${res.status}. If using Cloudflare tunnel, verify the KundliFlow API is running on the target port (e.g. 8787).`,
+    );
+  }
+
   if (!res.ok) throw new Error(data?.error || `Google sign-in failed (HTTP ${res.status})`);
   setAuthToken(data.token);
   return data;
