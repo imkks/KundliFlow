@@ -1,4 +1,4 @@
-name: Build, Test & Deploy (with Server Approval)
+name: Build, Test & Deploy
 
 on:
   push:
@@ -169,13 +169,11 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # 3. Deploy API artifact to Oracle Cloud Server (waits for manual approval via 'production-server' environment)
+  # 3. Deploy API artifact to Oracle Cloud Server
   deploy-server:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build-and-test
     runs-on: ubuntu-latest
-    environment:
-      name: production-server
     steps:
       - name: Download Backend API Artifact
         uses: actions/download-artifact@v4
@@ -190,7 +188,7 @@ jobs:
           ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
         run: |
           if [ -z "$ORACLE_HOST" ] || [ -z "$ORACLE_SSH_KEY" ]; then
-            echo "ORACLE_HOST or ORACLE_SSH_KEY secret not set — skipping SSH push (artifact is ready for manual download)."
+            echo "ORACLE_HOST or ORACLE_SSH_KEY not set — skipping SSH push."
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
@@ -202,15 +200,6 @@ jobs:
           ORACLE_HOST: ${{ secrets.ORACLE_HOST || vars.ORACLE_HOST }}
           ORACLE_USER: ${{ secrets.ORACLE_USER || vars.ORACLE_USER || 'ubuntu' }}
           ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
-          PORT: ${{ vars.PORT || '8787' }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET || '' }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || vars.VITE_GOOGLE_CLIENT_ID || '' }}
-          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN || secrets.DEEPSEEK_API_KEY || '' }}
-          ANTHROPIC_BASE_URL: ${{ vars.ANTHROPIC_BASE_URL || 'https://api.deepseek.com/anthropic' }}
-          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'deepseek-flash' }}
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY || '' }}
-          LLM_BASE_URL: ${{ vars.LLM_BASE_URL || '' }}
-          LLM_MODEL: ${{ vars.LLM_MODEL || '' }}
         run: |
           mkdir -p ~/.ssh
           printf "%s\n" "$ORACLE_SSH_KEY" > ~/.ssh/oracle_key
@@ -218,36 +207,4 @@ jobs:
           ssh-keyscan -H "$ORACLE_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
           scp -i ~/.ssh/oracle_key ./release/kundliflow-api-bundle.tar.gz "${ORACLE_USER}@${ORACLE_HOST}:/tmp/kundliflow-api-bundle.tar.gz"
-          ssh -i ~/.ssh/oracle_key "${ORACLE_USER}@${ORACLE_HOST}" bash -s <<REMOTE
-            set -euo pipefail
-            mkdir -p ~/kundliflow-api
-            tar -xzf /tmp/kundliflow-api-bundle.tar.gz -C ~
-            rm -f /tmp/kundliflow-api-bundle.tar.gz
-            cd ~/kundliflow-api
-            [ -f .env ] || cp .env.example .env
-
-            # Update environment variables if provided from GitHub Actions secrets/vars
-            update_env() {
-              key="\$1"
-              val="\$2"
-              if [ -n "\$val" ]; then
-                if grep -q "^\${key}=" .env; then
-                  sed -i "s|^\${key}=.*|\${key}=\${val}|" .env
-                else
-                  echo "\${key}=\${val}" >> .env
-                fi
-              fi
-            }
-
-            update_env "PORT" "${PORT}"
-            update_env "JWT_SECRET" "${JWT_SECRET}"
-            update_env "GOOGLE_CLIENT_ID" "${GOOGLE_CLIENT_ID}"
-            update_env "ANTHROPIC_AUTH_TOKEN" "${ANTHROPIC_AUTH_TOKEN}"
-            update_env "ANTHROPIC_BASE_URL" "${ANTHROPIC_BASE_URL}"
-            update_env "ANTHROPIC_MODEL" "${ANTHROPIC_MODEL}"
-            update_env "LLM_API_KEY" "${LLM_API_KEY}"
-            update_env "LLM_BASE_URL" "${LLM_BASE_URL}"
-            update_env "LLM_MODEL" "${LLM_MODEL}"
-
-            bash start.sh
-REMOTE
+          ssh -i ~/.ssh/oracle_key "${ORACLE_USER}@${ORACLE_HOST}" "mkdir -p ~/kundliflow-api && tar -xzf /tmp/kundliflow-api-bundle.tar.gz -C ~ && rm -f /tmp/kundliflow-api-bundle.tar.gz && cd ~/kundliflow-api && bash start.sh"
