@@ -45,14 +45,7 @@ import { CITIES } from '@astro/content';
 import { type ChartPlacement } from './components/NorthIndianChart.tsx';
 import { OnboardingModal, type UserProfileInput } from './components/OnboardingModal.tsx';
 import { FirstVisitOnboarding } from './components/FirstVisitOnboarding.tsx';
-import { PrintableNatalReport } from './components/PrintableNatalReport.tsx';
-import { DataSovereigntyModal } from './components/DataSovereigntyModal.tsx';
-import { LlmDossierModal } from './components/LlmDossierModal.tsx';
-import { PlainEnglishExplainerModal } from './components/PlainEnglishExplainerModal.tsx';
 import { AskCopilotDrawer } from './components/AskCopilotDrawer.tsx';
-import { ShareBlueprintModal } from './components/ShareBlueprintModal.tsx';
-import { CommandPaletteModal } from './components/CommandPaletteModal.tsx';
-import { GoogleAuthModal } from './components/GoogleAuthModal.tsx';
 import { AuthOnboardingGate } from './components/AuthOnboardingGate.tsx';
 import { type JournalEntry } from './components/JournalExplorer.tsx';
 import { ReadingProvider, useReading, type MainTab } from './context/ReadingContext.tsx';
@@ -62,6 +55,29 @@ import { TimingTab } from './tabs/TimingTab.tsx';
 import { StrengthsTab } from './tabs/StrengthsTab.tsx';
 import { JournalTab } from './tabs/JournalTab.tsx';
 import { API_BASE_URL } from './config.ts';
+
+// Lazy-load secondary and report modals to optimize initial bundle size
+const PrintableNatalReport = React.lazy(() =>
+  import('./components/PrintableNatalReport.tsx').then((m) => ({ default: m.PrintableNatalReport }))
+);
+const DataSovereigntyModal = React.lazy(() =>
+  import('./components/DataSovereigntyModal.tsx').then((m) => ({ default: m.DataSovereigntyModal }))
+);
+const LlmDossierModal = React.lazy(() =>
+  import('./components/LlmDossierModal.tsx').then((m) => ({ default: m.LlmDossierModal }))
+);
+const PlainEnglishExplainerModal = React.lazy(() =>
+  import('./components/PlainEnglishExplainerModal.tsx').then((m) => ({ default: m.PlainEnglishExplainerModal }))
+);
+const ShareBlueprintModal = React.lazy(() =>
+  import('./components/ShareBlueprintModal.tsx').then((m) => ({ default: m.ShareBlueprintModal }))
+);
+const CommandPaletteModal = React.lazy(() =>
+  import('./components/CommandPaletteModal.tsx').then((m) => ({ default: m.CommandPaletteModal }))
+);
+const GoogleAuthModal = React.lazy(() =>
+  import('./components/GoogleAuthModal.tsx').then((m) => ({ default: m.GoogleAuthModal }))
+);
 import {
   fetchOrCreateStaticBundle,
   fetchTodaySky,
@@ -74,21 +90,14 @@ import {
   type ServerProfileSummary,
 } from './services/apiClient.ts';
 
-type ChartStyle = 'north' | 'south';
+import {
+  useAppStore,
+  appStore,
+  type ChartStyle,
+  DEMO_PROFILE,
+} from './store/useAppStore.ts';
 
 const ACTIVE_PROFILE_KEY = 'astro_active_profile_v1';
-
-const DEMO_PROFILE: UserProfileInput = {
-  name: 'Sample Native',
-  birthDate: '2000-04-14',
-  birthTime: '06:30:00',
-  cityName: 'New Delhi',
-  lat: 28.6139,
-  lon: 77.209,
-  tzId: 'Asia/Kolkata',
-  timeCertainty: 'exact',
-  ayanamsa: 'lahiri',
-};
 
 interface AppShellProps {
   userName: string;
@@ -920,21 +929,27 @@ const AppShell: React.FC<AppShellProps> = (props) => {
       />
 
       {/* Cmd+K Global Search Palette */}
-      <CommandPaletteModal
-        isOpen={showCommandPalette}
-        onClose={() => setShowCommandPalette(false)}
-        onOpenShare={() => setShowShareBlueprint(true)}
-      />
+      {showCommandPalette && (
+        <React.Suspense fallback={null}>
+          <CommandPaletteModal
+            isOpen={showCommandPalette}
+            onClose={() => setShowCommandPalette(false)}
+            onOpenShare={() => setShowShareBlueprint(true)}
+          />
+        </React.Suspense>
+      )}
 
       {/* Shareable Cosmic Blueprint Modal */}
       {showShareBlueprint && (
-        <ShareBlueprintModal
-          userName={props.userName}
-          natalChart={props.natalChart}
-          reading={reading}
-          charaKarakas={props.charaKarakas}
-          onClose={() => setShowShareBlueprint(false)}
-        />
+        <React.Suspense fallback={null}>
+          <ShareBlueprintModal
+            userName={props.userName}
+            natalChart={props.natalChart}
+            reading={reading}
+            charaKarakas={props.charaKarakas}
+            onClose={() => setShowShareBlueprint(false)}
+          />
+        </React.Suspense>
       )}
 
       {/* Mobile Sticky Bottom Tab Bar */}
@@ -971,77 +986,105 @@ function loadSavedProfile(): UserProfileInput | null {
 }
 
 export default function App() {
-  const [savedProfile, setSavedProfile] = useState<UserProfileInput | null>(loadSavedProfile);
-  const activeProfile = savedProfile ?? DEMO_PROFILE;
+  const store = useAppStore((s) => s);
+  const {
+    savedProfile,
+    activeProfile,
+    chartStyle,
+    selectedVarga,
+    chartPerspective,
+    loading,
+    todayLocation,
+    todayCityName,
+    showOnboarding,
+    natalChart,
+    dayView,
+    currentScore,
+    avakahada,
+    dashas,
+    yoginiDashas,
+    charaDashas,
+    shadbala,
+    ashtakvarga,
+    chalit,
+    panchang,
+    serverLevel1,
+    serverLevel2,
+    monthPeakSummary,
+    serverError,
+    retryTick,
+    showPrintReport,
+    showDataSovereignty,
+    showLlmDossier,
+    showPlainEnglishModal,
+    plainEnglishCategory,
+    authChecked,
+    authUser,
+    savedProfiles,
+    showAuthModal,
+    selectedServerProfileId,
+    backendProfileId,
+    journalEntries,
+    serverTransits,
+  } = store;
 
-  const [chartStyle, setChartStyle] = useState<ChartStyle>(() => {
-    try {
-      const saved = localStorage.getItem('astro_chart_style_v1');
-      if (saved === 'north' || saved === 'south') return saved;
-    } catch {
-      // ignore
-    }
-    return 'north';
-  });
-  const [selectedVarga, setSelectedVarga] = useState<VargaType>('D9');
-  const [chartPerspective, setChartPerspective] = useState<'lagna' | 'chandra'>('lagna');
-  const [loading, setLoading] = useState(true);
+  const userName = activeProfile.name;
+  const cityName = activeProfile.cityName;
+  const lat = activeProfile.lat;
+  const lon = activeProfile.lon;
+  const birthDate = activeProfile.birthDate;
+  const birthTime = activeProfile.birthTime;
+  const tzId = activeProfile.tzId;
+  const timeCertainty = activeProfile.timeCertainty;
+  const ayanamsa = activeProfile.ayanamsa;
 
-  const [userName, setUserName] = useState(activeProfile.name);
-  const [cityName, setCityName] = useState(activeProfile.cityName);
-  const [todayLocation, setTodayLocation] = useState<{ name: string; lat: number; lon: number; tzId: string }>(() => {
-    const matched = CITIES.find((c) => c.name.toLowerCase() === activeProfile.cityName.toLowerCase());
-    if (matched) {
-      return { name: matched.name, lat: matched.lat, lon: matched.lon, tzId: matched.tzId };
-    }
-    return { name: activeProfile.cityName, lat: activeProfile.lat, lon: activeProfile.lon, tzId: activeProfile.tzId };
-  });
-  const [todayCityName, setTodayCityName] = useState(() => todayLocation.name);
-  const [lat, setLat] = useState(activeProfile.lat);
-  const [lon, setLon] = useState(activeProfile.lon);
-  const [birthDate, setBirthDate] = useState(activeProfile.birthDate);
-  const [birthTime, setBirthTime] = useState(activeProfile.birthTime);
-  const [tzId, setTzId] = useState(activeProfile.tzId);
-  const [timeCertainty, setTimeCertainty] = useState<'exact' | 'approx' | 'unknown'>(activeProfile.timeCertainty);
-  const [ayanamsa, setAyanamsa] = useState<AyanamsaId>(activeProfile.ayanamsa);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-
-  const [natalChart, setNatalChart] = useState<NatalChart | null>(null);
-  const [dayView, setDayView] = useState<DayView | null>(null);
-  const [currentScore, setCurrentScore] = useState<HourScore | null>(null);
-  const [avakahada, setAvakahada] = useState<AvakahadaDetails | null>(null);
-  const [dashas, setDashas] = useState<VimshottariDashaTree | null>(null);
-  const [yoginiDashas, setYoginiDashas] = useState<YoginiDashaTree | null>(null);
-  const [charaDashas, setCharaDashas] = useState<CharaDashaTree | null>(null);
-  const [shadbala, setShadbala] = useState<ShadbalaResult | null>(null);
-  const [ashtakvarga, setAshtakvarga] = useState<AshtakvargaResult | null>(null);
-  const [chalit, setChalit] = useState<ChalitChart | null>(null);
-  const [panchang, setPanchang] = useState<any>(null);
-  const [serverLevel1, setServerLevel1] = useState<any>(null);
-  const [serverLevel2, setServerLevel2] = useState<any>(null);
-  const [monthPeakSummary, setMonthPeakSummary] = useState<any>(null);
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [retryTick, setRetryTick] = useState(0);
-
-  const [showPrintReport, setShowPrintReport] = useState(false);
-  const [showDataSovereignty, setShowDataSovereignty] = useState(false);
-  const [showLlmDossier, setShowLlmDossier] = useState(false);
-  const [showPlainEnglishModal, setShowPlainEnglishModal] = useState(false);
-  const [plainEnglishCategory, setPlainEnglishCategory] = useState<string>('kundli');
-  const [authChecked, setAuthChecked] = useState(false);
-  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
-  const [savedProfiles, setSavedProfiles] = useState<ServerProfileSummary[]>([]);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [selectedServerProfileId, setSelectedServerProfileId] = useState<string | null>(null);
-  const [backendProfileId, setBackendProfileId] = useState<string | null>(() => {
-    try {
-      return localStorage.getItem('astro_backend_profile_id_v1');
-    } catch {
-      return null;
-    }
-  });
-  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
-  const [serverTransits, setServerTransits] = useState<any>(undefined);
+  const setChartStyle = (s: ChartStyle) => appStore.setChartStyle(s);
+  const setSelectedVarga = (v: VargaType) => appStore.setState({ selectedVarga: v });
+  const setChartPerspective = (p: 'lagna' | 'chandra') => appStore.setState({ chartPerspective: p });
+  const setShowOnboarding = (v: boolean) => appStore.setState({ showOnboarding: v });
+  const setShowPrintReport = (v: boolean) => appStore.setState({ showPrintReport: v });
+  const setShowDataSovereignty = (v: boolean) => appStore.setState({ showDataSovereignty: v });
+  const setShowLlmDossier = (v: boolean) => appStore.setState({ showLlmDossier: v });
+  const setShowPlainEnglishModal = (v: boolean) => appStore.setState({ showPlainEnglishModal: v });
+  const setPlainEnglishCategory = (v: string) => appStore.setState({ plainEnglishCategory: v });
+  const setShowAuthModal = (v: boolean) => appStore.setState({ showAuthModal: v });
+  const setSelectedServerProfileId = (id: string | null) => appStore.setState({ selectedServerProfileId: id });
+  const setBackendProfileId = (id: string | null) => appStore.setBackendProfileId(id);
+  const setSavedProfiles = (p: ServerProfileSummary[]) => appStore.setState({ savedProfiles: p });
+  const setAuthUser = (u: AuthUser | null) => appStore.setState({ authUser: u });
+  const setAuthChecked = (b: boolean) => appStore.setState({ authChecked: b });
+  const setSavedProfile = (p: UserProfileInput | null) => appStore.setState({ savedProfile: p });
+  const setNatalChart = (c: NatalChart | null) => appStore.setState({ natalChart: c });
+  const setJournalEntries = (e: JournalEntry[]) => appStore.setJournalEntries(e);
+  const setLoading = (l: boolean) => appStore.setState({ loading: l });
+  const setServerError = (e: string | null) => appStore.setState({ serverError: e });
+  const setRetryTick = (updater: (prev: number) => number) =>
+    appStore.setState((s) => ({ retryTick: updater(s.retryTick) }));
+  const setServerLevel1 = (l: any) => appStore.setState({ serverLevel1: l });
+  const setServerLevel2 = (l: any) => appStore.setState({ serverLevel2: l });
+  const setServerTransits = (t: any) => appStore.setState({ serverTransits: t });
+  const setDayView = (d: any) => appStore.setState({ dayView: d });
+  const setCurrentScore = (s: any) => appStore.setState({ currentScore: s });
+  const setMonthPeakSummary = (m: any) => appStore.setState({ monthPeakSummary: m });
+  const setAvakahada = (a: any) => appStore.setState({ avakahada: a });
+  const setDashas = (d: any) => appStore.setState({ dashas: d });
+  const setYoginiDashas = (y: any) => appStore.setState({ yoginiDashas: y });
+  const setCharaDashas = (c: any) => appStore.setState({ charaDashas: c });
+  const setShadbala = (s: any) => appStore.setState({ shadbala: s });
+  const setAshtakvarga = (a: any) => appStore.setState({ ashtakvarga: a });
+  const setChalit = (c: any) => appStore.setState({ chalit: c });
+  const setPanchang = (p: any) => appStore.setState({ panchang: p });
+  const setTodayLocation = (loc: any) => appStore.setState({ todayLocation: loc });
+  const setTodayCityName = (name: string) => appStore.setState({ todayCityName: name });
+  const setUserName = (_name: string) => {};
+  const setBirthDate = (_b: string) => {};
+  const setBirthTime = (_t: string) => {};
+  const setCityName = (_c: string) => {};
+  const setLat = (_l: number) => {};
+  const setLon = (_l: number) => {};
+  const setTzId = (_tz: string) => {};
+  const setTimeCertainty = (_tc: any) => {};
+  const setAyanamsa = (_ay: any) => {};
 
   useEffect(() => {
     try {
@@ -1593,11 +1636,15 @@ export default function App() {
         onDeleteProfile={handleDeleteProfile}
       />
 
-      <GoogleAuthModal
-        open={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        onSuccess={handleAuthSuccess}
-      />
+      {showAuthModal && (
+        <React.Suspense fallback={null}>
+          <GoogleAuthModal
+            open={showAuthModal}
+            onClose={() => setShowAuthModal(false)}
+            onSuccess={handleAuthSuccess}
+          />
+        </React.Suspense>
+      )}
 
       <OnboardingModal
         isOpen={showOnboarding}
@@ -1607,45 +1654,53 @@ export default function App() {
       />
 
       {showPrintReport && (
-        <PrintableNatalReport
-          userName={userName}
-          cityName={cityName}
-          birthDate={birthDate}
-          birthTime={birthTime}
-          tzId={tzId}
-          lat={lat}
-          lon={lon}
-          ayanamsa={ayanamsa}
-          timeCertainty={timeCertainty}
-          natalChart={natalChart}
-          avakahada={avakahada}
-          dashas={dashas}
-          ashtakvarga={ashtakvarga}
-          shadbala={shadbala}
-          chalit={chalit}
-          panchang={panchang}
-          onClose={() => setShowPrintReport(false)}
-        />
+        <React.Suspense fallback={null}>
+          <PrintableNatalReport
+            userName={userName}
+            cityName={cityName}
+            birthDate={birthDate}
+            birthTime={birthTime}
+            tzId={tzId}
+            lat={lat}
+            lon={lon}
+            ayanamsa={ayanamsa}
+            timeCertainty={timeCertainty}
+            natalChart={natalChart}
+            avakahada={avakahada}
+            dashas={dashas}
+            ashtakvarga={ashtakvarga}
+            shadbala={shadbala}
+            chalit={chalit}
+            panchang={panchang}
+            onClose={() => setShowPrintReport(false)}
+          />
+        </React.Suspense>
       )}
 
       {showDataSovereignty && (
-        <DataSovereigntyModal
-          currentProfile={currentProfile}
-          onRestoreData={(newProfile, newEntries) => {
-            handleSaveProfile(newProfile);
-            setJournalEntries(newEntries);
-          }}
-          onHardReset={() => window.location.reload()}
-          onClose={() => setShowDataSovereignty(false)}
-        />
+        <React.Suspense fallback={null}>
+          <DataSovereigntyModal
+            currentProfile={currentProfile}
+            onRestoreData={(newProfile, newEntries) => {
+              handleSaveProfile(newProfile);
+              setJournalEntries(newEntries);
+            }}
+            onHardReset={() => window.location.reload()}
+            onClose={() => setShowDataSovereignty(false)}
+          />
+        </React.Suspense>
       )}
 
       {showLlmDossier && llmDossierInput && (
-        <LlmDossierModal input={llmDossierInput} onClose={() => setShowLlmDossier(false)} />
+        <React.Suspense fallback={null}>
+          <LlmDossierModal input={llmDossierInput} onClose={() => setShowLlmDossier(false)} />
+        </React.Suspense>
       )}
 
       {showPlainEnglishModal && (
-        <PlainEnglishExplainerModal initialTab={plainEnglishCategory} onClose={() => setShowPlainEnglishModal(false)} />
+        <React.Suspense fallback={null}>
+          <PlainEnglishExplainerModal initialTab={plainEnglishCategory} onClose={() => setShowPlainEnglishModal(false)} />
+        </React.Suspense>
       )}
     </ReadingProvider>
   );

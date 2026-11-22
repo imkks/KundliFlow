@@ -96,13 +96,13 @@ Currently, `@astro/content` has source YAML files (`scoring.yaml`, `friendship.y
 ## 3. Staged Refactoring Roadmap
 
 ```
-Phase 1: Integrity & Critical Bugs (1-2 Days)
+Phase 1: Integrity & Critical Bugs [COMPLETED]
 ├── Fix property typos (starLord, vasya, elapsedFraction, nakshatra)
 ├── Fix missing NatalChart import paths
 ├── Resolve exactOptionalPropertyTypes mismatches
 └── Verify ./node_modules/.bin/tsc -b exits 0
 
-Phase 2: Dead Code & Security Cleanup (2-3 Days)
+Phase 2: Dead Code & Security Cleanup [COMPLETED]
 ├── Delete apps/web/src/components/AskAndReaderPanel.tsx
 ├── Remove duplicate rule definitions from sample_rules.yaml
 ├── Remove unused workspace dependencies in apps/web/package.json
@@ -110,13 +110,18 @@ Phase 2: Dead Code & Security Cleanup (2-3 Days)
 ├── Guard Google ID token audience verification
 └── Honor process.env.DB_PATH in server.ts
 
-Phase 3: Subsystem Consolidation (3-5 Days)
-├── Unify apps/api/src/db.ts into packages/store
+Phase 3: Subsystem Consolidation [IN PROGRESS]
+├── Consolidate SIGN_LORDS across engine subsystems [COMPLETED]
+├── Eliminate duplicate POST /api/reading in ReadingContext [COMPLETED]
 ├── Add automated YAML compile step in packages/content
-├── Consolidate SIGN_LORDS and house labels into @astro/engine
-└── Eliminate duplicate POST /api/reading in ReadingContext
+└── Unify apps/api/src/db.ts into packages/store
 
-Phase 4: Architecture Modernization (5-7 Days)
-├── Migrate server.ts to Hono/Fastify
-└── Refactor App.tsx state with Zustand and modularize shell
+Phase 4: Architecture Modernization (Track B & Track C) [COMPLETED]
+├── Modernize server.ts into AppRouter with modular route controllers [COMPLETED]
+│   ├── apps/api/src/router/router.ts (regex route compilation, middleware pipeline)
+│   └── apps/api/src/routes/ (health, auth, profiles, reading, chat, journal)
+└── Refactor App.tsx state & code-split heavy chunks [COMPLETED]
+    ├── apps/web/src/store/useAppStore.ts (useSyncExternalStore store)
+    ├── apps/web/src/App.tsx (React.lazy + Suspense for 7 heavy report/input modals)
+    └── apps/web/vite.config.ts (manualChunks dropped main bundle 658kB -> 322kB)
 ```
