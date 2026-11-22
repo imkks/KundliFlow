@@ -358,7 +358,7 @@ export const PrintableNatalReport: React.FC<PrintableNatalReportProps> = ({
                         <td className="py-2 px-3 font-semibold capitalize">{id}</td>
                         <td className="py-2 px-3">{SIGNS[g.signIndex]}</td>
                         <td className="py-2 px-3 font-mono">{d}° {m}&apos;</td>
-                        <td className="py-2 px-3">{g.nakshatraName}</td>
+                        <td className="py-2 px-3">{g.nakshatra}</td>
                         <td className="py-2 px-3 font-mono">{g.pada}</td>
                         <td className="py-2 px-3">
                           {g.retrograde ? (

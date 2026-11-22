@@ -29,8 +29,10 @@ const KARAKA_ORDER: readonly CharaKaraka[] = ['AK', 'AmK', 'BK', 'MK', 'PK', 'GK
  * Planets with highest degree in sign down to lowest degree in sign.
  */
 export const computeCharaKarakas = (
-  grahas: Record<string, GrahaDetail>,
+  grahasOrChart: Record<string, GrahaDetail> | { grahas: Record<string, GrahaDetail> },
 ): Record<string, CharaKaraka> => {
+  const grahas: Record<string, GrahaDetail> =
+    'grahas' in grahasOrChart ? (grahasOrChart as any).grahas : (grahasOrChart as any);
   const planetDegs = SEVEN_PLANETS.map((id) => {
     const g = grahas[id];
     return {

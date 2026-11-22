@@ -9,6 +9,10 @@ export interface AuthTokenPayload {
   exp: number;
 }
 
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  throw new Error('FATAL: JWT_SECRET environment variable must be set in production');
+}
+
 const DEFAULT_SECRET = process.env.JWT_SECRET || 'myastro-local-dev-secret-change-in-prod';
 
 function base64UrlEncode(input: string | Buffer): string {
@@ -78,6 +82,9 @@ export async function verifyGoogleIdToken(
   idToken: string,
   expectedClientId = process.env.GOOGLE_CLIENT_ID,
 ): Promise<VerifiedGoogleIdentity> {
+  if (!expectedClientId) {
+    throw new Error('GOOGLE_CLIENT_ID environment variable is not configured');
+  }
   const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`;
   const res = await fetch(url);
   if (!res.ok) {
@@ -87,7 +94,7 @@ export async function verifyGoogleIdToken(
   if (!info.sub || !info.email) {
     throw new Error('Google token missing required sub/email claims');
   }
-  if (expectedClientId && info.aud !== expectedClientId) {
+  if (info.aud !== expectedClientId) {
     throw new Error('Google token audience mismatch');
   }
   return {

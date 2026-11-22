@@ -7,6 +7,7 @@ export interface AvakahadaDetails {
   yoni: string;
   gana: 'Deva' | 'Manushya' | 'Rakshasa';
   vasya: 'Chatushpada' | 'Manava' | 'Jalachara' | 'Vanachara' | 'Keeta';
+  vashya: 'Chatushpada' | 'Manava' | 'Jalachara' | 'Vanachara' | 'Keeta';
   nadi: 'Adi' | 'Madhya' | 'Antya';
 }
 
@@ -80,6 +81,7 @@ export const computeAvakahada = (
     yoni: NAKSHATRA_YONIS[nak] || 'Gau (Cow)',
     gana: NAKSHATRA_GANAS[nak] || 'Manushya',
     vasya: vasyaMap[moonSignIndex] || 'Jalachara',
+    vashya: vasyaMap[moonSignIndex] || 'Jalachara',
     nadi: NAKSHATRA_NADIS[nak] || 'Madhya'
   };
 };

@@ -50,6 +50,7 @@ export interface InauspiciousWindows {
   rahuKalam: TimeWindow;
   yamaganda: TimeWindow;
   gulika: TimeWindow;
+  abhijitMuhurta?: TimeWindow;
 }
 
 export interface HoraInfo {
@@ -150,9 +151,21 @@ export const computeInauspiciousWindows = (
     };
   };
 
+  const muhurtaSpan = daySpan / 15;
+  const abhijitStart = rise.plus({ milliseconds: 7 * muhurtaSpan });
+  const abhijitEnd = rise.plus({ milliseconds: 8 * muhurtaSpan });
+  const abhijitMuhurta: TimeWindow = {
+    name: 'Abhijit Muhurta',
+    startIso: abhijitStart.toISO()!,
+    endIso: abhijitEnd.toISO()!,
+    startFormatted: abhijitStart.toFormat('HH:mm'),
+    endFormatted: abhijitEnd.toFormat('HH:mm'),
+  };
+
   return {
     rahuKalam: getWindow('Rahu Kalam', parts.rahuKalam),
     yamaganda: getWindow('Yamaganda', parts.yamaganda),
     gulika: getWindow('Gulika', parts.gulika),
+    abhijitMuhurta,
   };
 };

@@ -31,18 +31,21 @@ const PADA_SPAN = NAK_SPAN / 4;
 export interface SignPosition {
   signIndex: number; // 0 = Aries
   sign: Sign;
+  signName?: string;
   degInSign: number;
 }
 
 export const signOf = (lon: number): SignPosition => {
   const l = norm360(lon);
   const signIndex = Math.floor(l / 30);
-  return { signIndex, sign: SIGNS[signIndex]!, degInSign: l - signIndex * 30 };
+  const sign = SIGNS[signIndex]!;
+  return { signIndex, sign, signName: sign, degInSign: l - signIndex * 30 };
 };
 
 export interface NakshatraPosition {
   nakshatraIndex: number; // 0 = Ashwini
   nakshatra: Nakshatra;
+  nakshatraName?: string;
   pada: 1 | 2 | 3 | 4;
   /** Fraction of the nakshatra already traversed, 0..1 */
   elapsed: number;
@@ -53,7 +56,8 @@ export const nakshatraOf = (lon: number): NakshatraPosition => {
   const nakshatraIndex = Math.floor(l / NAK_SPAN);
   const within = l - nakshatraIndex * NAK_SPAN;
   const pada = (Math.floor(within / PADA_SPAN) + 1) as 1 | 2 | 3 | 4;
-  return { nakshatraIndex, nakshatra: NAKSHATRAS[nakshatraIndex]!, pada, elapsed: within / NAK_SPAN };
+  const nakshatra = NAKSHATRAS[nakshatraIndex]!;
+  return { nakshatraIndex, nakshatra, nakshatraName: nakshatra, pada, elapsed: within / NAK_SPAN };
 };
 
 /** Parse "27-40-54", "27°40'54\"", "27.40.54" or [27, 40, 54] into decimal degrees. */

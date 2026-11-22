@@ -107,25 +107,25 @@ export function generateLlmDossier(input: LlmDossierInput): LlmDossierOutput {
         }
       : null,
     avakahada: avakahada || null,
-    grahas: Object.entries(natalChart.grahas).map(([id, g]) => {
+    grahas: (Object.entries(natalChart.grahas) as [string, any][]).map(([id, g]) => {
       const av = avasthas[id];
       const karaka = karakas[id];
-      const sbPlanet = shadbala?.planets.find((p) => p.graha === id);
+      const sbPlanet = shadbala?.planets ? (shadbala.planets as any)[id] : undefined;
       return {
         id,
         sign: formatSign(SIGNS[g.signIndex] || g.sign),
         degInSign: `${Math.floor(g.degInSign)}° ${Math.floor((g.degInSign % 1) * 60)}'`,
-        nakshatra: g.nakshatraName,
+        nakshatra: g.nakshatra || g.nakshatraName,
         pada: g.pada,
         dignity: g.dignity,
         isRetrograde: !!g.retrograde,
-        isCombust: !!g.combust,
+        isCombust: !!(g.isCombust ?? g.combust),
         charaKaraka: karaka || null,
         baladiAvastha: av?.baladi || null,
         jagratadiAvastha: av?.jagrat || null,
         deeptadiAvastha: av?.deeptadi || null,
         shadbalaRupas: sbPlanet ? sbPlanet.shadbalaInRupas.toFixed(2) : null,
-        shadbalaRank: sbPlanet ? sbPlanet.relativeRank : null,
+        shadbalaRank: sbPlanet ? (sbPlanet.rank ?? sbPlanet.relativeRank) : null,
       };
     }),
     bhavas: bhavas.map((b: any) => ({
@@ -141,9 +141,9 @@ export function generateLlmDossier(input: LlmDossierInput): LlmDossierOutput {
     })),
     yogas: yogas.map((y) => ({
       name: y.name,
-      nature: y.type,
+      nature: y.category ?? y.type,
       description: y.description,
-      planets: y.planetsInvolved,
+      planets: y.planets ?? y.planetsInvolved,
     })),
     dashaLifeline: dashas
       ? (dashas.periods || []).slice(0, 9).map((p) => ({
@@ -155,7 +155,7 @@ export function generateLlmDossier(input: LlmDossierInput): LlmDossierOutput {
       : [],
     ashtakvarga: ashtakvarga
       ? {
-          sarvaTotal: ashtakvarga.totalScore,
+          sarvaTotal: (ashtakvarga as any).totalScore ?? ashtakvarga.sarva?.reduce((a: number, b: number) => a + b, 0),
           sarvaBySign: SIGNS.map((s, i) => ({ sign: s, bindus: ashtakvarga.sarva[i] })),
         }
       : null,
@@ -199,15 +199,15 @@ export function generateLlmDossier(input: LlmDossierInput): LlmDossierOutput {
     `| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |`
   );
 
-  for (const [id, g] of Object.entries(natalChart.grahas)) {
+  for (const [id, g] of Object.entries(natalChart.grahas) as [string, any][]) {
     const av = avasthas[id];
     const karaka = karakas[id] || '—';
-    const sb = shadbala?.planets.find((p) => p.graha === id);
-    const sbStr = sb ? `${sb.shadbalaInRupas.toFixed(1)}R (#${sb.relativeRank})` : '—';
-    const mot = g.retrograde ? ' (R)' : g.combust ? ' (C)' : '';
+    const sb = shadbala?.planets ? (shadbala.planets as any)[id] : undefined;
+    const sbStr = sb ? `${sb.shadbalaInRupas.toFixed(1)}R (#${sb.rank ?? sb.relativeRank})` : '—';
+    const mot = g.retrograde ? ' (R)' : (g.isCombust ?? g.combust) ? ' (C)' : '';
 
     lines.push(
-      `| ${id.toUpperCase()}${mot} | ${formatSign(SIGNS[g.signIndex] || g.sign)} | ${Math.floor(g.degInSign)}°${Math.floor((g.degInSign % 1) * 60)}' | ${g.nakshatraName} (${g.pada}) | ${g.dignity?.replace('_', ' ') || 'neutral'} | ${av?.baladi || '—'} | ${av?.jagrat || '—'} | ${av?.deeptadi || '—'} | ${karaka} | ${sbStr} |`
+      `| ${id.toUpperCase()}${mot} | ${formatSign(SIGNS[g.signIndex] || g.sign)} | ${Math.floor(g.degInSign)}°${Math.floor((g.degInSign % 1) * 60)}' | ${g.nakshatra || g.nakshatraName} (${g.pada}) | ${g.dignity?.replace('_', ' ') || 'neutral'} | ${av?.baladi || '—'} | ${av?.jagrat || '—'} | ${av?.deeptadi || '—'} | ${karaka} | ${sbStr} |`
     );
   }
 
@@ -239,8 +239,10 @@ export function generateLlmDossier(input: LlmDossierInput): LlmDossierOutput {
       `## 4. DETECTED CLASSICAL YOGAS & DOSHAS`
     );
     for (const y of yogas) {
+      const cat = (y.category ?? y.type ?? 'YOGA').toUpperCase();
+      const pls = (y.planets ?? y.planetsInvolved ?? []).join(', ').toUpperCase();
       lines.push(
-        `- **${y.name}** (${y.type.toUpperCase()}): ${y.description} (Involving: ${y.planetsInvolved.join(', ').toUpperCase()})`
+        `- **${y.name}** (${cat}): ${y.description} (Involving: ${pls})`
       );
     }
   }

@@ -38,6 +38,7 @@ interface InterpretationsGuideProps {
   natalChart: NatalChart;
   avakahada: AvakahadaDetails;
   karakas: Record<string, CharaKaraka>;
+  serverLevel1?: any;
   onOpenLlmDossier?: () => void;
 }
 
@@ -47,6 +48,7 @@ export const InterpretationsGuide: React.FC<InterpretationsGuideProps> = ({
   natalChart,
   avakahada,
   karakas,
+  serverLevel1,
   onOpenLlmDossier,
 }) => {
   const [filter, setFilter] = useState<GuideFilter>('all');
@@ -64,13 +66,14 @@ export const InterpretationsGuide: React.FC<InterpretationsGuideProps> = ({
     setExpandedSections((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const yogas: YogaDetection[] = detectYogasAndDoshas(natalChart);
+  // Prefer server-computed static bundle data (0 client calculations)
+  const yogas: YogaDetection[] = serverLevel1?.yogas ?? detectYogasAndDoshas(natalChart);
   const avkInterpretation = getAvakahadaInterpretation(avakahada);
   const planetaryInsights = getPlanetaryInsights(natalChart);
   const karakaInsights = getKarakasInsights(karakas);
-  const avasthas = computePlanetaryAvasthas(natalChart.grahas);
-  const ghatak = computeFavourableAndGhatak(natalChart.grahas.moon.signIndex);
-  const aspects = computeMutualAspects(natalChart.grahas);
+  const avasthas = serverLevel1?.avasthas ?? computePlanetaryAvasthas(natalChart.grahas);
+  const ghatak = serverLevel1?.ghatak ?? computeFavourableAndGhatak(natalChart.grahas.moon.signIndex);
+  const aspects = serverLevel1?.aspects ?? computeMutualAspects(natalChart.grahas);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

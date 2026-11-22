@@ -70,8 +70,23 @@ export interface AgentTraceEvent {
   data?: unknown;
 }
 
+export interface RouterResult {
+  topicId: string;
+  timeframe: { from: string; to: string };
+  riskClass:
+    | 'greeting'
+    | 'distress'
+    | 'declined'
+    | 'other_person'
+    | 'health_non_diagnostic'
+    | 'decision'
+    | 'timing'
+    | 'reflective';
+  declineMessage?: string;
+}
+
 export interface AskResult {
-  mode: 'level3_verified' | 'level2_fallback' | 'conversational' | 'conceptual';
+  mode: 'level3_verified' | 'level2_fallback' | 'conversational' | 'conceptual' | 'declined';
   response: ComposedAnswer;
   trace: string[];
   observedEvidenceIds: string[];

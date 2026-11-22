@@ -1167,3 +1167,81 @@ rules:
       statement: >-
         An active Ketu Dasha period brings Ketu's natal house, lordships, and dignity to the foreground of daily
         experience.
+  - id: conj.venus.rahu.4
+    kind: conjunction
+    school: parashari
+    source: BPHS (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: rahu
+          planet2: venus
+          house: 4
+          orb_lte: 10
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 53
+      statement: Venus close to Rahu in the 4th house colors comfort, relationships, and the sense of home with intensity and unconventional tastes.
+      modifiers:
+        - when:
+            fact: conjunction
+            planet1: rahu
+            planet2: venus
+            orb_lte: 3
+          strength: 5
+          phrase: With an orb under 3 degrees, the blending of desire and aesthetics is pronounced.
+  - id: yoga.budhaditya.4
+    kind: yoga
+    school: parashari
+    source: Classical Yoga (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          house: 4
+        - fact: placement
+          planet: mercury
+          house: 4
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 56
+      statement: Sun and Mercury together in the 4th house form a Budhaditya combination supporting analytical learning and clear expression.
+  - id: yoga.lakshmi_narayana.4
+    kind: yoga
+    school: parashari
+    source: Classical Yoga (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          house: 4
+        - fact: placement
+          planet: venus
+          house: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 58
+      statement: Mercury and Venus together in the 4th house blend intellect with aesthetic refinement in domestic and creative pursuits.
+  - id: conj.mercury.rahu.4
+    kind: conjunction
+    school: parashari
+    source: BPHS (authored paraphrase)
+    reviewed: false
+    when:
+      all:
+        - fact: conjunction
+          planet1: mercury
+          planet2: rahu
+          house: 4
+          orb_lte: 5
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 52
+      statement: Mercury close to Rahu sharpens inventive, unconventional thinking, though mental restlessness benefits from grounding habits.

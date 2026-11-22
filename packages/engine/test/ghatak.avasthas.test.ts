@@ -76,7 +76,7 @@ describe('Planetary Avasthas against AstroSage Golden Fixture (Page 23)', () => 
 
 describe('Prompt-Ready LLM Context Dossier Engine', () => {
   it('generates structured JSON and comprehensive Markdown context for LLM synthesis', () => {
-    const mockChart: NatalChart = {
+    const mockChart = {
       ayanamsa: { id: 'lahiri', value: 23.88 },
       time: { julianDayUt: 2452296, birthLocal: '2002-01-21T06:30:00', birthUtc: '2002-01-21T01:00:00Z', isDaytime: true },
       lagna: { lon: 276.49, sign: 'Capricorn', signIndex: 9, degInSign: 6.49 },
@@ -93,7 +93,7 @@ describe('Prompt-Ready LLM Context Dossier Engine', () => {
       },
       housesFromLagna: [],
       housesFromMoon: [],
-    };
+    } as unknown as NatalChart;
 
     const avasthas = computePlanetaryAvasthas(mockChart.grahas);
     const ghatak = computeFavourableAndGhatak(11);

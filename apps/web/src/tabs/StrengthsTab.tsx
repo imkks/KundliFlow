@@ -21,6 +21,7 @@ interface StrengthsTabProps {
   shadbala: ShadbalaResult | null;
   ashtakvarga: AshtakvargaResult | null;
   sevenPlanetSigns: any;
+  serverLevel1?: any;
   onOpenLlmDossier: () => void;
 }
 
@@ -32,6 +33,7 @@ export const StrengthsTab: React.FC<StrengthsTabProps> = ({
   shadbala,
   ashtakvarga,
   sevenPlanetSigns,
+  serverLevel1,
   onOpenLlmDossier,
 }) => {
   const [subMode, setSubMode] = useState<StrengthsSubMode>('yogas');
@@ -265,7 +267,8 @@ export const StrengthsTab: React.FC<StrengthsTabProps> = ({
                   <InterpretationsGuide
                     natalChart={natalChart}
                     avakahada={avakahada}
-                    karakas={computeCharaKarakas(natalChart.grahas)}
+                    karakas={serverLevel1?.karakas ?? computeCharaKarakas(natalChart.grahas)}
+                    serverLevel1={serverLevel1}
                     onOpenLlmDossier={onOpenLlmDossier}
                   />
                 </div>

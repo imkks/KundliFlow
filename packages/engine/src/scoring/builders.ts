@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import type { EphemerisProvider } from '../ephemeris/types.js';
 import type { NatalDigest } from '../natal/digest.js';
-import type { VedicGraha } from '../natal/types.js';
+import { SIGN_LORDS, type VedicGraha } from '../natal/types.js';
 import { scoreHour, type HourScore, type Band } from './index.js';
 import { calculateSunTimes } from '../timequality/suntimes.js';
 import { computeDayHoras, computeInauspiciousWindows, type HoraInfo, type InauspiciousWindows } from '../timequality/horas.js';
@@ -56,21 +56,6 @@ export interface YearView {
   months: YearMonthSummary[];
   slowTransits: Array<{ planet: string; sign: string; houseFromLagna: number; houseFromMoon: number }>;
 }
-
-const SIGN_LORDS: Record<number, VedicGraha> = {
-  0: 'mars', // Aries
-  1: 'venus', // Taurus
-  2: 'mercury', // Gemini
-  3: 'moon', // Cancer
-  4: 'sun', // Leo
-  5: 'mercury', // Virgo
-  6: 'venus', // Libra
-  7: 'mars', // Scorpio
-  8: 'jupiter', // Sagittarius
-  9: 'saturn', // Capricorn
-  10: 'saturn', // Aquarius
-  11: 'jupiter', // Pisces
-};
 
 export interface ScoringOptions {
   runningMahadashaLord?: VedicGraha;

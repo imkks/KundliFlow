@@ -326,7 +326,7 @@ export class EngineSession {
     const cached = this._muhurtaCache.get(dateStr);
     if (cached) return cached;
     if (!this._eph) this._eph = await loadEphemeris('astronomy-engine');
-    const digest = createNatalDigest(this.natal, this.getAshtakvarga(), this.getVimshottari());
+    const digest = createNatalDigest(this.natal);
     const dayView = buildDay(this._eph, digest, dateStr, this.natal.time.tzId);
     this._muhurtaCache.set(dateStr, dayView);
     return dayView;

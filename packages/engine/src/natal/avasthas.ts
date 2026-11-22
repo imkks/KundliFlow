@@ -147,8 +147,8 @@ export function computePlanetaryAvasthas(
     if (!g) continue;
 
     const baladi = computeBaladiAvastha(g.degInSign, g.signIndex);
-    const jagrat = computeJagratadiAvastha(g.dignity);
-    const deeptadi = computeDeeptadiAvastha(g.dignity, !!g.combust);
+    const jagrat = computeJagratadiAvastha(g.dignity as Dignity);
+    const deeptadi = computeDeeptadiAvastha(g.dignity as Dignity, !!(g.isCombust ?? g.combust));
 
     result[id] = {
       graha: id,

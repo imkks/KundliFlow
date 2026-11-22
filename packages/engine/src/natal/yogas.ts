@@ -1,4 +1,4 @@
-import type { NatalChart, VedicGraha } from './types.js';
+import { SIGN_LORDS, type NatalChart, type VedicGraha } from './types.js';
 
 export interface YogaDetection {
   id: string;
@@ -7,25 +7,14 @@ export interface YogaDetection {
   presence: boolean;
   strength: 'strong' | 'moderate' | 'mild' | 'cancelled' | 'absent';
   planets: string[];
+  planetsInvolved?: string[];
+  type?: string;
   description: string;
   effect: string;
   cancellationNote?: string;
 }
 
-const SIGN_LORDS: Record<number, VedicGraha> = {
-  0: 'mars',
-  1: 'venus',
-  2: 'mercury',
-  3: 'moon',
-  4: 'sun',
-  5: 'mercury',
-  6: 'venus',
-  7: 'mars',
-  8: 'jupiter',
-  9: 'saturn',
-  10: 'saturn',
-  11: 'jupiter',
-};
+export type DetectedYoga = YogaDetection;
 
 const KENDRAS = [1, 4, 7, 10];
 const TRIKONAS = [1, 5, 9];

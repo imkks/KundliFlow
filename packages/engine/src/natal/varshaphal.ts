@@ -2,11 +2,7 @@ import { DateTime } from 'luxon';
 import { angleDiff, norm360, SIGNS } from '../angles.js';
 import type { EphemerisProvider } from '../ephemeris/types.js';
 import { computePositions, houseFromSign, type NatalChart } from './positions.js';
-
-const SIGN_LORDS = [
-  'mars', 'venus', 'mercury', 'moon', 'sun', 'mercury',
-  'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter',
-];
+import { SIGN_LORDS } from './types.js';
 
 const WEEKDAY_LORDS = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
 

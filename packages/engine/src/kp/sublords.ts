@@ -1,5 +1,5 @@
 import { norm360, signOf } from '../angles.js';
-import type { VedicGraha } from '../natal/types.js';
+import { SIGN_LORDS, type VedicGraha } from '../natal/types.js';
 import { DASHA_ORDER, DASHA_YEARS, TOTAL_DASHA_YEARS, NAKSHATRA_LORDS } from '../dasha/vimshottari.js';
 
 export interface KpPlacement {
@@ -13,21 +13,6 @@ export interface KpPlacement {
   subLord: VedicGraha;
   subSubLord: VedicGraha;
 }
-
-const SIGN_LORDS = [
-  'mars', // Aries
-  'venus', // Taurus
-  'mercury', // Gemini
-  'moon', // Cancer
-  'sun', // Leo
-  'mercury', // Virgo
-  'venus', // Libra
-  'mars', // Scorpio
-  'jupiter', // Sagittarius
-  'saturn', // Capricorn
-  'saturn', // Aquarius
-  'jupiter', // Pisces
-];
 
 const NAKSHATRA_NAMES = [
   'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra', 'Punarvasu', 'Pushya', 'Ashlesha',

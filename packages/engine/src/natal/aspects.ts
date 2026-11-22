@@ -14,16 +14,17 @@ export interface AspectDefinition {
   angle: number;
   orb: number;
   weight: number;
+  nature: string;
 }
 
 export const MAJOR_ASPECTS: AspectDefinition[] = [
-  { name: 'Conjunction', abbr: 'CONJ', angle: 0, orb: 10, weight: 10 },
-  { name: 'Opposition', abbr: 'OPPN', angle: 180, orb: 10, weight: 10 },
-  { name: 'Trine', abbr: 'TRIN', angle: 120, orb: 6, weight: 3 },
-  { name: 'Square', abbr: 'SQUR', angle: 90, orb: 6, weight: 3 },
-  { name: 'Sextile', abbr: 'SEXT', angle: 60, orb: 6, weight: 3 },
-  { name: 'Semi-Square', abbr: 'SSQU', angle: 45, orb: 1.5, weight: 1 },
-  { name: 'Quincunx', abbr: 'QCUN', angle: 150, orb: 1.5, weight: 1 },
+  { name: 'Conjunction', abbr: 'CONJ', angle: 0, orb: 10, weight: 10, nature: 'Neutral/Variable' },
+  { name: 'Opposition', abbr: 'OPPN', angle: 180, orb: 10, weight: 10, nature: 'Challenging' },
+  { name: 'Trine', abbr: 'TRIN', angle: 120, orb: 6, weight: 3, nature: 'Harmonious' },
+  { name: 'Square', abbr: 'SQUR', angle: 90, orb: 6, weight: 3, nature: 'Dynamic/Tension' },
+  { name: 'Sextile', abbr: 'SEXT', angle: 60, orb: 6, weight: 3, nature: 'Supportive' },
+  { name: 'Semi-Square', abbr: 'SSQU', angle: 45, orb: 1.5, weight: 1, nature: 'Minor Friction' },
+  { name: 'Quincunx', abbr: 'QCUN', angle: 150, orb: 1.5, weight: 1, nature: 'Adjustment' },
 ];
 
 export interface DetectedAspect {

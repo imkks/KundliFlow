@@ -90,6 +90,7 @@ interface ReadingProviderProps {
   ashtakvarga: any;
   dashas: any;
   transits: any;
+  serverLevel2?: any;
   children: React.ReactNode;
 }
 
@@ -101,6 +102,7 @@ export const ReadingProvider: React.FC<ReadingProviderProps> = ({
   ashtakvarga,
   dashas,
   transits,
+  serverLevel2,
   children,
 }) => {
   const [depth, setDepthState] = useState<ReadingDepth>(() => {
@@ -160,6 +162,14 @@ export const ReadingProvider: React.FC<ReadingProviderProps> = ({
   }, []);
 
   useEffect(() => {
+    // If precomputed serverLevel2 readings exist in static bundle, use immediately with ZERO network calls!
+    if (serverLevel2 && serverLevel2[depth] && Array.isArray(serverLevel2[depth].houses)) {
+      setReading(serverLevel2[depth]);
+      setReadingLoading(false);
+      setApiOffline(false);
+      return;
+    }
+
     if (!natalChart) return;
     let cancelled = false;
     setReadingLoading(true);
@@ -202,7 +212,7 @@ export const ReadingProvider: React.FC<ReadingProviderProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [apiBaseUrl, profileId, natalChart, shadbala, ashtakvarga, dashas, transits, depth, retryTick]);
+  }, [apiBaseUrl, profileId, natalChart, shadbala, ashtakvarga, dashas, transits, depth, retryTick, serverLevel2]);
 
   return (
     <ReadingContext.Provider

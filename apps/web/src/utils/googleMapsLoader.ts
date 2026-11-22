@@ -48,7 +48,7 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
       MAPS_API_KEY,
-    )}&libraries=places&v=weekly`;
+    )}&libraries=places&v=weekly&loading=async`;
     script.async = true;
     script.defer = true;
     script.onload = () => {

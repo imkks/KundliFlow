@@ -134,6 +134,18 @@ CREATE TABLE IF NOT EXISTS life_events (
   deleted INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_events_profile_time ON life_events(profile_id, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS daily_sky_cache (
+  profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  date TEXT NOT NULL,
+  tz_id TEXT NOT NULL,
+  lat_bucket REAL NOT NULL,
+  lon_bucket REAL NOT NULL,
+  payload_json TEXT NOT NULL,
+  computed_at TEXT NOT NULL,
+  PRIMARY KEY (profile_id, date, tz_id, lat_bucket, lon_bucket)
+);
+CREATE INDEX IF NOT EXISTS idx_daily_sky_lookup ON daily_sky_cache(profile_id, date);
 `;
 
 export function createAppDatabase(dbFilePath: string) {
@@ -261,6 +273,7 @@ export function createAppDatabase(dbFilePath: string) {
 
     deleteProfile(profileId: string): boolean {
       const tx = db.transaction(() => {
+        db.prepare('DELETE FROM daily_sky_cache WHERE profile_id = ?').run(profileId);
         db.prepare('DELETE FROM chart_snapshots WHERE profile_id = ?').run(profileId);
         db.prepare('DELETE FROM journal_entries WHERE profile_id = ?').run(profileId);
         db.prepare('DELETE FROM qa_messages WHERE profile_id = ?').run(profileId);
@@ -318,6 +331,7 @@ export function createAppDatabase(dbFilePath: string) {
         INSERT OR REPLACE INTO chart_snapshots (profile_id, level1_json, level2_json, computed_at)
         VALUES (?, ?, ?, ?)
       `).run(profileId, JSON.stringify(level1), JSON.stringify(level2), new Date().toISOString());
+      db.prepare('DELETE FROM daily_sky_cache WHERE profile_id = ?').run(profileId);
     },
 
     getSnapshot(profileId: string): { level1: any; level2: any; computedAt: string } | null {
@@ -330,6 +344,49 @@ export function createAppDatabase(dbFilePath: string) {
         level2: JSON.parse(row.level2_json),
         computedAt: row.computed_at,
       };
+    },
+
+    getDailySky(profileId: string, date: string, tzId: string, latBucket: number, lonBucket: number): any | null {
+      const row = db
+        .prepare(
+          'SELECT payload_json FROM daily_sky_cache WHERE profile_id = ? AND date = ? AND tz_id = ? AND lat_bucket = ? AND lon_bucket = ?',
+        )
+        .get(profileId, date, tzId, latBucket, lonBucket) as { payload_json: string } | undefined;
+      if (!row) return null;
+      try {
+        return JSON.parse(row.payload_json);
+      } catch {
+        return null;
+      }
+    },
+
+    setDailySky(
+      profileId: string,
+      date: string,
+      tzId: string,
+      latBucket: number,
+      lonBucket: number,
+      payload: any,
+    ): void {
+      db.prepare(`
+        INSERT INTO daily_sky_cache (profile_id, date, tz_id, lat_bucket, lon_bucket, payload_json, computed_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(profile_id, date, tz_id, lat_bucket, lon_bucket) DO UPDATE SET
+          payload_json = excluded.payload_json,
+          computed_at = excluded.computed_at
+      `).run(
+        profileId,
+        date,
+        tzId,
+        latBucket,
+        lonBucket,
+        JSON.stringify(payload),
+        new Date().toISOString(),
+      );
+    },
+
+    clearDailySky(profileId: string): void {
+      db.prepare('DELETE FROM daily_sky_cache WHERE profile_id = ?').run(profileId);
     },
 
     appendQaMessage(msg: Omit<StoredQaMessage, 'createdAt'> & { createdAt?: string }) {

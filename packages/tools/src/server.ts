@@ -481,7 +481,7 @@ export class ToolServer {
       if (!k) continue;
       const id = `kp.${key}`;
       const text = capWords(
-        `KP ${key}: StarLord=${k.nakshatraLord}, SubLord=${k.subLord}, SubSub=${k.subSubLord}.`,
+        `KP ${key}: StarLord=${k.starLord}, SubLord=${k.subLord}, SubSub=${k.subSubLord}.`,
         42,
       );
       items.push({ id, kind: 'kp', text, evidence: [id], tokens: estimateTokens(text) });
@@ -614,7 +614,7 @@ export class ToolServer {
     } else if (kind === 'avakahada') {
       const av = this.engineSession.getAvakahada();
       const text = capWords(
-        `Avakahada: Varna=${av.varna}, Vashya=${av.vashya}, Yoni=${av.yoni}, Gana=${av.gana}, Nadi=${av.nadi}, Paya=${av.paya}.`,
+        `Avakahada: Varna=${av.varna}, Vashya=${av.vasya}, Yoni=${av.yoni}, Gana=${av.gana}, Nadi=${av.nadi}, Paya=${av.paya}.`,
         42,
       );
       items.push({ id: 'avakahada', kind: 'avakahada', text, evidence: ['avakahada'], tokens: estimateTokens(text) });
@@ -871,7 +871,7 @@ export class ToolServer {
         id: 'panchang.tithi_vara',
         kind: 'panchang',
         text: capWords(
-          `Birth Panchang: Vara=${p.wara.name} (lord ${p.wara.lord}), Tithi=${p.tithi.paksha} ${p.tithi.name} (#${p.tithi.index}, ${(p.tithi.elapsed * 100).toFixed(0)}% elapsed).`,
+          `Birth Panchang: Vara=${p.wara.name} (lord ${p.wara.lord}), Tithi=${p.tithi.paksha} ${p.tithi.name} (#${p.tithi.index}, ${(p.tithi.elapsedFraction * 100).toFixed(0)}% elapsed).`,
           42,
         ),
         evidence: ['panchang.tithi_vara'],

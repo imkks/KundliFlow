@@ -5,6 +5,7 @@ import {
   buildDay,
   buildMonth,
   buildYear,
+  calculateVargaSign,
   computeArudhaPadas,
   computeAshtakvarga,
   computeAvakahada,
@@ -28,6 +29,7 @@ import {
   julianDayUt,
   loadEphemeris,
   resolveBirthTime,
+  VARGA_TYPES,
 } from '@astro/engine';
 import { buildChartWorkspace, PLANET_IDS, type ChartWorkspaceInput } from '@astro/facts';
 import { buildLevel2Extras } from './level2Extras.js';
@@ -53,7 +55,7 @@ import { createAppDatabase } from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '../../..');
-const DB_PATH = path.join(ROOT_DIR, 'data/myastro.db');
+const DB_PATH = process.env.DB_PATH || path.join(ROOT_DIR, 'data/myastro.db');
 const STRENGTH_PATH = path.join(ROOT_DIR, 'packages/content/strength.yaml');
 const RULES_DIR = path.join(ROOT_DIR, 'packages/content/rules');
 const TOPICS_PATH = path.join(ROOT_DIR, 'packages/content/topics/topics.yaml');
@@ -204,8 +206,20 @@ export function createApiServer() {
       const arudhas = computeArudhaPadas(natal);
       const upagrahas = computeUpagrahas(natal);
 
+      // Precompute all harmonic divisional charts (D1..D60) on server once
+      const vargas: Record<string, { lagnaSignIndex: number; grahas: Record<string, number> }> = {};
+      for (const v of VARGA_TYPES) {
+        const vLagna = natal.lagna ? calculateVargaSign(natal.lagna.lon, v) : 0;
+        const vGrahas: Record<string, number> = {};
+        for (const [id, g] of Object.entries(natal.grahas)) {
+          vGrahas[id] = calculateVargaSign(g.lon, v);
+        }
+        vargas[v] = { lagnaSignIndex: vLagna, grahas: vGrahas };
+      }
+
       level1 = {
         natal,
+        vargas,
         panchang,
         shadbala,
         ashtakvarga,
@@ -355,7 +369,7 @@ export function createApiServer() {
         let identity: { googleSub: string; email: string; name: string; picture?: string };
         if (body.idToken) {
           identity = await verifyGoogleIdToken(String(body.idToken));
-        } else if (process.env.ALLOW_DEV_AUTH === 'true' && body.devEmail) {
+        } else if (process.env.NODE_ENV !== 'production' && process.env.ALLOW_DEV_AUTH === 'true' && body.devEmail) {
           identity = {
             googleSub: `dev_${String(body.devEmail).replace(/[^a-z0-9]/gi, '_')}`,
             email: String(body.devEmail),
@@ -554,12 +568,24 @@ export function createApiServer() {
         const tz = queryParams.get('tzId') || profile.tzId || 'Asia/Kolkata';
         const qLat = queryParams.get('lat');
         const qLon = queryParams.get('lon');
+        const latVal = qLat !== null && Number.isFinite(Number(qLat)) ? Number(qLat) : profile.lat;
+        const lonVal = qLon !== null && Number.isFinite(Number(qLon)) ? Number(qLon) : profile.lon;
+        const latBucket = Math.round(latVal * 100) / 100;
+        const lonBucket = Math.round(lonVal * 100) / 100;
+
+        // Check if daily payload was already created and cached on demand for this date
+        const cachedDaily = appDb.getDailySky(profileId, dateStr, tz, latBucket, lonBucket);
+        if (cachedDaily) {
+          sendJson(res, 200, cachedDaily);
+          return;
+        }
+
         const eph = await getServerEphemeris();
         const baseDigest = createNatalDigest(snap!.level1.natal);
         const digest = {
           ...baseDigest,
-          ...(qLat !== null && Number.isFinite(Number(qLat)) ? { lat: Number(qLat) } : {}),
-          ...(qLon !== null && Number.isFinite(Number(qLon)) ? { lon: Number(qLon) } : {}),
+          lat: latVal,
+          lon: lonVal,
         };
         const activeDashasList = snap!.level2?.standard?.dashas ?? [];
         const scoringOpts = {
@@ -581,7 +607,7 @@ export function createApiServer() {
         const peakDays = [...mv.days].sort((a, b) => b.dayScore - a.dayScore).slice(0, 3);
         const cautionDays = [...mv.days].sort((a, b) => a.dayScore - b.dayScore).slice(0, 3);
 
-        sendJson(res, 200, {
+        const payload = {
           date: dateStr,
           tzId: tz,
           dayView,
@@ -593,7 +619,12 @@ export function createApiServer() {
           },
           activeDashas: activeDashasList,
           extendedDashas: snap!.level2?.standard?.extendedDashas ?? null,
-        });
+        };
+
+        // Cache on demand so subsequent fetches on this day return in <2ms
+        appDb.setDailySky(profileId, dateStr, tz, latBucket, lonBucket, payload);
+
+        sendJson(res, 200, payload);
       } catch (err: any) {
         sendJson(res, 400, { error: err?.message ?? 'Failed to compute daily payload' });
       }

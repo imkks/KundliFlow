@@ -59,11 +59,11 @@ export function computeUpagrahas(chart: NatalChart): UpagrahaPosition[] {
       id: item.id,
       name: item.name,
       lon: Number(item.lon.toFixed(4)),
-      sign: s.signName,
+      sign: s.sign,
       signIndex: s.signIndex,
       degInSign: Number(s.degInSign.toFixed(2)),
       houseFromLagna: houseFromSign(s.signIndex, lagnaSignIndex),
-      nakshatra: nak.nakshatraName,
+      nakshatra: nak.nakshatra,
       formula: item.formula,
     };
   });

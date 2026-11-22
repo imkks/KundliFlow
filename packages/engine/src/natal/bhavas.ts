@@ -35,6 +35,8 @@ export interface HouseDossier {
   reading: string;
 }
 
+export type BhavaAnalysis = HouseDossier;
+
 const BHAVA_METADATA: Record<
   number,
   { sanskritName: string; domainTitle: string; keyThemes: string[] }

@@ -1,4 +1,5 @@
 import { computeAvakahada, type AvakahadaDetails } from './avakahada.js';
+import { SIGN_LORDS } from './types.js';
 
 export interface AshtakootaKoota {
   name: string;
@@ -15,11 +16,6 @@ export interface AshtakootaResult {
   nativeA: AvakahadaDetails;
   nativeB: AvakahadaDetails;
 }
-
-const SIGN_LORDS = [
-  'mars', 'venus', 'mercury', 'moon', 'sun', 'mercury',
-  'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter',
-];
 
 const VARNA_ORDER: Record<string, number> = {
   Brahmin: 4,
@@ -52,7 +48,7 @@ export function computeAshtakoota(
   const varnaPts = (VARNA_ORDER[avA.varna] ?? 1) >= (VARNA_ORDER[avB.varna] ?? 1) ? 1 : 0;
 
   // 2. Vashya (2 pts)
-  const vashyaPts = avA.vashya === avB.vashya ? 2 : 1;
+  const vashyaPts = avA.vasya === avB.vasya ? 2 : 1;
 
   // 3. Tara (3 pts): count from A to B and B to A mod 9
   const distAB = ((b.moonNakshatraIndex - a.moonNakshatraIndex + 27) % 27) % 9;

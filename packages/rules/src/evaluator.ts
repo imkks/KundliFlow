@@ -42,10 +42,11 @@ export function loadRuleFile(filePath: string): { version: string; rules: Rule[]
 }
 
 export function loadAllRulesFromDir(dirPath: string): { version: string; rules: Rule[] } {
+  // Exclude test-only sample fixture files to avoid shadowing production rules
   const files = fs
     .readdirSync(dirPath)
-    .filter((f) => f.endsWith('.yaml') || f.endsWith('.yml'))
-    .sort((a, b) => (a === 'sample_rules.yaml' ? 1 : b === 'sample_rules.yaml' ? -1 : a.localeCompare(b)));
+    .filter((f) => (f.endsWith('.yaml') || f.endsWith('.yml')) && !f.startsWith('sample_'))
+    .sort();
 
   const byId = new Map<string, Rule>();
   let version = '1.0.0';

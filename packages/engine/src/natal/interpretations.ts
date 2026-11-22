@@ -1,4 +1,4 @@
-import type { NatalChart, VedicGraha } from './types.js';
+import { SIGN_LORDS, type NatalChart, type VedicGraha } from './types.js';
 import type { AvakahadaDetails } from './avakahada.js';
 import type { CharaKaraka } from './karakas.js';
 
@@ -31,8 +31,9 @@ export const getPlanetaryInsights = (chart: NatalChart): SectionInterpretation =
   const lagna = chart.lagna;
 
   if (lagna) {
+    const lagnaLord = SIGN_LORDS[lagna.signIndex];
     bullets.push(
-      `Ascendant in ${lagna.sign.toUpperCase()} (Lord: ${chart.grahas[lagna.lord]?.sign ? lagna.lord.toUpperCase() : lagna.lord}): Endows a ${lagna.sign.toLowerCase()} constitutional focus, shaping your primary interface with the outer world.`,
+      `Ascendant in ${lagna.sign.toUpperCase()} (Lord: ${lagnaLord ? lagnaLord.toUpperCase() : 'UNKNOWN'}): Endows a ${lagna.sign.toLowerCase()} constitutional focus, shaping your primary interface with the outer world.`,
     );
   }
 

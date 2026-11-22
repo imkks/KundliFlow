@@ -126,6 +126,7 @@ interface AppShellProps {
   vargaLagnaSignIndex: number;
   charaKarakas: Record<string, string>;
   backendProfileId: string | null;
+  serverLevel1?: any;
   calibrationLogs: SubjectiveLog[];
   onEntriesChange: (entries: JournalEntry[]) => void;
   onOpenOnboarding: () => void;
@@ -862,6 +863,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
               shadbala={props.shadbala}
               ashtakvarga={props.ashtakvarga}
               sevenPlanetSigns={props.sevenPlanetSigns}
+              serverLevel1={props.serverLevel1}
               onOpenLlmDossier={props.onOpenLlmDossier}
             />
           )}
@@ -1016,6 +1018,7 @@ export default function App() {
   const [chalit, setChalit] = useState<ChalitChart | null>(null);
   const [panchang, setPanchang] = useState<any>(null);
   const [serverLevel1, setServerLevel1] = useState<any>(null);
+  const [serverLevel2, setServerLevel2] = useState<any>(null);
   const [monthPeakSummary, setMonthPeakSummary] = useState<any>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [retryTick, setRetryTick] = useState(0);
@@ -1308,7 +1311,9 @@ export default function App() {
             .catch(() => {});
         }
         const l1 = bundle.level1Static;
+        const l2 = bundle.level2Static;
         setServerLevel1(l1);
+        setServerLevel2(l2);
         setNatalChart(l1.natal);
         setAvakahada(l1.avakahada ?? null);
         setPanchang(l1.panchang ?? null);
@@ -1390,22 +1395,34 @@ export default function App() {
     if (!natalChart || !natalChart.lagna) return [];
     const map = new Map<number, ChartPlacement['items']>();
     for (let s = 0; s < 12; s++) map.set(s, []);
-    map.get(calculateVargaSign(natalChart.lagna.lon, selectedVarga))?.push({ label: 'Asc', isLagna: true });
+
+    const precomputed = serverLevel1?.vargas?.[selectedVarga];
+    const lagnaSign = precomputed !== undefined
+      ? precomputed.lagnaSignIndex
+      : calculateVargaSign(natalChart.lagna.lon, selectedVarga);
+    map.get(lagnaSign)?.push({ label: 'Asc', isLagna: true });
+
     const shortNames: Record<string, string> = {
       sun: 'Su', moon: 'Mo', mars: 'Ma', mercury: 'Me', jupiter: 'Ju',
       venus: 'Ve', saturn: 'Sa', rahu: 'Ra', ketu: 'Ke',
     };
     for (const [id, g] of Object.entries(natalChart.grahas)) {
       if (!shortNames[id]) continue;
-      map.get(calculateVargaSign(g.lon, selectedVarga))?.push({ label: shortNames[id]!, isRetrograde: g.retrograde });
+      const sign = precomputed?.grahas?.[id] !== undefined
+        ? precomputed.grahas[id]
+        : calculateVargaSign(g.lon, selectedVarga);
+      map.get(sign)?.push({ label: shortNames[id]!, isRetrograde: g.retrograde });
     }
     return Array.from(map.entries()).map(([signIndex, items]) => ({ signIndex, items }));
-  }, [natalChart, selectedVarga]);
+  }, [natalChart, selectedVarga, serverLevel1]);
 
   const vargaLagnaSignIndex = useMemo(() => {
+    if (serverLevel1?.vargas?.[selectedVarga]?.lagnaSignIndex !== undefined) {
+      return serverLevel1.vargas[selectedVarga].lagnaSignIndex;
+    }
     if (!natalChart || !natalChart.lagna) return 0;
     return calculateVargaSign(natalChart.lagna.lon, selectedVarga);
-  }, [natalChart, selectedVarga]);
+  }, [natalChart, selectedVarga, serverLevel1]);
 
   const charaKarakas = useMemo(() => {
     return serverLevel1?.karakas ?? {};
@@ -1516,6 +1533,7 @@ export default function App() {
       ashtakvarga={ashtakvarga}
       dashas={dashas}
       transits={currentTransits}
+      serverLevel2={serverLevel2}
     >
       <AppShell
         userName={userName}
@@ -1531,6 +1549,7 @@ export default function App() {
         lat={lat}
         lon={lon}
         natalChart={natalChart}
+        serverLevel1={serverLevel1}
         dayView={dayView}
         currentScore={currentScore}
         activeCityName={activeCity.name}
