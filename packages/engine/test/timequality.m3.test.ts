@@ -83,6 +83,14 @@ describe('M3 Time Quality, Ashtakvarga & Transits Suite', () => {
       const sunPrastara = av.prastara.sun;
       expect(sunPrastara.totals).toEqual(ashtakvargaFixture.bhinna.sun);
       expect(sunPrastara.totalSum).toBe(48);
+
+      // Verify BPHS Trikona Shodhana on Sun BAV
+      expect(av.trikonaShodhita?.sun).toEqual([2, 4, 0, 3, 2, 0, 2, 0, 0, 5, 3, 0]);
+
+      // Verify Ekadhipatya Shodhana and Shodhita Pindas are computed
+      expect(av.ekadhipatyaShodhita?.sun).toBeDefined();
+      expect(av.pindas?.sun?.shodhitaPinda).toBeGreaterThan(0);
+      expect(av.pindas?.jupiter?.shodhitaPinda).toBeGreaterThan(0);
     });
   });
 

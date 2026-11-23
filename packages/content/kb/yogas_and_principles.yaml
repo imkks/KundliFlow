@@ -182,3 +182,67 @@ items:
     school: parashari
     source: "Muhurta Chintamani (paraphrase)"
     reviewed: 1
+
+  - id: principle.sudarshana_chakra
+    type: concept_note
+    text: "Sudarshana Chakra evaluates the chart synchronously through three concentric rings (Lagna, Moon, Sun). When all three occupy different signs, it yields an objective 3D perspective of each house's beneficence, with 12-year rotating annual dashas."
+    themes: "self,career_status"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XXXI (paraphrase)"
+    reviewed: 1
+
+  - id: principle.kakshya_transits
+    type: concept_note
+    text: "In Ashtakavarga, each sign is divided into 8 equal Kakshyas of 3°45' ruled by Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon, and Lagna. A transit planet delivers favorable results when traversing a Kakshya that received a benefic bindu in its Prastaraka."
+    themes: "decision_timing,gains_network"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XXX (paraphrase)"
+    reviewed: 1
+
+  - id: principle.ashtakoota_matching
+    type: concept_note
+    text: "Traditional 36-point compatibility evaluates Varna (1), Vashya (2), Tara (3), Yoni (4), Graha-Maitri (5), Gana (6), Bhakoota (7), and Naadi (8) to determine physiological, mental, emotional, and constitutional harmony between partners."
+    themes: "partnership"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XXVII (paraphrase)"
+    reviewed: 1
+
+  - id: principle.upagrahas
+    type: concept_note
+    text: "Non-luminous sub-planets (Gulika, Mandi, Yamakantaka, Ardhaprahara, Kaala, Mrityu, Dhooma, Vyatipata, Parivesha, Indrachapa, Upaketu, Pranapada) act as sensitive karmic focal points that modify house promises."
+    themes: "transformation_secrets,health_routine"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XI (paraphrase)"
+    reviewed: 1
+
+  - id: principle.chandra_yogas
+    type: concept_note
+    text: "Lunar yogas (Sunapha, Anapha, Durudhara, Kemadruma, Chandra-Mangala, Amala) govern emotional security, commercial acumen, and public reputation based on planets flanking the Moon."
+    themes: "money_speech,mind_emotion"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XXII (paraphrase)"
+    reviewed: 1
+
+  - id: principle.surya_yogas
+    type: concept_note
+    text: "Solar yogas (Vesi, Vosi, Ubhayachari) govern administrative authority, speech eloquence, and worldly leadership based on planets flanking the Sun."
+    themes: "career_status,self"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XXII (paraphrase)"
+    reviewed: 1
+
+  - id: principle.dharma_karmadhipati
+    type: concept_note
+    text: "Association between the 9th (Dharma) and 10th (Karma) lords forms the premier Parashari Raja Yoga, conferring high state honors, executive leadership, and unblemished public renown."
+    themes: "career_status,luck_dharma"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XXI (paraphrase)"
+    reviewed: 1
+
+  - id: principle.chatur_pancha_naadi
+    type: concept_note
+    text: "When Naadi dosha occurs in standard Tri-Naadi, classical Chatur-Naadi (for Sun/Jupiter stars) and Pancha-Naadi (for Mars stars) can cancel the dosha if bride and groom occupy different sub-naadis."
+    themes: "partnership,health_routine"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology Ch. XXVII (paraphrase)"
+    reviewed: 1

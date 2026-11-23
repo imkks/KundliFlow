@@ -342,7 +342,7 @@ export const InterpretationsGuide: React.FC<InterpretationsGuideProps> = ({
                             </span>
                           </td>
                           <td style={{ padding: '8px 10px' }}>
-                            <span style={{ fontWeight: 600, color: av.deeptadi === 'Deepta' || av.deeptadi === 'Swatha' ? 'var(--teal)' : av.deeptadi === 'Muditha' || av.deeptadi === 'Shant' ? 'var(--gold)' : 'var(--amber)' }}>
+                            <span style={{ fontWeight: 600, color: av.deeptadi === 'Deepta' || av.deeptadi === 'Swastha' || av.deeptadi === 'Swatha' ? 'var(--teal)' : av.deeptadi === 'Muditha' || av.deeptadi === 'Shant' ? 'var(--gold)' : 'var(--amber)' }}>
                               {av.deeptadi}
                             </span>
                           </td>
@@ -530,7 +530,7 @@ export const InterpretationsGuide: React.FC<InterpretationsGuideProps> = ({
                       {a.formatted}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
-                      {a.aspect.name} ({a.aspect.angle}°) • Exact Angle: {a.exactAngle}°
+                      {a.aspect.name} ({a.aspect.angle}°) • Separation: {a.exactAngle}° (Orb: {a.diffFromExact}°)
                     </div>
                   </div>
                   <span

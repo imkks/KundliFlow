@@ -1,0 +1,1298 @@
+version: 1.0.0
+rules:
+  - id: asp.moon.aries.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aries
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 65
+      statement: "When the Sun aspects Moon in Mars signs, it confers courageous leadership, generous disposition, active stamina, and honor from superiors."
+  - id: asp.moon.scorpio.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: scorpio
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 65
+      statement: "When the Sun aspects Moon in Mars signs, it confers courageous leadership, generous disposition, active stamina, and honor from superiors."
+  - id: asp.moon.aries.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aries
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 58
+      statement: "When Mars aspects Moon in its own signs, it imparts intense martial energy, fearless daring, and quick temper, requiring conscious emotional pacing."
+  - id: asp.moon.scorpio.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: scorpio
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 58
+      statement: "When Mars aspects Moon in its own signs, it imparts intense martial energy, fearless daring, and quick temper, requiring conscious emotional pacing."
+  - id: asp.moon.aries.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aries
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 62
+      statement: "When Mercury aspects Moon in Mars signs, it produces sharp analytical wit, skill in debate, dexterity in crafts, and eloquent rhetoric."
+  - id: asp.moon.scorpio.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: scorpio
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 62
+      statement: "When Mercury aspects Moon in Mars signs, it produces sharp analytical wit, skill in debate, dexterity in crafts, and eloquent rhetoric."
+  - id: asp.moon.aries.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aries
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 74
+      statement: "When Jupiter aspects Moon in Mars signs, it bestows esteemed honor, scholarly learning, moral fortitude, generous patronage, and high authority."
+  - id: asp.moon.scorpio.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: scorpio
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 74
+      statement: "When Jupiter aspects Moon in Mars signs, it bestows esteemed honor, scholarly learning, moral fortitude, generous patronage, and high authority."
+  - id: asp.moon.aries.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aries
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 65
+      statement: "When Venus aspects Moon in Mars signs, it creates attractive personal charm, artistic talent, affectionate relationships, and abundant social goodwill."
+  - id: asp.moon.scorpio.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: scorpio
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 65
+      statement: "When Venus aspects Moon in Mars signs, it creates attractive personal charm, artistic talent, affectionate relationships, and abundant social goodwill."
+  - id: asp.moon.aries.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aries
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 50
+      statement: "When Saturn aspects Moon in Mars signs, it demands patient perseverance and disciplined endurance, transforming hardships into profound self-reliance."
+  - id: asp.moon.scorpio.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: scorpio
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 50
+      statement: "When Saturn aspects Moon in Mars signs, it demands patient perseverance and disciplined endurance, transforming hardships into profound self-reliance."
+  - id: asp.moon.taurus.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: taurus
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 66
+      statement: "When the Sun aspects Moon in Venus signs, it gives attractive bearing, aristocratic dignity, wealthy family heritage, and respectful conduct."
+  - id: asp.moon.libra.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: libra
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 66
+      statement: "When the Sun aspects Moon in Venus signs, it gives attractive bearing, aristocratic dignity, wealthy family heritage, and respectful conduct."
+  - id: asp.moon.taurus.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: taurus
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 60
+      statement: "When Mars aspects Moon in Venus signs, it channels passion into artistic crafts, bold business partnerships, and dynamic aesthetic craftsmanship."
+  - id: asp.moon.libra.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: libra
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 60
+      statement: "When Mars aspects Moon in Venus signs, it channels passion into artistic crafts, bold business partnerships, and dynamic aesthetic craftsmanship."
+  - id: asp.moon.taurus.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: taurus
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 70
+      statement: "When Mercury aspects Moon in Venus signs, it confers gracious conversational charm, literary brilliance, musical talent, and diplomatic finesse."
+  - id: asp.moon.libra.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: libra
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 70
+      statement: "When Mercury aspects Moon in Venus signs, it confers gracious conversational charm, literary brilliance, musical talent, and diplomatic finesse."
+  - id: asp.moon.taurus.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: taurus
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 76
+      statement: "When Jupiter aspects Moon in Venus signs, it blesses with abundant comforts, joyful family life, noble virtues, generous hospitality, and peace."
+  - id: asp.moon.libra.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: libra
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 76
+      statement: "When Jupiter aspects Moon in Venus signs, it blesses with abundant comforts, joyful family life, noble virtues, generous hospitality, and peace."
+  - id: asp.moon.taurus.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: taurus
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 75
+      statement: "When Venus aspects Moon in its own signs, it enhances radiant aesthetic grace, romantic contentment, luxurious comforts, and refined artistic tastes."
+  - id: asp.moon.libra.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: libra
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 75
+      statement: "When Venus aspects Moon in its own signs, it enhances radiant aesthetic grace, romantic contentment, luxurious comforts, and refined artistic tastes."
+  - id: asp.moon.taurus.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: taurus
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 58
+      statement: "When Saturn aspects Moon in Venus signs, it confers prudent financial management, mature partnerships, practical craftsmanship, and steady accumulation."
+  - id: asp.moon.libra.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: libra
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 58
+      statement: "When Saturn aspects Moon in Venus signs, it confers prudent financial management, mature partnerships, practical craftsmanship, and steady accumulation."
+  - id: asp.moon.gemini.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: gemini
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 68
+      statement: "When the Sun aspects Moon in Mercury signs, it imparts administrative acumen, intellectual authority, truthful speech, and broad professional respect."
+  - id: asp.moon.virgo.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: virgo
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 68
+      statement: "When the Sun aspects Moon in Mercury signs, it imparts administrative acumen, intellectual authority, truthful speech, and broad professional respect."
+  - id: asp.moon.gemini.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: gemini
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 58
+      statement: "When Mars aspects Moon in Mercury signs, it sharpens tactical intellect, critical debate, and technical dexterity, with a quick-witted critical tongue."
+  - id: asp.moon.virgo.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: virgo
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 58
+      statement: "When Mars aspects Moon in Mercury signs, it sharpens tactical intellect, critical debate, and technical dexterity, with a quick-witted critical tongue."
+  - id: asp.moon.gemini.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: gemini
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 76
+      statement: "When Mercury aspects Moon in its own signs, it produces supreme intellectual versatility, photographic memory, poetic eloquence, and scholarly acclaim."
+  - id: asp.moon.virgo.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: virgo
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 76
+      statement: "When Mercury aspects Moon in its own signs, it produces supreme intellectual versatility, photographic memory, poetic eloquence, and scholarly acclaim."
+  - id: asp.moon.gemini.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: gemini
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 78
+      statement: "When Jupiter aspects Moon in Mercury signs, it creates a revered counselor, learned author, wise educator, and person of spotless moral integrity."
+  - id: asp.moon.virgo.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: virgo
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 78
+      statement: "When Jupiter aspects Moon in Mercury signs, it creates a revered counselor, learned author, wise educator, and person of spotless moral integrity."
+  - id: asp.moon.gemini.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: gemini
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 68
+      statement: "When Venus aspects Moon in Mercury signs, it gives delightful conversational charm, witty friendships, artistic versatility, and cultured social ease."
+  - id: asp.moon.virgo.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: virgo
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 68
+      statement: "When Venus aspects Moon in Mercury signs, it gives delightful conversational charm, witty friendships, artistic versatility, and cultured social ease."
+  - id: asp.moon.gemini.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: gemini
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 60
+      statement: "When Saturn aspects Moon in Mercury signs, it confers deep investigative concentration, methodical research, analytical seriousness, and scholarly patience."
+  - id: asp.moon.virgo.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: virgo
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 60
+      statement: "When Saturn aspects Moon in Mercury signs, it confers deep investigative concentration, methodical research, analytical seriousness, and scholarly patience."
+  - id: asp.moon.cancer.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: cancer
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 68
+      statement: "When the Sun aspects Moon in Cancer, it manifests dignified presence, paternal blessings, prominent societal status, and proud, noble character."
+  - id: asp.moon.cancer.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: cancer
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 60
+      statement: "When Mars aspects Moon in Cancer, it stimulates fierce protective courage, passionate feelings, technical or medical aptitude, and active drive."
+  - id: asp.moon.cancer.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: cancer
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 68
+      statement: "When Mercury aspects Moon in Cancer, it enriches creative imagination, empathetic writing, intuitive memory, and sweet, engaging speech."
+  - id: asp.moon.cancer.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: cancer
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 80
+      statement: "When Jupiter aspects Moon in Cancer, it bestows kingly virtue, profound spiritual wisdom, boundless philanthropy, and universal affection."
+  - id: asp.moon.cancer.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: cancer
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 74
+      statement: "When Venus aspects Moon in Cancer, it confers domestic harmony, maternal tenderness, exquisite home sanctuary, and graceful social magnetism."
+  - id: asp.moon.cancer.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: cancer
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 52
+      statement: "When Saturn aspects Moon in Cancer, it calls for emotional self-reliance, steady mental discipline, and calm endurance under shifting moods."
+  - id: asp.moon.leo.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: leo
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 74
+      statement: "When the Sun aspects Moon in Leo, it bestows commanding leadership, royal dignity, magnanimous courage, and prominent public authority."
+  - id: asp.moon.leo.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: leo
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 70
+      statement: "When Mars aspects Moon in Leo, it produces fearless warrior drive, athletic enterprise, heroic ambition, and inspiring competitive command."
+  - id: asp.moon.leo.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: leo
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 66
+      statement: "When Mercury aspects Moon in Leo, it gives articulate oratory, administrative sharpness, charismatic presentation, and creative intellect."
+  - id: asp.moon.leo.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: leo
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 80
+      statement: "When Jupiter aspects Moon in Leo, it confers supreme magnanimity, high judicial or state honors, unshakeable righteousness, and noble eminence."
+  - id: asp.moon.leo.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: leo
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 70
+      statement: "When Venus aspects Moon in Leo, it brings dramatic personal charm, artistic patronage, flamboyant aesthetic elegance, and warm social popularity."
+  - id: asp.moon.leo.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: leo
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 52
+      statement: "When Saturn aspects Moon in Leo, it tests regal pride against duty, forging mature, enduring executive authority through heavy responsibilities."
+  - id: asp.moon.sagittarius.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: sagittarius
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 72
+      statement: "When the Sun aspects Moon in Jupiter signs, it inspires righteous leadership, dedication to spiritual truth, philosophical eminence, and widespread honor."
+  - id: asp.moon.pisces.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: pisces
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 72
+      statement: "When the Sun aspects Moon in Jupiter signs, it inspires righteous leadership, dedication to spiritual truth, philosophical eminence, and widespread honor."
+  - id: asp.moon.sagittarius.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: sagittarius
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 68
+      statement: "When Mars aspects Moon in Jupiter signs, it fuels righteous crusades, valiant defense of truth, dynamic pedagogical drive, and adventurous courage."
+  - id: asp.moon.pisces.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: pisces
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 68
+      statement: "When Mars aspects Moon in Jupiter signs, it fuels righteous crusades, valiant defense of truth, dynamic pedagogical drive, and adventurous courage."
+  - id: asp.moon.sagittarius.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: sagittarius
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 72
+      statement: "When Mercury aspects Moon in Jupiter signs, it confers deep philosophical clarity, scholarly authorship, legal erudition, and synthetic wisdom."
+  - id: asp.moon.pisces.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: pisces
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 72
+      statement: "When Mercury aspects Moon in Jupiter signs, it confers deep philosophical clarity, scholarly authorship, legal erudition, and synthetic wisdom."
+  - id: asp.moon.sagittarius.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: sagittarius
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 82
+      statement: "When Jupiter aspects Moon in its own signs, it manifests supreme spiritual grace, venerable teaching authority, moral radiance, and profound inner peace."
+  - id: asp.moon.pisces.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: pisces
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 82
+      statement: "When Jupiter aspects Moon in its own signs, it manifests supreme spiritual grace, venerable teaching authority, moral radiance, and profound inner peace."
+  - id: asp.moon.sagittarius.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: sagittarius
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 74
+      statement: "When Venus aspects Moon in Jupiter signs, it confers peaceful, blessed partnerships, cultural refinement, philanthropic devotion, and gracious living."
+  - id: asp.moon.pisces.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: pisces
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 74
+      statement: "When Venus aspects Moon in Jupiter signs, it confers peaceful, blessed partnerships, cultural refinement, philanthropic devotion, and gracious living."
+  - id: asp.moon.sagittarius.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: sagittarius
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 64
+      statement: "When Saturn aspects Moon in Jupiter signs, it anchors wisdom into austere contemplation, patient mentorship, spiritual endurance, and lasting legacy."
+  - id: asp.moon.pisces.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: pisces
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 64
+      statement: "When Saturn aspects Moon in Jupiter signs, it anchors wisdom into austere contemplation, patient mentorship, spiritual endurance, and lasting legacy."
+  - id: asp.moon.capricorn.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: capricorn
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 55
+      statement: "When the Sun aspects Moon in Saturn signs, it confers serious dedication to duty, pragmatic leadership, patient career ascent, and respectful maturity."
+  - id: asp.moon.aquarius.sun
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aquarius
+        - fact: aspect
+          planet1: sun
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 55
+      statement: "When the Sun aspects Moon in Saturn signs, it confers serious dedication to duty, pragmatic leadership, patient career ascent, and respectful maturity."
+  - id: asp.moon.capricorn.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: capricorn
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 58
+      statement: "When Mars aspects Moon in Saturn signs, it imparts ironclad technical endurance, tenacious work ethic, strategic realism, and resilience under pressure."
+  - id: asp.moon.aquarius.mars
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aquarius
+        - fact: aspect
+          planet1: mars
+          planet2: moon
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 58
+      statement: "When Mars aspects Moon in Saturn signs, it imparts ironclad technical endurance, tenacious work ethic, strategic realism, and resilience under pressure."
+  - id: asp.moon.capricorn.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: capricorn
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 65
+      statement: "When Mercury aspects Moon in Saturn signs, it confers systematic administrative precision, methodical calculation, pragmatic logic, and reliable execution."
+  - id: asp.moon.aquarius.mercury
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aquarius
+        - fact: aspect
+          planet1: mercury
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 65
+      statement: "When Mercury aspects Moon in Saturn signs, it confers systematic administrative precision, methodical calculation, pragmatic logic, and reliable execution."
+  - id: asp.moon.capricorn.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: capricorn
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 74
+      statement: "When Jupiter aspects Moon in Saturn signs, it brings respected civic authority, moral fairness in governance, enduring wealth, and public trust."
+  - id: asp.moon.aquarius.jupiter
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aquarius
+        - fact: aspect
+          planet1: jupiter
+          planet2: moon
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 74
+      statement: "When Jupiter aspects Moon in Saturn signs, it brings respected civic authority, moral fairness in governance, enduring wealth, and public trust."
+  - id: asp.moon.capricorn.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: capricorn
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 62
+      statement: "When Venus aspects Moon in Saturn signs, it produces faithful, mature affections, refined architectural or structural taste, and prudent domestic care."
+  - id: asp.moon.aquarius.venus
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aquarius
+        - fact: aspect
+          planet1: venus
+          planet2: moon
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 62
+      statement: "When Venus aspects Moon in Saturn signs, it produces faithful, mature affections, refined architectural or structural taste, and prudent domestic care."
+  - id: asp.moon.capricorn.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: capricorn
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 54
+      statement: "When Saturn aspects Moon in its own signs, it deepens meditative solemnity, self-contained stamina, unshakeable patience, and stoic inner peace."
+  - id: asp.moon.aquarius.saturn
+    kind: aspect
+    school: parashari
+    source: "BPHS & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX: Aspects on Moon)"
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aquarius
+        - fact: aspect
+          planet1: saturn
+          planet2: moon
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 54
+      statement: "When Saturn aspects Moon in its own signs, it deepens meditative solemnity, self-contained stamina, unshakeable patience, and stoic inner peace."

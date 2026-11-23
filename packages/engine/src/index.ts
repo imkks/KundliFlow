@@ -18,6 +18,7 @@ export * from './panchang/index.js';
 export * from './dasha/vimshottari.js';
 export * from './dasha/yogini.js';
 export * from './dasha/chara.js';
+export * from './dasha/sudarshana.js';
 export * from './kp/sublords.js';
 export * from './shadbala/index.js';
 export * from './vargas/index.js';
@@ -37,3 +38,6 @@ export * from './natal/upagrahas.js';
 export * from './natal/arudha.js';
 export * from './natal/varshaphal.js';
 export * from './natal/ashtakoota.js';
+export * from './muhurta/index.js';
+export * from './longevity/ayurdaya.js';
+

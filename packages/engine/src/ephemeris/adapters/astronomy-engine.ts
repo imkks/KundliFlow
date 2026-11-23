@@ -56,7 +56,11 @@ const dpsiDeg = (jdUt: number): number => Astronomy.e_tilt(timeOf(jdUt)).dpsi / 
 export const createAstronomyEngineProvider = async (): Promise<EphemerisProvider> => ({
   id: 'astronomy-engine',
   version: 'astronomy-engine@2.1.19',
-  capabilities: { trueNode: false, ayanamsas: ['lahiri'], outerPlanets: true },
+  capabilities: {
+    trueNode: false,
+    ayanamsas: ['lahiri', 'raman', 'kp_old', 'kp_new', 'yukteshwar'],
+    outerPlanets: true,
+  },
 
   bodies(jdUt, ids) {
     const out = {} as Record<BodyId, BodyState>;
@@ -74,8 +78,9 @@ export const createAstronomyEngineProvider = async (): Promise<EphemerisProvider
   },
 
   ayanamsa(jdUt, kind) {
-    if (kind !== 'lahiri') throw new UnsupportedSettingError('astronomy-engine', `ayanamsa "${kind}"`);
-    return meanAyanamsa(jdUt, AYANAMSA_ANCHORS.lahiri) + dpsiDeg(jdUt);
+    const anchor = AYANAMSA_ANCHORS[kind as keyof typeof AYANAMSA_ANCHORS];
+    if (!anchor) throw new UnsupportedSettingError('astronomy-engine', `ayanamsa "${kind}"`);
+    return meanAyanamsa(jdUt, anchor) + dpsiDeg(jdUt);
   },
 
   angles(jdUt, lat, lon) {

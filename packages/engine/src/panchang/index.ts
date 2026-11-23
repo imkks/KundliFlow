@@ -43,7 +43,8 @@ export const FIXED_KARANAS = [
 ] as const;
 
 export interface KaranaInfo {
-  index: number; // 1 to 60
+  index: number; // 0 to 59 (0-indexed half-tithi)
+  halfTithiNumber?: number; // 1 to 60 (1-indexed canonical half-tithi)
   name: string;
   isVishtiBhadra: boolean;
 }
@@ -70,9 +71,9 @@ const WARA_NAMES = [
 ] as const;
 
 /**
- * Computes Panchang limbs from sidereal or tropical Sun & Moon positions.
- * Note: relative angles (Moon - Sun, Moon + Sun) give identical results
- * whether sidereal or tropical, because ayanamsa cancels out for difference.
+ * Computes Panchang limbs from Nirayana (sidereal) Sun & Moon positions.
+ * Note: While Tithi (Moon - Sun) and Karana cancel out Ayanamsha, Yoga (Sun + Moon)
+ * sums longitudes and must strictly be computed from Nirayana longitudes.
  */
 export const computePanchang = (
   sunLon: number,
@@ -135,6 +136,7 @@ export const computePanchang = (
     },
     karana: {
       index: karanaHalfTithi, // 0 to 59
+      halfTithiNumber: karanaHalfTithi + 1, // 1 to 60
       name: karanaName,
       isVishtiBhadra,
     },

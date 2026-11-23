@@ -840,9 +840,7 @@ rules:
       theme: mind_emotion
       polarity: challenging
       base_strength: 56
-      statement: >-
-        Moon and Saturn together (Vish/Sade-like sobriety) deepen emotional realism and endurance, though mood needs
-        gentle care.
+      statement: Moon and Saturn together (Vish/Sade-like sobriety) deepen emotional realism and endurance, though mood needs gentle care.
   - id: conj.moon.rahu.general
     kind: conjunction
     school: parashari
@@ -906,9 +904,7 @@ rules:
       theme: courage_siblings
       polarity: challenging
       base_strength: 58
-      statement: >-
-        Mars and Saturn together pair intense drive with restraint—powerful for engineering and endurance when paced
-        well.
+      statement: Mars and Saturn together pair intense drive with restraint—powerful for engineering and endurance when paced well.
   - id: conj.mercury.venus.general
     kind: conjunction
     school: parashari
@@ -988,9 +984,7 @@ rules:
       theme: luck_dharma
       polarity: mixed
       base_strength: 56
-      statement: >-
-        Jupiter and Saturn together (Brahma/Dharma-Karma) balance expansion with realism and long-term institution
-        building.
+      statement: Jupiter and Saturn together (Brahma/Dharma-Karma) balance expansion with realism and long-term institution building.
   - id: conj.venus.saturn.general
     kind: conjunction
     school: parashari
@@ -1036,9 +1030,7 @@ rules:
       theme: self
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Sun Dasha period brings Sun's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Sun Dasha period brings Sun's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.moon
     kind: dasha
     school: parashari
@@ -1052,9 +1044,7 @@ rules:
       theme: mind_emotion
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Moon Dasha period brings Moon's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Moon Dasha period brings Moon's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.mars
     kind: dasha
     school: parashari
@@ -1068,9 +1058,7 @@ rules:
       theme: courage_siblings
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Mars Dasha period brings Mars's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Mars Dasha period brings Mars's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.mercury
     kind: dasha
     school: parashari
@@ -1084,9 +1072,7 @@ rules:
       theme: education_children
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Mercury Dasha period brings Mercury's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Mercury Dasha period brings Mercury's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.jupiter
     kind: dasha
     school: parashari
@@ -1100,9 +1086,7 @@ rules:
       theme: luck_dharma
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Jupiter Dasha period brings Jupiter's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Jupiter Dasha period brings Jupiter's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.venus
     kind: dasha
     school: parashari
@@ -1116,9 +1100,7 @@ rules:
       theme: partnership
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Venus Dasha period brings Venus's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Venus Dasha period brings Venus's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.saturn
     kind: dasha
     school: parashari
@@ -1132,9 +1114,7 @@ rules:
       theme: career_status
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Saturn Dasha period brings Saturn's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Saturn Dasha period brings Saturn's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.rahu
     kind: dasha
     school: parashari
@@ -1148,9 +1128,7 @@ rules:
       theme: transformation_secrets
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Rahu Dasha period brings Rahu's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Rahu Dasha period brings Rahu's natal house, lordships, and dignity to the foreground of daily experience.
   - id: dasha.maha.ketu
     kind: dasha
     school: parashari
@@ -1164,9 +1142,7 @@ rules:
       theme: losses_retreat
       polarity: mixed
       base_strength: 55
-      statement: >-
-        An active Ketu Dasha period brings Ketu's natal house, lordships, and dignity to the foreground of daily
-        experience.
+      statement: An active Ketu Dasha period brings Ketu's natal house, lordships, and dignity to the foreground of daily experience.
   - id: conj.venus.rahu.4
     kind: conjunction
     school: parashari
@@ -1245,3 +1221,385 @@ rules:
       polarity: mixed
       base_strength: 52
       statement: Mercury close to Rahu sharpens inventive, unconventional thinking, though mental restlessness benefits from grounding habits.
+  - id: yoga.ruchaka
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      all:
+        - fact: dignity
+          planet: mars
+          state:
+            - exalted
+            - own
+            - mooltrikona
+        - any:
+            - fact: placement
+              planet: mars
+              house: 1
+            - fact: placement
+              planet: mars
+              house: 4
+            - fact: placement
+              planet: mars
+              house: 7
+            - fact: placement
+              planet: mars
+              house: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 75
+      statement: Ruchaka Yoga is formed by Mars strong in a Kendra in own or exaltation sign, conferring extraordinary courage, executive authority, leadership, and victorious enterprise.
+  - id: yoga.bhadra
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      all:
+        - fact: dignity
+          planet: mercury
+          state:
+            - exalted
+            - own
+            - mooltrikona
+        - any:
+            - fact: placement
+              planet: mercury
+              house: 1
+            - fact: placement
+              planet: mercury
+              house: 4
+            - fact: placement
+              planet: mercury
+              house: 7
+            - fact: placement
+              planet: mercury
+              house: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 75
+      statement: Bhadra Yoga is formed by Mercury strong in a Kendra in own or exaltation sign, conferring scholarly brilliance, sharp commercial intellect, eloquence, and respected public status.
+  - id: yoga.hamsa
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      all:
+        - fact: dignity
+          planet: jupiter
+          state:
+            - exalted
+            - own
+            - mooltrikona
+        - any:
+            - fact: placement
+              planet: jupiter
+              house: 1
+            - fact: placement
+              planet: jupiter
+              house: 4
+            - fact: placement
+              planet: jupiter
+              house: 7
+            - fact: placement
+              planet: jupiter
+              house: 10
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 78
+      statement: Hamsa Yoga is formed by Jupiter strong in a Kendra in own or exaltation sign, bestowing pure righteous wisdom, reverence from rulers, ethical preeminence, and deep spiritual grace.
+  - id: yoga.malavya
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      all:
+        - fact: dignity
+          planet: venus
+          state:
+            - exalted
+            - own
+            - mooltrikona
+        - any:
+            - fact: placement
+              planet: venus
+              house: 1
+            - fact: placement
+              planet: venus
+              house: 4
+            - fact: placement
+              planet: venus
+              house: 7
+            - fact: placement
+              planet: venus
+              house: 10
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 75
+      statement: Malavya Yoga is formed by Venus strong in a Kendra in own or exaltation sign, endowing the native with artistic refinement, abundant material luxuries, magnetic charm, and harmonious partnerships.
+  - id: yoga.shasha
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      all:
+        - fact: dignity
+          planet: saturn
+          state:
+            - exalted
+            - own
+            - mooltrikona
+        - any:
+            - fact: placement
+              planet: saturn
+              house: 1
+            - fact: placement
+              planet: saturn
+              house: 4
+            - fact: placement
+              planet: saturn
+              house: 7
+            - fact: placement
+              planet: saturn
+              house: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 75
+      statement: Shasha Yoga is formed by Saturn strong in a Kendra in own or exaltation sign, establishing durable authority, strategic discipline, steadfast leadership, and enduring civic prominence.
+  - id: yoga.gajakesari
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+        - any:
+            - fact: placement
+              planet: jupiter
+              from_moon: 1
+            - fact: placement
+              planet: jupiter
+              from_moon: 4
+            - fact: placement
+              planet: jupiter
+              from_moon: 7
+            - fact: placement
+              planet: jupiter
+              from_moon: 10
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 70
+      statement: Gaja-Kesari Yoga is formed by Jupiter in a Kendra from the Moon, conferring lion-like majesty, righteous intellect, lasting renown, and high societal esteem.
+  - id: yoga.chandra_mangala
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      all:
+        - fact: conjunction
+          planet1: moon
+          planet2: mars
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 65
+      statement: Chandra-Mangala Yoga is formed by Moon and Mars conjunct, activating strong financial drive, commercial enterprise, energetic productivity, and resource accumulation.
+  - id: yoga.amala
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXII)
+    reviewed: true
+    when:
+      any:
+        - fact: placement
+          planet: jupiter
+          house: 10
+        - fact: placement
+          planet: venus
+          house: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 68
+      statement: Amala Yoga is formed by a natural benefic in the 10th house from Lagna, conferring an unblemished professional reputation, ethical public career, and lasting goodwill.
+  - id: yoga.harsha
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXI)
+    reviewed: true
+    when:
+      all:
+        - fact: lordship
+          house: 6
+        - any:
+            - fact: lordship
+              house: 6
+              placedHouseLagna: 6
+            - fact: lordship
+              house: 6
+              placedHouseLagna: 8
+            - fact: lordship
+              house: 6
+              placedHouseLagna: 12
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 65
+      statement: Harsha Vipareeta Raja Yoga is formed by the 6th lord occupying a Dusthana (6th, 8th, or 12th), conferring victory over adversaries, robust resilience against physical ailments, and steady prosperity.
+  - id: yoga.sarala
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXI)
+    reviewed: true
+    when:
+      all:
+        - fact: lordship
+          house: 8
+        - any:
+            - fact: lordship
+              house: 8
+              placedHouseLagna: 6
+            - fact: lordship
+              house: 8
+              placedHouseLagna: 8
+            - fact: lordship
+              house: 8
+              placedHouseLagna: 12
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 65
+      statement: Sarala Vipareeta Raja Yoga is formed by the 8th lord occupying a Dusthana, granting exceptional longevity, fearlessness in crisis, scholarly penetration into deep mysteries, and sudden prosperity.
+  - id: yoga.vimala
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXI)
+    reviewed: true
+    when:
+      all:
+        - fact: lordship
+          house: 12
+        - any:
+            - fact: lordship
+              house: 12
+              placedHouseLagna: 6
+            - fact: lordship
+              house: 12
+              placedHouseLagna: 8
+            - fact: lordship
+              house: 12
+              placedHouseLagna: 12
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 65
+      statement: Vimala Vipareeta Raja Yoga is formed by the 12th lord occupying a Dusthana, fostering frugal independence, dissolution of liabilities and adversaries, and noble philanthropic inclinations.
+  - id: yoga.dharma_karmadhipati
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXI)
+    reviewed: true
+    when:
+      any:
+        - all:
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 10
+        - all:
+            - fact: lordship
+              house: 10
+              placedHouseLagna: 9
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 75
+      statement: Dharma-Karmadhipati Yoga is formed by mutual association between the lords of the 9th (Dharma) and 10th (Karma), bestowing supreme ethical authority, distinguished societal leadership, and state honors.
+  - id: yoga.lakshmi
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXI)
+    reviewed: true
+    when:
+      all:
+        - fact: lordship
+          house: 9
+        - any:
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 1
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 4
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 5
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 7
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 9
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 10
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 72
+      statement: Lakshmi Yoga is formed by the 9th lord strong in a Kendra or Trikona, bestowing abundant fortune, aristocratic grace, scholarly accomplishment, and honorable material abundance.
+  - id: yoga.kahala
+    kind: yoga
+    school: parashari
+    source: Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXI)
+    reviewed: true
+    when:
+      all:
+        - fact: lordship
+          house: 4
+        - any:
+            - fact: lordship
+              house: 4
+              placedHouseLagna: 1
+            - fact: lordship
+              house: 4
+              placedHouseLagna: 4
+            - fact: lordship
+              house: 4
+              placedHouseLagna: 7
+            - fact: lordship
+              house: 4
+              placedHouseLagna: 10
+        - fact: lordship
+          house: 9
+        - any:
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 1
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 4
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 7
+            - fact: lordship
+              house: 9
+              placedHouseLagna: 10
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 65
+      statement: Kahala Yoga is formed by strong Kendra placements of the 4th and 9th lords, conferring bold administrative leadership, organizational command, and stubborn valor in achieving undertakings.

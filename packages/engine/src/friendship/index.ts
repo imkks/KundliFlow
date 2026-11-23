@@ -74,9 +74,7 @@ export const computePanchadhaFriendship = (
         result[p1][p2] = 'great_friend';
       } else if (perm === 'neutral' && temp === 'friend') {
         result[p1][p2] = 'friend';
-      } else if ((perm === 'friend' && temp === 'enemy') || (perm === 'neutral' && temp === 'friend')) {
-        result[p1][p2] = 'neutral';
-      } else if (perm === 'enemy' && temp === 'friend') {
+      } else if ((perm === 'friend' && temp === 'enemy') || (perm === 'enemy' && temp === 'friend')) {
         result[p1][p2] = 'neutral';
       } else if (perm === 'neutral' && temp === 'enemy') {
         result[p1][p2] = 'enemy';

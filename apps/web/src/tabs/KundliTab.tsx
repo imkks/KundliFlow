@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { HelpCircle, PenLine, ChevronDown, ChevronRight, Clock, BookOpen, Sparkles, Flame, Zap } from 'lucide-react';
 import {
   computeMutualAspects,
+  computeVedicAspects,
   degToDms,
   VARGA_TYPES,
   VARGA_LABELS,
@@ -248,7 +249,9 @@ export const KundliTab: React.FC<KundliTabProps> = ({
       .filter((v: any) => v.vargottama)
       .map((v: any) => v.planet);
 
-    const aspects = computeMutualAspects(natalChart.grahas).slice(0, 6);
+    // Calculate classical Vedic Graha Drishti aspects (with fallback to mutual aspects if empty)
+    const vedicAspects = computeVedicAspects(natalChart.grahas);
+    const aspects = (vedicAspects.length > 0 ? vedicAspects : computeMutualAspects(natalChart.grahas)).slice(0, 6);
 
     return { elems, mods, total, dominantElem, dominantMod, retro, combust, exaltedOwn, debilitated, vargottama, aspects };
   }, [natalChart, reading]);
@@ -702,9 +705,11 @@ export const KundliTab: React.FC<KundliTabProps> = ({
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 6 }}>
                     {chartMakeup.aspects.map((a: any, idx: number) => (
                       <div key={idx} style={{ padding: '6px 9px', borderRadius: 7, background: 'var(--surface-alt)', fontSize: 11.5 }}>
-                        <strong style={{ color: 'var(--teal)', textTransform: 'capitalize' }}>{a.from}</strong> →{' '}
-                        <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{a.to}</strong>{' '}
-                        <span style={{ color: 'var(--text-muted)' }}>({a.type})</span>
+                        <strong style={{ color: 'var(--teal)', textTransform: 'capitalize' }}>{a.from ?? a.body1}</strong> →{' '}
+                        <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{a.to ?? a.body2}</strong>{' '}
+                        <span style={{ color: 'var(--text-muted)' }}>
+                          ({a.type ?? a.aspect?.name}{a.diffFromExact !== undefined ? ` • ${a.diffFromExact}° orb` : ''})
+                        </span>
                       </div>
                     ))}
                   </div>

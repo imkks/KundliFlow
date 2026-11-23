@@ -3,8 +3,8 @@ rules:
   - id: lord.1.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -14,14 +14,12 @@ rules:
       theme: self
       polarity: supportive
       base_strength: 62
-      statement: >-
-        The lord of house 1 placed in house 1 traditionally links self-identity, vitality, and personal presence with
-        self-identity, vitality, and personal presence.
+      statement: Lagna lord in the 1st house confers sound physical health, enduring vitality, valor, and a commanding, self-reliant personal presence.
   - id: lord.1.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -29,16 +27,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: self
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 1 placed in house 2 traditionally links self-identity, vitality, and personal presence with
-        accumulated resources, speech, and family values.
+      polarity: supportive
+      base_strength: 60
+      statement: Lagna lord in the 2nd house brings learning, steady prosperity, dignified speech, and material earnings through landed or family assets.
   - id: lord.1.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -46,16 +42,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: self
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 1 placed in house 3 traditionally links self-identity, vitality, and personal presence with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 58
+      statement: Lagna lord in the 3rd house grants immense lion-like courage, adventurous self-effort, and supportive cooperation with brothers and associates.
   - id: lord.1.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -64,15 +58,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 1 placed in house 4 traditionally links self-identity, vitality, and personal presence with
-        home life, emotional roots, and inner peace.
+      base_strength: 62
+      statement: Lagna lord in the 4th house secures deep maternal blessings, comfortable domestic residences, virtuous character, and landed stability.
   - id: lord.1.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -81,15 +73,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 1 placed in house 5 traditionally links self-identity, vitality, and personal presence with
-        creative intelligence, learning, and discernment.
+      base_strength: 62
+      statement: Lagna lord in the 5th house fosters sharp intellect, honorable reputation, devotion to noble deeds, and pride in virtuous progeny.
   - id: lord.1.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -97,16 +87,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: self
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 1 placed in house 6 traditionally links self-identity, vitality, and personal presence with
-        daily routine, service, and overcoming obstacles.
+      statement: Lagna lord in the 6th house subdues opponents through sustained resilience and thrifty enterprise, demanding mindful care against physical fatigue.
   - id: lord.1.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -114,16 +102,14 @@ rules:
           placedHouseLagna: 7
     effect:
       theme: self
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 1 placed in house 7 traditionally links self-identity, vitality, and personal presence with
-        committed partnerships and public dealings.
+      polarity: mixed
+      base_strength: 54
+      statement: Lagna lord in the 7th house directs focus toward partnerships and public commerce, attracting a graceful spouse while requiring flexibility in joint life.
   - id: lord.1.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -131,16 +117,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: self
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 1 placed in house 8 traditionally links self-identity, vitality, and personal presence with
-        deep transformation, research, and shared resources.
+      statement: Lagna lord in the 8th house stimulates interest in esoteric or occult sciences and unexpected inheritances, advising disciplined maintenance of vitality.
   - id: lord.1.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -149,15 +133,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 1 placed in house 9 traditionally links self-identity, vitality, and personal presence with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 65
+      statement: Lagna lord in the 9th house is an outstanding blessing, conferring good fortune, righteous conduct, reverence for preceptors, and widespread renown.
   - id: lord.1.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -166,15 +148,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 1 placed in house 10 traditionally links self-identity, vitality, and personal presence with
-        career, reputation, and worldly contribution.
+      base_strength: 65
+      statement: Lagna lord in the 10th house elevates professional status, ensuring governmental honors, executive authority, and accomplishment through personal prowess.
   - id: lord.1.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -183,15 +163,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 1 placed in house 11 traditionally links self-identity, vitality, and personal presence with
-        gains, networks, and long-term aspirations.
+      base_strength: 62
+      statement: Lagna lord in the 11th house generates continuous prosperity, lucrative alliances, wide social respect, and the fulfillment of cherished goals.
   - id: lord.1.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -200,15 +178,13 @@ rules:
     effect:
       theme: self
       polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 1 placed in house 12 traditionally links self-identity, vitality, and personal presence with
-        solitude, reflection, expenses, and distant horizons.
+      base_strength: 50
+      statement: Lagna lord in the 12th house inclines toward overseas travels, contemplative seclusion, and philanthropic activities, cautioning against erratic expenses.
   - id: lord.2.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -217,15 +193,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 2 placed in house 1 traditionally links accumulated resources, speech, and family values with
-        self-identity, vitality, and personal presence.
+      base_strength: 60
+      statement: 2nd lord in the 1st house empowers the native to build substantial wealth through personal initiative, thrift, and persuasive expression.
   - id: lord.2.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -234,15 +208,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 2 placed in house 2 traditionally links accumulated resources, speech, and family values with
-        accumulated resources, speech, and family values.
+      base_strength: 64
+      statement: 2nd lord in the 2nd house (own house) strongly establishes family prosperity, eloquent and dignified speech, and lasting financial security.
   - id: lord.2.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -250,16 +222,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: money_speech
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 2 placed in house 3 traditionally links accumulated resources, speech, and family values with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 56
+      statement: 2nd lord in the 3rd house stimulates entrepreneurial earnings, artistic ventures, and commercial collaboration through media and short travels.
   - id: lord.2.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -268,15 +238,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 2 placed in house 4 traditionally links accumulated resources, speech, and family values with
-        home life, emotional roots, and inner peace.
+      base_strength: 62
+      statement: 2nd lord in the 4th house yields financial benefits from real estate, maternal heritage, agricultural assets, and comfortable conveyances.
   - id: lord.2.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -285,15 +253,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 2 placed in house 5 traditionally links accumulated resources, speech, and family values with
-        creative intelligence, learning, and discernment.
+      base_strength: 62
+      statement: 2nd lord in the 5th house channels wealth into creative and educational pursuits, earning prosperity through advisory acumen and investments.
   - id: lord.2.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -301,16 +267,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: money_speech
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 2 placed in house 6 traditionally links accumulated resources, speech, and family values with
-        daily routine, service, and overcoming obstacles.
+      statement: 2nd lord in the 6th house generates wealth through legal, medical, or administrative service, advising careful management against debts.
   - id: lord.2.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -319,15 +283,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 2 placed in house 7 traditionally links accumulated resources, speech, and family values with
-        committed partnerships and public dealings.
+      base_strength: 58
+      statement: 2nd lord in the 7th house brings commercial prosperity through marriage and trade alliances, actively engaging in public commerce.
   - id: lord.2.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -335,16 +297,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: money_speech
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 2 placed in house 8 traditionally links accumulated resources, speech, and family values with
-        deep transformation, research, and shared resources.
+      polarity: mixed
+      base_strength: 50
+      statement: 2nd lord in the 8th house unlocks wealth through legacy, insurance, or partner's assets, while alerting to fluctuations in accumulated savings.
   - id: lord.2.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -353,15 +313,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 2 placed in house 9 traditionally links accumulated resources, speech, and family values with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 64
+      statement: 2nd lord in the 9th house is highly fortunate, producing honest prosperity, eloquent philosophical speech, and lifelong material comfort.
   - id: lord.2.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -370,15 +328,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 2 placed in house 10 traditionally links accumulated resources, speech, and family values with
-        career, reputation, and worldly contribution.
+      base_strength: 65
+      statement: 2nd lord in the 10th house aligns finances with honorable career status, earning public recognition, administrative authority, and state favor.
   - id: lord.2.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -387,15 +343,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 2 placed in house 11 traditionally links accumulated resources, speech, and family values with
-        gains, networks, and long-term aspirations.
+      base_strength: 65
+      statement: 2nd lord in the 11th house creates powerful Dhana Yoga, expanding financial revenues, profitable networks, and generous family support.
   - id: lord.2.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -403,16 +357,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: money_speech
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 2 placed in house 12 traditionally links accumulated resources, speech, and family values with
-        solitude, reflection, expenses, and distant horizons.
+      polarity: mixed
+      base_strength: 50
+      statement: 2nd lord in the 12th house fosters bold foreign trade and philanthropic generosity, while urging vigilant control over avoidable leakages.
   - id: lord.3.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -421,15 +373,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 3 placed in house 1 traditionally links courage, communication, and self-initiated projects
-        with self-identity, vitality, and personal presence.
+      base_strength: 58
+      statement: 3rd lord in the 1st house builds a self-made, courageous character, relying on untiring determination and personal enterprise to succeed.
   - id: lord.3.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -438,15 +388,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 3 placed in house 2 traditionally links courage, communication, and self-initiated projects
-        with accumulated resources, speech, and family values.
+      base_strength: 50
+      statement: 3rd lord in the 2nd house directs physical energy into financial acquisition, urging harmonious speech and patience with relatives.
   - id: lord.3.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -456,14 +404,12 @@ rules:
       theme: courage_siblings
       polarity: supportive
       base_strength: 62
-      statement: >-
-        The lord of house 3 placed in house 3 traditionally links courage, communication, and self-initiated projects
-        with courage, communication, and self-initiated projects.
+      statement: 3rd lord in the 3rd house (own house) bestows heroic bravery, supportive co-borns, athletic vitality, and resolute persistence.
   - id: lord.3.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -472,15 +418,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 3 placed in house 4 traditionally links courage, communication, and self-initiated projects
-        with home life, emotional roots, and inner peace.
+      base_strength: 56
+      statement: 3rd lord in the 4th house applies energetic initiative toward acquiring vehicles, land, and home improvements through self-effort.
   - id: lord.3.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -489,15 +433,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 3 placed in house 5 traditionally links courage, communication, and self-initiated projects
-        with creative intelligence, learning, and discernment.
+      base_strength: 58
+      statement: 3rd lord in the 5th house fosters inventive intelligence, dynamic counseling ability, and creative talents in writing or media.
   - id: lord.3.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -505,16 +447,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: courage_siblings
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 3 placed in house 6 traditionally links courage, communication, and self-initiated projects
-        with daily routine, service, and overcoming obstacles.
+      polarity: supportive
+      base_strength: 58
+      statement: 3rd lord in the 6th house conquers competitors through tactical courage, excelling in demanding administrative, legal, or athletic environments.
   - id: lord.3.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -522,16 +462,14 @@ rules:
           placedHouseLagna: 7
     effect:
       theme: courage_siblings
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 3 placed in house 7 traditionally links courage, communication, and self-initiated projects
-        with committed partnerships and public dealings.
+      polarity: mixed
+      base_strength: 52
+      statement: 3rd lord in the 7th house brings an active, independent partner, involving frequent travel and energetic joint ventures.
   - id: lord.3.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -539,16 +477,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: courage_siblings
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 3 placed in house 8 traditionally links courage, communication, and self-initiated projects
-        with deep transformation, research, and shared resources.
+      polarity: mixed
+      base_strength: 50
+      statement: 3rd lord in the 8th house provides endurance in unseen crises and research, though sibling relationships benefit from conscious clarity.
   - id: lord.3.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -557,15 +493,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 3 placed in house 9 traditionally links courage, communication, and self-initiated projects
-        with dharma, mentorship, higher learning, and fortune.
+      base_strength: 60
+      statement: 3rd lord in the 9th house yields fortune through personal travel, publishing, and independent philosophical inquiry.
   - id: lord.3.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -574,15 +508,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 3 placed in house 10 traditionally links courage, communication, and self-initiated projects
-        with career, reputation, and worldly contribution.
+      base_strength: 62
+      statement: 3rd lord in the 10th house elevates career standing through courageous enterprise, communications, and decisive executive leadership.
   - id: lord.3.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -591,15 +523,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 3 placed in house 11 traditionally links courage, communication, and self-initiated projects
-        with gains, networks, and long-term aspirations.
+      base_strength: 62
+      statement: 3rd lord in the 11th house produces profitable commercial enterprises, ambitious long-term goals, and helpful alliances with energetic peers.
   - id: lord.3.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -607,16 +537,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: courage_siblings
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 3 placed in house 12 traditionally links courage, communication, and self-initiated projects
-        with solitude, reflection, expenses, and distant horizons.
+      polarity: mixed
+      base_strength: 50
+      statement: 3rd lord in the 12th house fosters courage in foreign environments and private research, advising prudence in speculative ventures.
   - id: lord.4.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -625,15 +553,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 4 placed in house 1 traditionally links home life, emotional roots, and inner peace with
-        self-identity, vitality, and personal presence.
+      base_strength: 62
+      statement: 4th lord in the 1st house confers cultured manners, deep domestic contentment, landed assets, and warm maternal affection.
   - id: lord.4.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -641,16 +567,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: home_mother
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 4 placed in house 2 traditionally links home life, emotional roots, and inner peace with
-        accumulated resources, speech, and family values.
+      polarity: supportive
+      base_strength: 62
+      statement: 4th lord in the 2nd house brings prosperity through ancestral property, real estate, and peaceful, nourishing family life.
   - id: lord.4.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -658,16 +582,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: home_mother
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 4 placed in house 3 traditionally links home life, emotional roots, and inner peace with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 56
+      statement: 4th lord in the 3rd house applies practical enterprise toward domestic assets, vehicles, and close community collaboration.
   - id: lord.4.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -676,15 +598,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 4 placed in house 4 traditionally links home life, emotional roots, and inner peace with home
-        life, emotional roots, and inner peace.
+      base_strength: 65
+      statement: The lord of the 4th in the 4th house is traditionally read as a strong foundation for home, property, and emotional security.
   - id: lord.4.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -693,15 +613,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 4 placed in house 5 traditionally links home life, emotional roots, and inner peace with
-        creative intelligence, learning, and discernment.
+      base_strength: 64
+      statement: 4th lord in the 5th house blends emotional contentment with superior education, artistic appreciation, and devoted, virtuous children.
   - id: lord.4.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -709,16 +627,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: home_mother
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 4 placed in house 6 traditionally links home life, emotional roots, and inner peace with daily
-        routine, service, and overcoming obstacles.
+      polarity: mixed
+      base_strength: 50
+      statement: 4th lord in the 6th house urges patience regarding property maintenance and maternal health, resolving domestic hurdles through persistence.
   - id: lord.4.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -727,15 +643,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 4 placed in house 7 traditionally links home life, emotional roots, and inner peace with
-        committed partnerships and public dealings.
+      base_strength: 60
+      statement: 4th lord in the 7th house brings a loving, cultured spouse, beautiful residential environments, and mutual happiness in domestic life.
   - id: lord.4.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -744,15 +658,13 @@ rules:
     effect:
       theme: home_mother
       polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 4 placed in house 8 traditionally links home life, emotional roots, and inner peace with deep
-        transformation, research, and shared resources.
+      base_strength: 50
+      statement: 4th lord in the 8th house counsels emotional grounding against inner unrest, seeking quiet psychological and spiritual sanctuary.
   - id: lord.4.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -761,15 +673,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 4 placed in house 9 traditionally links home life, emotional roots, and inner peace with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 65
+      statement: 4th lord in the 9th house is highly auspicious, conferring ancestral fortune, generous preceptors, and peaceful domestic tranquility.
   - id: lord.4.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -778,15 +688,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 4 placed in house 10 traditionally links home life, emotional roots, and inner peace with
-        career, reputation, and worldly contribution.
+      base_strength: 65
+      statement: 4th lord in the 10th house unites home and career, granting high public esteem, property holdings, and success in public administration.
   - id: lord.4.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -795,15 +703,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 4 placed in house 11 traditionally links home life, emotional roots, and inner peace with
-        gains, networks, and long-term aspirations.
+      base_strength: 64
+      statement: 4th lord in the 11th house delivers substantial gains from real estate, hospitable gatherings with loyal friends, and domestic abundance.
   - id: lord.4.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -811,16 +717,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: home_mother
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 4 placed in house 12 traditionally links home life, emotional roots, and inner peace with
-        solitude, reflection, expenses, and distant horizons.
+      polarity: mixed
+      base_strength: 50
+      statement: 4th lord in the 12th house inclines toward residence in distant lands or serene sanctuaries, releasing attachment to ancestral dwellings.
   - id: lord.5.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -829,15 +733,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 5 placed in house 1 traditionally links creative intelligence, learning, and discernment with
-        self-identity, vitality, and personal presence.
+      base_strength: 65
+      statement: 5th lord in the 1st house confers brilliant analytical intellect, noble character, high wisdom, and proud, virtuous progeny.
   - id: lord.5.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -845,16 +747,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: education_children
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 5 placed in house 2 traditionally links creative intelligence, learning, and discernment with
-        accumulated resources, speech, and family values.
+      polarity: supportive
+      base_strength: 64
+      statement: 5th lord in the 2nd house generates prosperity through advisory insight, academic mastery, and eloquent, inspiring speech.
   - id: lord.5.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -862,16 +762,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: education_children
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 5 placed in house 3 traditionally links creative intelligence, learning, and discernment with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 58
+      statement: 5th lord in the 3rd house stimulates literary talent, creative communication, and affectionate guidance among younger co-borns.
   - id: lord.5.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -880,15 +778,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 5 placed in house 4 traditionally links creative intelligence, learning, and discernment with
-        home life, emotional roots, and inner peace.
+      base_strength: 64
+      statement: 5th lord in the 4th house yields high scholastic honors, domestic peace, maternal blessings, and a scholarly home environment.
   - id: lord.5.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -897,15 +793,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 5 placed in house 5 traditionally links creative intelligence, learning, and discernment with
-        creative intelligence, learning, and discernment.
+      base_strength: 68
+      statement: 5th lord in the 5th house (own house) unlocks supreme Purvapunya, celebrated wisdom, ministerial counsel, and extraordinary progeny.
   - id: lord.5.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -913,16 +807,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: education_children
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 5 placed in house 6 traditionally links creative intelligence, learning, and discernment with
-        daily routine, service, and overcoming obstacles.
+      statement: 5th lord in the 6th house sharpens analytical prowess in auditing, law, or medicine, while urging mindful health care for children.
   - id: lord.5.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -931,15 +823,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 5 placed in house 7 traditionally links creative intelligence, learning, and discernment with
-        committed partnerships and public dealings.
+      base_strength: 62
+      statement: 5th lord in the 7th house attracts an intelligent, cultured partner, blending deep romance with mutual intellectual respect.
   - id: lord.5.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -947,16 +837,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: education_children
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 5 placed in house 8 traditionally links creative intelligence, learning, and discernment with
-        deep transformation, research, and shared resources.
+      polarity: mixed
+      base_strength: 50
+      statement: 5th lord in the 8th house unlocks profound interest in deep research and occult mysteries, advising patience with speculative ventures.
   - id: lord.5.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -965,15 +853,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 5 placed in house 9 traditionally links creative intelligence, learning, and discernment with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 68
+      statement: 5th lord in the 9th house is a magnificent Raja-Dhana Yoga, bestowing spiritual wisdom, esteemed mentors, and lifelong divine fortune.
   - id: lord.5.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -982,15 +868,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 5 placed in house 10 traditionally links creative intelligence, learning, and discernment with
-        career, reputation, and worldly contribution.
+      base_strength: 68
+      statement: 5th lord in the 10th house elevates professional counsel, establishing the native as an esteemed advisor, leader, or statesman.
   - id: lord.5.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -999,15 +883,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 5 placed in house 11 traditionally links creative intelligence, learning, and discernment with
-        gains, networks, and long-term aspirations.
+      base_strength: 66
+      statement: 5th lord in the 11th house creates abundant wealth through intellectual achievements, fulfilling ambitious desires through influential networks.
   - id: lord.5.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1015,16 +897,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: education_children
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 5 placed in house 12 traditionally links creative intelligence, learning, and discernment with
-        solitude, reflection, expenses, and distant horizons.
+      statement: 5th lord in the 12th house fosters meditative wisdom, philosophical research, and foreign scholarship, spending on charitable causes.
   - id: lord.6.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1032,16 +912,14 @@ rules:
           placedHouseLagna: 1
     effect:
       theme: health_routine
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 6 placed in house 1 traditionally links daily routine, service, and overcoming obstacles with
-        self-identity, vitality, and personal presence.
+      polarity: mixed
+      base_strength: 52
+      statement: 6th lord in the 1st house gives strong competitive stamina and problem-solving courage, urging routine attention to physical vitality.
   - id: lord.6.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1049,16 +927,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: health_routine
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 6 placed in house 2 traditionally links daily routine, service, and overcoming obstacles with
-        accumulated resources, speech, and family values.
+      polarity: challenging
+      base_strength: 50
+      statement: 6th lord in the 2nd house advises disciplined financial budgeting and measured speech to prevent disputes over domestic resources.
   - id: lord.6.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1068,14 +944,12 @@ rules:
       theme: health_routine
       polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 6 placed in house 3 traditionally links daily routine, service, and overcoming obstacles with
-        courage, communication, and self-initiated projects.
+      statement: 6th lord in the 3rd house confers tactical bravery against adversaries, though co-born relationships thrive best with clear boundaries.
   - id: lord.6.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1083,16 +957,14 @@ rules:
           placedHouseLagna: 4
     effect:
       theme: health_routine
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 6 placed in house 4 traditionally links daily routine, service, and overcoming obstacles with
-        home life, emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 50
+      statement: 6th lord in the 4th house counsels patience regarding property management and maternal health, resolving domestic challenges steadily.
   - id: lord.6.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1100,16 +972,14 @@ rules:
           placedHouseLagna: 5
     effect:
       theme: health_routine
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 6 placed in house 5 traditionally links daily routine, service, and overcoming obstacles with
-        creative intelligence, learning, and discernment.
+      polarity: mixed
+      base_strength: 50
+      statement: 6th lord in the 5th house excels in competitive examinations and problem-solving, advising caution in speculative financial investments.
   - id: lord.6.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1119,14 +989,12 @@ rules:
       theme: health_routine
       polarity: supportive
       base_strength: 62
-      statement: >-
-        The lord of house 6 placed in house 6 traditionally links daily routine, service, and overcoming obstacles with
-        daily routine, service, and overcoming obstacles.
+      statement: 6th lord in the 6th house (Harsha Vipareeta Yoga) conquers rivals, protects robust health, and achieves victory in administrative contests.
   - id: lord.6.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1134,16 +1002,14 @@ rules:
           placedHouseLagna: 7
     effect:
       theme: health_routine
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 6 placed in house 7 traditionally links daily routine, service, and overcoming obstacles with
-        committed partnerships and public dealings.
+      polarity: challenging
+      base_strength: 50
+      statement: 6th lord in the 7th house urges mutual tolerance and clear contracts in partnerships, resolving disagreements through objective mediation.
   - id: lord.6.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1152,15 +1018,13 @@ rules:
     effect:
       theme: health_routine
       polarity: mixed
-      base_strength: 54
-      statement: >-
-        The lord of house 6 placed in house 8 traditionally links daily routine, service, and overcoming obstacles with
-        deep transformation, research, and shared resources.
+      base_strength: 52
+      statement: 6th lord in the 8th house (Harsha Vipareeta Yoga) triumphs over sudden emergencies and adversaries, advising routine care against fatigue.
   - id: lord.6.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1168,16 +1032,14 @@ rules:
           placedHouseLagna: 9
     effect:
       theme: health_routine
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 6 placed in house 9 traditionally links daily routine, service, and overcoming obstacles with
-        dharma, mentorship, higher learning, and fortune.
+      polarity: mixed
+      base_strength: 50
+      statement: 6th lord in the 9th house challenges traditional dogmas through independent critical thinking, navigating legal or ethical debates abroad.
   - id: lord.6.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1186,15 +1048,13 @@ rules:
     effect:
       theme: health_routine
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 6 placed in house 10 traditionally links daily routine, service, and overcoming obstacles with
-        career, reputation, and worldly contribution.
+      base_strength: 58
+      statement: 6th lord in the 10th house grants success in competitive, judicial, medical, or administrative vocations, overcoming professional rivals.
   - id: lord.6.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1202,16 +1062,14 @@ rules:
           placedHouseLagna: 11
     effect:
       theme: health_routine
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 6 placed in house 11 traditionally links daily routine, service, and overcoming obstacles with
-        gains, networks, and long-term aspirations.
+      polarity: mixed
+      base_strength: 54
+      statement: 6th lord in the 11th house secures financial gains through banking, dispute settlement, or competitive enterprise through vigilant effort.
   - id: lord.6.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1220,15 +1078,13 @@ rules:
     effect:
       theme: health_routine
       polarity: mixed
-      base_strength: 54
-      statement: >-
-        The lord of house 6 placed in house 12 traditionally links daily routine, service, and overcoming obstacles with
-        solitude, reflection, expenses, and distant horizons.
+      base_strength: 52
+      statement: 6th lord in the 12th house (Harsha Vipareeta Yoga) dissolves hidden adversaries and manages foreign challenges, though expenses require monitoring.
   - id: lord.7.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1237,15 +1093,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 7 placed in house 1 traditionally links committed partnerships and public dealings with
-        self-identity, vitality, and personal presence.
+      base_strength: 60
+      statement: 7th lord in the 1st house confers an attractive, supportive partner and diplomatic charm, drawing public popularity and partnership success.
   - id: lord.7.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1253,16 +1107,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: partnership
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 7 placed in house 2 traditionally links committed partnerships and public dealings with
-        accumulated resources, speech, and family values.
+      polarity: supportive
+      base_strength: 62
+      statement: 7th lord in the 2nd house brings financial gains through marriage and commercial alliances, speaking with persuasive grace.
   - id: lord.7.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1270,16 +1122,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: partnership
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 7 placed in house 3 traditionally links committed partnerships and public dealings with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 56
+      statement: 7th lord in the 3rd house promotes joint commercial travels, media initiatives, and energetic collaboration with the spouse.
   - id: lord.7.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1288,15 +1138,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 7 placed in house 4 traditionally links committed partnerships and public dealings with home
-        life, emotional roots, and inner peace.
+      base_strength: 62
+      statement: 7th lord in the 4th house yields domestic harmony, an affectionate and cultured partner, and mutual happiness in the family home.
   - id: lord.7.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1305,15 +1153,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 7 placed in house 5 traditionally links committed partnerships and public dealings with
-        creative intelligence, learning, and discernment.
+      base_strength: 64
+      statement: 7th lord in the 5th house unites romance with intellect, attracting an artistic, educated spouse and ensuring blessed children.
   - id: lord.7.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1322,15 +1168,13 @@ rules:
     effect:
       theme: partnership
       polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 7 placed in house 6 traditionally links committed partnerships and public dealings with daily
-        routine, service, and overcoming obstacles.
+      base_strength: 50
+      statement: 7th lord in the 6th house calls for patience and mutual care in marriage, working through relationship differences constructively.
   - id: lord.7.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1339,15 +1183,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 7 placed in house 7 traditionally links committed partnerships and public dealings with
-        committed partnerships and public dealings.
+      base_strength: 65
+      statement: 7th lord in the 7th house (own house) strongly secures marital happiness, public esteem, and highly lucrative commercial partnerships.
   - id: lord.7.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1355,16 +1197,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: partnership
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 7 placed in house 8 traditionally links committed partnerships and public dealings with deep
-        transformation, research, and shared resources.
+      polarity: mixed
+      base_strength: 50
+      statement: 7th lord in the 8th house unlocks joint financial inheritances, while advising emotional transparency and care for partner's health.
   - id: lord.7.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1373,15 +1213,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 7 placed in house 9 traditionally links committed partnerships and public dealings with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 65
+      statement: 7th lord in the 9th house attracts a noble, ethically minded partner, bringing fortune through marriage and foreign voyages.
   - id: lord.7.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1390,15 +1228,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 7 placed in house 10 traditionally links committed partnerships and public dealings with
-        career, reputation, and worldly contribution.
+      base_strength: 65
+      statement: 7th lord in the 10th house elevates career status through marriage and partnerships, excelling in diplomacy and public trade.
   - id: lord.7.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1407,15 +1243,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 7 placed in house 11 traditionally links committed partnerships and public dealings with
-        gains, networks, and long-term aspirations.
+      base_strength: 65
+      statement: 7th lord in the 11th house yields substantial wealth through commerce and marriage, supported by influential societal associates.
   - id: lord.7.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1423,16 +1257,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: partnership
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 7 placed in house 12 traditionally links committed partnerships and public dealings with
-        solitude, reflection, expenses, and distant horizons.
+      polarity: mixed
+      base_strength: 50
+      statement: 7th lord in the 12th house connects with partner from distant or overseas lands, cultivating quiet private companionship.
   - id: lord.8.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1440,16 +1272,14 @@ rules:
           placedHouseLagna: 1
     effect:
       theme: transformation_secrets
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 8 placed in house 1 traditionally links deep transformation, research, and shared resources
-        with self-identity, vitality, and personal presence.
+      polarity: mixed
+      base_strength: 50
+      statement: 8th lord in the 1st house fosters an investigative, deep nature and interest in hidden mysteries, advising mindful preservation of health.
   - id: lord.8.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1457,16 +1287,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: transformation_secrets
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 8 placed in house 2 traditionally links deep transformation, research, and shared resources
-        with accumulated resources, speech, and family values.
+      polarity: challenging
+      base_strength: 50
+      statement: 8th lord in the 2nd house counsels prudent financial management, avoiding speculative risks while uncovering unexpected inheritances.
   - id: lord.8.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1475,15 +1303,13 @@ rules:
     effect:
       theme: transformation_secrets
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 8 placed in house 3 traditionally links deep transformation, research, and shared resources
-        with courage, communication, and self-initiated projects.
+      base_strength: 50
+      statement: 8th lord in the 3rd house gives quiet resilience in emergency situations, while maintaining transparent communications with co-borns.
   - id: lord.8.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1491,16 +1317,14 @@ rules:
           placedHouseLagna: 4
     effect:
       theme: transformation_secrets
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 8 placed in house 4 traditionally links deep transformation, research, and shared resources
-        with home life, emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 50
+      statement: 8th lord in the 4th house seeks emotional serenity within, navigating domestic responsibilities through meditation and reflection.
   - id: lord.8.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1508,16 +1332,14 @@ rules:
           placedHouseLagna: 5
     effect:
       theme: transformation_secrets
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 8 placed in house 5 traditionally links deep transformation, research, and shared resources
-        with creative intelligence, learning, and discernment.
+      polarity: mixed
+      base_strength: 50
+      statement: 8th lord in the 5th house confers deep intellectual penetration into hidden wisdom, advising patience with speculative finances.
   - id: lord.8.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1525,16 +1347,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: transformation_secrets
-      polarity: mixed
-      base_strength: 54
-      statement: >-
-        The lord of house 8 placed in house 6 traditionally links deep transformation, research, and shared resources
-        with daily routine, service, and overcoming obstacles.
+      polarity: supportive
+      base_strength: 60
+      statement: 8th lord in the 6th house (Sarala Vipareeta Yoga) conquers formidable adversaries, delivers legal victory, and fosters physical resilience.
   - id: lord.8.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1542,16 +1362,14 @@ rules:
           placedHouseLagna: 7
     effect:
       theme: transformation_secrets
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 8 placed in house 7 traditionally links deep transformation, research, and shared resources
-        with committed partnerships and public dealings.
+      polarity: challenging
+      base_strength: 50
+      statement: 8th lord in the 7th house encourages deep emotional understanding in marriage, navigating partner's transitions with loyalty.
   - id: lord.8.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1560,15 +1378,13 @@ rules:
     effect:
       theme: transformation_secrets
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 8 placed in house 8 traditionally links deep transformation, research, and shared resources
-        with deep transformation, research, and shared resources.
+      base_strength: 64
+      statement: 8th lord in the 8th house (Sarala Vipareeta Yoga) bestows exceptional longevity, profound esoteric mastery, and legacy assets.
   - id: lord.8.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1576,16 +1392,14 @@ rules:
           placedHouseLagna: 9
     effect:
       theme: transformation_secrets
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 8 placed in house 9 traditionally links deep transformation, research, and shared resources
-        with dharma, mentorship, higher learning, and fortune.
+      polarity: mixed
+      base_strength: 50
+      statement: 8th lord in the 9th house pursues profound transformative philosophies, questioning dogma in search of eternal, universal truths.
   - id: lord.8.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1593,16 +1407,14 @@ rules:
           placedHouseLagna: 10
     effect:
       theme: transformation_secrets
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 8 placed in house 10 traditionally links deep transformation, research, and shared resources
-        with career, reputation, and worldly contribution.
+      polarity: mixed
+      base_strength: 52
+      statement: 8th lord in the 10th house leads to specialized research, investigative, or emergency careers, navigating vocational evolutions smoothly.
   - id: lord.8.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1610,16 +1422,14 @@ rules:
           placedHouseLagna: 11
     effect:
       theme: transformation_secrets
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 8 placed in house 11 traditionally links deep transformation, research, and shared resources
-        with gains, networks, and long-term aspirations.
+      polarity: mixed
+      base_strength: 52
+      statement: 8th lord in the 11th house yields sudden financial windfalls and deep alliances, achieving long-term goals through unexpected avenues.
   - id: lord.8.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1628,15 +1438,13 @@ rules:
     effect:
       theme: transformation_secrets
       polarity: mixed
-      base_strength: 54
-      statement: >-
-        The lord of house 8 placed in house 12 traditionally links deep transformation, research, and shared resources
-        with solitude, reflection, expenses, and distant horizons.
+      base_strength: 52
+      statement: 8th lord in the 12th house (Sarala Vipareeta Yoga) promotes longevity, spiritual detachment, and victory over secret obstacles in quietude.
   - id: lord.9.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1645,15 +1453,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 9 placed in house 1 traditionally links dharma, mentorship, higher learning, and fortune with
-        self-identity, vitality, and personal presence.
+      base_strength: 68
+      statement: 9th lord in the 1st house is a supreme fortune, conferring noble character, radiant dignity, righteous outlook, and lifelong divine protection.
   - id: lord.9.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1661,16 +1467,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: luck_dharma
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 9 placed in house 2 traditionally links dharma, mentorship, higher learning, and fortune with
-        accumulated resources, speech, and family values.
+      polarity: supportive
+      base_strength: 65
+      statement: 9th lord in the 2nd house secures honest prosperity, wise and benevolent speech, family prestige, and generous charitable deeds.
   - id: lord.9.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1678,16 +1482,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: luck_dharma
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 9 placed in house 3 traditionally links dharma, mentorship, higher learning, and fortune with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 60
+      statement: 9th lord in the 3rd house brings good fortune through personal enterprise, inspiring writing, and harmonious relations with siblings.
   - id: lord.9.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1696,15 +1498,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 9 placed in house 4 traditionally links dharma, mentorship, higher learning, and fortune with
-        home life, emotional roots, and inner peace.
+      base_strength: 65
+      statement: 9th lord in the 4th house yields ancestral blessings, tranquil domestic residences, maternal happiness, and high academic honors.
   - id: lord.9.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1713,15 +1513,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 9 placed in house 5 traditionally links dharma, mentorship, higher learning, and fortune with
-        creative intelligence, learning, and discernment.
+      base_strength: 68
+      statement: 9th lord in the 5th house connects deep Purvapunya with spiritual wisdom, blessed children, and celebrated guidance as a scholar or preceptor.
   - id: lord.9.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1729,16 +1527,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: luck_dharma
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 9 placed in house 6 traditionally links dharma, mentorship, higher learning, and fortune with
-        daily routine, service, and overcoming obstacles.
+      polarity: supportive
+      base_strength: 56
+      statement: 9th lord in the 6th house upholds ethical integrity in service, overcoming obstacles through moral stature and principled advocacy.
   - id: lord.9.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1747,15 +1543,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 9 placed in house 7 traditionally links dharma, mentorship, higher learning, and fortune with
-        committed partnerships and public dealings.
+      base_strength: 65
+      statement: 9th lord in the 7th house attracts a virtuous, noble spouse, bringing prosperity through marriage and international partnerships.
   - id: lord.9.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1763,16 +1557,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: luck_dharma
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 9 placed in house 8 traditionally links dharma, mentorship, higher learning, and fortune with
-        deep transformation, research, and shared resources.
+      statement: 9th lord in the 8th house unlocks spiritual transformations, profound esoteric wisdom, and ancestral inheritances after patience.
   - id: lord.9.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1781,15 +1573,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 9 placed in house 9 traditionally links dharma, mentorship, higher learning, and fortune with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 70
+      statement: 9th lord in the 9th house (Bhagya Yoga) confers paramount fortune, pilgrimage, devotion to truth, and world-renowned righteous stature.
   - id: lord.9.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1798,15 +1588,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 9 placed in house 10 traditionally links dharma, mentorship, higher learning, and fortune with
-        career, reputation, and worldly contribution.
+      base_strength: 70
+      statement: 9th lord in the 10th house creates Dharma-Karmadhipati Yoga, granting high governmental honors, ethical leadership, and lasting renown.
   - id: lord.9.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1815,15 +1603,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 9 placed in house 11 traditionally links dharma, mentorship, higher learning, and fortune with
-        gains, networks, and long-term aspirations.
+      base_strength: 68
+      statement: 9th lord in the 11th house generates abundant, righteous wealth, esteemed societal circles, and the fulfillment of vision-driven ambitions.
   - id: lord.9.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1831,16 +1617,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: luck_dharma
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 9 placed in house 12 traditionally links dharma, mentorship, higher learning, and fortune with
-        solitude, reflection, expenses, and distant horizons.
+      polarity: supportive
+      base_strength: 58
+      statement: 9th lord in the 12th house inspires international pilgrimages, generous philanthropic endowments, and the pursuit of spiritual liberation.
   - id: lord.10.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1849,15 +1633,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 10 placed in house 1 traditionally links career, reputation, and worldly contribution with
-        self-identity, vitality, and personal presence.
+      base_strength: 68
+      statement: 10th lord in the 1st house establishes distinguished executive leadership, high professional recognition, and self-made authority.
   - id: lord.10.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1865,16 +1647,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: career_status
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 10 placed in house 2 traditionally links career, reputation, and worldly contribution with
-        accumulated resources, speech, and family values.
+      polarity: supportive
+      base_strength: 65
+      statement: 10th lord in the 2nd house creates financial prosperity through professional standing, commercial leadership, and executive responsibility.
   - id: lord.10.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1882,16 +1662,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: career_status
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 10 placed in house 3 traditionally links career, reputation, and worldly contribution with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 60
+      statement: 10th lord in the 3rd house excels in media, publishing, technology, or communications, demonstrating courageous vocational enterprise.
   - id: lord.10.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1900,15 +1678,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 10 placed in house 4 traditionally links career, reputation, and worldly contribution with
-        home life, emotional roots, and inner peace.
+      base_strength: 65
+      statement: 10th lord in the 4th house succeeds in public administration, real estate, or governance, enjoying broad societal respect.
   - id: lord.10.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1917,15 +1693,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 10 placed in house 5 traditionally links career, reputation, and worldly contribution with
-        creative intelligence, learning, and discernment.
+      base_strength: 68
+      statement: 10th lord in the 5th house confers ministerial and advisory brilliance, celebrated counsel, and high state or corporate recognition.
   - id: lord.10.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1933,16 +1707,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: career_status
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 10 placed in house 6 traditionally links career, reputation, and worldly contribution with
-        daily routine, service, and overcoming obstacles.
+      polarity: supportive
+      base_strength: 60
+      statement: 10th lord in the 6th house conquers career obstacles, excelling in administrative, judicial, medical, or defense leadership.
   - id: lord.10.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1951,15 +1723,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 10 placed in house 7 traditionally links career, reputation, and worldly contribution with
-        committed partnerships and public dealings.
+      base_strength: 65
+      statement: 10th lord in the 7th house elevates career status through marriage and partnerships, succeeding in diplomacy and public trade.
   - id: lord.10.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1967,16 +1737,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: career_status
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 10 placed in house 8 traditionally links career, reputation, and worldly contribution with
-        deep transformation, research, and shared resources.
+      statement: 10th lord in the 8th house leads to specialized research, investigative vocations, or crisis management, adapting well to transitions.
   - id: lord.10.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -1985,15 +1753,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 10 placed in house 9 traditionally links career, reputation, and worldly contribution with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 70
+      statement: 10th lord in the 9th house creates Dharma-Karmadhipati Yoga, conferring righteous authority, ethical governance, and public mentor status.
   - id: lord.10.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2002,15 +1768,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 10 placed in house 10 traditionally links career, reputation, and worldly contribution with
-        career, reputation, and worldly contribution.
+      base_strength: 70
+      statement: 10th lord in the 10th house (own house) confers supreme professional success, executive command, and an unblemished public legacy.
   - id: lord.10.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2019,15 +1783,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 10 placed in house 11 traditionally links career, reputation, and worldly contribution with
-        gains, networks, and long-term aspirations.
+      base_strength: 68
+      statement: 10th lord in the 11th house yields substantial professional revenues, influential patrons, and high status in extensive organizations.
   - id: lord.10.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2035,16 +1797,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: career_status
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 10 placed in house 12 traditionally links career, reputation, and worldly contribution with
-        solitude, reflection, expenses, and distant horizons.
+      polarity: mixed
+      base_strength: 54
+      statement: 10th lord in the 12th house thrives in foreign institutions, research sanctuaries, or non-profit vocations, often working overseas.
   - id: lord.11.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2053,15 +1813,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 11 placed in house 1 traditionally links gains, networks, and long-term aspirations with
-        self-identity, vitality, and personal presence.
+      base_strength: 65
+      statement: 11th lord in the 1st house confers natural earner status, diverse financial gains, charismatic presence, and self-made prosperity.
   - id: lord.11.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2069,16 +1827,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: gains_network
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 11 placed in house 2 traditionally links gains, networks, and long-term aspirations with
-        accumulated resources, speech, and family values.
+      polarity: supportive
+      base_strength: 65
+      statement: 11th lord in the 2nd house forms potent Dhana Yoga, steadily multiplying accumulated wealth, family prosperity, and resources.
   - id: lord.11.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2086,16 +1842,14 @@ rules:
           placedHouseLagna: 3
     effect:
       theme: gains_network
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 11 placed in house 3 traditionally links gains, networks, and long-term aspirations with
-        courage, communication, and self-initiated projects.
+      polarity: supportive
+      base_strength: 60
+      statement: 11th lord in the 3rd house generates profits through commercial communications, enterprising initiatives, and helpful co-borns.
   - id: lord.11.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2104,15 +1858,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 11 placed in house 4 traditionally links gains, networks, and long-term aspirations with home
-        life, emotional roots, and inner peace.
+      base_strength: 64
+      statement: 11th lord in the 4th house yields continuous gains from real estate, hospitable gatherings with loyal friends, and domestic abundance.
   - id: lord.11.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2121,15 +1873,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 11 placed in house 5 traditionally links gains, networks, and long-term aspirations with
-        creative intelligence, learning, and discernment.
+      base_strength: 66
+      statement: 11th lord in the 5th house grants prosperity through intellectual pursuits, advisory services, investments, and accomplished progeny.
   - id: lord.11.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2137,16 +1887,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: gains_network
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        The lord of house 11 placed in house 6 traditionally links gains, networks, and long-term aspirations with daily
-        routine, service, and overcoming obstacles.
+      polarity: supportive
+      base_strength: 56
+      statement: 11th lord in the 6th house achieves financial gains through dispute resolution, banking, or competitive ventures through vigilant labor.
   - id: lord.11.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2155,15 +1903,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 11 placed in house 7 traditionally links gains, networks, and long-term aspirations with
-        committed partnerships and public dealings.
+      base_strength: 64
+      statement: 11th lord in the 7th house brings commercial wealth through trade and marriage, supported by influential societal associates.
   - id: lord.11.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2171,16 +1917,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: gains_network
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 11 placed in house 8 traditionally links gains, networks, and long-term aspirations with deep
-        transformation, research, and shared resources.
+      statement: 11th lord in the 8th house unlocks unexpected financial windfalls and deep alliances, achieving long-term aspirations through transformation.
   - id: lord.11.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2189,15 +1933,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 11 placed in house 9 traditionally links gains, networks, and long-term aspirations with
-        dharma, mentorship, higher learning, and fortune.
+      base_strength: 68
+      statement: 11th lord in the 9th house creates magnificent wealth through ethical endeavors, noble mentors, and high international partnerships.
   - id: lord.11.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2206,15 +1948,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 11 placed in house 10 traditionally links gains, networks, and long-term aspirations with
-        career, reputation, and worldly contribution.
+      base_strength: 68
+      statement: 11th lord in the 10th house produces substantial professional income, executive prestige, and recognized societal honors.
   - id: lord.11.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2223,15 +1963,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 11 placed in house 11 traditionally links gains, networks, and long-term aspirations with
-        gains, networks, and long-term aspirations.
+      base_strength: 70
+      statement: 11th lord in the 11th house (own house) confers supreme material gains, extensive influential networks, and total ambition fulfillment.
   - id: lord.11.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2239,16 +1977,14 @@ rules:
           placedHouseLagna: 12
     effect:
       theme: gains_network
-      polarity: challenging
+      polarity: mixed
       base_strength: 52
-      statement: >-
-        The lord of house 11 placed in house 12 traditionally links gains, networks, and long-term aspirations with
-        solitude, reflection, expenses, and distant horizons.
+      statement: 11th lord in the 12th house balances international revenues with philanthropic expenditure, expanding global charitable alliances.
   - id: lord.12.in.1
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2256,16 +1992,14 @@ rules:
           placedHouseLagna: 1
     effect:
       theme: losses_retreat
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 12 placed in house 1 traditionally links solitude, reflection, expenses, and distant horizons
-        with self-identity, vitality, and personal presence.
+      polarity: mixed
+      base_strength: 50
+      statement: 12th lord in the 1st house confers an ascetic simplicity, contemplative nature, overseas travel, and quiet spiritual introspection.
   - id: lord.12.in.2
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2273,16 +2007,14 @@ rules:
           placedHouseLagna: 2
     effect:
       theme: losses_retreat
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 12 placed in house 2 traditionally links solitude, reflection, expenses, and distant horizons
-        with accumulated resources, speech, and family values.
+      polarity: challenging
+      base_strength: 50
+      statement: 12th lord in the 2nd house advises disciplined financial budgeting and measured speech, preventing unexpected family expenses.
   - id: lord.12.in.3
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2291,15 +2023,13 @@ rules:
     effect:
       theme: losses_retreat
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        The lord of house 12 placed in house 3 traditionally links solitude, reflection, expenses, and distant horizons
-        with courage, communication, and self-initiated projects.
+      base_strength: 50
+      statement: 12th lord in the 3rd house gives quiet self-reliance in independent adventures, maintaining transparent cooperation with co-borns.
   - id: lord.12.in.4
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2307,16 +2037,14 @@ rules:
           placedHouseLagna: 4
     effect:
       theme: losses_retreat
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 12 placed in house 4 traditionally links solitude, reflection, expenses, and distant horizons
-        with home life, emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 50
+      statement: 12th lord in the 4th house inclines toward residence in distant lands, releasing attachment to ancestral dwellings in search of sanctuary.
   - id: lord.12.in.5
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2324,16 +2052,14 @@ rules:
           placedHouseLagna: 5
     effect:
       theme: losses_retreat
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 12 placed in house 5 traditionally links solitude, reflection, expenses, and distant horizons
-        with creative intelligence, learning, and discernment.
+      polarity: mixed
+      base_strength: 50
+      statement: 12th lord in the 5th house fosters meditative wisdom and philosophical contemplation, directing resources into intellectual charities.
   - id: lord.12.in.6
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2341,16 +2067,14 @@ rules:
           placedHouseLagna: 6
     effect:
       theme: losses_retreat
-      polarity: mixed
-      base_strength: 54
-      statement: >-
-        The lord of house 12 placed in house 6 traditionally links solitude, reflection, expenses, and distant horizons
-        with daily routine, service, and overcoming obstacles.
+      polarity: supportive
+      base_strength: 60
+      statement: 12th lord in the 6th house (Vimala Vipareeta Yoga) dissolves adversaries and debts, achieving independence through robust resilience.
   - id: lord.12.in.7
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2358,16 +2082,14 @@ rules:
           placedHouseLagna: 7
     effect:
       theme: losses_retreat
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 12 placed in house 7 traditionally links solitude, reflection, expenses, and distant horizons
-        with committed partnerships and public dealings.
+      polarity: mixed
+      base_strength: 50
+      statement: 12th lord in the 7th house connects with partner from a distant or overseas land, cultivating private spiritual companionship.
   - id: lord.12.in.8
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2375,16 +2097,14 @@ rules:
           placedHouseLagna: 8
     effect:
       theme: losses_retreat
-      polarity: mixed
-      base_strength: 54
-      statement: >-
-        The lord of house 12 placed in house 8 traditionally links solitude, reflection, expenses, and distant horizons
-        with deep transformation, research, and shared resources.
+      polarity: supportive
+      base_strength: 60
+      statement: 12th lord in the 8th house (Vimala Vipareeta Yoga) promotes longevity, spiritual inquiry, and mastery over hidden challenges in quietude.
   - id: lord.12.in.9
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2393,15 +2113,13 @@ rules:
     effect:
       theme: losses_retreat
       polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 12 placed in house 9 traditionally links solitude, reflection, expenses, and distant horizons
-        with dharma, mentorship, higher learning, and fortune.
+      base_strength: 56
+      statement: 12th lord in the 9th house inspires foreign pilgrimages, international scholarship, and generous contributions to spiritual missions.
   - id: lord.12.in.10
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2409,16 +2127,14 @@ rules:
           placedHouseLagna: 10
     effect:
       theme: losses_retreat
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 12 placed in house 10 traditionally links solitude, reflection, expenses, and distant horizons
-        with career, reputation, and worldly contribution.
+      polarity: mixed
+      base_strength: 52
+      statement: 12th lord in the 10th house thrives in foreign corporations, hospitals, research institutions, or non-profit organizations.
   - id: lord.12.in.11
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2426,16 +2142,14 @@ rules:
           placedHouseLagna: 11
     effect:
       theme: losses_retreat
-      polarity: supportive
-      base_strength: 57
-      statement: >-
-        The lord of house 12 placed in house 11 traditionally links solitude, reflection, expenses, and distant horizons
-        with gains, networks, and long-term aspirations.
+      polarity: mixed
+      base_strength: 52
+      statement: 12th lord in the 11th house balances international earnings with philanthropic expenditure, maintaining broad global connections.
   - id: lord.12.in.12
     kind: lord_in_house
     school: parashari
-    source: BPHS Bhavesha Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhavesha Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVII)
+    reviewed: true
     when:
       all:
         - fact: lordship
@@ -2444,7 +2158,5 @@ rules:
     effect:
       theme: losses_retreat
       polarity: supportive
-      base_strength: 62
-      statement: >-
-        The lord of house 12 placed in house 12 traditionally links solitude, reflection, expenses, and distant horizons
-        with solitude, reflection, expenses, and distant horizons.
+      base_strength: 65
+      statement: 12th lord in the 12th house (Vimala Vipareeta Yoga) bestows spiritual liberation (Moksha), generous philanthropy, and serene seclusion.

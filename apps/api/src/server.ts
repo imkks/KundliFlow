@@ -82,10 +82,24 @@ export function createApiServer() {
   kb.ingestConceptsFile(NAKSHATRAS_PATH);
   kb.ingestConceptsFile(PRINCIPLES_PATH);
 
-  let serverEph: any = null;
-  const getServerEphemeris = async () => {
-    if (!serverEph) serverEph = await loadEphemeris('astronomy-engine');
-    return serverEph;
+  const defaultProvider = (process.env.EPHEMERIS_PROVIDER || 'swisseph') as any;
+  const serverEphMap = new Map<string, any>();
+
+  const getServerEphemeris = async (requestedProvider?: string) => {
+    const pid = requestedProvider || defaultProvider;
+    let eph = serverEphMap.get(pid);
+    if (!eph) {
+      try {
+        eph = await loadEphemeris(pid);
+        serverEphMap.set(pid, eph);
+        console.log(`[API Ephemeris] Initialized primary provider: ${eph.id} (${eph.version})`);
+      } catch (err: any) {
+        console.warn(`[API Ephemeris] Failed to initialize ${pid}: ${err?.message}. Falling back to astronomy-engine.`);
+        eph = await loadEphemeris('astronomy-engine');
+        serverEphMap.set(pid, eph);
+      }
+    }
+    return eph;
   };
 
   const getLlmClient = (): LlmClient => {
@@ -151,7 +165,9 @@ export function createApiServer() {
       const dashas = computeVimshottariDashas(m.nakshatraIndex, m.elapsedInNakshatra, timeRes.resolved.birthLocal, 3);
       const yogini = computeYoginiDashas(m.nakshatraIndex, m.elapsedInNakshatra, timeRes.resolved.birthLocal);
       const chara = computeCharaDashas(natal.lagna?.signIndex ?? 0, timeRes.resolved.birthLocal, natal.grahas);
-      const chalit = natal.lagna ? computeSripatiChalit(natal.lagna.lon, (natal.lagna.lon + 270) % 360) : null;
+      const chalit = natal.lagna
+        ? computeSripatiChalit(natal.lagna.lon, natal.mc?.lon ?? (natal.lagna.lon + 270) % 360)
+        : null;
       const now = new Date();
       const nowJd = julianDayUt(
         now.getUTCFullYear(),

@@ -259,7 +259,21 @@ export async function fetchOrCreateStaticBundle(profileInput: {
   }
   const created = await createRes.json();
   const profileId = String(created.profile.id);
-  const bundle = await fetchProfileBundleById(profileId);
+  const bundle: StaticBundleResponse = {
+    profile: created.profile,
+    bundleVersion: created.profile.bundleVersion ?? 1,
+    computedAt: new Date().toISOString(),
+    level1Static: created.dashboard?.level1,
+    level2Static: created.dashboard?.level2,
+  };
+  const cacheKey = `${BUNDLE_CACHE_PREFIX}${profileId}`;
+  const etag = `"bundle-${profileId}-v${created.profile.bundleVersion ?? 1}"`;
+  try {
+    localStorage.setItem(cacheKey, JSON.stringify({ etag, bundle }));
+    localStorage.setItem('astro_backend_profile_id_v1', profileId);
+  } catch {
+    // ignore
+  }
   return { profileId, bundle };
 }
 

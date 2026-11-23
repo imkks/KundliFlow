@@ -23,6 +23,10 @@ export const generalPrecessionArcsec = (T: number): number =>
  */
 export const AYANAMSA_ANCHORS = {
   lahiri: { t0Jd: 2435553.5, valueDeg: 23.250182778 - 0.004658035 },
+  raman: { t0Jd: 2451545.0, valueDeg: 22.410754763 },
+  kp_old: { t0Jd: 2451545.0, valueDeg: 23.760203763 },
+  kp_new: { t0Jd: 2451545.0, valueDeg: 23.760203763 },
+  yukteshwar: { t0Jd: 2451545.0, valueDeg: 22.478766750 },
 } as const;
 
 /** Mean ayanamsa (no nutation), degrees. */

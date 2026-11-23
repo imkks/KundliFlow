@@ -352,7 +352,7 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
             id: `aspect.${fromPlanet}.${toPlanet}`,
             type: 'aspect',
             subject: toPlanet,
-            args: { from: fromPlanet, to: toPlanet, offset, targetHouse },
+            args: { from: fromPlanet, to: toPlanet, planet1: fromPlanet, planet2: toPlanet, offset, targetHouse },
             value: offset,
             houseFrom: { lagna: gTo.houses.houseFromLagna, moon: gTo.houses.houseFromMoon },
             sourceModule: 'emitters.aspects',

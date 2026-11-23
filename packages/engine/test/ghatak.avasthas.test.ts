@@ -64,7 +64,7 @@ describe('Planetary Avasthas against AstroSage Golden Fixture (Page 23)', () => 
     expect(computeJagratadiAvastha('enemy')).toBe('Susupta');
 
     expect(computeDeeptadiAvastha('exalted', false)).toBe('Deepta');
-    expect(computeDeeptadiAvastha('own', false)).toBe('Swatha');
+    expect(computeDeeptadiAvastha('own', false)).toBe('Swastha');
     expect(computeDeeptadiAvastha('great_friend', false)).toBe('Muditha');
     expect(computeDeeptadiAvastha('friend', false)).toBe('Shant');
     expect(computeDeeptadiAvastha('neutral', false)).toBe('Deena');

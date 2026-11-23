@@ -45,11 +45,33 @@ const BODY_MAP: Record<BodyId, number> = {
 const SIDM: Partial<Record<AyanamsaId, number>> = {
   lahiri: SiderealMode.Lahiri,
   kp_old: SiderealMode.Krishnamurti,
+  kp_new: SiderealMode.Krishnamurti,
   raman: SiderealMode.Raman,
   yukteshwar: SiderealMode.Yukteshwar,
 };
 
 const SUPPORTED_AYANAMSAS = Object.keys(SIDM) as AyanamsaId[];
+
+// Enable loading local swisseph.wasm in Node.js where globalThis.fetch('file://...') is unsupported natively
+if (typeof process !== 'undefined' && process.versions?.node && typeof globalThis.fetch === 'function') {
+  const origFetch = globalThis.fetch;
+  // @ts-ignore
+  if (!globalThis.__swisseph_node_fetch_patched) {
+    // @ts-ignore
+    globalThis.__swisseph_node_fetch_patched = true;
+    globalThis.fetch = async (input, init) => {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : (input as any)?.url;
+      if (url && typeof url === 'string' && url.startsWith('file:')) {
+        const { readFile } = await import('node:fs/promises');
+        const fileBytes = await readFile(new URL(url));
+        return new Response(fileBytes, {
+          headers: { 'content-type': 'application/wasm' },
+        });
+      }
+      return origFetch(input, init);
+    };
+  }
+}
 
 export const createSwissephProvider = async (
   opts: ProviderInitOptions = {},

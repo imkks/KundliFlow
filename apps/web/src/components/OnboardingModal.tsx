@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   User,
   Calendar,
@@ -92,6 +92,20 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   const [tzId, setTzId] = useState(currentProfile.tzId);
   const [timeCertainty, setTimeCertainty] = useState(currentProfile.timeCertainty);
   const [ayanamsa, setAyanamsa] = useState<AyanamsaId>(currentProfile.ayanamsa);
+
+  useEffect(() => {
+    if (isOpen) {
+      setName(currentProfile.name);
+      setBirthDate(currentProfile.birthDate);
+      setBirthTime(currentProfile.birthTime);
+      setCityName(currentProfile.cityName);
+      setLat(currentProfile.lat);
+      setLon(currentProfile.lon);
+      setTzId(currentProfile.tzId);
+      setTimeCertainty(currentProfile.timeCertainty);
+      setAyanamsa(currentProfile.ayanamsa);
+    }
+  }, [isOpen, currentProfile]);
 
   if (!isOpen) return null;
 
@@ -427,8 +441,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               >
                 <option value="lahiri">Lahiri (Chitra Paksha — Vedic Default)</option>
                 <option value="kp_new">KP New (Krishnamurti Padhdhati)</option>
+                <option value="kp_old">KP Original (Krishnamurti Traditional)</option>
                 <option value="raman">B.V. Raman</option>
-                <option value="krishnamurti">Krishnamurti Original</option>
                 <option value="yukteshwar">Sri Yukteshwar</option>
               </select>
             </div>

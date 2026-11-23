@@ -22,6 +22,7 @@ export interface NatalChart {
     lon: number;
   };
   lagna: LagnaDetail | null;
+  mc?: LagnaDetail | null;
   grahas: Record<GrahaName, GrahaDetail>;
   grahasList: GrahaDetail[];
 }
@@ -56,10 +57,12 @@ export const computePositions = (
   settings: NatalSettings,
 ): NatalChart => {
   const jd = time.julianDayUt;
-  const ay = eph.ayanamsa(jd, settings.ayanamsa);
+  const normalizedAy = (settings.ayanamsa as string) === 'krishnamurti' ? 'kp_old' : settings.ayanamsa;
+  const ay = eph.ayanamsa(jd, normalizedAy as AyanamsaId);
 
-  // 1. Chart Angles / Lagna
+  // 1. Chart Angles / Lagna & MC
   let lagna: LagnaDetail | null = null;
+  let mc: LagnaDetail | null = null;
   let lagnaSignIndex = 0;
 
   if (time.timeCertainty !== 'unknown') {
@@ -79,6 +82,21 @@ export const computePositions = (
       nakshatraIndex: n.nakshatraIndex,
       pada: n.pada,
       elapsedInNakshatra: n.elapsed,
+    };
+
+    const sidMc = norm360(angles.mcTropical - ay);
+    const sMc = signOf(sidMc);
+    const nMc = nakshatraOf(sidMc);
+    mc = {
+      lon: sidMc,
+      tropicalLon: angles.mcTropical,
+      sign: sMc.sign,
+      signIndex: sMc.signIndex,
+      degInSign: sMc.degInSign,
+      nakshatra: nMc.nakshatra,
+      nakshatraIndex: nMc.nakshatraIndex,
+      pada: nMc.pada,
+      elapsedInNakshatra: nMc.elapsed,
     };
   }
 
@@ -190,6 +208,7 @@ export const computePositions = (
     time,
     place,
     lagna,
+    mc,
     grahas,
     grahasList,
   };

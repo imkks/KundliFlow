@@ -128,11 +128,31 @@ function buildComposedModifierNote(f: Finding, factById: Map<string, Fact>): str
     if (!fact) continue;
     const planet = String(fact.args.planet ?? fact.subject ?? '');
     if (fact.type === 'placement') {
-      if (fact.args.retrograde === true) notes.push(`${planet} is retrograde, deepening internal reflection.`);
+      const house = Number(fact.args.house ?? 0);
+      // Classical Dig Bala per Dr. K.S. Charak Ch. XIII
+      if ((planet === 'jupiter' || planet === 'mercury') && house === 1) {
+        notes.push(`${planet.toUpperCase()} holds Dig Bala (directional potency) in the 1st house, maximizing mental and ethical clarity.`);
+      } else if ((planet === 'moon' || planet === 'venus') && house === 4) {
+        notes.push(`${planet.toUpperCase()} holds Dig Bala in the 4th house, strengthening emotional foundations and domestic comfort.`);
+      } else if (planet === 'saturn' && house === 7) {
+        notes.push(`SATURN holds Dig Bala in the 7th house, anchoring enduring relationship commitment and public responsibility.`);
+      } else if ((planet === 'sun' || planet === 'mars') && house === 10) {
+        notes.push(`${planet.toUpperCase()} holds Dig Bala in the 10th house, conferring powerful executive leadership and professional drive.`);
+      }
+
+      // Dignity modifiers
+      const dig = factById.get(`dignity.${planet}`);
+      if (dig?.value === 'exalted') {
+        notes.push(`${planet.toUpperCase()} is exalted, expressing its highest constructive potential.`);
+      } else if (dig?.value === 'own' || dig?.value === 'mooltrikona') {
+        notes.push(`${planet.toUpperCase()} resides in its own sign, operating from steady, self-reliant foundations.`);
+      }
+
+      if (fact.args.retrograde === true) notes.push(`${planet} is retrograde, deepening internal reflection and conferring high Cheshta Bala.`);
       const comb = factById.get(`combust.${planet}`);
-      if (comb?.value === true) notes.push(`${planet} is combust near the Sun, turning its expression inward.`);
+      if (comb?.value === true) notes.push(`${planet} is combust near the Sun, internalizing its expressive drive.`);
       const d9 = factById.get(`varga.d9.${planet}`);
-      if (d9?.args.vargottama === true) notes.push(`${planet} is Vargottama in D9, reinforcing lasting results.`);
+      if (d9?.args.vargottama === true) notes.push(`${planet} is Vargottama in D9 Navamsha, reinforcing lasting results.`);
       break;
     }
   }

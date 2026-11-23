@@ -1,0 +1,127 @@
+version: "1.0.0"
+items:
+  - id: medical.drekkana_zones
+    type: concept_note
+    text: "Dr. K.S. Charak Medical Astrology (Ch. XXIV): The rising Drekkana (D3) divides the 12 houses into three physiological zones: 1st Drekkana (0°-10°) covers Head to Neck; 2nd Drekkana (10°-20°) covers Chest to Navel; 3rd Drekkana (20°-30°) covers Pelvis to Feet. This decanate matrix localizes physical symptoms with exact anatomical precision."
+    houses: "1,6,8"
+    themes: "health_routine"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.tridosha_constitution
+    type: concept_note
+    text: "Planetary Tridosha Significations: Pitta (fire, metabolic heat, bile) is ruled by Sun, Mars, and Ketu. Kapha (water/earth, mucous, structural lubrication) is ruled by Moon, Venus, and Jupiter. Vata (air/ether, nervous transmission, dry movement) is ruled by Saturn, Rahu, and Mercury. Predominance of afflicted planets indicates constitutional imbalance."
+    houses: "1,6"
+    themes: "health_routine"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house1_vitality
+    type: concept_note
+    text: "Medical 1st House & Aries: Governs the skull, brain, cerebral cortex, facial bones, and constitutional life-force (Jeeva). Strong Lagna and Lagna lord provide natural immunity and resilient recuperation."
+    houses: "1"
+    themes: "health_routine,self"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house2_facial_ent
+    type: concept_note
+    text: "Medical 2nd House & Taurus: Governs the right eye, teeth, tongue, throat, vocal cords, neck, thyroid gland, and nutritional intake habits."
+    houses: "2"
+    themes: "health_routine,money_speech"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house3_respiratory
+    type: concept_note
+    text: "Medical 3rd House & Gemini: Governs the right ear, collarbones, shoulders, arms, hands, trachea, bronchial tubes, and nervous coordination."
+    houses: "3"
+    themes: "health_routine,courage_siblings"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house4_cardiopulmonary
+    type: concept_note
+    text: "Medical 4th House & Cancer: Governs the chest, breasts, pericardium, heart vessels, lung parenchyma, and emotional somatic reflexes."
+    houses: "4"
+    themes: "health_routine,home_mother"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house5_digestion
+    type: concept_note
+    text: "Medical 5th House & Leo: Governs the stomach, upper abdomen, cardiac end of stomach, liver enzymes, spleen, gallbladder, pancreas, and intellectual vitality."
+    houses: "5"
+    themes: "health_routine,education_children"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house6_acute_ailments
+    type: concept_note
+    text: "Medical 6th House (Roga Bhava) & Virgo: Governs small intestines, appendix, kidney filtering, intestinal peristalsis, acute ailments, and immunological defense."
+    houses: "6"
+    themes: "health_routine"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house7_urogenital
+    type: concept_note
+    text: "Medical 7th House & Libra: Governs kidneys, lumbar region, internal reproductive organs, urinary bladder, and balance of bodily fluids."
+    houses: "7"
+    themes: "health_routine,partnership"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house8_chronic_longevity
+    type: concept_note
+    text: "Medical 8th House (Mrityu Bhava) & Scorpio: Governs excretory organs, external genitalia, perineum, chronic or degenerative ailments, surgical interventions, and longevity (Ayushya)."
+    houses: "8"
+    themes: "health_routine,transformation_secrets"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house9_arterial_hips
+    type: concept_note
+    text: "Medical 9th House & Sagittarius: Governs the hips, thighs, femoral arteries, sacrum, and overall systemic circulation."
+    houses: "9"
+    themes: "health_routine,luck_dharma"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house10_skeletal_knees
+    type: concept_note
+    text: "Medical 10th House & Capricorn: Governs the knees, kneecaps (patella), joints, bones, skeletal structure, and constitutional wear-and-tear."
+    houses: "10"
+    themes: "health_routine,career_status"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house11_calves_shins
+    type: concept_note
+    text: "Medical 11th House & Aquarius: Governs the left ear, shins, calves, ankles, lymphatic system, and recovery from prolonged illness."
+    houses: "11"
+    themes: "health_routine,gains_network"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1
+
+  - id: medical.house12_feet_lymphatic
+    type: concept_note
+    text: "Medical 12th House & Pisces: Governs the feet, toes, left eye, lymphatic fluid balance, circadian sleep rhythms, hospitalization, and convalescence."
+    houses: "12"
+    themes: "health_routine,losses_retreat"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXIV)"
+    reviewed: 1

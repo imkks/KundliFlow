@@ -1,0 +1,1622 @@
+version: 1.0.0
+rules:
+  - id: pis.sun.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: aries
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 75
+      statement: "Sun exalted in Aries confers pioneering leadership, noble ambition, valiant courage, and strong vitality, excelling in administrative and executive roles."
+  - id: pis.sun.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: mixed
+      base_strength: 52
+      statement: "Sun in Taurus imparts perseverance, fondness for music and perfumes, deliberate speech, and financial endurance, though obstinacy can create friction."
+  - id: pis.sun.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 60
+      statement: "Sun in Gemini gives intellectual curiosity, linguistic skill, scholarly pursuits, versatility in communication, and active involvement with literature or sciences."
+  - id: pis.sun.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: cancer
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 50
+      statement: "Sun in Cancer brings emotional intensity, devotion to family, interest in ancestral heritage, and travel by water, tempered by mood fluctuations."
+  - id: pis.sun.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: leo
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 72
+      statement: "Sun in its own sign Leo bestows commanding authority, dignified self-respect, generosity of spirit, regal demeanor, and unshakeable inner confidence."
+  - id: pis.sun.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: virgo
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 58
+      statement: "Sun in Virgo grants analytical intellect, craftsmanship, computational skill, modest self-presentation, and proficiency in writing or medicine."
+  - id: pis.sun.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 42
+      statement: "Sun debilitated in Libra prompts lessons in self-worth and partnership balance, seeking social harmony while learning not to dilute core identity."
+  - id: pis.sun.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 55
+      statement: "Sun in Scorpio confers intense willpower, investigative acumen, capacity for secrecy, surgical or martial precision, and a penetrating gaze."
+  - id: pis.sun.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 68
+      statement: "Sun in Sagittarius fosters broad philosophical outlook, devotion to truth, high moral principles, respected counsel, and philanthropic leadership."
+  - id: pis.sun.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 52
+      statement: "Sun in Capricorn imparts organizational stamina, methodical career ascent, pragmatic realism, and steady responsibility, sometimes appearing aloof."
+  - id: pis.sun.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: mixed
+      base_strength: 50
+      statement: "Sun in Aquarius develops egalitarian ideals, unconventional intellect, interest in collective welfare or reform, and quiet dedication to broad causes."
+  - id: pis.sun.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: sun
+          sign: pisces
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 62
+      statement: "Sun in Pisces inspires spiritual depth, poetic sensibility, intuitive wisdom, love of sanctuary, and a sympathetic attitude toward others."
+  - id: pis.moon.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aries
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 60
+      statement: "Moon in Aries stimulates an alert, enterprising mind, quick emotional responses, pioneering enthusiasm, and a bold attitude toward new ventures."
+  - id: pis.moon.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: taurus
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 75
+      statement: "Moon exalted in Taurus bestows emotional stability, gracious manners, refined artistic taste, steady affections, and magnetic personal charm."
+  - id: pis.moon.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: gemini
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 62
+      statement: "Moon in Gemini encourages versatile intellect, conversational wit, multifaceted interests, literary pursuits, and adaptable social connections."
+  - id: pis.moon.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: cancer
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 72
+      statement: "Moon in its own sign Cancer imparts deep emotional sensitivity, nurturing maternal instincts, imaginative insight, and strong connection to home."
+  - id: pis.moon.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: leo
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 62
+      statement: "Moon in Leo confers magnanimous feelings, dramatic self-expression, pride of character, warm generosity, and natural social presence."
+  - id: pis.moon.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: virgo
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 58
+      statement: "Moon in Virgo bestows an analytical, methodical memory, refined sense of service, practical discretion, and attention to emotional hygiene."
+  - id: pis.moon.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 65
+      statement: "Moon in Libra creates a diplomatic, aesthetic disposition, love of peaceful partnerships, refined balance, and instinctive social courtesy."
+  - id: pis.moon.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: challenging
+      base_strength: 40
+      statement: "Moon debilitated in Scorpio calls for emotional self-mastery, transforming intense psychic undercurrents and guarded feelings into profound resilience."
+  - id: pis.moon.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 68
+      statement: "Moon in Sagittarius inspires cheerful optimism, enthusiasm for philosophy and higher learning, moral integrity, and broad spiritual curiosity."
+  - id: pis.moon.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 50
+      statement: "Moon in Capricorn imparts emotional self-discipline, cautious pragmatism, dutiful responsibility, and perseverance in social responsibilities."
+  - id: pis.moon.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 60
+      statement: "Moon in Aquarius encourages humanitarian ideals, universal empathy, intuitive intellect, and loyal bonds within collective networks."
+  - id: pis.moon.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: moon
+          sign: pisces
+    effect:
+      theme: mind_emotion
+      polarity: supportive
+      base_strength: 68
+      statement: "Moon in Pisces evokes boundless compassion, rich poetic imagination, mystical empathy, and deep attunement to subtle emotional currents."
+  - id: pis.mars.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: aries
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 72
+      statement: "Mars in its own sign Aries bestows fearless courage, energetic initiative, decisive command, athletic stamina, and assertive leadership."
+  - id: pis.mars.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: mixed
+      base_strength: 50
+      statement: "Mars in Taurus directs energy into persistent financial accumulation and craftsmanship, with determined execution alongside stubborn resolve."
+  - id: pis.mars.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 58
+      statement: "Mars in Gemini sparks sharp verbal debate, technical agility, mental vigor, dexterity in hands, and strategic communication skills."
+  - id: pis.mars.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: cancer
+    effect:
+      theme: home_mother
+      polarity: challenging
+      base_strength: 40
+      statement: "Mars debilitated in Cancer requires directing protective passion constructively, preventing internal emotional storms and domestic defensiveness."
+  - id: pis.mars.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: leo
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 68
+      statement: "Mars in friendly sign Leo produces bold executive fortitude, heroic drive, noble pride, and inspiring dynamic authority."
+  - id: pis.mars.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: virgo
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 58
+      statement: "Mars in Virgo confers surgical precision, technical and engineering aptitude, meticulous work standards, and tactical problem-solving."
+  - id: pis.mars.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 52
+      statement: "Mars in Libra channels martial vigor through diplomatic strategy, aesthetic craftsmanship, and advocacy for fairness in alliances."
+  - id: pis.mars.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 74
+      statement: "Mars in its own sign Scorpio manifests profound investigative endurance, crisis mastery, intense strategic stamina, and regenerative power."
+  - id: pis.mars.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 65
+      statement: "Mars in Sagittarius fuels righteous crusades, ethical enthusiasm, pursuit of legal or philosophical reform, and adventurous enterprise."
+  - id: pis.mars.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 78
+      statement: "Mars exalted in Capricorn confers consummate executive discipline, untiring professional endurance, tactical mastery, and sustained achievement."
+  - id: pis.mars.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: mixed
+      base_strength: 52
+      statement: "Mars in Aquarius applies bold initiative toward collective causes, scientific innovation, reformist teams, and unconventional technical avenues."
+  - id: pis.mars.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mars
+          sign: pisces
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 54
+      statement: "Mars in Pisces channels drive into humanitarian, creative, or spiritual service, championing those in need with empathetic determination."
+  - id: pis.mercury.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: aries
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 52
+      statement: "Mercury in Aries provides quick-witted intellect, spontaneous ideas, candid debate, and innovative mental initiative, needing patient follow-through."
+  - id: pis.mercury.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 62
+      statement: "Mercury in Taurus yields sound commercial judgment, practical intellect, pleasing speech, and careful valuation of material resources."
+  - id: pis.mercury.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 74
+      statement: "Mercury in its own sign Gemini exhibits brilliant linguistic flair, versatile learning, rapid assimilation, and multifaceted communication skills."
+  - id: pis.mercury.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: cancer
+    effect:
+      theme: mind_emotion
+      polarity: mixed
+      base_strength: 52
+      statement: "Mercury in Cancer blends intuitive feelings with reasoning, supporting imaginative writing, receptive memory, and empathetic counseling."
+  - id: pis.mercury.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: leo
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 62
+      statement: "Mercury in Leo imparts articulate, authoritative rhetoric, confident creative intellect, dignified exposition, and executive thinking."
+  - id: pis.mercury.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: virgo
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 78
+      statement: "Mercury exalted in Virgo bestows unmatched analytical clarity, mathematical precision, methodical editorial skill, and pragmatic discrimination."
+  - id: pis.mercury.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 64
+      statement: "Mercury in Libra produces balanced, diplomatic negotiation, aesthetic appreciation, impartial arbitration, and collaborative intelligence."
+  - id: pis.mercury.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 55
+      statement: "Mercury in Scorpio confers penetrating investigative intellect, interest in occult or research topics, strategic secrecy, and shrewd insight."
+  - id: pis.mercury.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 60
+      statement: "Mercury in Sagittarius fosters philosophical curiosity, interest in law, higher learning, teaching, and synthesis of broad cultural perspectives."
+  - id: pis.mercury.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 62
+      statement: "Mercury in Capricorn imparts cautious, systematic calculation, administrative aptitude, practical realism, and methodical business acumen."
+  - id: pis.mercury.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 65
+      statement: "Mercury in Aquarius encourages inventive, progressive thinking, scientific or technical mastery, abstract logic, and egalitarian discourse."
+  - id: pis.mercury.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: mercury
+          sign: pisces
+    effect:
+      theme: mind_emotion
+      polarity: challenging
+      base_strength: 40
+      statement: "Mercury debilitated in Pisces calls for balancing rich poetic intuition and spiritual visions with structured everyday facts and logic."
+  - id: pis.jupiter.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: aries
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 68
+      statement: "Jupiter in friendly Aries generates enthusiastic wisdom, pioneering righteous ventures, confident mentorship, and courageous ethical leadership."
+  - id: pis.jupiter.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 60
+      statement: "Jupiter in Taurus anchors philosophical values into sustainable financial prosperity, generous domestic security, and enduring stability."
+  - id: pis.jupiter.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 58
+      statement: "Jupiter in Gemini expands intellectual horizons, encouraging pedagogical excellence, scholarly publication, and engaging discourse."
+  - id: pis.jupiter.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: cancer
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 80
+      statement: "Jupiter exalted in Cancer radiates supreme moral grace, philanthropic generosity, profound spiritual wisdom, and widespread protective benediction."
+  - id: pis.jupiter.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: leo
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 70
+      statement: "Jupiter in friendly Leo manifests noble dignity, magnanimous leadership, high public office, and an uplifting ethical presence."
+  - id: pis.jupiter.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: virgo
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 58
+      statement: "Jupiter in Virgo channels wisdom into therapeutic care, educational service, practical ethics, and meticulous mentorship."
+  - id: pis.jupiter.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 62
+      statement: "Jupiter in Libra promotes equitable justice, diplomatic harmony, noble partnerships, and cultured aesthetic appreciation."
+  - id: pis.jupiter.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 65
+      statement: "Jupiter in friendly Scorpio deepens esoteric knowledge, transformative spiritual wisdom, occult research, and profound inner regeneration."
+  - id: pis.jupiter.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 75
+      statement: "Jupiter in its own sign Sagittarius champions spiritual truth, high ethical philosophy, legal righteousness, and scholarly eminence."
+  - id: pis.jupiter.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: challenging
+      base_strength: 42
+      statement: "Jupiter debilitated in Capricorn teaches grounding spiritual optimism into disciplined, patient effort, overcoming initial material doubts."
+  - id: pis.jupiter.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 65
+      statement: "Jupiter in Aquarius manifests visionary humanitarian ideals, egalitarian fellowship, philanthropic societies, and progressive wisdom."
+  - id: pis.jupiter.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: jupiter
+          sign: pisces
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 75
+      statement: "Jupiter in its own sign Pisces bestows mystical contemplation, boundless compassion, serene devotion, and profound spiritual peace."
+  - id: pis.venus.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: aries
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 52
+      statement: "Venus in Aries brings passionate romantic expressions, ardent enthusiasm, creative spontaneity, and bold artistic initiative."
+  - id: pis.venus.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 74
+      statement: "Venus in its own sign Taurus bestows sensual elegance, artistic mastery, abundant comforts, harmonious home life, and stable prosperity."
+  - id: pis.venus.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 62
+      statement: "Venus in Gemini inspires witty, sociable affections, literary and artistic versatility, charming eloquence, and delightful companions."
+  - id: pis.venus.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: cancer
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 60
+      statement: "Venus in Cancer fosters tender devotion, protective warmth, love of home sanctuary, culinary appreciation, and sentimental bonding."
+  - id: pis.venus.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: leo
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 62
+      statement: "Venus in Leo expresses dramatic romance, regal generosity, flamboyant aesthetic flair, warm loyalty, and creative presentation."
+  - id: pis.venus.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: virgo
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 42
+      statement: "Venus debilitated in Virgo calls for gentle unconditional love, learning to temper analytical perfectionism with emotional acceptance."
+  - id: pis.venus.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 75
+      statement: "Venus in its own sign Libra confers consummate social grace, refined diplomacy, artistic harmony, beautiful partnerships, and peace."
+  - id: pis.venus.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 52
+      statement: "Venus in Scorpio deepens magnetic emotional intensity, transformative romantic passion, loyalty under trial, and aesthetic intrigue."
+  - id: pis.venus.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 65
+      statement: "Venus in Sagittarius evokes broad-minded affection, love of travel and higher philosophy, ethical idealism, and generous good cheer."
+  - id: pis.venus.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 60
+      statement: "Venus in Capricorn creates enduring, mature loyalties, artistic professionalism, dignified social standing, and prudent resource management."
+  - id: pis.venus.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 64
+      statement: "Venus in Aquarius inspires unconventional, intellectual friendships, progressive artistic expressions, and broad humanitarian fellowship."
+  - id: pis.venus.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: venus
+          sign: pisces
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 80
+      statement: "Venus exalted in Pisces embodies divine, selfless love, sublime artistic inspiration, tender empathy, and refined aesthetic transcendence."
+  - id: pis.saturn.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: aries
+    effect:
+      theme: self
+      polarity: challenging
+      base_strength: 40
+      statement: "Saturn debilitated in Aries requires cultivating patient pacing and humility, transforming hasty frustration into steady, mature endurance."
+  - id: pis.saturn.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 62
+      statement: "Saturn in friendly Taurus confers patient financial prudence, enduring stability, deliberate speech, and methodical accumulation of assets."
+  - id: pis.saturn.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 60
+      statement: "Saturn in friendly Gemini bestows disciplined intellectual focus, systematic learning, pragmatic communication, and realistic problem-solving."
+  - id: pis.saturn.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: cancer
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 48
+      statement: "Saturn in Cancer prompts lessons in emotional boundaries and domestic endurance, teaching self-reliance beneath a reserved exterior."
+  - id: pis.saturn.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: leo
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 48
+      statement: "Saturn in enemy sign Leo tests personal authority against societal duty, forging authentic leadership through testing responsibilities."
+  - id: pis.saturn.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: virgo
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 62
+      statement: "Saturn in friendly Virgo produces exceptional organizational diligence, practical discernment, hygienic discipline, and meticulous craft."
+  - id: pis.saturn.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 78
+      statement: "Saturn exalted in Libra confers profound justice, democratic integrity, enduring partnerships, balanced judgment, and societal authority."
+  - id: pis.saturn.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 50
+      statement: "Saturn in Scorpio confers unflinching tenacity in crisis, deep psychic stamina, investigative endurance, and capacity for austere self-control."
+  - id: pis.saturn.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 64
+      statement: "Saturn in Sagittarius develops grounded moral discipline, serious philosophical inquiry, respect for tradition, and enduring wisdom."
+  - id: pis.saturn.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 72
+      statement: "Saturn in its own sign Capricorn manifests executive stamina, structural mastery, methodical climb to prominence, and unshakeable duty."
+  - id: pis.saturn.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 75
+      statement: "Saturn in its Moolatrikona sign Aquarius confers humanitarian endurance, systemic social vision, egalitarian loyalty, and lasting collective achievements."
+  - id: pis.saturn.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: saturn
+          sign: pisces
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 60
+      statement: "Saturn in Pisces anchors spiritual devotion into practical service, contemplative solitude, graceful detachment, and compassionate endurance."
+  - id: pis.rahu.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: aries
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 52
+      statement: "Rahu in Aries stimulates intense, unconventional initiative, bold competitive appetite, and ambitious pioneering drive."
+  - id: pis.rahu.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 68
+      statement: "Rahu in Taurus (exaltation per classical tradition) confers sharp financial ambition, material resourcefulness, and persistent worldly goals."
+  - id: pis.rahu.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: supportive
+      base_strength: 68
+      statement: "Rahu in Gemini (exaltation per Gemini school) empowers cutting-edge communication, technical innovation, multilingual acuity, and media savvy."
+  - id: pis.rahu.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: cancer
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 50
+      statement: "Rahu in Cancer stirs unconventional domestic desires, intense emotional yearnings, and interest in foreign real estate or culture."
+  - id: pis.rahu.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: leo
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 52
+      statement: "Rahu in Leo amplifies ambitions for public recognition, dramatic influence, charismatic leadership, and creative distinction."
+  - id: pis.rahu.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: virgo
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 65
+      statement: "Rahu in Virgo sharpens analytical resourcefulness, mastery of complex technical systems, medical research, and pragmatic problem-solving."
+  - id: pis.rahu.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 52
+      statement: "Rahu in Libra brings intense, non-traditional relationship dynamics, foreign business alliances, and sophisticated public diplomacy."
+  - id: pis.rahu.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: challenging
+      base_strength: 44
+      statement: "Rahu in Scorpio intensifies desires for occult power, psychological depth, and hidden knowledge, urging transparent motives in crises."
+  - id: pis.rahu.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: mixed
+      base_strength: 52
+      statement: "Rahu in Sagittarius seeks non-conformist spiritual philosophies, cross-cultural exploration, foreign pilgrimages, and unconventional beliefs."
+  - id: pis.rahu.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 62
+      statement: "Rahu in Capricorn directs relentless ambition into social status, corporate climbing, pragmatic power, and large-scale enterprise."
+  - id: pis.rahu.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 68
+      statement: "Rahu in its co-ruled sign Aquarius fosters revolutionary scientific insight, collective reform, global networks, and technological innovation."
+  - id: pis.rahu.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: rahu
+          sign: pisces
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 50
+      statement: "Rahu in Pisces stirs mystical fascinations, foreign travel, imaginative dreams, and the search for transcendent or altered states."
+  - id: pis.ketu.aries
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: aries
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 52
+      statement: "Ketu in Aries imparts instinctive courage, martial detachment, spiritual individuality, and sharp sudden reactions."
+  - id: pis.ketu.taurus
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: taurus
+    effect:
+      theme: money_speech
+      polarity: challenging
+      base_strength: 44
+      statement: "Ketu in Taurus tests attachment to material security, cultivating inner values and simplicity over external possessions."
+  - id: pis.ketu.gemini
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: gemini
+    effect:
+      theme: courage_siblings
+      polarity: mixed
+      base_strength: 50
+      statement: "Ketu in Gemini confers detached, non-linear intellectual insight, interest in symbolic or esoteric languages, and intuitive thinking."
+  - id: pis.ketu.cancer
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: cancer
+    effect:
+      theme: home_mother
+      polarity: mixed
+      base_strength: 50
+      statement: "Ketu in Cancer fosters inner emotional detachment, yearning for spiritual homeland, and deep, introspective psychological wisdom."
+  - id: pis.ketu.leo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: leo
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 50
+      statement: "Ketu in Leo cultivates quiet, humble self-assurance, looking past external pomp to inner authentic purpose."
+  - id: pis.ketu.virgo
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: virgo
+    effect:
+      theme: health_routine
+      polarity: supportive
+      base_strength: 62
+      statement: "Ketu in Virgo grants intuitive healing acumen, technical discrimination, modesty in daily service, and surgical exactness."
+  - id: pis.ketu.libra
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: libra
+    effect:
+      theme: partnership
+      polarity: mixed
+      base_strength: 50
+      statement: "Ketu in Libra teaches spiritual autonomy within partnerships, maintaining inner completeness without co-dependent entanglements."
+  - id: pis.ketu.scorpio
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: scorpio
+    effect:
+      theme: transformation_secrets
+      polarity: supportive
+      base_strength: 70
+      statement: "Ketu in Scorpio (exaltation per classical tradition) confers profound occult intuition, mystical liberation, and regenerative psychic insight."
+  - id: pis.ketu.sagittarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: sagittarius
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 70
+      statement: "Ketu in Sagittarius (exaltation per classical tradition) inspires true spiritual detachment, philosophical renunciation, and quest for enlightenment."
+  - id: pis.ketu.capricorn
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: capricorn
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 52
+      statement: "Ketu in Capricorn imparts detachment from worldly status and corporate politics, focusing on duty without hunger for applause."
+  - id: pis.ketu.aquarius
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: aquarius
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 62
+      statement: "Ketu in Aquarius fosters unconventional egalitarian vision, mystical detachment from group conformity, and universal goodwill."
+  - id: pis.ketu.pisces
+    kind: dignity
+    school: parashari
+    source: BPHS Rashi Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XIX)
+    reviewed: true
+    when:
+      all:
+        - fact: placement
+          planet: ketu
+          sign: pisces
+    effect:
+      theme: losses_retreat
+      polarity: supportive
+      base_strength: 74
+      statement: "Ketu in Pisces (own spiritual realm) opens the doorway to deep meditation, spiritual transcendence, divine surrender, and ultimate liberation."

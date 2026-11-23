@@ -333,11 +333,33 @@ describe('M2 Natal Calculations Suite (Panchang, Dashas, Vargas, Chalit, Digest)
       const gajakesari = yogas.find((y) => y.id === 'gajakesari');
       const kujadosha = yogas.find((y) => y.id === 'kuja_dosha');
       const kaalsarp = yogas.find((y) => y.id === 'kaal_sarp');
+      const pitra = yogas.find((y) => y.id === 'pitra_dosha');
+      const neechaBhanga = yogas.find((y) => y.id === 'neecha_bhanga');
+      const guruChandal = yogas.find((y) => y.id === 'guru_chandal');
+      const angarak = yogas.find((y) => y.id === 'angarak_dosha');
+      const vish = yogas.find((y) => y.id === 'vish_dosha');
+      const gandanta = yogas.find((y) => y.id === 'gandanta_dosha');
 
       expect(budhaditya?.presence).toBe(true);
       expect(gajakesari?.presence).toBe(true);
       expect(kujadosha?.presence).toBe(false); // Mars in Cancer 3rd house: Kuja Dosha absent
       expect(kaalsarp?.presence).toBe(false); // Planets span across nodal axis: Kaal Sarp Yoga absent
+      expect(pitra?.presence).toBe(true); // Sun conjunct Rahu in Leo (H4)
+      expect(neechaBhanga?.presence).toBe(true); // Mars & Saturn debilitations cancelled by kendras
+      expect(guruChandal?.presence).toBe(false); // Jupiter in Pisces, nodes in Leo/Aquarius
+      expect(angarak?.presence).toBe(false); // Mars in Cancer, nodes in Leo/Aquarius
+      expect(vish?.presence).toBe(false); // Saturn in Aries (H12) does not aspect Moon in Pisces (H11)
+      expect(gandanta?.presence).toBe(false); // Moon at 8°36' Pisces, Lagna at 27°40' Taurus
+
+      // Chandra & Surya Yogas (Dr. Charak Ch. XXII)
+      const sunapha = yogas.find((y) => y.id === 'sunapha_yoga');
+      const vosi = yogas.find((y) => y.id === 'vosi_yoga');
+      expect(sunapha?.presence).toBe(true); // Saturn in 2nd from Moon (Aries)
+      expect(vosi?.presence).toBe(true); // Mars in 12th from Sun (Cancer)
+
+      // Nabhasa Sankhya Yoga (Dr. Charak Ch. XX)
+      const kedara = yogas.find((y) => y.id === 'sankhya_kedara');
+      expect(kedara?.presence).toBe(true); // 7 classical planets distributed across 4 signs (Leo, Pisces, Cancer, Aries)
     });
 
     it('generates rich textual interpretations for Avakahada, Planets, and Karakas', () => {

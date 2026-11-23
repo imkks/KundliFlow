@@ -15,7 +15,8 @@ export type BaladiAvastha = 'Bala' | 'Kumar' | 'Yuva' | 'Vradha' | 'Mrita';
 export type JagratadiAvastha = 'Jaagrat' | 'Swapna' | 'Susupta';
 export type DeeptadiAvastha =
   | 'Deepta'
-  | 'Swatha'
+  | 'Swastha'
+  | 'Swatha' // alias for Swastha
   | 'Muditha'
   | 'Shant'
   | 'Deena'
@@ -91,7 +92,7 @@ export function computeDeeptadiAvastha(
       return 'Deepta'; // Radiant
     case 'moolatrikona':
     case 'own':
-      return 'Swatha'; // Self-reliant / at ease
+      return 'Swastha'; // Self-reliant / at ease
     case 'great_friend':
       return 'Muditha'; // Delighted
     case 'friend':
@@ -104,7 +105,7 @@ export function computeDeeptadiAvastha(
     case 'debilitated':
       return 'Khal'; // Base / distressed
     default:
-      return 'Swatha';
+      return 'Swastha';
   }
 }
 
@@ -124,6 +125,7 @@ const JAGRAT_DESCRIPTIONS: Record<JagratadiAvastha, string> = {
 
 const DEEPTADI_DESCRIPTIONS: Record<DeeptadiAvastha, string> = {
   Deepta: 'Radiant (Exalted) — bestows sovereign respect, brilliance, high authority, and effortless grace.',
+  Swastha: 'Self-seated (Own domain) — gives contentment, security, solid foundation, and self-confidence.',
   Swatha: 'Self-seated (Own domain) — gives contentment, security, solid foundation, and self-confidence.',
   Muditha: 'Delighted (Great Friend) — joyful, harmonious social assistance, high goodwill, and good fortune.',
   Shant: 'Peaceful (Friend) — gentle, constructive development, steady composure, and friendly patronage.',

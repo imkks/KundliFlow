@@ -6,7 +6,7 @@ import type { AuthTokenPayload } from './auth.js';
 
 export interface ServerContext {
   appDb: AppDatabase;
-  getServerEphemeris: () => Promise<EphemerisProvider>;
+  getServerEphemeris: (providerId?: any) => Promise<EphemerisProvider>;
   rules: Rule[];
   rulesVersion: string;
   strengthConfig: StrengthConfig;

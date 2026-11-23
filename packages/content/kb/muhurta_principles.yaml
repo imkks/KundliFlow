@@ -1,0 +1,46 @@
+version: "1.0.0"
+items:
+  - id: muhurta.panchaka_rahita
+    type: concept_note
+    text: "Panchaka Rahita Calculation (Dr. Charak Ch. XXVI): Sum the numbers of Tithi (1-30), Vaara (1-7, Sunday=1), Nakshatra (1-27), and rising Lagna (1-12). Divide the total by 9. Remainder 0, 3, 5, or 7 indicates Shudha (Panchaka-free, auspicious). Remainders 1 (Mrityu Panchaka - danger), 2 (Agni Panchaka - fire/fever), 4 (Raja Panchaka - legal/authority conflict), 6 (Chora Panchaka - theft/loss), and 8 (Roga Panchaka - illness) represent specific afflictions to avoid."
+    houses: "1,9"
+    themes: "luck_dharma,self"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXVI: Muhurta)"
+    reviewed: 1
+
+  - id: muhurta.siddha_amrita_yogas
+    type: concept_note
+    text: "Special Auspicious Electional Yogas: Sarvartha Siddhi Yoga forms when specific Nakshatras align with weekdays (e.g., Sunday + Pushya/Hasta/Moola, Monday + Rohini/Mrigashira/Shravana, Thursday + Pushya/Punarvasu). Amrita Siddhi Yoga forms when special planetary nectars activate (e.g., Sunday + Hasta, Monday + Mrigashira, Thursday + Pushya). These yogas overcome minor flaws in the election chart."
+    houses: "1,9,10"
+    themes: "luck_dharma,career_status"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXVI: Muhurta)"
+    reviewed: 1
+
+  - id: muhurta.abhijit_muhurta
+    type: concept_note
+    text: "Abhijit Muhurta: The 8th of the 15 daytime Muhurtas, occurring around local solar noon (spanning approximately 24 minutes before to 24 minutes after solar midday). Lord Vishnu presides over Abhijit, destroying millions of subtle astrological doshas and blessing decisive enterprise, except when it occurs on Wednesday."
+    houses: "1,10"
+    themes: "luck_dharma,career_status"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXVI: Muhurta)"
+    reviewed: 1
+
+  - id: muhurta.rahu_kaalam
+    type: concept_note
+    text: "Inauspicious Daily Windows: Rahu Kaalam is the 1/8th segment of daytime governed by Rahu (Sunday 8th part ~16:30-18:00, Monday 2nd part ~07:30-09:00, Tuesday 7th part, Wednesday 5th part, Thursday 6th part, Friday 4th part, Saturday 3rd part). During Rahu Kaalam, starting fresh contracts, journeys, or ceremonies is avoided."
+    houses: "8,12"
+    themes: "health_routine,losses_retreat"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXVI: Muhurta)"
+    reviewed: 1
+
+  - id: muhurta.tarabala_chandrabala
+    type: concept_note
+    text: "Tarabala and Chandrabala Foundation: Electional strength requires counting the day's Nakshatra from birth Nakshatra (modulo 9). Tara numbers 2 (Sampat - wealth), 4 (Kshema - well-being), 6 (Sadhana - achievement), 8 (Mitra - friendship), and 9 (Parama Mitra - supreme aid) are auspicious; Taras 1 (Janma), 3 (Vipat), 5 (Pratyak), and 7 (Naidhana) are adverse. Chandrabala requires the transit Moon to occupy houses 1, 3, 6, 7, 10, or 11 from natal Moon."
+    houses: "1,9"
+    themes: "luck_dharma,mind_emotion"
+    school: parashari
+    source: "Dr. K.S. Charak Elements of Vedic Astrology (Ch. XXVI: Muhurta)"
+    reviewed: 1

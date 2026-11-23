@@ -2,10 +2,14 @@ import { norm360, signOf } from '../angles.js';
 
 export interface ChalitBhava {
   bhava: number; // 1 to 12
+  house: number; // alias for bhava (1 to 12)
   sign: string;
   signIndex: number;
   bhavaBeginDeg: number;
+  startLon: number; // alias for bhavaBeginDeg
   midBhavaDeg: number;
+  bhavaEndDeg: number;
+  endLon: number; // alias for bhavaEndDeg
 }
 
 export interface ChalitChart {
@@ -16,11 +20,11 @@ export interface ChalitChart {
  * Computes Sripati Bhava Chalit chart (Bhava Madhya and Bhava Begin).
  * Lagna serves as the midpoint of the 1st house (Bhava Madhya 1).
  * Midheaven (MC) serves as the midpoint of the 10th house (Bhava Madhya 10).
- * Midpoints between successive Bhava Madhyas mark the beginning of each Bhava.
+ * Midpoints between successive Bhava Madhyas mark the beginning and end of each Bhava.
  */
 export const computeSripatiChalit = (
   lagnaSiderealDeg: number,
-  mcSiderealDeg: number,
+  mcSiderealDeg: number = norm360(lagnaSiderealDeg + 270),
 ): ChalitChart => {
   const madhyas = new Array<number>(12);
 
@@ -51,26 +55,50 @@ export const computeSripatiChalit = (
   madhyas[7] = norm360(madhyas[1] + 180);
   madhyas[8] = norm360(madhyas[2] + 180);
 
-  // Bhava Begins: Midpoints between preceding and current Bhava Madhya
+  // Bhava Begins and Ends
   const bhavas: ChalitBhava[] = [];
 
   for (let i = 0; i < 12; i++) {
     const prevIdx = (i + 11) % 12;
+    const nextIdx = (i + 1) % 12;
     const prevMadhya = madhyas[prevIdx]!;
     const curMadhya = madhyas[i]!;
+    const nextMadhya = madhyas[nextIdx]!;
 
-    const span = norm360(curMadhya - prevMadhya);
-    const bhavaBeginDeg = norm360(prevMadhya + span / 2);
+    const prevSpan = norm360(curMadhya - prevMadhya);
+    const bhavaBeginDeg = norm360(prevMadhya + prevSpan / 2);
+
+    const nextSpan = norm360(nextMadhya - curMadhya);
+    const bhavaEndDeg = norm360(curMadhya + nextSpan / 2);
+
     const s = signOf(curMadhya);
 
     bhavas.push({
       bhava: i + 1,
+      house: i + 1,
       sign: s.sign,
       signIndex: s.signIndex,
       bhavaBeginDeg,
+      startLon: bhavaBeginDeg,
       midBhavaDeg: curMadhya,
+      bhavaEndDeg,
+      endLon: bhavaEndDeg,
     });
   }
 
   return { bhavas };
+};
+
+/**
+ * Determines which Chalit house a given sidereal longitude falls in.
+ */
+export const getChalitHouse = (planetLon: number, chalit: ChalitChart): number => {
+  const normLon = norm360(planetLon);
+  for (const b of chalit.bhavas) {
+    const s = b.startLon;
+    const e = b.endLon;
+    const inside = s <= e ? normLon >= s && normLon < e : normLon >= s || normLon < e;
+    if (inside) return b.house;
+  }
+  return 1;
 };

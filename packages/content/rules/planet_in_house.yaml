@@ -3,8 +3,8 @@ rules:
   - id: pih.sun.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -13,15 +13,13 @@ rules:
     effect:
       theme: self
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 1th house brings vitality, authority, and clarity of purpose to self-identity,
-        vitality, and personal presence.
+      base_strength: 55
+      statement: Sun in the 1st house confers high self-esteem, natural authority, and a commanding presence, though it may cause impatience, pride, and sensitivity in the eyes.
   - id: pih.sun.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -31,14 +29,12 @@ rules:
       theme: money_speech
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 2th house brings vitality, authority, and clarity of purpose to accumulated
-        resources, speech, and family values.
+      statement: Sun in the 2nd house directs strong focus toward lineage and financial accumulation, accompanied by assertive speech and occasional disputes over family resources.
   - id: pih.sun.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -47,15 +43,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Sun in the 3th house brings vitality, authority, and clarity of purpose to courage,
-        communication, and self-initiated projects.
+      base_strength: 58
+      statement: Sun in the 3rd house grants immense courage, valiant initiative, and triumph over competitors, though it can create distance with younger co-borns.
   - id: pih.sun.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -63,16 +57,14 @@ rules:
           house: 4
     effect:
       theme: home_mother
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 4th house brings vitality, authority, and clarity of purpose to home life,
-        emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 54
+      statement: Sun in the 4th house creates an unsettled domestic atmosphere and inner restlessness, imparting ambition while challenging simple emotional contentment.
   - id: pih.sun.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -82,14 +74,12 @@ rules:
       theme: education_children
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 5th house brings vitality, authority, and clarity of purpose to creative
-        intelligence, learning, and discernment.
+      statement: Sun in the 5th house bestows a sharp, penetrating intellect and strategic mind, though classical texts note potential anxieties or delays concerning progeny.
   - id: pih.sun.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -98,15 +88,13 @@ rules:
     effect:
       theme: health_routine
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Sun in the 6th house brings vitality, authority, and clarity of purpose to daily routine,
-        service, and overcoming obstacles.
+      base_strength: 60
+      statement: Sun in the 6th house is highly celebrated for overcoming opposition, subduing ailments, and achieving executive authority through robust resilience.
   - id: pih.sun.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -114,16 +102,14 @@ rules:
           house: 7
     effect:
       theme: partnership
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 7th house brings vitality, authority, and clarity of purpose to committed
-        partnerships and public dealings.
+      polarity: challenging
+      base_strength: 54
+      statement: Sun in the 7th house brings ego confrontations into one-on-one partnerships, requiring mutual respect and conscious compromise to maintain marital harmony.
   - id: pih.sun.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -133,14 +119,12 @@ rules:
       theme: transformation_secrets
       polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 8th house brings vitality, authority, and clarity of purpose to deep
-        transformation, research, and shared resources.
+      statement: Sun in the 8th house stimulates interest in esoteric or occult knowledge, while calling for mindful attention to physical vitality and vitality reserves.
   - id: pih.sun.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -148,16 +132,14 @@ rules:
           house: 9
     effect:
       theme: luck_dharma
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 9th house brings vitality, authority, and clarity of purpose to dharma,
-        mentorship, higher learning, and fortune.
+      polarity: supportive
+      base_strength: 58
+      statement: Sun in the 9th house fosters deep ethical principles, reverence for wisdom, and good fortune, though it may occasionally spark philosophical differences with paternal figures.
   - id: pih.sun.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -166,15 +148,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Sun in the 10th house brings vitality, authority, and clarity of purpose to career,
-        reputation, and worldly contribution.
+      base_strength: 65
+      statement: Sun in the 10th house is classically exalted in directional strength (Dig Bala), conferring leadership, public renown, administrative acumen, and career success.
   - id: pih.sun.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -183,15 +163,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Sun in the 11th house brings vitality, authority, and clarity of purpose to gains,
-        networks, and long-term aspirations.
+      base_strength: 62
+      statement: Sun in the 11th house brings abundant material gains, expansive social networks, and fruitful alliances with influential patrons and organizations.
   - id: pih.sun.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -201,14 +179,12 @@ rules:
       theme: losses_retreat
       polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Sun in the 12th house brings vitality, authority, and clarity of purpose to solitude,
-        reflection, expenses, and distant horizons.
+      statement: Sun in the 12th house favors spiritual seclusion, overseas travel, and quiet charitable deeds, but advises prudence against excessive expenditures and fatigue.
   - id: pih.moon.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -216,16 +192,14 @@ rules:
           house: 1
     effect:
       theme: self
-      polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 1th house brings emotional sensitivity, intuition, and mental flow to
-        self-identity, vitality, and personal presence.
+      polarity: mixed
+      base_strength: 55
+      statement: Moon in the 1st house bestows a magnetic persona, emotional receptivity, and charming appearance, though the constitution and moods fluctuate with lunar phases.
   - id: pih.moon.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -235,14 +209,12 @@ rules:
       theme: money_speech
       polarity: supportive
       base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 2th house brings emotional sensitivity, intuition, and mental flow to
-        accumulated resources, speech, and family values.
+      statement: Moon in the 2nd house brings gracious, persuasive speech, emotional attachment to family wealth, and prosperity through public or commercial dealings.
   - id: pih.moon.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -251,15 +223,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 3th house brings emotional sensitivity, intuition, and mental flow to courage,
-        communication, and self-initiated projects.
+      base_strength: 56
+      statement: Moon in the 3rd house promotes creative hobbies, affection among siblings, and adaptable courage in day-to-day communications.
   - id: pih.moon.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -268,15 +238,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 4th house brings emotional sensitivity, intuition, and mental flow to home
-        life, emotional roots, and inner peace.
+      base_strength: 62
+      statement: Moon in the 4th house (Dig Bala) provides deep psychological roots, comfort from maternal figures, love of tranquil homes, and affection for water and gardens.
   - id: pih.moon.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -285,15 +253,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 5th house brings emotional sensitivity, intuition, and mental flow to creative
-        intelligence, learning, and discernment.
+      base_strength: 60
+      statement: Moon in the 5th house fosters rich creative imagination, intuitive intelligence, romantic idealism, and joy through children and expressive arts.
   - id: pih.moon.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -301,16 +267,14 @@ rules:
           house: 6
     effect:
       theme: health_routine
-      polarity: mixed
+      polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Moon in the 6th house brings emotional sensitivity, intuition, and mental flow to daily
-        routine, service, and overcoming obstacles.
+      statement: Moon in the 6th house is vulnerable to psychosomatic fluctuations, digestive sensitivity, and emotional fatigue from handling interpersonal conflicts.
   - id: pih.moon.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -320,14 +284,12 @@ rules:
       theme: partnership
       polarity: supportive
       base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 7th house brings emotional sensitivity, intuition, and mental flow to
-        committed partnerships and public dealings.
+      statement: Moon in the 7th house attracts a sensitive, attractive, and nurturing partner, emphasizing emotional bonding in marriage and public relationships.
   - id: pih.moon.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -335,16 +297,14 @@ rules:
           house: 8
     effect:
       theme: transformation_secrets
-      polarity: mixed
+      polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Moon in the 8th house brings emotional sensitivity, intuition, and mental flow to deep
-        transformation, research, and shared resources.
+      statement: Moon in the 8th house brings deep psychological transformations, psychic sensitivity, and occult interests, requiring emotional grounding against irrational anxieties.
   - id: pih.moon.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -353,15 +313,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 9th house brings emotional sensitivity, intuition, and mental flow to dharma,
-        mentorship, higher learning, and fortune.
+      base_strength: 62
+      statement: Moon in the 9th house bestows noble fortune, philosophical broad-mindedness, devotion to spiritual preceptors, and rewarding journeys.
   - id: pih.moon.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -370,15 +328,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 10th house brings emotional sensitivity, intuition, and mental flow to career,
-        reputation, and worldly contribution.
+      base_strength: 60
+      statement: Moon in the 10th house confers public popularity, emotional attunement to collective needs, and career success in service, commerce, or government.
   - id: pih.moon.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -387,15 +343,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Moon in the 11th house brings emotional sensitivity, intuition, and mental flow to gains,
-        networks, and long-term aspirations.
+      base_strength: 60
+      statement: Moon in the 11th house brings a wide circle of helpful friends, varied avenues of prosperity, and the fulfillment of cherished personal aspirations.
   - id: pih.moon.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -403,16 +357,14 @@ rules:
           house: 12
     effect:
       theme: losses_retreat
-      polarity: mixed
+      polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Moon in the 12th house brings emotional sensitivity, intuition, and mental flow to
-        solitude, reflection, expenses, and distant horizons.
+      statement: Moon in the 12th house fosters solitary reflection, intuitive dream life, and spiritual retreat, though it predisposes to emotional isolation or overseas displacement.
   - id: pih.mars.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -420,16 +372,14 @@ rules:
           house: 1
     effect:
       theme: self
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 1th house brings initiative, courage, and decisive energy to self-identity,
-        vitality, and personal presence.
+      polarity: challenging
+      base_strength: 54
+      statement: Mars in the 1st house (Kuja Dosha) imparts fearless drive, physical endurance, and bold initiative, though it warns of headstrong temper, scars, and impetuous decisions.
   - id: pih.mars.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -437,16 +387,14 @@ rules:
           house: 2
     effect:
       theme: money_speech
-      polarity: mixed
+      polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 2th house brings initiative, courage, and decisive energy to accumulated
-        resources, speech, and family values.
+      statement: Mars in the 2nd house produces blunt, incisive speech and erratic expenses, urging disciplined speech and structured financial management.
   - id: pih.mars.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -455,15 +403,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Mars in the 3th house brings initiative, courage, and decisive energy to courage,
-        communication, and self-initiated projects.
+      base_strength: 62
+      statement: Mars in the 3rd house is exceptionally strong, conferring formidable bravery, heroic enterprise, and decisive triumph over adversaries and obstacles.
   - id: pih.mars.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -471,16 +417,14 @@ rules:
           house: 4
     effect:
       theme: home_mother
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 4th house brings initiative, courage, and decisive energy to home life,
-        emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 54
+      statement: Mars in the 4th house (Kuja Dosha) creates domestic volatility and disputes over property or family assets, channeling energy toward physical renovation.
   - id: pih.mars.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -488,16 +432,14 @@ rules:
           house: 5
     effect:
       theme: education_children
-      polarity: mixed
+      polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 5th house brings initiative, courage, and decisive energy to creative
-        intelligence, learning, and discernment.
+      statement: Mars in the 5th house generates passionate, competitive intellect and bold speculation, though classical texts suggest caution against speculative losses and friction with children.
   - id: pih.mars.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -506,15 +448,13 @@ rules:
     effect:
       theme: health_routine
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Mars in the 6th house brings initiative, courage, and decisive energy to daily routine,
-        service, and overcoming obstacles.
+      base_strength: 65
+      statement: Mars in the 6th house is an outstanding placement for victory over competitors, immune vitality, and untiring resolution in demanding careers.
   - id: pih.mars.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -522,16 +462,14 @@ rules:
           house: 7
     effect:
       theme: partnership
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 7th house brings initiative, courage, and decisive energy to committed
-        partnerships and public dealings.
+      polarity: challenging
+      base_strength: 54
+      statement: Mars in the 7th house (Kuja Dosha) sparks fiery dynamics in marriage and partnerships, requiring mutual patience and conscious conflict resolution.
   - id: pih.mars.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -541,14 +479,12 @@ rules:
       theme: transformation_secrets
       polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 8th house brings initiative, courage, and decisive energy to deep
-        transformation, research, and shared resources.
+      statement: Mars in the 8th house (Kuja Dosha) brings intense transformative events, sudden financial emergencies, and calls for vigilance against accidents and inflammatory ailments.
   - id: pih.mars.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -558,14 +494,12 @@ rules:
       theme: luck_dharma
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 9th house brings initiative, courage, and decisive energy to dharma,
-        mentorship, higher learning, and fortune.
+      statement: Mars in the 9th house inspires passionate defense of personal convictions, independent voyages, and friction with traditional philosophical dogmas.
   - id: pih.mars.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -574,15 +508,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Mars in the 10th house brings initiative, courage, and decisive energy to career,
-        reputation, and worldly contribution.
+      base_strength: 65
+      statement: Mars in the 10th house possesses directional strength (Dig Bala), creating a dynamic executive, commander, engineer, or leader who executes ambitious goals.
   - id: pih.mars.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -591,15 +523,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Mars in the 11th house brings initiative, courage, and decisive energy to gains, networks,
-        and long-term aspirations.
+      base_strength: 62
+      statement: Mars in the 11th house drives relentless pursuit of material ambitions, securing commanding gains and influential, competitive alliances.
   - id: pih.mars.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -609,14 +539,12 @@ rules:
       theme: losses_retreat
       polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mars in the 12th house brings initiative, courage, and decisive energy to solitude,
-        reflection, expenses, and distant horizons.
+      statement: Mars in the 12th house (Kuja Dosha) stimulates restless sleep, impulsive expenditures, and hidden friction, urging channeling energy into martial or charitable disciplines.
   - id: pih.mercury.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -625,15 +553,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 1th house brings intellect, communication, and analytical skill to
-        self-identity, vitality, and personal presence.
+      base_strength: 60
+      statement: Mercury in the 1st house (Dig Bala) bestows youthful appearance, versatile intelligence, humorous eloquence, and quick analytical mastery.
   - id: pih.mercury.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -642,15 +568,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 2th house brings intellect, communication, and analytical skill to
-        accumulated resources, speech, and family values.
+      base_strength: 60
+      statement: Mercury in the 2nd house endows the native with eloquent, witty speech, commercial acumen, and steady wealth through literary, accounting, or consultative skills.
   - id: pih.mercury.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -659,15 +583,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 3th house brings intellect, communication, and analytical skill to courage,
-        communication, and self-initiated projects.
+      base_strength: 56
+      statement: Mercury in the 3rd house promotes clever communication, skilled craftwork, positive ties with co-borns, and curiosity across diverse subjects.
   - id: pih.mercury.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -676,15 +598,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 4th house brings intellect, communication, and analytical skill to home
-        life, emotional roots, and inner peace.
+      base_strength: 60
+      statement: Mercury in the 4th house brings an intellectually stimulating domestic environment, love of books, comfortable vehicles, and supportive friends.
   - id: pih.mercury.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -693,15 +613,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 5th house brings intellect, communication, and analytical skill to creative
-        intelligence, learning, and discernment.
+      base_strength: 62
+      statement: Mercury in the 5th house confers exceptional intellect, proficiency in mathematics and counsel, and bright, articulate progeny.
   - id: pih.mercury.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -710,15 +628,13 @@ rules:
     effect:
       theme: health_routine
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mercury in the 6th house brings intellect, communication, and analytical skill to daily
-        routine, service, and overcoming obstacles.
+      base_strength: 54
+      statement: Mercury in the 6th house sharpens critical debate and problem-solving skills, though nervous strain or digestive sensitivity may arise during prolonged workload.
   - id: pih.mercury.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -728,14 +644,12 @@ rules:
       theme: partnership
       polarity: supportive
       base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 7th house brings intellect, communication, and analytical skill to
-        committed partnerships and public dealings.
+      statement: Mercury in the 7th house attracts an intelligent, youthful, and communicative partner, ensuring amicable mutual understanding in business and marriage.
   - id: pih.mercury.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -743,16 +657,14 @@ rules:
           house: 8
     effect:
       theme: transformation_secrets
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mercury in the 8th house brings intellect, communication, and analytical skill to deep
-        transformation, research, and shared resources.
+      polarity: supportive
+      base_strength: 58
+      statement: Mercury in the 8th house is classically praised for contributing to longevity, investigative acumen, legacy through trade, and deep research capability.
   - id: pih.mercury.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -761,15 +673,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 9th house brings intellect, communication, and analytical skill to dharma,
-        mentorship, higher learning, and fortune.
+      base_strength: 62
+      statement: Mercury in the 9th house bestows higher education, philosophical eloquence, literary accomplishment, and ethical, well-guided fortune.
   - id: pih.mercury.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -778,15 +688,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 10th house brings intellect, communication, and analytical skill to career,
-        reputation, and worldly contribution.
+      base_strength: 62
+      statement: Mercury in the 10th house ensures multifaceted professional success in commerce, governance, writing, or technology through adaptable diplomacy.
   - id: pih.mercury.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -795,15 +703,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Mercury in the 11th house brings intellect, communication, and analytical skill to gains,
-        networks, and long-term aspirations.
+      base_strength: 60
+      statement: Mercury in the 11th house provides multiple streams of income, reliable friendships with intellectual peers, and the realization of long-term goals.
   - id: pih.mercury.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -813,14 +719,12 @@ rules:
       theme: losses_retreat
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Mercury in the 12th house brings intellect, communication, and analytical skill to
-        solitude, reflection, expenses, and distant horizons.
+      statement: Mercury in the 12th house aids solitary study, contemplative writing, and philosophical research, while warning against unfocused thoughts or clerical mistakes.
   - id: pih.jupiter.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -829,15 +733,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 1th house brings wisdom, growth, and ethical discernment to self-identity,
-        vitality, and personal presence.
+      base_strength: 65
+      statement: Jupiter in the 1st house (Dig Bala) is a supreme blessing, imparting moral stature, expansive wisdom, long life, and broad protection across the entire horoscope.
   - id: pih.jupiter.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -846,15 +748,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 2th house brings wisdom, growth, and ethical discernment to accumulated
-        resources, speech, and family values.
+      base_strength: 62
+      statement: Jupiter in the 2nd house confers dignified speech, prosperous family lineage, charitable nature, and abundance of nourishing sustenance.
   - id: pih.jupiter.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -862,16 +762,14 @@ rules:
           house: 3
     effect:
       theme: courage_siblings
-      polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 3th house brings wisdom, growth, and ethical discernment to courage,
-        communication, and self-initiated projects.
+      polarity: mixed
+      base_strength: 54
+      statement: Jupiter in the 3rd house provides philosophical courage and principled initiative, though it inclines the native toward peaceful moderation over aggressive rivalry.
   - id: pih.jupiter.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -880,15 +778,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 4th house brings wisdom, growth, and ethical discernment to home life,
-        emotional roots, and inner peace.
+      base_strength: 65
+      statement: Jupiter in the 4th house yields deep domestic peace, spacious property, respected status in the community, and benevolent maternal blessings.
   - id: pih.jupiter.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -897,15 +793,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 5th house brings wisdom, growth, and ethical discernment to creative
-        intelligence, learning, and discernment.
+      base_strength: 65
+      statement: Jupiter in the 5th house bestows profound wisdom (Purvapunya), ministerial counsel, righteous intellect, and blessed progeny.
   - id: pih.jupiter.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -914,15 +808,13 @@ rules:
     effect:
       theme: health_routine
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Jupiter in the 6th house brings wisdom, growth, and ethical discernment to daily routine,
-        service, and overcoming obstacles.
+      base_strength: 54
+      statement: Jupiter in the 6th house conquers adversaries through dignified reconciliation and goodwill, though dietary indulgence requires moderation.
   - id: pih.jupiter.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -931,15 +823,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 7th house brings wisdom, growth, and ethical discernment to committed
-        partnerships and public dealings.
+      base_strength: 62
+      statement: Jupiter in the 7th house blesses the native with a virtuous, educated, and supportive life partner, ensuring honor and prosperity in union.
   - id: pih.jupiter.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -948,15 +838,13 @@ rules:
     effect:
       theme: transformation_secrets
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Jupiter in the 8th house brings wisdom, growth, and ethical discernment to deep
-        transformation, research, and shared resources.
+      base_strength: 55
+      statement: Jupiter in the 8th house promotes long life, peaceful resolution of crises, spiritual wisdom, and righteous handling of joint inheritances.
   - id: pih.jupiter.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -965,15 +853,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 9th house brings wisdom, growth, and ethical discernment to dharma,
-        mentorship, higher learning, and fortune.
+      base_strength: 65
+      statement: Jupiter in the 9th house is in its natural home, conferring magnificent fortune, deep spiritual devotion, pilgrimage, and celebrated reputation as a preceptor.
   - id: pih.jupiter.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -982,15 +868,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 10th house brings wisdom, growth, and ethical discernment to career,
-        reputation, and worldly contribution.
+      base_strength: 65
+      statement: Jupiter in the 10th house ensures an unblemished professional reputation, ethical authority, high executive honors, and lasting societal contributions.
   - id: pih.jupiter.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -999,15 +883,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Jupiter in the 11th house brings wisdom, growth, and ethical discernment to gains,
-        networks, and long-term aspirations.
+      base_strength: 65
+      statement: Jupiter in the 11th house yields abundant and righteous wealth, noble friendships, high societal recognition, and fulfillment of virtuous ambitions.
   - id: pih.jupiter.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1015,16 +897,14 @@ rules:
           house: 12
     effect:
       theme: losses_retreat
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Jupiter in the 12th house brings wisdom, growth, and ethical discernment to solitude,
-        reflection, expenses, and distant horizons.
+      polarity: supportive
+      base_strength: 56
+      statement: Jupiter in the 12th house turns the mind toward spiritual liberation (Moksha), generous philanthropic expenditure, and inner serenity in quiet retreat.
   - id: pih.venus.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1033,15 +913,13 @@ rules:
     effect:
       theme: self
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 1th house brings harmony, comfort, and relational warmth to self-identity,
-        vitality, and personal presence.
+      base_strength: 62
+      statement: Venus in the 1st house confers beauty, charm, refined artistic taste, diplomatic charisma, and a pleasant, comfortable life.
   - id: pih.venus.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1050,15 +928,13 @@ rules:
     effect:
       theme: money_speech
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 2th house brings harmony, comfort, and relational warmth to accumulated
-        resources, speech, and family values.
+      base_strength: 62
+      statement: Venus in the 2nd house blesses the native with sweet speech, poetic talent, handsome facial features, and wealth accumulated through arts, luxury, or diplomacy.
   - id: pih.venus.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1067,15 +943,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 3th house brings harmony, comfort, and relational warmth to courage,
-        communication, and self-initiated projects.
+      base_strength: 56
+      statement: Venus in the 3rd house inspires artistic hobbies, harmonious sibling relationships, and gentle, persuasive communication styles.
   - id: pih.venus.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1084,15 +958,13 @@ rules:
     effect:
       theme: home_mother
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 4th house brings harmony, comfort, and relational warmth to home life,
-        emotional roots, and inner peace.
+      base_strength: 65
+      statement: Venus in the 4th house (Dig Bala) brings luxurious home environments, exquisite vehicles, artistic decor, and affectionate family happiness.
   - id: pih.venus.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1101,15 +973,13 @@ rules:
     effect:
       theme: education_children
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 5th house brings harmony, comfort, and relational warmth to creative
-        intelligence, learning, and discernment.
+      base_strength: 62
+      statement: Venus in the 5th house yields brilliant creative talent, romantic refinement, joy in theatrical or musical arts, and virtuous, affectionate children.
   - id: pih.venus.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1119,14 +989,12 @@ rules:
       theme: health_routine
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Venus in the 6th house brings harmony, comfort, and relational warmth to daily routine,
-        service, and overcoming obstacles.
+      statement: Venus in the 6th house advises balance in romantic and financial choices, overcoming opposition without open confrontation.
   - id: pih.venus.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1135,15 +1003,13 @@ rules:
     effect:
       theme: partnership
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 7th house brings harmony, comfort, and relational warmth to committed
-        partnerships and public dealings.
+      base_strength: 60
+      statement: Venus in the 7th house bestows an affectionate, attractive, and artistic partner, emphasizing sensual pleasure and refined harmony in relationships.
   - id: pih.venus.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1151,16 +1017,14 @@ rules:
           house: 8
     effect:
       theme: transformation_secrets
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Venus in the 8th house brings harmony, comfort, and relational warmth to deep
-        transformation, research, and shared resources.
+      polarity: supportive
+      base_strength: 60
+      statement: Venus in the 8th house is famously auspicious for long life, material comforts through partnership, and smooth inheritance of resources.
   - id: pih.venus.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1169,15 +1033,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 9th house brings harmony, comfort, and relational warmth to dharma,
-        mentorship, higher learning, and fortune.
+      base_strength: 62
+      statement: Venus in the 9th house yields refined philosophical tastes, rewarding foreign travels, fortunate marital ties, and charitable generosity.
   - id: pih.venus.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1186,15 +1048,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 10th house brings harmony, comfort, and relational warmth to career,
-        reputation, and worldly contribution.
+      base_strength: 62
+      statement: Venus in the 10th house brings career acclaim in design, entertainment, public diplomacy, or commerce, supported by influential societal patrons.
   - id: pih.venus.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1203,15 +1063,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 58
-      statement: >-
-        In Jyotish tradition, Venus in the 11th house brings harmony, comfort, and relational warmth to gains, networks,
-        and long-term aspirations.
+      base_strength: 62
+      statement: Venus in the 11th house produces substantial prosperity, affectionate alliances, cultural patronage, and the enjoyment of refined luxuries.
   - id: pih.venus.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1219,16 +1077,14 @@ rules:
           house: 12
     effect:
       theme: losses_retreat
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Venus in the 12th house brings harmony, comfort, and relational warmth to solitude,
-        reflection, expenses, and distant horizons.
+      polarity: supportive
+      base_strength: 60
+      statement: Venus in the 12th house (classically unique for a planet in the 12th) confers luxurious bed comforts, generous hospitality, artistic sanctuary, and peaceful relaxation.
   - id: pih.saturn.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1238,14 +1094,12 @@ rules:
       theme: self
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 1th house brings discipline, patience, and enduring structure to
-        self-identity, vitality, and personal presence.
+      statement: Saturn in the 1st house imparts grave sobriety, persevering patience, and late-blooming recognition, though early life may encounter health frailties and heavy responsibilities.
   - id: pih.saturn.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1255,14 +1109,12 @@ rules:
       theme: money_speech
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 2th house brings discipline, patience, and enduring structure to accumulated
-        resources, speech, and family values.
+      statement: Saturn in the 2nd house encourages frugal financial habits and conservative speech, with substantial wealth earned gradually through disciplined perseverance.
   - id: pih.saturn.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1271,15 +1123,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Saturn in the 3th house brings discipline, patience, and enduring structure to courage,
-        communication, and self-initiated projects.
+      base_strength: 62
+      statement: Saturn in the 3rd house is exceptionally strong, giving unshakable endurance, cautious valor, tactical discipline, and victory over adversaries.
   - id: pih.saturn.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1287,16 +1137,14 @@ rules:
           house: 4
     effect:
       theme: home_mother
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 4th house brings discipline, patience, and enduring structure to home life,
-        emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 54
+      statement: Saturn in the 4th house imposes emotional reserve and familial obligations, delivering solid landed property and maturity later in life.
   - id: pih.saturn.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1306,14 +1154,12 @@ rules:
       theme: education_children
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 5th house brings discipline, patience, and enduring structure to creative
-        intelligence, learning, and discernment.
+      statement: Saturn in the 5th house fosters a methodical, contemplative mind and serious intellectual interests, though it counsels patience in speculative ventures and progeny.
   - id: pih.saturn.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1322,15 +1168,13 @@ rules:
     effect:
       theme: health_routine
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Saturn in the 6th house brings discipline, patience, and enduring structure to daily
-        routine, service, and overcoming obstacles.
+      base_strength: 65
+      statement: Saturn in the 6th house is an outstanding classical placement for crushing competition, enduring difficult challenges, and achieving success in administrative or legal battles.
   - id: pih.saturn.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1338,16 +1182,14 @@ rules:
           house: 7
     effect:
       theme: partnership
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 7th house brings discipline, patience, and enduring structure to committed
-        partnerships and public dealings.
+      polarity: challenging
+      base_strength: 54
+      statement: Saturn in the 7th house indicates a serious, mature, or practical marriage partner, rewarding relationship commitment and patience over haste.
   - id: pih.saturn.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1355,16 +1197,14 @@ rules:
           house: 8
     effect:
       theme: transformation_secrets
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 8th house brings discipline, patience, and enduring structure to deep
-        transformation, research, and shared resources.
+      polarity: mixed
+      base_strength: 55
+      statement: Saturn in the 8th house (Ayushkaraka in the house of longevity) strongly protects life duration, while demanding disciplined self-care against chronic conditions.
   - id: pih.saturn.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1373,15 +1213,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 9th house brings discipline, patience, and enduring structure to dharma,
-        mentorship, higher learning, and fortune.
+      base_strength: 54
+      statement: Saturn in the 9th house encourages independent philosophical contemplation and austere spiritual discipline, testing conventional traditions through hard experience.
   - id: pih.saturn.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1390,15 +1228,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Saturn in the 10th house brings discipline, patience, and enduring structure to career,
-        reputation, and worldly contribution.
+      base_strength: 65
+      statement: Saturn in the 10th house is a classic indicator of high authority gained through methodical labor, steadfast endurance, and public responsibility.
   - id: pih.saturn.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1407,15 +1243,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Saturn in the 11th house brings discipline, patience, and enduring structure to gains,
-        networks, and long-term aspirations.
+      base_strength: 62
+      statement: Saturn in the 11th house secures steady, durable wealth, loyal and elder associations, and enduring fulfillment of long-term objectives.
   - id: pih.saturn.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1425,14 +1259,12 @@ rules:
       theme: losses_retreat
       polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Saturn in the 12th house brings discipline, patience, and enduring structure to solitude,
-        reflection, expenses, and distant horizons.
+      statement: Saturn in the 12th house inclines toward ascetic solitude, overseas settlement, and modest personal needs, cautioning against burdensome hidden liabilities.
   - id: pih.rahu.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1442,14 +1274,12 @@ rules:
       theme: self
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 1th house brings unconventional ambition, curiosity, and restless drive to
-        self-identity, vitality, and personal presence.
+      statement: Rahu in the 1st house creates an unconventional personality, acute worldly ambition, and charismatic presence, requiring mindful care for physical equilibrium.
   - id: pih.rahu.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1457,16 +1287,14 @@ rules:
           house: 2
     effect:
       theme: money_speech
-      polarity: mixed
+      polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 2th house brings unconventional ambition, curiosity, and restless drive to
-        accumulated resources, speech, and family values.
+      statement: Rahu in the 2nd house produces sharp or secretive speech and fluctuating financial cycles, rewarding innovative and foreign avenues of income.
   - id: pih.rahu.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1475,15 +1303,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Rahu in the 3th house brings unconventional ambition, curiosity, and restless drive to
-        courage, communication, and self-initiated projects.
+      base_strength: 62
+      statement: Rahu in the 3rd house is powerfully placed, granting daring bravery, triumphant overcoming of obstacles, and resourcefulness in media and ventures.
   - id: pih.rahu.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1491,16 +1317,14 @@ rules:
           house: 4
     effect:
       theme: home_mother
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 4th house brings unconventional ambition, curiosity, and restless drive to
-        home life, emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 55
+      statement: Rahu in the 4th house is traditionally read as restlessness or unusual circumstances around home and inner peace, encouraging detachment from rigid ancestral roots.
   - id: pih.rahu.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1510,14 +1334,12 @@ rules:
       theme: education_children
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 5th house brings unconventional ambition, curiosity, and restless drive to
-        creative intelligence, learning, and discernment.
+      statement: Rahu in the 5th house stimulates unconventional intellect, speculative genius, and fascination with high-tech or esoteric subjects, advising patience in romance.
   - id: pih.rahu.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1526,15 +1348,13 @@ rules:
     effect:
       theme: health_routine
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Rahu in the 6th house brings unconventional ambition, curiosity, and restless drive to
-        daily routine, service, and overcoming obstacles.
+      base_strength: 65
+      statement: Rahu in the 6th house is formidable against rivals, swiftly routing opposition, recovering from mysterious ailments, and excelling in challenging environments.
   - id: pih.rahu.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1542,16 +1362,14 @@ rules:
           house: 7
     effect:
       theme: partnership
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 7th house brings unconventional ambition, curiosity, and restless drive to
-        committed partnerships and public dealings.
+      polarity: challenging
+      base_strength: 54
+      statement: Rahu in the 7th house attracts unusual, foreign, or unconventional partnerships, demanding conscious communication to navigate fluctuating marital expectations.
   - id: pih.rahu.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1561,14 +1379,12 @@ rules:
       theme: transformation_secrets
       polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 8th house brings unconventional ambition, curiosity, and restless drive to
-        deep transformation, research, and shared resources.
+      statement: Rahu in the 8th house induces profound interest in the occult, hidden mysteries, and sudden transformations, advising caution in confidential financial agreements.
   - id: pih.rahu.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1578,14 +1394,12 @@ rules:
       theme: luck_dharma
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 9th house brings unconventional ambition, curiosity, and restless drive to
-        dharma, mentorship, higher learning, and fortune.
+      statement: Rahu in the 9th house inspires unorthodox worldviews, cross-cultural pilgrimages, and questioning of conventional orthodoxy in pursuit of truth.
   - id: pih.rahu.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1594,15 +1408,13 @@ rules:
     effect:
       theme: career_status
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Rahu in the 10th house brings unconventional ambition, curiosity, and restless drive to
-        career, reputation, and worldly contribution.
+      base_strength: 65
+      statement: Rahu in the 10th house produces a rapid public rise, innovative executive authority, and charismatic career success in contemporary or unconventional fields.
   - id: pih.rahu.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1611,15 +1423,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Rahu in the 11th house brings unconventional ambition, curiosity, and restless drive to
-        gains, networks, and long-term aspirations.
+      base_strength: 65
+      statement: Rahu in the 11th house delivers extraordinary gains through innovative networks, influential patronage, and fulfillment of ambitious desires.
   - id: pih.rahu.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1629,14 +1439,12 @@ rules:
       theme: losses_retreat
       polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Rahu in the 12th house brings unconventional ambition, curiosity, and restless drive to
-        solitude, reflection, expenses, and distant horizons.
+      statement: Rahu in the 12th house fosters deep meditative curiosity, overseas residency, and rich dream experiences, advising prudent management of expenses.
   - id: pih.ketu.1
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1646,14 +1454,12 @@ rules:
       theme: self
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 1th house brings detachment, inward insight, and specialized focus to
-        self-identity, vitality, and personal presence.
+      statement: Ketu in the 1st house bestows spiritual detachment, acute intuitive perception, and modest demeanor, sometimes feeling disconnected from physical self-identity.
   - id: pih.ketu.2
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1661,16 +1467,14 @@ rules:
           house: 2
     effect:
       theme: money_speech
-      polarity: mixed
+      polarity: challenging
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 2th house brings detachment, inward insight, and specialized focus to
-        accumulated resources, speech, and family values.
+      statement: Ketu in the 2nd house fosters spartan speech and detachment from material wealth, advising clear clarity in family communications.
   - id: pih.ketu.3
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1679,15 +1483,13 @@ rules:
     effect:
       theme: courage_siblings
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Ketu in the 3th house brings detachment, inward insight, and specialized focus to courage,
-        communication, and self-initiated projects.
+      base_strength: 62
+      statement: Ketu in the 3rd house grants quiet, fearless heroism, decisive execution in emergencies, and total indifference to intimidating adversaries.
   - id: pih.ketu.4
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1695,16 +1497,14 @@ rules:
           house: 4
     effect:
       theme: home_mother
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 4th house brings detachment, inward insight, and specialized focus to home
-        life, emotional roots, and inner peace.
+      polarity: challenging
+      base_strength: 54
+      statement: Ketu in the 4th house creates an inner spiritual void in domestic spaces, leading the soul toward inner spiritual sanctuary rather than external property.
   - id: pih.ketu.5
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1714,14 +1514,12 @@ rules:
       theme: education_children
       polarity: mixed
       base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 5th house brings detachment, inward insight, and specialized focus to creative
-        intelligence, learning, and discernment.
+      statement: Ketu in the 5th house confers profound intuitive wisdom, spiritual mantra-siddhi, and non-linear intelligence, though emotional detachment from progeny may occur.
   - id: pih.ketu.6
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1730,15 +1528,13 @@ rules:
     effect:
       theme: health_routine
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Ketu in the 6th house brings detachment, inward insight, and specialized focus to daily
-        routine, service, and overcoming obstacles.
+      base_strength: 65
+      statement: Ketu in the 6th house effectively dissolves opposition and disease through spiritual resilience, fearlessness, and moral conviction.
   - id: pih.ketu.7
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1746,16 +1542,14 @@ rules:
           house: 7
     effect:
       theme: partnership
-      polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 7th house brings detachment, inward insight, and specialized focus to
-        committed partnerships and public dealings.
+      polarity: challenging
+      base_strength: 54
+      statement: Ketu in the 7th house introduces detachment into marital partnerships, attracting an ascetic or spiritually seeking companion who values independence.
   - id: pih.ketu.8
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1763,16 +1557,14 @@ rules:
           house: 8
     effect:
       theme: transformation_secrets
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 8th house brings detachment, inward insight, and specialized focus to deep
-        transformation, research, and shared resources.
+      polarity: mixed
+      base_strength: 54
+      statement: Ketu in the 8th house unlocks deep esoteric insight, psychic perceptions, and fascination with the mysteries of life, transformation, and liberation.
   - id: pih.ketu.9
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1781,15 +1573,13 @@ rules:
     effect:
       theme: luck_dharma
       polarity: mixed
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 9th house brings detachment, inward insight, and specialized focus to dharma,
-        mentorship, higher learning, and fortune.
+      base_strength: 54
+      statement: Ketu in the 9th house inspires authentic spiritual pilgrimages, devotion to formless truth, and detachment from rigid religious dogma.
   - id: pih.ketu.10
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1797,16 +1587,14 @@ rules:
           house: 10
     effect:
       theme: career_status
-      polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Ketu in the 10th house brings detachment, inward insight, and specialized focus to career,
-        reputation, and worldly contribution.
+      polarity: mixed
+      base_strength: 52
+      statement: Ketu in the 10th house produces detachment from worldly titles, excelling behind the scenes or in humanitarian and spiritual vocations.
   - id: pih.ketu.11
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1815,15 +1603,13 @@ rules:
     effect:
       theme: gains_network
       polarity: supportive
-      base_strength: 56
-      statement: >-
-        In Jyotish tradition, Ketu in the 11th house brings detachment, inward insight, and specialized focus to gains,
-        networks, and long-term aspirations.
+      base_strength: 62
+      statement: Ketu in the 11th house grants sudden, unexpected gains and associations with spiritually evolved peers, while maintaining internal detachment from desires.
   - id: pih.ketu.12
     kind: planet_in_house
     school: parashari
-    source: BPHS Bhava Phala (authored paraphrase)
-    reviewed: false
+    source: BPHS Bhava Phala & Dr. K.S. Charak Elements of Vedic Astrology (Ch. XVIII)
+    reviewed: true
     when:
       all:
         - fact: placement
@@ -1831,8 +1617,6 @@ rules:
           house: 12
     effect:
       theme: losses_retreat
-      polarity: challenging
-      base_strength: 52
-      statement: >-
-        In Jyotish tradition, Ketu in the 12th house brings detachment, inward insight, and specialized focus to
-        solitude, reflection, expenses, and distant horizons.
+      polarity: supportive
+      base_strength: 62
+      statement: Ketu in the 12th house is the prime significator for spiritual liberation (Moksha), conferring deep meditative solitude, detachment from worldly illusion, and peace.

@@ -5,7 +5,7 @@
   "type": "module",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --external:better-sqlite3 --external:js-yaml --external:zod --alias:@swisseph/browser=./src/noop-swisseph.ts --outfile=dist/index.js",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --external:better-sqlite3 --external:js-yaml --external:zod --external:@swisseph/browser --outfile=dist/index.js",
     "dev": "pnpm build && node dist/index.js",
     "start": "node dist/index.js"
   },
@@ -20,6 +20,7 @@
     "@astro/kb": "workspace:*",
     "@astro/rules": "workspace:*",
     "@astro/tools": "workspace:*",
+    "@swisseph/browser": "^1.4.0",
     "better-sqlite3": "^11.5.0",
     "js-yaml": "^5.5.0",
     "zod": "^3.23.0"

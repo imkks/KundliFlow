@@ -1228,18 +1228,20 @@ export default function App() {
   const handleSaveProfile = (p: UserProfileInput) => {
     // Creating/editing a profile clears pinned server ID so POST /api/profiles creates/updates cleanly under current user
     setSelectedServerProfileId(null);
-    setSavedProfile(p);
-    setUserName(p.name);
-    setBirthDate(p.birthDate);
-    setBirthTime(p.birthTime);
-    setCityName(p.cityName);
-    setTodayCityName(p.cityName);
-    setTodayLocation({ name: p.cityName, lat: p.lat, lon: p.lon, tzId: p.tzId });
-    setLat(p.lat);
-    setLon(p.lon);
-    setTzId(p.tzId);
-    setTimeCertainty(p.timeCertainty);
-    setAyanamsa(p.ayanamsa);
+    if (backendProfileId) {
+      try {
+        localStorage.removeItem(`astro_bundle_cache_v1_${backendProfileId}`);
+      } catch {
+        // ignore
+      }
+    }
+    appStore.setState({
+      savedProfile: p,
+      activeProfile: p,
+      selectedServerProfileId: null,
+      todayCityName: p.cityName,
+      todayLocation: { name: p.cityName, lat: p.lat, lon: p.lon, tzId: p.tzId },
+    });
     try {
       localStorage.setItem(ACTIVE_PROFILE_KEY, JSON.stringify(p));
     } catch {

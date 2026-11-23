@@ -48,15 +48,15 @@ export const getPlanetaryInsights = (chart: NatalChart): SectionInterpretation =
     const retroStr = d.retrograde ? ' [Retrograde]' : '';
 
     let meaning = '';
-    if (g === 'sun') meaning = 'Core identity, vitality, moral dignity, and authority.';
-    else if (g === 'moon') meaning = `Contemplative mental rhythm, intuition, and emotional peace (${d.nakshatra} pada ${d.pada}).`;
-    else if (g === 'mars') meaning = 'Courage, physical drive, and decisive execution.';
-    else if (g === 'mercury') meaning = 'Analytical intellect, articulate communication, and commercial logic.';
-    else if (g === 'jupiter') meaning = 'Higher wisdom, ethical expansion, mentorship, and optimistic guidance.';
-    else if (g === 'venus') meaning = 'Aesthetics, relational grace, creative expression, and worldly appreciation.';
-    else if (g === 'saturn') meaning = 'Karmic discipline, perseverance, structure, and enduring resilience.';
-    else if (g === 'rahu') meaning = 'Ambitious worldly experimentation, unconventional drive, and future growth.';
-    else if (g === 'ketu') meaning = 'Subconscious detachment, spiritual discernment, and past-life mastery.';
+    if (g === 'sun') meaning = 'King and soul (Atmakaraka) of the planetary cabinet: governs core vitality, righteous authority, executive dignity, and father.';
+    else if (g === 'moon') meaning = `Mind (Manas) and emotional consciousness: reflects instinctive mental peace, public empathy, and nurturing roots (${d.nakshatra} pada ${d.pada}).`;
+    else if (g === 'mars') meaning = 'Commander of the planets: governs physical courage, stamina, technical execution, and victorious resolution under challenge.';
+    else if (g === 'mercury') meaning = 'Prince and intellectual counselor: governs articulate eloquence, analytical intellect, commercial acumen, and versatile adaptability.';
+    else if (g === 'jupiter') meaning = 'Supreme preceptor (Guru): governs higher wisdom, ethical dharma, counseling stature, and protective divine grace.';
+    else if (g === 'venus') meaning = 'Minister of aesthetics and diplomacy: governs relational harmony, diplomatic grace, material comfort, and refined creative arts.';
+    else if (g === 'saturn') meaning = 'Karmic taskmaster and Ayushkaraka (longevity): governs methodical discipline, perseverance, enduring institutional legacy, and humility.';
+    else if (g === 'rahu') meaning = 'North Node of worldly ambition: drives unconventional exploration, innovative technologies, foreign horizons, and future growth.';
+    else if (g === 'ketu') meaning = 'South Node and Mokshakaraka (liberation): governs spiritual discernment, intuitive mastery, esoteric depth, and sacred detachment.';
 
     bullets.push(
       `${g.toUpperCase()} in ${d.sign.toUpperCase()} (${houseStr}${dignityStr}${retroStr}): ${meaning}`,

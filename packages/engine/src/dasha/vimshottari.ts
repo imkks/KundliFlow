@@ -79,10 +79,18 @@ export const computeVimshottariDashas = (
   const balanceYears = totalYearsForLord * remainingFraction;
 
   // Breakdown into Years, Months, Days for standard display
-  const y = Math.floor(balanceYears);
+  let y = Math.floor(balanceYears);
   const remY = (balanceYears - y) * 12;
-  const m = Math.floor(remY);
-  const d = Math.round((remY - m) * 30);
+  let m = Math.floor(remY);
+  let d = Math.round((remY - m) * 30);
+  if (d >= 30) {
+    d = 0;
+    m += 1;
+  }
+  if (m >= 12) {
+    m = 0;
+    y += 1;
+  }
   const formattedBalance = `${startingLord.slice(0, 3).toUpperCase()} ${y} Y ${m} M ${d} D`;
 
   const birthDt = DateTime.fromISO(birthLocalIso);

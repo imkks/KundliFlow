@@ -199,7 +199,7 @@ export class EngineSession {
   getChalit(): ChalitChart | null {
     if (!this._chalit && this.natal.lagna) {
       const lagnaLon = this.natal.lagna.lon;
-      const mcLon = (lagnaLon + 270) % 360;
+      const mcLon = this.natal.mc?.lon ?? (lagnaLon + 270) % 360;
       this._chalit = computeSripatiChalit(lagnaLon, mcLon);
     }
     return this._chalit;

@@ -57,7 +57,13 @@ function resolveSignLord(signIdx: number, grahas: NatalChart['grahas']): VedicGr
   const gB = grahas[lordB];
   if (!gA || !gB) return lordA;
 
-  // Count planetary companions in same sign (excluding self)
+  // 1. If one lord is in own sign and the other is outside, the one outside determines the period
+  const inOwnA = gA.signIndex === signIdx;
+  const inOwnB = gB.signIndex === signIdx;
+  if (inOwnA && !inOwnB) return lordB;
+  if (inOwnB && !inOwnA) return lordA;
+
+  // 2. Count planetary companions in same sign (excluding self)
   const all9: VedicGraha[] = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu'];
   const compA = all9.filter((k) => k !== lordA && grahas[k]?.signIndex === gA.signIndex).length;
   const compB = all9.filter((k) => k !== lordB && grahas[k]?.signIndex === gB.signIndex).length;

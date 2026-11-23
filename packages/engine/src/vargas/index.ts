@@ -222,9 +222,9 @@ export const calculateVargaSign = (lon: number, varga: VargaType): number => {
 
     case 'D60': {
       // Shashtiamsha (60 parts of 30' = 0.5°)
-      // Count sequentially from the same sign
+      // BPHS Ch. 6, Verses 33-34: count from Aries (0) irrespective of the sign
       const part = Math.min(59, Math.floor(degInSign / 0.5));
-      return (signIndex + part) % 12;
+      return part % 12;
     }
 
     default:

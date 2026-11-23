@@ -142,3 +142,76 @@ export const computeTransits = (
     transits,
   };
 };
+
+export const KAKSHYA_LORDS = [
+  'saturn',
+  'jupiter',
+  'mars',
+  'sun',
+  'venus',
+  'mercury',
+  'moon',
+  'lagna',
+] as const;
+
+export type KakshyaLord = (typeof KAKSHYA_LORDS)[number];
+
+export interface KakshyaTransitEvaluation {
+  planet: string;
+  signIndex: number;
+  kakshyaIndex: number; // 1 to 8
+  kakshyaLord: KakshyaLord;
+  isBenefic: boolean;
+}
+
+/**
+ * Evaluates daily transit through Ashtakavarga Kakshyas (3°45' sub-divisions) per classical Parashara principles.
+ * Each sign is divided into 8 Kakshyas ruled in astronomical order:
+ * Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon, Lagna.
+ * If the Kakshya lord contributes a bindu in that sign in the planet's Prastaraka, the transit is benefic.
+ */
+export function evaluateKakshyaTransits(
+  transitPositions: Record<string, number>,
+  prastara?: Record<string, { rows: Record<string, number[]> }>,
+): {
+  evaluations: KakshyaTransitEvaluation[];
+  beneficCount: number;
+} {
+  const evaluations: KakshyaTransitEvaluation[] = [];
+  let beneficCount = 0;
+
+  for (const planet of ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn']) {
+    const lon = transitPositions[planet];
+    if (lon === undefined) continue;
+
+    const normLon = norm360(lon);
+    const signIndex = Math.floor(normLon / 30);
+    const degInSign = normLon % 30;
+    const kIndex = Math.min(7, Math.floor(degInSign / 3.75)); // 0 to 7
+    const kakshyaLord = KAKSHYA_LORDS[kIndex]!;
+
+    let isBenefic = false;
+    if (prastara && prastara[planet]?.rows?.[kakshyaLord]) {
+      const row = prastara[planet]!.rows[kakshyaLord]!;
+      isBenefic = (row[signIndex] ?? 0) === 1;
+    }
+
+    if (isBenefic) beneficCount++;
+
+    evaluations.push({
+      planet,
+      signIndex,
+      kakshyaIndex: kIndex + 1,
+      kakshyaLord,
+      isBenefic,
+    });
+  }
+
+  return {
+    evaluations,
+    beneficCount,
+  };
+}
+
+export * from './vedha.js';
+

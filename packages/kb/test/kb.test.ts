@@ -7,6 +7,8 @@ const TOPICS_PATH = path.join(ROOT_DIR, 'packages/content/topics/topics.yaml');
 const CONCEPTS_PATH = path.join(ROOT_DIR, 'packages/content/kb/concepts.yaml');
 const NAKSHATRAS_PATH = path.join(ROOT_DIR, 'packages/content/kb/nakshatras.yaml');
 const PRINCIPLES_PATH = path.join(ROOT_DIR, 'packages/content/kb/yogas_and_principles.yaml');
+const MEDICAL_PATH = path.join(ROOT_DIR, 'packages/content/kb/medical_astrology.yaml');
+const MUHURTA_PATH = path.join(ROOT_DIR, 'packages/content/kb/muhurta_principles.yaml');
 
 describe('L3-M1: packages/kb Knowledge Base & Topic Maps', () => {
   it('ingests topics and concepts, matches questions to topics, and enforces reviewed=1 gate', () => {
@@ -16,11 +18,15 @@ describe('L3-M1: packages/kb Knowledge Base & Topic Maps', () => {
       const conceptCount = kb.ingestConceptsFile(CONCEPTS_PATH);
       const nakCount = kb.ingestConceptsFile(NAKSHATRAS_PATH);
       const prinCount = kb.ingestConceptsFile(PRINCIPLES_PATH);
+      const medCount = kb.ingestConceptsFile(MEDICAL_PATH);
+      const muhCount = kb.ingestConceptsFile(MUHURTA_PATH);
 
       expect(topicCount).toBeGreaterThanOrEqual(10);
       expect(conceptCount).toBeGreaterThanOrEqual(5);
       expect(nakCount).toBe(27);
       expect(prinCount).toBeGreaterThanOrEqual(20);
+      expect(medCount).toBeGreaterThanOrEqual(10);
+      expect(muhCount).toBeGreaterThanOrEqual(5);
 
       // Ingest an unreviewed item and ensure it is NOT retrieved
       kb.ingestItems([

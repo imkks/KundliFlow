@@ -37,6 +37,46 @@ const YOGA_MEANINGS: Record<string, string> = {
   kemadruma: 'Moon without flanking planets can bring moments of emotional solitude or self-reliance; grounding habits and Kendra support stabilize it.',
   guru_chandal: 'Jupiter–Rahu association blends traditional wisdom with unconventional questioning—great for innovation when grounded.',
   grahan: 'Luminaries close to Rahu/Ketu heighten sensitivity and deep introspection; avoid impulsive decisions during eclipse windows.',
+  chandra_mangala: 'Moon–Mars conjunction activates acute financial ambition, energetic commercial initiative, resource generation, and fearless competitive drive.',
+  amala: 'Natural benefic (Jupiter, Venus, or Mercury) unblemished in the 10th house confers an immaculate professional reputation, ethical public legacy, and enduring goodwill.',
+  sunapha: 'Planets other than Sun in the 2nd house from Moon indicate self-earned wealth, intelligent resource management, and reputable social standing.',
+  anapha: 'Planets other than Sun in the 12th house from Moon bestow contentment, refined manners, good physical health, and enjoyment of quiet comforts.',
+  durudhara: 'Planets on both sides (2nd and 12th) of Moon provide balanced material security, faithful allies, comfortable conveyances, and steady life flow.',
+  vesi: 'Planets other than Moon in the 2nd house from Sun impart dignified speech, steady perseverance, moral conviction, and comfortable assets.',
+  vosi: 'Planets other than Moon in the 12th house from Sun confer charitable generosity, sharp intellect, worldly renown, and high learning.',
+  ubhayachari: 'Planets on both sides (2nd and 12th) of Sun ensure high social status, eloquence, well-proportioned physique, and diplomatic capability.',
+  harsha: '6th lord occupying a Dusthana (Harsha Vipareeta Yoga) conquers formidable adversaries, protects physical vitality, and yields triumph through resilience.',
+  sarala: '8th lord occupying a Dusthana (Sarala Vipareeta Yoga) confers exceptional longevity, fearless composure in crises, investigative intellect, and unexpected wealth.',
+  vimala: '12th lord occupying a Dusthana (Vimala Vipareeta Yoga) dissolves liabilities and enemies, fostering independent frugality, spiritual detachment, and noble character.',
+  dharma_karmadhipati: 'Mutual association of the 9th (Dharma) and 10th (Karma) lords creates the premier Parashari Raja Yoga, conferring high executive authority, state honors, and ethical leadership.',
+  lakshmi: '9th lord strong in Kendra or Trikona confers Lakshmi Yoga, bestowing noble grace, high scholastic attainment, aristocratic comfort, and enduring wealth.',
+  kahala: '4th and 9th lords in mutual Kendras produce Kahala Yoga, giving resolute administrative command, organizational leadership, and unyielding stamina in undertakings.',
+  parivartana: 'Mutual exchange of house signs between two lords creates intimate lifelong synergy between their respective life domains.',
+  shankha: 'Lords of 5th and 6th in mutual Kendras with Lagna lord strong confers sharp philosophical insight, humanitarian service, and high learning.',
+  vasumati: 'Benefics in Upachaya houses (3, 6, 10, 11) from Lagna or Moon confer unshakeable independence and steady accumulation of wealth.',
+  pushkala: 'Moon sign lord strong with Lagna lord in Kendra confers magnetic public recognition, aristocratic speech, and influential mentorship.',
+  chamara: 'Exalted or Kendra Lagna lord aspected by Jupiter confers royal dignity, eloquence, philosophical scholarship, and enduring fame.',
+  bheri: 'Planets in Lagna, 2nd, 7th, and 12th or Jupiter/Venus in Kendras with 9th lord strong bestow durable prosperity, noble family ties, and joyful disposition.',
+  arishta_bhanga: 'Benefic planetary placements (such as strong Jupiter in Lagna or Full Moon in Kendra) nullify childhood afflictions, ensuring long life and vitality.',
+  durudhara_yoga: 'Planets flanking both 2nd and 12th from Moon bestow material abundance, trustworthy allies, comfortable vehicles, and generous renown.',
+  sunapha_yoga: 'Planets in 2nd house from Moon indicate self-earned wealth, sharp commercial intelligence, and reputable social standing.',
+  anapha_yoga: 'Planets in 12th house from Moon bestow physical health, polite disposition, self-respect, and spiritual contentment.',
+  kemadruma_yoga: 'Moon without flanking planets tests early self-reliance; classical cancellations convert this solitude into formidable leadership.',
+  ubhayachari_yoga: 'Planets flanking both 2nd and 12th from Sun confer distinguished public stature, eloquence, and balanced executive judgment.',
+  vesi_yoga: 'Planets in 2nd house from Sun impart dignified speech, steady perseverance, moral conviction, and comfortable assets.',
+  vosi_yoga: 'Planets in 12th house from Sun confer broad charitable vision, sharp intellect, worldly renown, and contemplative depth.',
+  sankhya_vallaki: 'Nabhasa Vallaki (Veena) Yoga: All 7 classical planets spread across 7 signs bestow refined musical, artistic, and literary talents.',
+  sankhya_dama: 'Nabhasa Dama Yoga: All 7 classical planets spread across 6 signs grant generous philanthropy, public welfare leadership, and affluent ease.',
+  sankhya_pasha: 'Nabhasa Pasha Yoga: All 7 classical planets spread across 5 signs impart skilled management of complex organizations and households.',
+  sankhya_kedara: 'Nabhasa Kedara Yoga: All 7 classical planets spread across 4 signs bestow steady agricultural, land, or estate prosperity.',
+  sankhya_shoola: 'Nabhasa Shoola Yoga: All 7 classical planets spread across 3 signs confer tenacious courage, strategic grit, and competitive victory.',
+  sankhya_yuga: 'Nabhasa Yuga Yoga: All 7 classical planets concentrated in 2 signs inspire independent pioneering thought and non-conformist paths.',
+  sankhya_gola: 'Nabhasa Gola Yoga: All 7 classical planets in 1 sign grant intense laser-focused concentration and reclusive inner power.',
+  nabhasa_rajju: 'Nabhasa Rajju Yoga: All 7 planets in movable signs make one dynamic, adventurous, fond of foreign travel, and constantly enterprising.',
+  nabhasa_musala: 'Nabhasa Musala Yoga: All 7 planets in fixed signs confer unshakeable resolve, enduring family loyalty, and steady wealth accumulation.',
+  nabhasa_nala: 'Nabhasa Nala Yoga: All 7 planets in dual signs bestow multifaceted learning, versatile communication, and high intellectual agility.',
+  nabhasa_kamala: 'Nabhasa Kamala Yoga: All 4 angular Kendras occupied by classical planets confer monumental fame, spotless character, and kingly fortune.',
+  nabhasa_shringataka: 'Nabhasa Shringataka Yoga: All 7 planets in trinal houses (1, 5, 9) bring supreme good fortune, scholarly distinction, and victorious courage.',
 };
 
 const YOGINI_THEMES: Record<string, { lord: string; theme: string }> = {
@@ -63,13 +103,19 @@ const TARA_NAMES = [
 ];
 
 const UPAGRAHA_MEANINGS: Record<string, string> = {
-  gulika: 'Shows where karmic weight, chronic duties, or delayed but solid discipline concentrate.',
-  mandi: 'Marks sensitive spots requiring patience, structured habits, and health/boundary care.',
-  dhuma: 'Indicates smoky restlessness or areas where clarity comes only after releasing attachment.',
-  vyatipata: 'Highlights sudden reversals or unconventional lessons that test steadiness.',
-  parivesha: 'Protective halo around the chart axis; indicates aura, reputation, or sheltering themes.',
-  indrachapa: 'Signals aspiration, ideological drive, and aiming high despite obstacles.',
-  upaketu: 'Brings sudden insights, detachment, and spiritual or unexpected turning points.',
+  gulika: 'Son of Saturn; marks the nexus of karmic responsibility, chronic labor, and areas where patience builds unshakable discipline.',
+  mandi: 'Subtle sensitive point related to Gulika; requires disciplined lifestyle habits, mental grounding, and structured boundary management.',
+  yamakantaka: 'Son of Jupiter; highly auspicious invisible point that confers divine protection, mental clarity, and success in learning or enterprise.',
+  ardhaprahara: 'Son of Mercury; subtle point of commercial acumen, witty intellect, and skillful trade or mediation.',
+  kaala: 'Son of Sun; marker of authority, time discipline, and moments when decisive executive responsibility is demanded.',
+  mrityu: 'Son of Mars; indicates fiery points of sudden physical energy, requiring conscious patience against impulsiveness.',
+  dhuma: 'Smoky upstream point from Sun; reveals areas where attachment causes confusion until spiritual surrender reveals clarity.',
+  dhooma: 'Smoky upstream point from Sun; reveals areas where attachment causes confusion until spiritual surrender reveals clarity.',
+  vyatipata: 'Violent atmospheric inversion point; marks unexpected life reversals that catalyze rapid psychological maturation.',
+  parivesha: 'Solar halo boundary; forms a protective aura around reputation, shelters personal assets, and shields against scandal.',
+  indrachapa: 'Celestial rainbow point; inspires high ethical aspiration, ideological vision, and reaching beyond conventional horizons.',
+  upaketu: 'Smoky tail of Ketu; triggers sudden flashes of intuitive detachment, spiritual insight, and unexpected turning points.',
+  pranapada: 'Vital breath point (Lagna Ayurdaya indicator); determines physiological vitality, breath rhythm, and alignment of the physical vehicle with the soul.',
 };
 
 const GANA_MEANINGS: Record<string, string> = {
@@ -365,7 +411,7 @@ export function buildLevel2Extras(
 
   // 7. Kundli Extras: Chalit shifts, KP key cusps, Varshaphal
   const chalit =
-    level1.chalit ?? (natal.lagna ? computeSripatiChalit(natal.lagna.lon, (natal.lagna.lon + 270) % 360) : null);
+    level1.chalit ?? (natal.lagna ? computeSripatiChalit(natal.lagna.lon, natal.mc?.lon ?? (natal.lagna.lon + 270) % 360) : null);
   const chalitShifts = chalit?.bhavas
     ? PLANET_IDS.map((p) => {
         const g = natal.grahas[p];
