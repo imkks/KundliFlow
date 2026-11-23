@@ -62,7 +62,8 @@ if (typeof process !== 'undefined' && process.versions?.node && typeof globalThi
     globalThis.fetch = async (input, init) => {
       const url = typeof input === 'string' ? input : input instanceof URL ? input.href : (input as any)?.url;
       if (url && typeof url === 'string' && url.startsWith('file:')) {
-        const { readFile } = await import('node:fs/promises');
+        const fsMod = 'node:fs/promises';
+        const { readFile } = await import(/* @vite-ignore */ fsMod);
         const fileBytes = await readFile(new URL(url));
         return new Response(fileBytes, {
           headers: { 'content-type': 'application/wasm' },

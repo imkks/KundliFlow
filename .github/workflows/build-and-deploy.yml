@@ -61,6 +61,7 @@ jobs:
               "start": "node apps/api/dist/index.js"
             },
             "dependencies": {
+              "@swisseph/browser": "^1.4.0",
               "better-sqlite3": "^11.5.0",
               "js-yaml": "^5.5.0",
               "zod": "^3.23.0"
@@ -80,7 +81,7 @@ jobs:
             set +a
           fi
           if [ ! -d node_modules ]; then
-            echo "Installing 3 runtime packages (better-sqlite3, js-yaml, zod)..."
+            echo "Installing runtime packages (@swisseph/browser, better-sqlite3, js-yaml, zod)..."
             npm install --omit=dev
           fi
           if command -v pm2 >/dev/null 2>&1; then
