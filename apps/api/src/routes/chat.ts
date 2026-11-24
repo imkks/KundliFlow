@@ -19,6 +19,21 @@ export function registerChatRoutes(router: AppRouter, ctx: ServerContext) {
     c.json({ messages: appDb.getQaMessages(profileId) });
   });
 
+  router.delete('/api/conversations/:id', (c) => {
+    const profileId = c.params.id;
+    const profile = appDb.getProfile(profileId);
+    if (!profile) {
+      c.error('Profile not found', 404);
+      return;
+    }
+    if (!canAccessProfile(profile, c.authUser)) {
+      c.error('Forbidden', 403);
+      return;
+    }
+    const deletedCount = appDb.clearQaMessages(profileId);
+    c.json({ ok: true, deletedCount });
+  });
+
   // --- Level 3 DeepAgent Ask Endpoint ---
   router.post('/api/ask', async (c) => {
     const wantsSse = (c.req.headers.accept ?? '').includes('text/event-stream');

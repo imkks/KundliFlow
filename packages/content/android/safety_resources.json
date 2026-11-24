@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "policy": {
+    "evaluateOnDeviceOnly": true,
+    "neverPersistTriggerText": true,
+    "neverTransmitTriggerText": true,
+    "preemptsAllAstrologyUi": true,
+    "repeatedLowMoodThreshold": { "moodValue": 1, "count": 2, "windowDays": 3 }
+  },
+  "keywords": {
+    "en": [
+      "kill myself",
+      "end my life",
+      "want to die",
+      "suicidal",
+      "suicide",
+      "self harm",
+      "self-harm",
+      "hurt myself",
+      "no reason to live",
+      "better off dead",
+      "cannot go on",
+      "can't go on"
+    ],
+    "hi": [
+      "marna chahta",
+      "marna chahti",
+      "khudkushi",
+      "aatmahatya",
+      "jeena nahi",
+      "zindagi khatam",
+      "khatam karna",
+      "खुदकुशी",
+      "आत्महत्या",
+      "मरना चाहता",
+      "मरना चाहती",
+      "जीना नहीं"
+    ]
+  },
+  "groundingScreen": {
+    "title": "You don't have to carry this alone",
+    "acknowledgement": "It sounds like things feel really heavy right now. Let's pause everything else and focus only on supporting you.",
+    "steps": [
+      {
+        "id": "breathe",
+        "title": "Take three slow breaths",
+        "detail": "Inhale gently for 4 seconds, hold for 2, and exhale slowly for 6 seconds."
+      },
+      {
+        "id": "reach_out",
+        "title": "Reach someone you trust",
+        "detail": "Call or message a friend, family member, or one of the free, confidential support lines below."
+      }
+    ]
+  },
+  "helplines": [
+    {
+      "countryCode": "IN",
+      "countryName": "India",
+      "services": [
+        { "name": "Tele-MANAS (24x7 Mental Health)", "number": "14416", "dialUri": "tel:14416" },
+        { "name": "KIRAN Mental Health Helpline", "number": "1800-599-0019", "dialUri": "tel:18005990019" },
+        { "name": "Emergency Services", "number": "112", "dialUri": "tel:112" }
+      ]
+    },
+    {
+      "countryCode": "US",
+      "countryName": "United States",
+      "services": [
+        { "name": "988 Suicide & Crisis Lifeline", "number": "988", "dialUri": "tel:988" },
+        { "name": "Emergency Services", "number": "911", "dialUri": "tel:911" }
+      ]
+    },
+    {
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "services": [
+        { "name": "NHS Mental Health", "number": "111", "dialUri": "tel:111" },
+        { "name": "Samaritans", "number": "116 123", "dialUri": "tel:116123" }
+      ]
+    },
+    {
+      "countryCode": "GLOBAL",
+      "countryName": "International",
+      "services": [
+        { "name": "Find A Helpline", "number": "findahelpline.com", "webUri": "https://findahelpline.com" }
+      ]
+    }
+  ]
+}

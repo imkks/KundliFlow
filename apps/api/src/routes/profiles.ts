@@ -152,6 +152,10 @@ export function registerProfileRoutes(router: AppRouter, ctx: ServerContext) {
         c.error('Profile not found', 404);
         return;
       }
+      if (!canAccessProfile(profile, c.authUser)) {
+        c.error('Forbidden', 403);
+        return;
+      }
       let snap = appDb.getSnapshot(profileId);
       if (!snap) {
         const agg = await aggregateLevel1And2(profile);
@@ -210,6 +214,7 @@ export function registerProfileRoutes(router: AppRouter, ctx: ServerContext) {
           peakDays,
           cautionDays,
           ingressCount: mv.ingressEvents?.length ?? 0,
+          ingressEvents: mv.ingressEvents ?? [],
         },
         activeDashas: activeDashasList,
         extendedDashas: snap!.level2?.standard?.extendedDashas ?? null,
@@ -229,6 +234,10 @@ export function registerProfileRoutes(router: AppRouter, ctx: ServerContext) {
       const profile = appDb.getProfile(profileId);
       if (!profile) {
         c.error('Profile not found', 404);
+        return;
+      }
+      if (!canAccessProfile(profile, c.authUser)) {
+        c.error('Forbidden', 403);
         return;
       }
       let snap = appDb.getSnapshot(profileId);
@@ -276,6 +285,10 @@ export function registerProfileRoutes(router: AppRouter, ctx: ServerContext) {
       const profile = appDb.getProfile(profileId);
       if (!profile) {
         c.error('Profile not found', 404);
+        return;
+      }
+      if (!canAccessProfile(profile, c.authUser)) {
+        c.error('Forbidden', 403);
         return;
       }
       let snap = appDb.getSnapshot(profileId);

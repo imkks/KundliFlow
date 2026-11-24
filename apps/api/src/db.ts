@@ -58,6 +58,8 @@ export interface StoredJournalEntry {
   energy: number;
   focus: number;
   mood: number;
+  kind?: string;
+  tags?: string[];
   skySnapshot?: any;
   createdAt: string;
 }
@@ -116,6 +118,8 @@ CREATE TABLE IF NOT EXISTS journal_entries (
   energy INTEGER NOT NULL,
   focus INTEGER NOT NULL,
   mood INTEGER NOT NULL,
+  kind TEXT NOT NULL DEFAULT 'checkin',
+  tags_json TEXT NOT NULL DEFAULT '[]',
   sky_snapshot_json TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT,
@@ -164,6 +168,8 @@ export function createAppDatabase(dbFilePath: string) {
     'ALTER TABLE profiles ADD COLUMN bundle_version INTEGER NOT NULL DEFAULT 1',
     'ALTER TABLE journal_entries ADD COLUMN updated_at TEXT',
     'ALTER TABLE journal_entries ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0',
+    "ALTER TABLE journal_entries ADD COLUMN kind TEXT NOT NULL DEFAULT 'checkin'",
+    "ALTER TABLE journal_entries ADD COLUMN tags_json TEXT NOT NULL DEFAULT '[]'",
   ]) {
     try {
       db.exec(sql);
@@ -421,11 +427,16 @@ export function createAppDatabase(dbFilePath: string) {
       }));
     },
 
+    clearQaMessages(profileId: string): number {
+      const info = db.prepare('DELETE FROM qa_messages WHERE profile_id = ?').run(profileId);
+      return info.changes;
+    },
+
     saveJournalEntry(entry: Omit<StoredJournalEntry, 'createdAt'> & { createdAt?: string; updatedAt?: string; deleted?: boolean }) {
       const now = new Date().toISOString();
       db.prepare(`
-        INSERT OR REPLACE INTO journal_entries (id, profile_id, entry_date, note, energy, focus, mood, sky_snapshot_json, created_at, updated_at, deleted)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT OR REPLACE INTO journal_entries (id, profile_id, entry_date, note, energy, focus, mood, kind, tags_json, sky_snapshot_json, created_at, updated_at, deleted)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         entry.id,
         entry.profileId,
@@ -434,6 +445,8 @@ export function createAppDatabase(dbFilePath: string) {
         entry.energy,
         entry.focus,
         entry.mood,
+        entry.kind ?? 'checkin',
+        JSON.stringify(Array.isArray(entry.tags) ? entry.tags : []),
         entry.skySnapshot ? JSON.stringify(entry.skySnapshot) : null,
         entry.createdAt ?? now,
         entry.updatedAt ?? now,
@@ -453,6 +466,8 @@ export function createAppDatabase(dbFilePath: string) {
         energy: r.energy,
         focus: r.focus,
         mood: r.mood,
+        kind: r.kind ?? 'checkin',
+        tags: JSON.parse(r.tags_json || '[]'),
         skySnapshot: r.sky_snapshot_json ? JSON.parse(r.sky_snapshot_json) : undefined,
         createdAt: r.created_at,
       }));
@@ -474,6 +489,8 @@ export function createAppDatabase(dbFilePath: string) {
         energy: r.energy,
         focus: r.focus,
         mood: r.mood,
+        kind: r.kind ?? 'checkin',
+        tags: JSON.parse(r.tags_json || '[]'),
         skySnapshot: r.sky_snapshot_json ? JSON.parse(r.sky_snapshot_json) : undefined,
         createdAt: r.created_at,
         updatedAt: r.updated_at ?? r.created_at,
