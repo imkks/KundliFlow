@@ -2,8 +2,20 @@ import {
   angleDiff,
   calculateVargaSign,
   houseFromSign,
+  computeArudhaPadas,
+  computeCharaKarakas,
+  computeSpecialLagnas,
+  computeUpagrahas,
+  computeChartVaisheshikamsa,
+  computeSpecialNakshatras,
+  evaluateNavatara,
+  evaluateTransitNavatara,
+  evaluateKakshyaTransits,
+  checkTransitVedha,
+  computeAnnualSahams,
   type GrahaDetail,
   type DashaNode,
+  type VedicGraha,
 } from '@astro/engine';
 import {
   PLANET_IDS,
@@ -124,6 +136,14 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
 
   // 2. Planet placements, dignities, nakshatras, combustion, retrograde, vargas, strengths
   const sunDetail = natal.grahas.sun;
+  let charaKarakas: Record<string, string> = {};
+  if (natal.grahas) {
+    try {
+      charaKarakas = computeCharaKarakas(natal);
+    } catch {
+      // gracefully skip if partial mock
+    }
+  }
 
   for (const planet of PLANET_IDS) {
     const g = natal.grahas[planet];
@@ -137,6 +157,7 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
     const owned = planetOwnedHouses[planet];
     const natRole = NATURAL_BENEFICS.includes(planet) ? 'benefic' : NATURAL_MALEFICS.includes(planet) ? 'malefic' : 'neutral';
     const funcRole = getFunctionalRole(planet, owned);
+    const charaRole = charaKarakas[planet] ?? '';
 
     const placementId = `placement.${planet}`;
     facts.push({
@@ -156,6 +177,7 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
         naturalRole: natRole,
         functionalRole: funcRole,
         ownedHouses: owned.join(','),
+        charaKaraka: charaRole,
       },
       value: hLagna,
       houseFrom: { lagna: hLagna, moon: hMoon },
@@ -436,13 +458,30 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
     walkDashas(dashas.periods, null);
   }
 
-  // 7. Transits (current slow planets)
+  // 7. Transits (current Gochar planets)
   if (transits?.transits) {
     const refIso = options?.referenceDateIso ?? new Date().toISOString();
+    const allTransitHouses = {} as Record<VedicGraha, number>;
+    for (const [p, tr] of Object.entries(transits.transits) as [VedicGraha, any][]) {
+      if (tr?.houseFromMoon !== undefined) {
+        allTransitHouses[p] = tr.houseFromMoon;
+      }
+    }
+
     for (const planet of PLANET_IDS) {
       const tr = transits.transits[planet];
       if (!tr) continue;
       const signId = SIGN_IDS[tr.signIndex]!;
+
+      const vedha = tr.vedha ?? checkTransitVedha(planet, tr.houseFromMoon, allTransitHouses);
+
+      let kakshya = tr.kakshya;
+      if (!kakshya && ashtakvarga?.prastara) {
+        const pLon = tr.lon ?? (tr.signIndex * 30 + (tr.degInSign ?? 0));
+        const kRes = evaluateKakshyaTransits({ [planet]: pLon }, ashtakvarga.prastara);
+        kakshya = kRes.evaluations[0];
+      }
+
       facts.push({
         id: `transit.${planet}`,
         type: 'transit',
@@ -454,11 +493,60 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
           houseFromMoon: tr.houseFromMoon,
           retrograde: tr.retrograde,
           bindus: tr.ashtakvargaBindus,
+          ...(vedha ? { vedhaStatus: vedha.netStatus, isObstructed: vedha.isObstructed } : {}),
+          ...(kakshya ? { kakshyaLord: kakshya.kakshyaLord, kakshyaBenefic: kakshya.isBenefic } : {}),
         },
         value: tr.houseFromLagna,
         houseFrom: { lagna: tr.houseFromLagna, moon: tr.houseFromMoon },
         sourceModule: 'transits',
       });
+
+      if (vedha) {
+        facts.push({
+          id: `vedha.${planet}`,
+          type: 'vedha',
+          subject: planet,
+          args: {
+            planet,
+            transitHouseFromMoon: vedha.transitHouseFromMoon,
+            isFavourableHouse: vedha.isFavourableHouse,
+            obstructingHouse: vedha.obstructingHouse ?? 0,
+            obstructingPlanets: vedha.obstructingPlanets.join(','),
+            isObstructed: vedha.isObstructed,
+            netStatus: vedha.netStatus,
+            explanation: vedha.explanation,
+          },
+          value: vedha.isObstructed ? 0 : 1,
+          houseFrom: { lagna: tr.houseFromLagna, moon: tr.houseFromMoon },
+          sourceModule: 'transits.vedha',
+        });
+        edges.push({ src: `vedha.${planet}`, dst: `transit.${planet}`, rel: 'evidence_of' });
+      }
+
+      if (kakshya) {
+        facts.push({
+          id: `kakshya.${planet}`,
+          type: 'kakshya',
+          subject: planet,
+          args: {
+            planet,
+            kakshyaIndex: kakshya.kakshyaIndex,
+            kakshyaLord: kakshya.kakshyaLord,
+            isBenefic: kakshya.isBenefic,
+            bindu: kakshya.bindu,
+            signIndex: kakshya.signIndex,
+            degInSign: kakshya.degInSign,
+            arcStartDeg: kakshya.arcStartDeg,
+            arcEndDeg: kakshya.arcEndDeg,
+            explanation: kakshya.explanation,
+          },
+          value: kakshya.isBenefic ? 1 : 0,
+          houseFrom: { lagna: tr.houseFromLagna, moon: tr.houseFromMoon },
+          sourceModule: 'transits.kakshya',
+        });
+        edges.push({ src: `kakshya.${planet}`, dst: `transit.${planet}`, rel: 'evidence_of' });
+      }
+
       transitWindows.push({
         id: `tw.${planet}.${signId}`,
         planet,
@@ -469,6 +557,333 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
         startUtc: refIso,
         endUtc: refIso,
       });
+    }
+  }
+
+  // 8. Chara Karakas (AK, AmK, BK, MK, PK, GK, DK)
+  if (natal.grahas) {
+    try {
+      for (const [planet, role] of Object.entries(charaKarakas)) {
+        const g = natal.grahas[planet as PlanetId];
+        const hLagna = g?.houses.houseFromLagna ?? 1;
+        const hMoon = g?.houses.houseFromMoon ?? 1;
+        const signId = g ? SIGN_IDS[g.signIndex]! : 'aries';
+        const roleLower = role.toLowerCase();
+        facts.push({
+          id: `karaka.${roleLower}`,
+          type: 'karaka',
+          subject: planet,
+          args: { karaka: role, planet, house: hLagna, sign: signId },
+          value: planet,
+          houseFrom: { lagna: hLagna, moon: hMoon },
+          sourceModule: 'natal.karakas',
+        });
+        edges.push({ src: `placement.${planet}`, dst: `karaka.${roleLower}`, rel: 'karaka_of' });
+      }
+    } catch {
+      // gracefully skip if partial mock
+    }
+  }
+
+  // 9. Arudha Padas (AL, A2..A11, UL)
+  if (natal.lagna && natal.grahas) {
+    try {
+      const arudhas = computeArudhaPadas(natal);
+      for (const ar of arudhas) {
+        const codeLower = ar.code.toLowerCase();
+        facts.push({
+          id: `arudha.${codeLower}`,
+          type: 'arudha',
+          subject: ar.code,
+          args: {
+            code: ar.code,
+            house: ar.house,
+            name: ar.name,
+            sign: ar.sign,
+            signIndex: ar.signIndex,
+            houseFromLagna: ar.houseFromLagna,
+            lord: ar.lord,
+            exceptionApplied: ar.exceptionApplied,
+          },
+          value: ar.houseFromLagna,
+          houseFrom: { lagna: ar.houseFromLagna, moon: houseFromSign(ar.signIndex, moonSignIndex) },
+          sourceModule: 'natal.arudha',
+        });
+        edges.push({ src: `house${ar.house}`, dst: `arudha.${codeLower}`, rel: 'arudha_of' });
+      }
+    } catch {
+      // gracefully skip if partial mock
+    }
+  }
+
+  // 10. Special Lagnas (BL, HL, GL, SL, Indu, Pranapada)
+  if (natal.lagna && natal.grahas && natal.time && natal.place) {
+    try {
+      const specialLagnas = computeSpecialLagnas(natal);
+      for (const sl of specialLagnas) {
+        facts.push({
+          id: `special_lagna.${sl.id}`,
+          type: 'special_lagna',
+          subject: sl.id,
+          args: {
+            id: sl.id,
+            code: sl.code,
+            name: sl.name,
+            sign: sl.sign,
+            signIndex: sl.signIndex,
+            degInSign: sl.degInSign,
+            houseFromLagna: sl.houseFromLagna,
+            houseFromMoon: sl.houseFromMoon,
+            nakshatra: sl.nakshatra,
+            signification: sl.signification,
+          },
+          value: sl.houseFromLagna,
+          houseFrom: { lagna: sl.houseFromLagna, moon: sl.houseFromMoon },
+          sourceModule: 'natal.special_lagnas',
+        });
+        edges.push({ src: `special_lagna.${sl.id}`, dst: `house${sl.houseFromLagna}`, rel: 'in_house' });
+      }
+    } catch {
+      // gracefully skip if partial mock
+    }
+  }
+
+  // 11. Upagrahas (Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu, Gulika, Mandi)
+  if (natal.grahas && natal.time && natal.place) {
+    try {
+      const upagrahas = computeUpagrahas(natal);
+      for (const u of upagrahas) {
+        facts.push({
+          id: `upagraha.${u.id}`,
+          type: 'upagraha',
+          subject: u.id,
+          args: {
+            id: u.id,
+            name: u.name,
+            sign: u.sign,
+            signIndex: u.signIndex,
+            degInSign: u.degInSign,
+            houseFromLagna: u.houseFromLagna,
+            nakshatra: u.nakshatra,
+            formula: u.formula,
+          },
+          value: u.houseFromLagna,
+          houseFrom: { lagna: u.houseFromLagna, moon: houseFromSign(u.signIndex, moonSignIndex) },
+          sourceModule: 'natal.upagrahas',
+        });
+        edges.push({ src: `upagraha.${u.id}`, dst: `house${u.houseFromLagna}`, rel: 'in_house' });
+      }
+    } catch {
+      // gracefully skip if partial mock
+    }
+  }
+
+  // 12. Vaisheshikamsa (Dasavarga Amsabala) & Pushkara Navamsha
+  if (natal.grahas) {
+    try {
+      const amsabala = computeChartVaisheshikamsa(natal);
+      for (const [graha, res] of Object.entries(amsabala)) {
+        const isLagna = graha === 'lagna';
+        const hLagna = isLagna ? 1 : natal.grahas[graha as PlanetId]?.houses.houseFromLagna ?? 1;
+        const sIndex = isLagna ? natal.lagna?.signIndex ?? 0 : natal.grahas[graha as PlanetId]?.signIndex ?? 0;
+        const hMoon = houseFromSign(sIndex, moonSignIndex);
+
+        if (res.tier) {
+          facts.push({
+            id: `vaisheshikamsa.${graha}`,
+            type: 'vaisheshikamsa',
+            subject: graha,
+            args: {
+              graha,
+              tier: res.tier,
+              tierName: res.tierName,
+              vargaCount: res.vargaCount,
+              vargottama: res.vargottama,
+              dignifiedVargas: res.dignifiedVargas.join(','),
+            },
+            value: res.vargaCount,
+            houseFrom: { lagna: hLagna, moon: hMoon },
+            sourceModule: 'vargas.amsabala',
+          });
+          edges.push({ src: `vaisheshikamsa.${graha}`, dst: isLagna ? 'house1' : `placement.${graha}`, rel: 'evidence_of' });
+        }
+
+        if (res.pushkara.isPushkaraNavamsha || res.pushkara.isPushkaraBhaga) {
+          facts.push({
+            id: `pushkara.${graha}`,
+            type: 'pushkara',
+            subject: graha,
+            args: {
+              graha,
+              isPushkaraNavamsha: res.pushkara.isPushkaraNavamsha,
+              isPushkaraBhaga: res.pushkara.isPushkaraBhaga,
+              navamshaSign: res.pushkara.navamshaSign,
+              navamshaLord: res.pushkara.navamshaLord,
+              pushkaraBhagaDeg: res.pushkara.pushkaraBhagaDeg,
+              description: res.pushkara.description,
+            },
+            value: res.pushkara.isPushkaraBhaga ? 2 : 1,
+            houseFrom: { lagna: hLagna, moon: hMoon },
+            sourceModule: 'vargas.amsabala',
+          });
+          edges.push({ src: `pushkara.${graha}`, dst: isLagna ? 'house1' : `placement.${graha}`, rel: 'evidence_of' });
+        }
+      }
+    } catch {
+      // gracefully skip if partial mock
+    }
+  }
+
+  // 13. Navatara (9 Taras) & 11 Special Life-Department Nakshatras
+  if (natal.grahas?.moon) {
+    try {
+      const moonNakIndex = natal.grahas.moon.nakshatraIndex;
+      const occupants: Array<{ graha: string; nakshatraIndex: number }> = [];
+
+      for (const [gid, g] of Object.entries(natal.grahas)) {
+        if (g && typeof g.nakshatraIndex === 'number') {
+          occupants.push({ graha: gid, nakshatraIndex: g.nakshatraIndex });
+
+          const nav = evaluateNavatara(moonNakIndex, g.nakshatraIndex);
+          facts.push({
+            id: `navatara.${gid}`,
+            type: 'navatara',
+            subject: gid,
+            args: {
+              graha: gid,
+              tara: nav.tara,
+              taraLabel: nav.taraLabel,
+              englishLabel: nav.englishLabel,
+              category: nav.category,
+              paryaya: nav.paryaya,
+              offset: nav.offset,
+              isFavorable: nav.isFavorable,
+            },
+            value: nav.taraNumber,
+            houseFrom: { lagna: g.houses.houseFromLagna, moon: g.houses.houseFromMoon },
+            sourceModule: 'natal.navatara',
+          });
+          edges.push({ src: `navatara.${gid}`, dst: `placement.${gid}`, rel: 'evidence_of' });
+        }
+      }
+
+      const specialNakshatras = computeSpecialNakshatras(moonNakIndex, occupants);
+      for (const spec of specialNakshatras) {
+        facts.push({
+          id: `special_nakshatra.${spec.def.key}`,
+          type: 'special_nakshatra',
+          subject: spec.def.key,
+          args: {
+            key: spec.def.key,
+            name: spec.def.name,
+            sanskritName: spec.def.sanskritName,
+            domain: spec.def.domain,
+            nakshatra: spec.nakshatra,
+            nakshatraIndex: spec.nakshatraIndex,
+            tara: spec.navatara.tara,
+            significance: spec.def.significance,
+            occupants: spec.occupyingGrahas.join(','),
+          },
+          value: spec.def.offset,
+          houseFrom: { lagna: 1, moon: 1 },
+          sourceModule: 'natal.navatara',
+        });
+
+        for (const occ of spec.occupyingGrahas) {
+          edges.push({
+            src: `special_nakshatra.${spec.def.key}`,
+            dst: `placement.${occ}`,
+            rel: 'evidence_of',
+          });
+        }
+      }
+    } catch {
+      // gracefully skip if partial mock
+    }
+  }
+
+  // 14. Tajika Sahams (36 Sensitive Life Points)
+  if (natal.lagna && natal.grahas?.sun && natal.grahas?.moon) {
+    try {
+      const sunH = houseFromSign(natal.grahas.sun.signIndex, lagnaSignIndex);
+      const isDayNatal = sunH >= 7 && sunH <= 12;
+      const { sahamsList } = computeAnnualSahams(natal, isDayNatal);
+
+      for (const saham of sahamsList) {
+        facts.push({
+          id: `saham.${saham.id}`,
+          type: 'saham',
+          subject: saham.id,
+          args: {
+            id: saham.id,
+            name: saham.name,
+            sanskritName: saham.sanskritName,
+            meaning: saham.meaning,
+            category: saham.category,
+            sign: saham.sign,
+            signIndex: saham.signIndex,
+            degreeInSign: saham.degreeInSign,
+            formatted: saham.formatted,
+            house: saham.houseFromLagna,
+            lord: saham.lord,
+            arcRuleApplied: saham.arcRuleApplied,
+            isKendraOrTrikona: saham.isKendraOrTrikona,
+            fructification: saham.fructification,
+            assessment: saham.assessment,
+          },
+          value: saham.lon,
+          houseFrom: { lagna: saham.houseFromLagna, moon: houseFromSign(saham.signIndex, moonSignIndex) },
+          sourceModule: 'natal.sahams',
+        });
+
+        edges.push({
+          src: `saham.${saham.id}`,
+          dst: `placement.${saham.lord}`,
+          rel: 'lord_of',
+        });
+        edges.push({
+          src: `saham.${saham.id}`,
+          dst: `house.${saham.houseFromLagna}`,
+          rel: 'in_house',
+        });
+      }
+
+      // If annual varshaphal is provided, also emit varsha sahams
+      if (input.varshaphal?.sahamsList) {
+        for (const vs of input.varshaphal.sahamsList) {
+          facts.push({
+            id: `saham.varsha.${vs.id}`,
+            type: 'saham',
+            subject: `varsha.${vs.id}`,
+            args: {
+              id: vs.id,
+              name: vs.name,
+              sanskritName: vs.sanskritName,
+              meaning: vs.meaning,
+              category: vs.category,
+              sign: vs.sign,
+              signIndex: vs.signIndex,
+              degreeInSign: vs.degreeInSign,
+              formatted: vs.formatted,
+              house: vs.houseFromLagna,
+              lord: vs.lord,
+              lordHarshaBala: vs.lordHarshaBala ?? 0,
+              arcRuleApplied: vs.arcRuleApplied,
+              isKendraOrTrikona: vs.isKendraOrTrikona,
+              fructification: vs.fructification,
+              assessment: vs.assessment,
+            },
+            value: vs.lon,
+            houseFrom: {
+              lagna: vs.houseFromLagna,
+              moon: houseFromSign(vs.signIndex, input.varshaphal.annualChart.grahas.moon?.signIndex ?? 0),
+            },
+            sourceModule: 'varshaphal.sahams',
+          });
+        }
+      }
+    } catch {
+      // gracefully skip if partial mock
     }
   }
 

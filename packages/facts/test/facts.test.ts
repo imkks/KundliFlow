@@ -101,6 +101,66 @@ describe('L2-M1: packages/facts & chart.db workspace', () => {
       const nakRahu = ws.getFact('nakshatra.rahu');
       expect(nakRahu?.value).toBe('magha');
 
+      // Verify Arudha Padas emitted (AL, UL)
+      const al = ws.getFact('arudha.al');
+      expect(al).not.toBeNull();
+      expect(al?.type).toBe('arudha');
+      expect(al?.args.code).toBe('AL');
+      const ul = ws.getFact('arudha.ul');
+      expect(ul).not.toBeNull();
+      expect(ul?.type).toBe('arudha');
+      expect(ul?.args.code).toBe('UL');
+
+      // Verify Chara Karakas emitted (AK, AmK)
+      const ak = ws.getFact('karaka.ak');
+      expect(ak).not.toBeNull();
+      expect(ak?.type).toBe('karaka');
+      const amk = ws.getFact('karaka.amk');
+      expect(amk).not.toBeNull();
+      expect(amk?.type).toBe('karaka');
+
+      // Verify Special Lagnas emitted (HL, GL, Indu)
+      const hl = ws.getFact('special_lagna.hl');
+      expect(hl).not.toBeNull();
+      expect(hl?.type).toBe('special_lagna');
+      expect(hl?.args.code).toBe('HL');
+      const gl = ws.getFact('special_lagna.gl');
+      expect(gl).not.toBeNull();
+      expect(gl?.args.code).toBe('GL');
+      const indu = ws.getFact('special_lagna.indu');
+      expect(indu).not.toBeNull();
+      expect(indu?.args.code).toBe('IL');
+
+      // Verify Upagrahas emitted (Gulika, Mandi)
+      const gulika = ws.getFact('upagraha.gulika');
+      expect(gulika).not.toBeNull();
+      expect(gulika?.type).toBe('upagraha');
+
+      // Verify Vaisheshikamsa and Pushkara facts emitted
+      const vkFacts = ws.factSet.facts.filter((f) => f.type === 'vaisheshikamsa');
+      expect(vkFacts.length).toBeGreaterThan(0);
+      const pushkaraFacts = ws.factSet.facts.filter((f) => f.type === 'pushkara');
+      expect(pushkaraFacts.length).toBeGreaterThan(0);
+
+      // Verify Navatara and Special Nakshatra facts emitted
+      const navataraFacts = ws.factSet.facts.filter((f) => f.type === 'navatara');
+      expect(navataraFacts.length).toBeGreaterThanOrEqual(7);
+      const specialNakshatraFacts = ws.factSet.facts.filter((f) => f.type === 'special_nakshatra');
+      expect(specialNakshatraFacts.length).toBe(11);
+      const karmaStarFact = ws.getFact('special_nakshatra.karma');
+      expect(karmaStarFact).not.toBeNull();
+      expect(karmaStarFact?.args.domain).toBe('Career & Action');
+
+      // Verify Tajika Sahams facts emitted
+      const sahamFacts = ws.factSet.facts.filter((f) => f.type === 'saham');
+      expect(sahamFacts.length).toBe(36);
+      const punyaSaham = ws.getFact('saham.punya');
+      expect(punyaSaham).not.toBeNull();
+      expect(punyaSaham?.args.name).toBe('Punya');
+      const arthaSaham = ws.getFact('saham.artha');
+      expect(arthaSaham).not.toBeNull();
+      expect(arthaSaham?.args.category).toBe('wealth');
+
       // Verify SQLite tables populated
       const factCount = (ws.db.prepare('SELECT COUNT(*) as c FROM fact').get() as { c: number }).c;
       const edgeCount = (ws.db.prepare('SELECT COUNT(*) as c FROM edge').get() as { c: number }).c;

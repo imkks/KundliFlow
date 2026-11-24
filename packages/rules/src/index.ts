@@ -3,3 +3,4 @@ export * from './evaluator.js';
 export * from './aggregator.js';
 export * from './linter.js';
 export * from './renderer.js';
+export * from './argala.js';

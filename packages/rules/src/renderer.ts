@@ -7,6 +7,7 @@ import {
   type PlanetId,
 } from '@astro/facts';
 import { aggregateByHouse } from './aggregator.js';
+import { computeHouseArgala } from './argala.js';
 import type { Finding, NetToneLabel, Polarity } from './schema.js';
 
 export type DetailLevel = 'simple' | 'standard' | 'detailed';
@@ -40,6 +41,10 @@ export interface HouseReading {
   bottomLine: string;
   netBalance?: string;
   activeDashaNote?: string;
+  bhavatBhavamNote?: string;
+  environmentalSupport?: string;
+  doubleTransitNote?: string;
+  argalaNote?: string;
   findings: RenderedFinding[];
   strengths: RenderedFinding[];
   cautions: RenderedFinding[];
@@ -56,6 +61,12 @@ export interface PlanetReading {
   ownedHouses: number[];
   bottomLine: string;
   netBalance?: string;
+  vargaNote?: string;
+  vaisheshikamsaNote?: string;
+  pushkaraNote?: string;
+  navataraNote?: string;
+  specialNakshatraNote?: string;
+  functionalNote?: string;
   findings: RenderedFinding[];
   strengths: RenderedFinding[];
   cautions: RenderedFinding[];
@@ -112,6 +123,21 @@ function factToChip(f: Fact): EvidenceChip {
   if (f.type === 'dignity') {
     return { id: f.id, label: `${f.subject}: ${f.value}`, kind: 'fact' };
   }
+  if (f.type === 'navatara') {
+    return { id: f.id, label: `${f.subject} in ${f.args.taraLabel} Tara (${f.args.englishLabel})`, kind: 'fact' };
+  }
+  if (f.type === 'special_nakshatra') {
+    return { id: f.id, label: `${f.args.name} in ${f.args.nakshatra}`, kind: 'fact' };
+  }
+  if (f.type === 'kakshya') {
+    return { id: f.id, label: `${f.subject} Kakshya ${f.args.kakshyaIndex} (${f.args.kakshyaLord}): ${f.args.isBenefic ? '1 bindu ✓' : '0 bindus'}`, kind: 'fact' };
+  }
+  if (f.type === 'vedha') {
+    return { id: f.id, label: `${f.subject} Vedha: ${f.args.netStatus}`, kind: 'fact' };
+  }
+  if (f.type === 'saham') {
+    return { id: f.id, label: `${f.args.name} Saham: ${f.args.formatted} (H${f.args.house})`, kind: 'fact' };
+  }
   return { id: f.id, label: f.id, kind: 'fact' };
 }
 
@@ -153,6 +179,10 @@ function buildComposedModifierNote(f: Finding, factById: Map<string, Fact>): str
       if (comb?.value === true) notes.push(`${planet} is combust near the Sun, internalizing its expressive drive.`);
       const d9 = factById.get(`varga.d9.${planet}`);
       if (d9?.args.vargottama === true) notes.push(`${planet} is Vargottama in D9 Navamsha, reinforcing lasting results.`);
+      const vk = factById.get(`vaisheshikamsa.${planet}`);
+      if (vk?.args.tierName) notes.push(`${planet} attains ${vk.args.tierName} across divisional charts.`);
+      const pk = factById.get(`pushkara.${planet}`);
+      if (pk) notes.push(`${planet} resides in a Pushkara degree/Navamsha, blessing it with regenerative recovery.`);
       break;
     }
   }
@@ -265,6 +295,55 @@ export function renderHouse(
   const activeDashaNote =
     dashaNotes.length > 0 ? `Currently activated by ${dashaNotes.join(' & ')}.` : undefined;
 
+  // Classical Bhavat Bhavam & Angular placement (from KB R-05 & R-18)
+  const lordOffsetFromHouse = ((lordPlacedHouse - house + 12) % 12) + 1;
+  let bhavatBhavamNote: string | undefined;
+  if (lordOffsetFromHouse === 1) {
+    bhavatBhavamNote = `Lord resides in its own house, conferring self-sufficiency and natural endurance to this department.`;
+  } else if (lordOffsetFromHouse === 8) {
+    bhavatBhavamNote = `Lord sits in the 8th from its own house (Bhavat Bhavam 8th), indicating transformative restructuring or fluctuations.`;
+  } else if (lordOffsetFromHouse === 12) {
+    bhavatBhavamNote = `Lord sits in the 12th from its own house, indicating expenditure or detachment related to this area.`;
+  } else if (lordOffsetFromHouse === 5 || lordOffsetFromHouse === 9) {
+    bhavatBhavamNote = `Lord sits in a trine from its own house, creating effortless alignment and creative luck.`;
+  } else if (lordOffsetFromHouse === 4 || lordOffsetFromHouse === 7 || lordOffsetFromHouse === 10) {
+    bhavatBhavamNote = `Lord sits in a quadrant from its own house, requiring active sustenance and focused initiative.`;
+  } else if (lordOffsetFromHouse === 3 || lordOffsetFromHouse === 6 || lordOffsetFromHouse === 11) {
+    bhavatBhavamNote = `Lord sits in an Upachaya from its own house, promoting compounding growth and progress through effort over time.`;
+  }
+
+  // Environmental Ease / Ashtakavarga Threshold (from KB R-10 & R-18)
+  const savFact = ws.getFact(`strength.house${house}`);
+  const savBindus = Number(savFact?.args.savBindus ?? 0);
+  let environmentalSupport: string | undefined;
+  if (savBindus >= 30) {
+    environmentalSupport = `High environmental receptivity (${savBindus} SAV points) — events and projects here find smooth natural momentum.`;
+  } else if (savBindus > 0 && savBindus <= 25) {
+    environmentalSupport = `Demands structured perseverance (${savBindus} SAV points) — lower baseline environmental ease; steady discipline required.`;
+  }
+
+  // Double Transit Sanction (from KB R-14 & R-18)
+  const satTransit = ws.getFact('transit.saturn');
+  const jupTransit = ws.getFact('transit.jupiter');
+  let doubleTransitNote: string | undefined;
+  if (satTransit && jupTransit) {
+    const satH = Number(satTransit.args.houseFromLagna ?? satTransit.value);
+    const jupH = Number(jupTransit.args.houseFromLagna ?? jupTransit.value);
+    if (satH > 0 && jupH > 0) {
+      // Saturn aspects: 1st (conjunction), 3rd, 7th, 10th
+      const satAspects = [satH, ((satH + 2 - 1) % 12) + 1, ((satH + 6 - 1) % 12) + 1, ((satH + 9 - 1) % 12) + 1];
+      // Jupiter aspects: 1st (conjunction), 5th, 7th, 9th
+      const jupAspects = [jupH, ((jupH + 4 - 1) % 12) + 1, ((jupH + 6 - 1) % 12) + 1, ((jupH + 8 - 1) % 12) + 1];
+      if (satAspects.includes(house) && jupAspects.includes(house)) {
+        doubleTransitNote = `Double Transit Sanction Active: Both transiting Saturn (karma/duty) and Jupiter (grace/growth) currently influence House ${house}, unlocking a prime manifestation window.`;
+      }
+    }
+  }
+
+  // Classical Argala (Decisive Intervention) per KB R-07 & R-18
+  const argalaSummary = computeHouseArgala(ws, house);
+  const argalaNote = argalaSummary.summaryNote || undefined;
+
   return {
     house,
     lifeArea,
@@ -276,6 +355,10 @@ export function renderHouse(
     bottomLine,
     ...(netBalance ? { netBalance } : {}),
     ...(activeDashaNote ? { activeDashaNote } : {}),
+    ...(bhavatBhavamNote ? { bhavatBhavamNote } : {}),
+    ...(environmentalSupport ? { environmentalSupport } : {}),
+    ...(doubleTransitNote ? { doubleTransitNote } : {}),
+    ...(argalaNote ? { argalaNote } : {}),
     findings: rendered,
     strengths,
     cautions,
@@ -338,6 +421,60 @@ export function renderPlanet(
   if (dignityFact) evidenceChips.push(factToChip(dignityFact));
   if (nakFact) evidenceChips.push(factToChip(nakFact));
 
+  // Varga D9 Navamsha & Functional Role (from KB R-04, R-07, R-18)
+  const d9Fact = ws.getFact(`varga.d9.${planet}`);
+  const vkFact = ws.getFact(`vaisheshikamsa.${planet}`);
+  const pushkaraFact = ws.getFact(`pushkara.${planet}`);
+
+  const isVargottama = d9Fact?.args.vargottama === true || vkFact?.args.vargottama === true;
+  const funcRole = placement?.args.functionalRole;
+
+  let vargaNote: string | undefined;
+  if (isVargottama) {
+    vargaNote = `${planet.toUpperCase()} is Vargottama (same sign in D1 and D9 Navamsha), giving deep-seated stability and enduring results.`;
+  }
+
+  let vaisheshikamsaNote: string | undefined;
+  if (vkFact) {
+    vaisheshikamsaNote = `${planet.toUpperCase()} attains ${vkFact.args.tierName} across the 10 divisional charts (${vkFact.args.dignifiedVargas}), conferring remarkable inner resilience and status.`;
+  }
+
+  let pushkaraNote: string | undefined;
+  if (pushkaraFact) {
+    pushkaraNote = pushkaraFact.args.isPushkaraBhaga
+      ? `${planet.toUpperCase()} occupies an exact Pushkara Bhaga degree (${pushkaraFact.args.pushkaraBhagaDeg}°) & Pushkara Navamsha in ${String(pushkaraFact.args.navamshaSign).toUpperCase()} — granting supreme amrita healing and recovery potency.`
+      : `${planet.toUpperCase()} occupies a Pushkara Navamsha in ${String(pushkaraFact.args.navamshaSign).toUpperCase()} (lord ${pushkaraFact.args.navamshaLord}) — blessing it with regenerative grace and protective fruitfulness.`;
+  }
+
+  // Navatara (9-Tara from natal Moon)
+  const navFact = ws.getFact(`navatara.${planet}`);
+  let navataraNote: string | undefined;
+  if (navFact) {
+    const taraLabel = String(navFact.args.taraLabel ?? '');
+    const englishLabel = String(navFact.args.englishLabel ?? '');
+    const paryaya = String(navFact.args.paryaya ?? '');
+    const isFavorable = navFact.args.isFavorable === true;
+    navataraNote = `${planet.toUpperCase()} is in ${taraLabel} Tara (${englishLabel}, ${paryaya} cycle from Moon) — conferring ${isFavorable ? 'favorable supportive' : 'karmic friction'} influence.`;
+  }
+
+  // Check if planet occupies any of the 11 Special Nakshatras
+  let specialNakshatraNote: string | undefined;
+  const specialFacts = ws.factSet.facts.filter((f) => f.type === 'special_nakshatra');
+  for (const sf of specialFacts) {
+    const occupants = String(sf.args.occupants ?? '').split(',').map((s) => s.trim());
+    if (occupants.includes(planet)) {
+      specialNakshatraNote = `${planet.toUpperCase()} activates the native's ${sf.args.name} (${sf.args.sanskritName}) in ${String(sf.args.nakshatra).toUpperCase()} — governing ${sf.args.domain}.`;
+      break;
+    }
+  }
+
+  let functionalNote: string | undefined;
+  if (funcRole === 'benefic') {
+    functionalNote = `Acts as a Functional Benefic for this chart due to auspicious house lordship.`;
+  } else if (funcRole === 'malefic') {
+    functionalNote = `Acts as a Functional Malefic for this chart due to Dusthana/Upachaya lordship; calls for conscious pacing.`;
+  }
+
   return {
     planet,
     sign,
@@ -347,6 +484,12 @@ export function renderPlanet(
     ownedHouses,
     bottomLine,
     ...(netBalance ? { netBalance } : {}),
+    ...(vargaNote ? { vargaNote } : {}),
+    ...(vaisheshikamsaNote ? { vaisheshikamsaNote } : {}),
+    ...(pushkaraNote ? { pushkaraNote } : {}),
+    ...(navataraNote ? { navataraNote } : {}),
+    ...(specialNakshatraNote ? { specialNakshatraNote } : {}),
+    ...(functionalNote ? { functionalNote } : {}),
     findings: rendered,
     strengths,
     cautions,

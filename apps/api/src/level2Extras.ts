@@ -458,8 +458,10 @@ export function buildLevel2Extras(
         munthaSign: vp.munthaSign,
         munthaHouseInVarsha: vp.munthaHouseInVarsha,
         munthaLord: vp.munthaLord,
+        varsheshwara: vp.varsheshwara,
         varaPati: vp.varaPati,
         plainSummary: `For age ${vp.completedAge} (${vp.targetYear}), Varsha Lagna rises in ${vp.varshaLagnaSign} with Muntha in ${vp.munthaSign} (Annual House ${vp.munthaHouseInVarsha}): ${MUNTHA_HOUSE_THEMES[vp.munthaHouseInVarsha] ?? ''}`,
+        sahams: vp.sahamsList?.slice(0, 10),
       };
     } catch {
       varshaphalSummary = null;

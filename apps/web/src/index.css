@@ -34,8 +34,24 @@ button {
   font-family: inherit;
   cursor: pointer;
   border: none;
-  outline: none;
   background: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Glassmorphism & Card Styles */
@@ -262,6 +278,10 @@ button {
 
 .mobile-bottom-nav {
   display: none;
+}
+
+.mobile-only-inline {
+  display: none !important;
 }
 
 .ask-ai-cta {

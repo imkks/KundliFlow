@@ -38,6 +38,9 @@ export * from './natal/upagrahas.js';
 export * from './natal/arudha.js';
 export * from './natal/varshaphal.js';
 export * from './natal/ashtakoota.js';
+export * from './natal/special_lagnas.js';
 export * from './muhurta/index.js';
 export * from './longevity/ayurdaya.js';
+export * from './natal/navatara.js';
+export * from './natal/sahams.js';
 

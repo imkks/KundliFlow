@@ -183,6 +183,7 @@ export function createApiServer() {
         natal.lagna?.signIndex ?? 0,
         m.signIndex,
         ashtakvarga.bhinna,
+        ashtakvarga.prastara,
       );
       const avakahada = computeAvakahada(m.nakshatraIndex, m.signIndex);
       const localDow = new Date(`${profile.birthDate}T12:00:00Z`).getUTCDay();
@@ -255,6 +256,7 @@ export function createApiServer() {
         level1.natal.lagna?.signIndex ?? 0,
         level1.natal.grahas.moon.signIndex,
         av.bhinna,
+        av.prastara,
       );
     }
 

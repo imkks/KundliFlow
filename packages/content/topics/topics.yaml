@@ -157,3 +157,51 @@ topics:
       - { path: /periods/current, weight: 2 }
     timing: { activate_houses: [9, 12, 5] }
     sensitive: false
+
+  - id: children_progeny
+    description: "Children, progeny prospects, conception windows, creativity, and lineage."
+    themes: [education_children, luck_dharma]
+    houses: [5, 9, 6]
+    karakas: [jupiter]
+    vargas: [d7]
+    checklist:
+      - { path: /houses/5, weight: 3 }
+      - { path: /houses/5/lord, weight: 3 }
+      - { path: /planets/jupiter, weight: 3 }
+      - { path: /vargas/d7/houses/5, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=jupiter,saturn, weight: 2 }
+    timing: { activate_houses: [5, 9] }
+    sensitive: false
+
+  - id: travel_relocation
+    description: "Foreign travel, long distance journeys, relocation, immigration, and residence change."
+    themes: [losses_retreat, luck_dharma, partnership]
+    houses: [12, 9, 7, 3, 4]
+    karakas: [rahu, moon, saturn]
+    vargas: [d4, d9, d12]
+    checklist:
+      - { path: /houses/12, weight: 3 }
+      - { path: /houses/9, weight: 3 }
+      - { path: /houses/7, weight: 2 }
+      - { path: /planets/rahu, weight: 2 }
+      - { path: /planets/moon, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+      - { path: /transits/now?planets=saturn,rahu, weight: 2 }
+    timing: { activate_houses: [12, 9, 7] }
+    sensitive: false
+
+  - id: disputes_litigation
+    description: "Court cases, legal disputes, adversaries, conflicts, debts, and resolution."
+    themes: [health_routine, transformation_secrets]
+    houses: [6, 8, 10]
+    karakas: [mars, saturn, rahu]
+    vargas: [d6]
+    checklist:
+      - { path: /houses/6, weight: 3 }
+      - { path: /houses/6/lord, weight: 3 }
+      - { path: /planets/mars, weight: 2 }
+      - { path: /planets/saturn, weight: 2 }
+      - { path: /periods/current, weight: 3 }
+    timing: { activate_houses: [6, 8, 10] }
+    sensitive: false

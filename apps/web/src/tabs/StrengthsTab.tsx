@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { HelpCircle, ChevronDown, ChevronRight, Crown, Sparkles } from 'lucide-react';
 import {
   computeCharaKarakas,
+  computeChartVaisheshikamsa,
   degToDms,
   type NatalChart,
   type AvakahadaDetails,
@@ -25,7 +26,7 @@ interface StrengthsTabProps {
   onOpenLlmDossier: () => void;
 }
 
-type StrengthsSubMode = 'yogas' | 'shadbala' | 'ashtakvarga' | 'karakas';
+type StrengthsSubMode = 'yogas' | 'shadbala' | 'ashtakvarga' | 'karakas' | 'vargas';
 
 export const StrengthsTab: React.FC<StrengthsTabProps> = ({
   natalChart,
@@ -49,6 +50,14 @@ export const StrengthsTab: React.FC<StrengthsTabProps> = ({
   const strengthsSummary = reading?.strengths;
   const specialsSummary = reading?.specials;
 
+  const vaisheshikamsaData = useMemo(() => {
+    try {
+      return computeChartVaisheshikamsa(natalChart);
+    } catch {
+      return {};
+    }
+  }, [natalChart]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Sub-mode Switcher */}
@@ -69,7 +78,8 @@ export const StrengthsTab: React.FC<StrengthsTabProps> = ({
               { id: 'yogas', label: `Yogas & Doshas (${activeYogas.length + activeDoshas.length} Active)` },
               { id: 'shadbala', label: 'Shadbala & Avasthas' },
               { id: 'ashtakvarga', label: 'Ashtakvarga & Friendship' },
-              { id: 'karakas', label: 'Karakas, Vargas & Guardrails' },
+              { id: 'karakas', label: 'Karakas & Arudhas' },
+              { id: 'vargas', label: 'Vaisheshikamsa & Pushkara' },
             ] as const
           ).map((m) => (
             <button
@@ -638,6 +648,124 @@ export const StrengthsTab: React.FC<StrengthsTabProps> = ({
                   <div><strong>Ghatak Lagna:</strong> {specialsSummary.ghatak.badLagna}</div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. VAISHESHIKAMSA & PUSHKARA GRACE */}
+      {subMode === 'vargas' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Card 1: Vaisheshikamsa (10-Varga Dignity Leaderboard) */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Crown size={16} style={{ color: 'var(--gold)' }} />
+                Vaisheshikamsa (10-Varga Royal Dignity Leaderboard)
+              </h3>
+              <span className="teal-badge" style={{ fontSize: 11 }}>Parashara Dasavarga • PVR Rao Ch. 6</span>
+            </div>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+              A planet's true capacity to manifest lasting status, wealth, and authority is evaluated across the 10 divisional charts (<strong>D1, D2, D3, D7, D9, D10, D12, D16, D30, D60</strong>). Count of own, exalted, or moolatrikona signs determines its classical Vaisheshikamsa rank (Parijata to Sreedhama).
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
+              {Object.entries(vaisheshikamsaData).map(([key, item]) => {
+                const isHigh = item.vargaCount >= 4;
+                const isMid = item.vargaCount >= 2;
+                return (
+                  <div
+                    key={key}
+                    style={{
+                      padding: 12,
+                      borderRadius: 10,
+                      background: 'var(--surface-alt)',
+                      border: isHigh ? '1px solid var(--gold)' : isMid ? '1px solid var(--teal)' : '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 700, textTransform: 'capitalize', color: 'var(--text-main)', fontSize: 13 }}>
+                        {key}
+                      </span>
+                      {item.tierName && (
+                        <span className={isHigh ? 'gold-badge' : isMid ? 'teal-badge' : 'badge'} style={{ fontSize: 10.5 }}>
+                          {item.tierName}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      Dignified in {item.vargaCount}/10 Vargas {item.dignifiedVargas.length ? `(${item.dignifiedVargas.join(', ')})` : ''}
+                    </div>
+                    {item.vargottama && (
+                      <div style={{ fontSize: 11, color: 'var(--teal)', fontWeight: 600 }}>
+                        ✦ Vargottama (same sign in D1 &amp; D9)
+                      </div>
+                    )}
+                    {item.summary && (
+                      <div style={{ fontSize: 11.5, color: 'var(--text-main)', marginTop: 2, lineHeight: 1.35 }}>
+                        {item.summary}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Card 2: Pushkara Navamsha & Pushkara Bhaga (Nectar of Recovery) */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Sparkles size={16} style={{ color: 'var(--amber)' }} />
+                Pushkara Navamsha &amp; Pushkara Bhaga (The Healing Degrees)
+              </h3>
+              <span className="gold-badge" style={{ fontSize: 11 }}>Jataka Parijata • Dr. K.S. Charak</span>
+            </div>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+              The 24 Pushkara Navamshas and exact Pushkara Bhagas in the zodiac are governed exclusively by natural benefics (Moon, Mercury, Venus, Jupiter). Any planet situated here gains extraordinary regenerative healing (Amrita) and resilience, turning even debilitated or stressed placements into sources of turnaround.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
+              {Object.entries(vaisheshikamsaData).map(([key, item]) => {
+                const p = item.pushkara;
+                const isSpecial = p.isPushkaraNavamsha || p.isPushkaraBhaga;
+                return (
+                  <div
+                    key={key}
+                    style={{
+                      padding: 12,
+                      borderRadius: 10,
+                      background: 'var(--surface-alt)',
+                      border: p.isPushkaraBhaga ? '1px solid var(--gold)' : p.isPushkaraNavamsha ? '1px solid var(--teal)' : '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 700, textTransform: 'capitalize', color: 'var(--text-main)', fontSize: 13 }}>
+                        {key}
+                      </span>
+                      {isSpecial ? (
+                        <span className={p.isPushkaraBhaga ? 'gold-badge' : 'teal-badge'} style={{ fontSize: 10.5 }}>
+                          {p.isPushkaraBhaga ? 'Pushkara Bhaga' : 'Pushkara Navamsha'}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Standard</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      D9 Navamsha: {p.navamshaSign} (Lord {p.navamshaLord}) • {p.degInSign.toFixed(2)}°
+                    </div>
+                    <div style={{ fontSize: 11.5, color: isSpecial ? 'var(--text-main)' : 'var(--text-muted)', lineHeight: 1.35 }}>
+                      {p.description}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

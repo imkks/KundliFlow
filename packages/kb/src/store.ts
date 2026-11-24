@@ -107,11 +107,14 @@ function expandQueryTokens(rawQuery: string): string[] {
 }
 
 const TOPIC_KEYWORDS: Record<string, string[]> = {
-  home_family: ['home', 'house', 'family', 'mother', 'property', 'real estate', 'peace', 'living', 'domestic', 'relocat'],
+  home_family: ['home', 'house', 'family', 'mother', 'property', 'real estate', 'peace', 'living', 'domestic'],
   career: ['career', 'job', 'work', 'profession', 'promotion', 'boss', 'business', 'status', 'office'],
   money: ['money', 'wealth', 'income', 'salary', 'finance', 'saving', 'rich', 'debt', 'cash'],
   relationships: ['marriage', 'partner', 'spouse', 'love', 'relationship', 'wife', 'husband', 'dating'],
-  education: ['study', 'education', 'exam', 'college', 'degree', 'learn', 'school', 'children', 'child'],
+  education: ['study', 'education', 'exam', 'college', 'degree', 'learn', 'school'],
+  children_progeny: ['child', 'children', 'progeny', 'kids', 'son', 'daughter', 'baby', 'conception', 'pregnancy'],
+  travel_relocation: ['travel', 'relocat', 'foreign', 'abroad', 'visa', 'settle abroad', 'moving country', 'journey', 'immigration'],
+  disputes_litigation: ['dispute', 'litigation', 'court', 'lawsuit', 'legal', 'enemy', 'enemies', 'conflict', 'adversary'],
   health_routine: ['health', 'sick', 'ill', 'disease', 'routine', 'stress', 'fitness', 'sleep', 'body'],
   self_personality: ['self', 'personality', 'who am i', 'nature', 'temperament', 'strength', 'weakness'],
   year_ahead: ['year', '2026', '2027', 'ahead', 'upcoming', 'forecast', 'next 12'],

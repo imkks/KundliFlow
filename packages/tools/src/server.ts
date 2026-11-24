@@ -503,14 +503,99 @@ export class ToolServer {
   }
 
   inspect_strengths(
-    kind: 'shadbala' | 'bhavabala' | 'ashtakvarga' | 'avasthas' | 'friendship',
+    kind:
+      | 'shadbala'
+      | 'bhavabala'
+      | 'ashtakvarga'
+      | 'avasthas'
+      | 'friendship'
+      | 'vaisheshikamsa'
+      | 'pushkara'
+      | 'navatara'
+      | 'special_nakshatras'
+      | 'kakshya'
+      | 'vedha',
     target?: string,
   ): ToolResult {
+    const items: ToolItem[] = [];
+    const tLower = target?.toLowerCase();
+
+    if (kind === 'vaisheshikamsa') {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'vaisheshikamsa');
+      const list = tLower ? facts.filter((f) => f.subject === tLower || f.args.graha === tLower) : facts;
+      for (const f of list) {
+        const text = capWords(
+          `${String(f.args.graha).toUpperCase()}: ${f.args.tierName} (${f.args.vargaCount}/10 Vargas: ${f.args.dignifiedVargas})${f.args.vargottama ? ' [Vargottama]' : ''}.`,
+          42,
+        );
+        items.push({ id: f.id, kind: 'strength', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+      return this.paginate(items, 12);
+    }
+
+    if (kind === 'pushkara') {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'pushkara');
+      const list = tLower ? facts.filter((f) => f.subject === tLower || f.args.graha === tLower) : facts;
+      for (const f of list) {
+        const text = capWords(
+          `${String(f.args.graha).toUpperCase()}: ${f.args.description}.`,
+          42,
+        );
+        items.push({ id: f.id, kind: 'strength', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+      return this.paginate(items, 12);
+    }
+
+    if (kind === 'navatara') {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'navatara');
+      const list = tLower ? facts.filter((f) => f.subject === tLower || f.args.graha === tLower) : facts;
+      for (const f of list) {
+        const text = capWords(
+          `${String(f.subject).toUpperCase()}: ${f.args.taraLabel} Tara (${f.args.englishLabel}) in ${f.args.paryaya} cycle — ${f.args.category}.`,
+          42,
+        );
+        items.push({ id: f.id, kind: 'strength', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+      return this.paginate(items, 12);
+    }
+
+    if (kind === 'special_nakshatras') {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'special_nakshatra');
+      const list = tLower ? facts.filter((f) => f.subject === tLower || f.args.key === tLower) : facts;
+      for (const f of list) {
+        const occ = f.args.occupants ? ` [Occupied by: ${f.args.occupants}]` : '';
+        const text = capWords(
+          `${f.args.name} (${f.args.sanskritName}): ${String(f.args.nakshatra).toUpperCase()} (#${f.value} from Janma) — ${f.args.domain}${occ}.`,
+          42,
+        );
+        items.push({ id: f.id, kind: 'strength', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+      return this.paginate(items, 12);
+    }
+
+    if (kind === 'kakshya') {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'kakshya');
+      const list = tLower ? facts.filter((f) => f.subject === tLower || f.args.planet === tLower) : facts;
+      for (const f of list) {
+        const text = capWords(String(f.args.explanation ?? `${f.subject} Kakshya`), 42);
+        items.push({ id: f.id, kind: 'strength', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+      return this.paginate(items, 12);
+    }
+
+    if (kind === 'vedha') {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'vedha');
+      const list = tLower ? facts.filter((f) => f.subject === tLower || f.args.planet === tLower) : facts;
+      for (const f of list) {
+        const text = capWords(String(f.args.explanation ?? `${f.subject} Vedha`), 42);
+        items.push({ id: f.id, kind: 'strength', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+      return this.paginate(items, 12);
+    }
+
     if (!this.engineSession) {
       return this.read(kind === 'bhavabala' || kind === 'ashtakvarga' ? '/strength/houses' : '/strength/planets');
     }
-    const items: ToolItem[] = [];
-    const tLower = target?.toLowerCase();
 
     if (kind === 'shadbala') {
       const sb = this.engineSession.getShadbala();
@@ -583,7 +668,7 @@ export class ToolServer {
   }
 
   inspect_natal_lore(
-    kind: 'yogas' | 'doshas' | 'aspects' | 'karakas' | 'avakahada' | 'ghatak' | 'upagrahas' | 'arudha',
+    kind: 'yogas' | 'doshas' | 'aspects' | 'karakas' | 'avakahada' | 'ghatak' | 'upagrahas' | 'arudha' | 'sahams',
   ): ToolResult {
     if (!this.engineSession) return this.paginate([], 8);
     const items: ToolItem[] = [];
@@ -658,8 +743,81 @@ export class ToolServer {
         );
         items.push({ id, kind: 'arudha', text, evidence: [id], tokens: estimateTokens(text) });
       }
+    } else if (kind === 'sahams') {
+      const sahamsList = this.engineSession.getSahams().sahamsList;
+      for (const s of sahamsList) {
+        const id = `saham.${s.id}`;
+        const text = capWords(
+          `${s.name} Saham (${s.sanskritName}) at ${s.formatted} in H${s.houseFromLagna}: Lord ${s.lord.toUpperCase()} [${s.category}, ${s.fructification} fructification]. ${s.assessment}.`,
+          42,
+        );
+        items.push({ id, kind: 'saham', text, evidence: [id], tokens: estimateTokens(text) });
+      }
     }
     return this.paginate(items, 12);
+  }
+
+  inspect_arudhas(target?: string): ToolResult {
+    const items: ToolItem[] = [];
+    if (this.engineSession) {
+      const padas = this.engineSession.getArudhaPadas();
+      const list = target ? padas.filter((a) => a.code.toLowerCase() === target.toLowerCase()) : padas;
+      for (const a of list) {
+        const id = `arudha.${a.code.toLowerCase()}`;
+        const text = capWords(
+          `${a.code} (${a.name}): in ${a.sign} (H${a.houseFromLagna} from Lagna), lord ${a.lord}${a.exceptionApplied ? ' [1st/7th exception applied]' : ''}.`,
+          42,
+        );
+        items.push({ id, kind: 'arudha', text, evidence: [id], tokens: estimateTokens(text) });
+      }
+    } else {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'arudha');
+      const list = target
+        ? facts.filter((f) => f.id === `arudha.${target.toLowerCase()}` || String(f.args.code).toLowerCase() === target.toLowerCase())
+        : facts;
+      for (const f of list) {
+        const text = capWords(
+          `${f.args.code} (${f.args.name}): in ${f.args.sign} (H${f.args.houseFromLagna} from Lagna), lord ${f.args.lord}${f.args.exceptionApplied ? ' [1st/7th exception applied]' : ''}.`,
+          42,
+        );
+        items.push({ id: f.id, kind: 'arudha', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+    }
+    return this.paginate(items, 12);
+  }
+
+  inspect_karakas(target?: string): ToolResult {
+    const items: ToolItem[] = [];
+    if (this.engineSession) {
+      const karakas = this.engineSession.getKarakas();
+      const list = target
+        ? karakas.filter(
+            (k) =>
+              k.karaka.toLowerCase() === target.toLowerCase() ||
+              k.graha.toLowerCase() === target.toLowerCase(),
+          )
+        : karakas;
+      for (const k of list) {
+        const id = `karaka.${k.karaka.toLowerCase()}`;
+        const text = capWords(`${k.karaka} (${k.role}): ${k.graha} at ${k.degInSign.toFixed(2)}° in ${k.sign}.`, 42);
+        items.push({ id, kind: 'karaka', text, evidence: [id], tokens: estimateTokens(text) });
+      }
+    } else {
+      const facts = this.ws.factSet.facts.filter((f) => f.type === 'karaka');
+      const list = target
+        ? facts.filter(
+            (f) =>
+              f.id === `karaka.${target.toLowerCase()}` ||
+              String(f.args.karaka).toLowerCase() === target.toLowerCase() ||
+              String(f.subject).toLowerCase() === target.toLowerCase(),
+          )
+        : facts;
+      for (const f of list) {
+        const text = capWords(`${f.args.karaka}: ${f.subject} in ${f.args.sign} (H${f.args.house} from Lagna).`, 42);
+        items.push({ id: f.id, kind: 'karaka', text, evidence: [f.id], tokens: estimateTokens(text) });
+      }
+    }
+    return this.paginate(items, 10);
   }
 
   inspect_dashas(system: 'vimshottari' | 'yogini' | 'chara', fromIso?: string, toIso?: string): ToolResult {
@@ -931,6 +1089,14 @@ export class ToolServer {
           42,
         );
         return { id, kind: 'varshaphal', text, evidence: [id], tokens: estimateTokens(text) };
+      }),
+      ...(v.sahamsList ?? []).map((s) => {
+        const id = `varshaphal.${y}.saham.${s.id}`;
+        const text = capWords(
+          `Varshaphal ${y} Saham ${s.name} (${s.sanskritName}) at ${s.formatted} in H${s.houseFromLagna}: Lord ${s.lord.toUpperCase()} (HB ${s.lordHarshaBala ?? 0}/20, ${s.fructification} fructification). ${s.assessment}.`,
+          42,
+        );
+        return { id, kind: 'saham', text, evidence: [id], tokens: estimateTokens(text) };
       }),
     ];
     return this.paginate(items, 12);

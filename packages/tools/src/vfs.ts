@@ -41,6 +41,16 @@ export function listVfsPath(
       makeItem('/topics', 'dir', `Topic maps (${kb.topics.length} available).`),
       makeItem('/houses', 'dir', '12 houses with signs, lords, occupants, and findings.'),
       makeItem('/planets', 'dir', '9 grahas with placements, dignities, and findings.'),
+      makeItem('/arudhas', 'dir', '12 Jaimini Arudha Padas (AL, UL, A10, etc.) representing the perception/Maya layer.'),
+      makeItem('/karakas', 'dir', '7 Jaimini Chara Karakas (AK Atmakaraka, AmK Amatyakaraka, DK Darakaraka, etc.).'),
+      makeItem('/special_lagnas', 'dir', 'Special Lagnas: Hora Lagna (wealth), Ghati Lagna (power), Sree Lagna, Indu Lagna.'),
+      makeItem('/vaisheshikamsa', 'dir', 'Dasavarga Amsabala (Parijata to Sreedhama) and Vargottama dignity.'),
+      makeItem('/pushkara', 'dir', 'Pushkara Navamsha and Pushkara Bhaga healing/amrita degrees.'),
+      makeItem('/navatara', 'dir', '9 Taras (Janma, Sampat, Vipat, Kshema, Sadhana, Naidhana, Mitra, etc.) from natal Moon.'),
+      makeItem('/special_nakshatras', 'dir', '11 Special Life-Department Nakshatras (Karma, Manasa, Abhisheka, Desha, Vainashika, etc.).'),
+      makeItem('/kakshya', 'dir', 'Ashtakavarga Kakshya (3°45\' transit subdivisions) & daily benefic points.'),
+      makeItem('/vedha', 'dir', 'Gochara Vedha transit obstructions with Father-Son exemptions (Sun-Saturn, Moon-Mercury).'),
+      makeItem('/sahams', 'dir', '36 Tajika Sahams (sensitive points: Punya, Vidya, Yasas, Artha, Karma, Vivaha, Rajya, etc.).'),
       makeItem('/periods', 'dir', 'Vimshottari dasha periods and current activations.'),
       makeItem('/transits', 'dir', 'Current planetary transits and Ashtakvarga bindus.'),
       makeItem('/strength', 'dir', 'Shadbala, Bhava Bala, and SAV bindu tables.'),
@@ -379,6 +389,142 @@ export function readVfsPath(
           evidence: [f.id],
         }),
       );
+  }
+
+  // /arudhas or /arudhas/:code
+  const arudhaMatch = path.match(/^\/arudhas(?:\/([a-z0-9]+))?$/i);
+  if (arudhaMatch) {
+    const code = arudhaMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'arudha');
+    const filtered = code ? facts.filter((f) => f.id === `arudha.${code}` || String(f.args.code).toLowerCase() === code) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'arudha', `${f.args.code} (${f.args.name}): in ${f.args.sign} (H${f.args.houseFromLagna} from Lagna), ruled by ${f.args.lord}${f.args.exceptionApplied ? ' [1st/7th exception applied]' : ''}.`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /karakas or /karakas/:role
+  const karakaMatch = path.match(/^\/karakas(?:\/([a-z]+))?$/i);
+  if (karakaMatch) {
+    const role = karakaMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'karaka');
+    const filtered = role ? facts.filter((f) => f.id === `karaka.${role}` || String(f.args.karaka).toLowerCase() === role) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'karaka', `${f.args.karaka} (${f.subject}): in ${f.args.sign} (H${f.args.house} from Lagna).`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /special_lagnas or /special_lagnas/:id
+  const specialLagnaMatch = path.match(/^\/special_lagnas(?:\/([a-z]+))?$/i);
+  if (specialLagnaMatch) {
+    const id = specialLagnaMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'special_lagna');
+    const filtered = id ? facts.filter((f) => f.id === `special_lagna.${id}` || String(f.args.code).toLowerCase() === id) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'special_lagna', `${f.args.name} (${f.args.code}): in ${f.args.sign} (${f.args.degInSign}°), H${f.args.houseFromLagna} from Lagna — ${f.args.signification}.`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /vaisheshikamsa or /vaisheshikamsa/:planet
+  const vkMatch = path.match(/^\/vaisheshikamsa(?:\/([a-z]+))?$/i);
+  if (vkMatch) {
+    const planet = vkMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'vaisheshikamsa');
+    const filtered = planet ? facts.filter((f) => f.subject === planet || f.args.graha === planet) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'vaisheshikamsa', `${String(f.args.graha).toUpperCase()}: ${f.args.tierName} (${f.args.vargaCount}/10 Vargas: ${f.args.dignifiedVargas})${f.args.vargottama ? ' [Vargottama]' : ''}.`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /pushkara or /pushkara/:planet
+  const pushkaraMatch = path.match(/^\/pushkara(?:\/([a-z]+))?$/i);
+  if (pushkaraMatch) {
+    const planet = pushkaraMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'pushkara');
+    const filtered = planet ? facts.filter((f) => f.subject === planet || f.args.graha === planet) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'pushkara', `${String(f.args.graha).toUpperCase()}: ${f.args.description}.`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /navatara or /navatara/:planet
+  const navataraMatch = path.match(/^\/navatara(?:\/([a-z]+))?$/i);
+  if (navataraMatch) {
+    const planet = navataraMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'navatara');
+    const filtered = planet ? facts.filter((f) => f.subject === planet || f.args.graha === planet) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'navatara', `${String(f.subject).toUpperCase()}: ${f.args.taraLabel} Tara (${f.args.englishLabel}) in ${f.args.paryaya} cycle — ${f.args.category}.`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /special_nakshatras or /special_nakshatras/:key
+  const specialNakMatch = path.match(/^\/special_nakshatras(?:\/([a-z]+))?$/i);
+  if (specialNakMatch) {
+    const key = specialNakMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'special_nakshatra');
+    const filtered = key ? facts.filter((f) => f.subject === key || f.args.key === key) : facts;
+    return filtered.map((f) => {
+      const occ = f.args.occupants ? ` [Occupied by: ${f.args.occupants}]` : '';
+      return makeItem(f.id, 'special_nakshatra', `${f.args.name} (${f.args.sanskritName}): ${String(f.args.nakshatra).toUpperCase()} (#${f.value} from Janma) — ${f.args.domain}${occ}.`, {
+        evidence: [f.id],
+      });
+    });
+  }
+
+  // /kakshya or /kakshya/:planet
+  const kakshyaMatch = path.match(/^\/kakshya(?:\/([a-z]+))?$/i);
+  if (kakshyaMatch) {
+    const planet = kakshyaMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'kakshya');
+    const filtered = planet ? facts.filter((f) => f.subject === planet || f.args.planet === planet) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'kakshya', `${f.args.explanation}`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /vedha or /vedha/:planet
+  const vedhaMatch = path.match(/^\/vedha(?:\/([a-z]+))?$/i);
+  if (vedhaMatch) {
+    const planet = vedhaMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'vedha');
+    const filtered = planet ? facts.filter((f) => f.subject === planet || f.args.planet === planet) : facts;
+    return filtered.map((f) =>
+      makeItem(f.id, 'vedha', `${f.args.explanation}`, {
+        evidence: [f.id],
+      }),
+    );
+  }
+
+  // /sahams or /sahams/:id
+  const sahamMatch = path.match(/^\/sahams(?:\/([a-z_]+))?$/i);
+  if (sahamMatch) {
+    const id = sahamMatch[1]?.toLowerCase();
+    const facts = ws.factSet.facts.filter((f) => f.type === 'saham');
+    const filtered = id ? facts.filter((f) => f.subject === id || f.args.id === id) : facts;
+    return filtered.map((f) =>
+      makeItem(
+        f.id,
+        'saham',
+        `${f.args.name} Saham (${f.args.sanskritName}) at ${f.args.formatted} in H${f.args.house} (${f.args.sign}): Lord ${String(f.args.lord).toUpperCase()} [${f.args.category}, ${f.args.fructification} fructification]. ${f.args.assessment}.`,
+        {
+          evidence: [f.id],
+        },
+      ),
+    );
   }
 
   return [];

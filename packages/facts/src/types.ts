@@ -5,6 +5,7 @@ import type {
   VimshottariDashaTree,
   TransitOverview,
   GrahaAvasthas,
+  VarshaphalResult,
 } from '@astro/engine';
 
 export type FactType =
@@ -18,7 +19,18 @@ export type FactType =
   | 'transit'
   | 'varga'
   | 'strength'
-  | 'avastha';
+  | 'avastha'
+  | 'arudha'
+  | 'karaka'
+  | 'special_lagna'
+  | 'upagraha'
+  | 'vaisheshikamsa'
+  | 'pushkara'
+  | 'navatara'
+  | 'special_nakshatra'
+  | 'kakshya'
+  | 'vedha'
+  | 'saham';
 
 export type Fact = {
   id: string; // readable and stable, e.g. placement.rahu, conj.rahu.venus, lord.house4
@@ -30,7 +42,14 @@ export type Fact = {
   sourceModule: string; // engine function that produced it
 };
 
-export type EdgeRel = 'evidence_of' | 'conjunct' | 'aspects' | 'lord_of' | 'in_house';
+export type EdgeRel =
+  | 'evidence_of'
+  | 'conjunct'
+  | 'aspects'
+  | 'lord_of'
+  | 'in_house'
+  | 'arudha_of'
+  | 'karaka_of';
 
 export type Edge = {
   src: string;
@@ -71,6 +90,7 @@ export interface ChartWorkspaceInput {
   dashas?: VimshottariDashaTree | null;
   transits?: TransitOverview | null;
   avasthas?: Record<string, GrahaAvasthas> | null;
+  varshaphal?: VarshaphalResult | null;
   options?: FactEmitterOptions;
 }
 

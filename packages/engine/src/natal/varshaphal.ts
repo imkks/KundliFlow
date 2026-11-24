@@ -3,6 +3,7 @@ import { angleDiff, norm360, SIGNS } from '../angles.js';
 import type { EphemerisProvider } from '../ephemeris/types.js';
 import { computePositions, houseFromSign, type NatalChart } from './positions.js';
 import { SIGN_LORDS, type GrahaDetail } from './types.js';
+import { computeAnnualSahams, type SahamResult } from './sahams.js';
 
 const WEEKDAY_LORDS = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
 
@@ -31,6 +32,9 @@ export interface VarshaphalResult {
   varsheshwara: string;
   varsheshwaraReason: string;
   harshaBala: Record<string, number>;
+  isDayReturn: boolean;
+  sahams: Record<string, SahamResult>;
+  sahamsList: SahamResult[];
 }
 
 // Tajika Tri-Rasheesha (Triplicity Rulers) for Day / Night
@@ -232,5 +236,7 @@ export function computeVarshaphal(
     varsheshwara,
     varsheshwaraReason: reason,
     harshaBala,
+    isDayReturn,
+    ...computeAnnualSahams(annualChart, isDayReturn, harshaBala),
   };
 }

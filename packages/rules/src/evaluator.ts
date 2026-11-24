@@ -104,6 +104,24 @@ function matchPredicate(pred: FactPredicate, ctx: EvalContext): boolean {
       }
     }
 
+    if (pred.code !== undefined && f.args.code !== pred.code && f.subject !== pred.code) continue;
+    if (pred.karaka !== undefined && f.args.karaka !== pred.karaka && f.args.charaKaraka !== pred.karaka) continue;
+    if (pred.rel_house !== undefined && f.args.houseFromLagna !== pred.rel_house && f.value !== pred.rel_house) continue;
+    if (pred.tier !== undefined && f.args.tier !== pred.tier) continue;
+    if (pred.vargottama !== undefined && f.args.vargottama !== pred.vargottama) continue;
+    if (pred.pushkara_navamsha !== undefined && f.args.isPushkaraNavamsha !== pred.pushkara_navamsha) continue;
+    if (pred.pushkara_bhaga !== undefined && f.args.isPushkaraBhaga !== pred.pushkara_bhaga) continue;
+    if (pred.tara !== undefined && f.args.tara !== pred.tara) continue;
+    if (pred.special_nakshatra !== undefined && f.args.key !== pred.special_nakshatra && f.subject !== pred.special_nakshatra) continue;
+    if (pred.paryaya !== undefined && f.args.paryaya !== pred.paryaya) continue;
+    if (pred.is_benefic !== undefined && f.args.isBenefic !== pred.is_benefic) continue;
+    if (pred.kakshya_lord !== undefined && f.args.kakshyaLord !== pred.kakshya_lord) continue;
+    if (pred.is_obstructed !== undefined && f.args.isObstructed !== pred.is_obstructed) continue;
+    if (pred.vedha_status !== undefined && f.args.netStatus !== pred.vedha_status && f.args.vedhaStatus !== pred.vedha_status) continue;
+    if (pred.saham_id !== undefined && f.args.id !== pred.saham_id && f.subject !== pred.saham_id) continue;
+    if (pred.saham_category !== undefined && f.args.category !== pred.saham_category) continue;
+    if (pred.fructification !== undefined && f.args.fructification !== pred.fructification) continue;
+
     if (pred.state) {
       const stateVal = String(f.args.state ?? f.value ?? '');
       if (!pred.state.includes(stateVal)) continue;
@@ -172,6 +190,12 @@ function inferPrimaryHouse(rule: Rule, evidence: string[], factById: Map<string,
   for (const eid of evidence) {
     const f = factById.get(eid);
     if (!f) continue;
+    if (f.type === 'arudha' && typeof f.args.houseFromLagna === 'number') {
+      return f.args.houseFromLagna;
+    }
+    if (f.type === 'special_lagna' && typeof f.args.houseFromLagna === 'number') {
+      return f.args.houseFromLagna;
+    }
     if (f.type === 'lordship' && typeof f.args.placedHouseLagna === 'number') {
       return f.args.placedHouseLagna;
     }
@@ -187,6 +211,7 @@ function inferPrimaryPlanet(evidence: string[], factById: Map<string, Fact>): st
     const f = factById.get(eid);
     if (!f) continue;
     if (f.type === 'lordship' && typeof f.value === 'string') return f.value;
+    if (f.type === 'saham' && typeof f.args.lord === 'string') return f.args.lord;
     if (typeof f.args.planet === 'string') return f.args.planet;
     if (typeof f.args.planet1 === 'string') return f.args.planet1;
   }

@@ -11,6 +11,17 @@ export const RuleKindSchema = z.enum([
   'aspect',
   'yoga',
   'dasha',
+  'arudha',
+  'argala',
+  'karaka',
+  'special_lagna',
+  'vaisheshikamsa',
+  'pushkara',
+  'navatara',
+  'special_nakshatra',
+  'kakshya',
+  'vedha',
+  'saham',
 ]);
 export type RuleKind = z.infer<typeof RuleKindSchema>;
 
@@ -32,6 +43,23 @@ export const FactPredicateSchema = z.object({
   same_sign: z.boolean().optional(),
   lord_of: z.number().int().min(1).max(12).optional(),
   subject_from: z.enum(['lord']).optional(),
+  code: z.string().optional(),
+  karaka: z.string().optional(),
+  rel_house: z.number().int().min(1).max(12).optional(),
+  tier: z.string().optional(),
+  vargottama: z.boolean().optional(),
+  pushkara_navamsha: z.boolean().optional(),
+  pushkara_bhaga: z.boolean().optional(),
+  tara: z.string().optional(),
+  special_nakshatra: z.string().optional(),
+  paryaya: z.string().optional(),
+  is_benefic: z.boolean().optional(),
+  kakshya_lord: z.string().optional(),
+  is_obstructed: z.boolean().optional(),
+  vedha_status: z.string().optional(),
+  saham_id: z.string().optional(),
+  saham_category: z.string().optional(),
+  fructification: z.string().optional(),
 });
 export type FactPredicate = z.infer<typeof FactPredicateSchema>;
 

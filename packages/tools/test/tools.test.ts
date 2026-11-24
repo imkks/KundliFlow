@@ -7,6 +7,7 @@ import {
   computeShadbala,
   computeAshtakvarga,
   computeVimshottariDashas,
+  computeTransits,
   type EphemerisProvider,
 } from '@astro/engine';
 import { buildChartWorkspace } from '@astro/facts';
@@ -64,11 +65,21 @@ describe('L3-M2: packages/tools VFS & ToolServer deterministic suite', () => {
       2,
     );
 
+    const transits = computeTransits(
+      eph,
+      res.resolved.julianDayUt,
+      natal.lagna?.signIndex ?? 0,
+      natal.grahas.moon.signIndex,
+      ashtakvarga.bhinna,
+      ashtakvarga.prastara,
+    );
+
     const ws = buildChartWorkspace({
       natal,
       shadbala,
       ashtakvarga,
       dashas,
+      transits,
       options: { referenceDateIso: '2026-11-18T00:00:00Z' },
     });
     const { rules, version } = loadRuleFile(SAMPLE_RULES_PATH);
@@ -107,10 +118,15 @@ describe('L3-M2: packages/tools VFS & ToolServer deterministic suite', () => {
       // Verify all EngineSession & DeepAgent synthesis tools execute without runtime errors
       expect(server.inspect_varga('D9').items.length).toBeGreaterThan(0);
       expect(server.inspect_kp_chalit().items.length).toBeGreaterThan(0);
-      for (const sk of ['shadbala', 'bhavabala', 'ashtakvarga', 'avasthas', 'friendship'] as const) {
+      for (const sk of ['shadbala', 'bhavabala', 'ashtakvarga', 'avasthas', 'friendship', 'vaisheshikamsa', 'pushkara', 'navatara', 'special_nakshatras', 'kakshya', 'vedha'] as const) {
         expect(server.inspect_strengths(sk).items.length).toBeGreaterThan(0);
       }
-      for (const lk of ['yogas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha'] as const) {
+      expect(server.read('/navatara').items.length).toBeGreaterThan(0);
+      expect(server.read('/special_nakshatras', 2, 20).items.length).toBe(11);
+      expect(server.read('/kakshya').items.length).toBeGreaterThan(0);
+      expect(server.read('/vedha').items.length).toBeGreaterThan(0);
+      expect(server.read('/sahams', 2, 20).items.length).toBeGreaterThan(0);
+      for (const lk of ['yogas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha', 'sahams'] as const) {
         expect(server.inspect_natal_lore(lk).items.length).toBeGreaterThan(0);
       }
       for (const dk of ['vimshottari', 'yogini', 'chara'] as const) {
@@ -141,11 +157,24 @@ describe('L3-M2: packages/tools VFS & ToolServer deterministic suite', () => {
       const conj = server.follow('placement.rahu', 'conjunct');
       expect(conj.items.some((i) => i.id === 'placement.venus')).toBe(true);
 
-      // 5. read /planets/moon & /periods/current
+      // 5. read /planets/moon & /periods/current & Jaimini/Special primitives
       const moon = server.read('/planets/moon');
       expect(moon.items.length).toBeGreaterThan(0);
       const periods = server.read('/periods/current');
       expect(periods.items.length).toBeGreaterThan(0);
+      const arudhas = server.read('/arudhas', 1, 20);
+      expect(arudhas.items.length).toBe(12);
+      expect(arudhas.items.some((i) => i.id === 'arudha.al')).toBe(true);
+      const karakas = server.read('/karakas', 1, 20);
+      expect(karakas.items.length).toBe(7);
+      expect(karakas.items.some((i) => i.id === 'karaka.ak')).toBe(true);
+      const specialLagnas = server.read('/special_lagnas', 1, 20);
+      expect(specialLagnas.items.length).toBe(6);
+      expect(specialLagnas.items.some((i) => i.id === 'special_lagna.hl')).toBe(true);
+      const vk = server.read('/vaisheshikamsa', 1, 20);
+      expect(vk.items.length).toBeGreaterThan(0);
+      const pk = server.read('/pushkara', 1, 20);
+      expect(pk.items.length).toBeGreaterThan(0);
 
       // 6. window_scan
       const windows = server.window_scan('home_family', '2026-11-18', '2027-11-18');

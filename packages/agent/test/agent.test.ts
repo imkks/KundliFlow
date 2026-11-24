@@ -210,4 +210,52 @@ describe('DA-M4: DeepAgent parallel tool_use, RAG & automatic observed evidence 
       ws.close();
     }
   });
+
+  it('supports inspect_arudhas and inspect_karakas with grounded verification', async () => {
+    const { ws, kb, findings, engineSession } = setupSampleChart();
+    try {
+      const mock = new MockLlmClient([
+        {
+          toolCalls: [
+            { id: 'tc1', name: 'inspect_arudhas', args: { target: 'AL' } },
+            { id: 'tc2', name: 'inspect_karakas', args: { target: 'AK' } },
+          ],
+        },
+        {
+          text: JSON.stringify({
+            responseType: 'chart_reading',
+            answer:
+              'Your Arudha Lagna (perceived public image) and Atmakaraka (soul purpose significator) show how public perception aligns with your internal karmic direction.',
+            because: [
+              {
+                claim: 'Arudha Lagna shapes public status while Atmakaraka governs soul lessons.',
+                evidenceIds: ['arudha.al', 'karaka.ak'],
+              },
+            ],
+            timing: [],
+            uncertainty: 'Perception and internal lessons evolve as maturity unfolds.',
+            reflect: 'How does your external career reputation match your personal sense of purpose?',
+            followUps: ['What does my Amatyakaraka (AmK) say about my career?'],
+          }),
+        },
+      ]);
+
+      const result = await runAgentQuery({
+        question: 'What is my public image and soul purpose?',
+        ws,
+        kb,
+        findings,
+        llm: mock,
+        engineSession,
+      });
+
+      expect(result.mode).toBe('level3_verified');
+      expect(result.observedEvidenceIds).toContain('arudha.al');
+      expect(result.observedEvidenceIds).toContain('karaka.ak');
+      expect(result.response.because[0]?.evidenceIds).toEqual(['arudha.al', 'karaka.ak']);
+    } finally {
+      kb.close();
+      ws.close();
+    }
+  });
 });

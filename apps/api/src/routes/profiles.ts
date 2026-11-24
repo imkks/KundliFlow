@@ -195,6 +195,7 @@ export function registerProfileRoutes(router: AppRouter, ctx: ServerContext) {
         snap!.level1.natal.lagna?.signIndex ?? 0,
         snap!.level1.natal.grahas.moon.signIndex,
         snap!.level1.ashtakvarga?.bhinna,
+        snap!.level1.ashtakvarga?.prastara,
       );
       const mv = buildMonth(eph, digest, dt.getUTCFullYear(), dt.getUTCMonth() + 1, tz, scoringOpts);
       const peakDays = [...mv.days].sort((a, b) => b.dayScore - a.dayScore).slice(0, 3);
@@ -260,6 +261,7 @@ export function registerProfileRoutes(router: AppRouter, ctx: ServerContext) {
         snap!.level1.natal.lagna?.signIndex ?? 0,
         snap!.level1.natal.grahas.moon.signIndex,
         snap!.level1.ashtakvarga?.bhinna,
+        snap!.level1.ashtakvarga?.prastara,
       );
       c.json({ year, month, selectedDate, monthData, yearData, transits });
     } catch (err: any) {

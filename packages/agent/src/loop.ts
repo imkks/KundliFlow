@@ -86,11 +86,11 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
   {
     name: 'inspect_strengths',
-    description: 'Inspect planetary/house strength engines: shadbala, bhavabala, ashtakvarga, avasthas, or friendship.',
+    description: 'Inspect planetary/house strength engines: shadbala, bhavabala, ashtakvarga, avasthas, friendship, vaisheshikamsa (10-varga dignity), pushkara, navatara (9-Tara cycle), special_nakshatras, kakshya (3°45\' transit bindu), or vedha (obstruction with father-son exemptions).',
     parameters: {
       type: 'object',
       properties: {
-        kind: { type: 'string', enum: ['shadbala', 'bhavabala', 'ashtakvarga', 'avasthas', 'friendship'] },
+        kind: { type: 'string', enum: ['shadbala', 'bhavabala', 'ashtakvarga', 'avasthas', 'friendship', 'vaisheshikamsa', 'pushkara', 'navatara', 'special_nakshatras', 'kakshya', 'vedha'] },
         target: { type: 'string' },
       },
       required: ['kind'],
@@ -98,13 +98,33 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
   {
     name: 'inspect_natal_lore',
-    description: 'Inspect detected classical yogas, doshas, mutual aspects, Jaimini Chara Karakas, Avakahada, Ghatak, Upagrahas, or Arudha Padas (AL, UL, A2..A11).',
+    description: 'Inspect detected classical yogas, doshas, mutual aspects, Jaimini Chara Karakas, Avakahada, Ghatak, Upagrahas, Arudha Padas, or 36 Tajika Sahams (Punya, Vidya, Yasas, Artha, Karma, Vivaha, Rajya).',
     parameters: {
       type: 'object',
       properties: {
-        kind: { type: 'string', enum: ['yogas', 'doshas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha'] },
+        kind: { type: 'string', enum: ['yogas', 'doshas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha', 'sahams'] },
       },
       required: ['kind'],
+    },
+  },
+  {
+    name: 'inspect_arudhas',
+    description: 'Inspect 12 Jaimini Arudha Padas (AL public image, UL marriage endurance, A10 career status, A11 gains). Shows the perception / Maya layer.',
+    parameters: {
+      type: 'object',
+      properties: {
+        target: { type: 'string', description: 'Optional code: AL, UL, A10, A11, A2, etc.' },
+      },
+    },
+  },
+  {
+    name: 'inspect_karakas',
+    description: 'Inspect 7 Jaimini Chara Karakas: AK (Atmakaraka/soul purpose), AmK (Amatyakaraka/career), DK (Darakaraka/spouse), PK (Putrakaraka/children), etc.',
+    parameters: {
+      type: 'object',
+      properties: {
+        target: { type: 'string', description: 'Optional role: AK, AmK, DK, PK, etc., or planet name' },
+      },
     },
   },
   {
@@ -288,6 +308,10 @@ function describeToolForUser(tc: NativeToolCall): string {
       };
       return labels[kind] ?? `Inspecting ${kind}`;
     }
+    case 'inspect_arudhas':
+      return a.target ? `Inspecting Arudha Pada ${String(a.target).toUpperCase()} (Maya / perceived layer)` : 'Inspecting Jaimini Arudha Padas (public perception vs reality)';
+    case 'inspect_karakas':
+      return a.target ? `Inspecting Chara Karaka ${String(a.target).toUpperCase()} (soul / functional significator)` : 'Inspecting 7 Jaimini Chara Karakas (soul purpose & drivers)';
     case 'inspect_strengths': {
       const kind = String(a.kind ?? 'shadbala');
       const labels: Record<string, string> = {
@@ -296,6 +320,12 @@ function describeToolForUser(tc: NativeToolCall): string {
         ashtakvarga: 'Checking Ashtakvarga bindu cushion (BAV/SAV)',
         avasthas: 'Checking planetary vitality & mood (Avasthas)',
         friendship: 'Checking 5-fold planetary friendship matrix',
+        vaisheshikamsa: 'Checking 10-divisional chart dignity (Vaisheshikamsa: Parijata to Sreedhama)',
+        pushkara: 'Checking Pushkara Navamsha & Pushkara Bhaga healing degrees',
+        navatara: 'Checking 9-Tara relationship from Moon (Sampat, Vipat, Sadhana, Naidhana, etc.)',
+        special_nakshatras: 'Checking 11 Special Life-Department Nakshatras (Karma, Manasa, Abhisheka, Desha, etc.)',
+        kakshya: "Checking Ashtakavarga Kakshya (3°45' transit slice) benefic points",
+        vedha: 'Checking Gochara Vedha transit obstructions & Father-Son exemptions',
       };
       return labels[kind] ?? `Checking ${kind}`;
     }
@@ -345,6 +375,10 @@ async function executeToolCall(server: ToolServer, tc: NativeToolCall): Promise<
       return server.inspect_strengths(a.kind ?? 'shadbala', a.target);
     case 'inspect_natal_lore':
       return server.inspect_natal_lore(a.kind ?? 'yogas');
+    case 'inspect_arudhas':
+      return server.inspect_arudhas(a.target ? String(a.target) : undefined);
+    case 'inspect_karakas':
+      return server.inspect_karakas(a.target ? String(a.target) : undefined);
     case 'inspect_dashas':
       return server.inspect_dashas(a.system ?? 'vimshottari', a.from, a.to);
     case 'inspect_transits':

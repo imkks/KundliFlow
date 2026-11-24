@@ -1,0 +1,243 @@
+# Jaimini Arudha Padas, Chara Karakas, and Argala Rules
+# Grounded in P.V.R. Narasimha Rao (Ch. 9, 10.3) & Dr. K.S. Charak (Ch. XIX, XXI)
+version: "1.0.0"
+rules:
+  - id: arudha.al.kendra.1
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 1
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 65
+      statement: Arudha Lagna (AL) in the 1st house aligns the public image closely with true personal identity, conferring authentic self-expression and direct social recognition.
+
+  - id: arudha.al.kendra.4
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 4
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 60
+      statement: Arudha Lagna (AL) in the 4th house gives a reputation anchored in family heritage, domestic stability, hospitality, and educational roots.
+
+  - id: arudha.al.kendra.7
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 7
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 62
+      statement: Arudha Lagna (AL) in the 7th house projects strong collaborative goodwill, interpersonal charisma, and respected public interactions.
+
+  - id: arudha.al.kendra.10
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 70
+      statement: Arudha Lagna (AL) in the 10th house is a prime marker for professional prominence, executive leadership, and visible societal impact.
+
+  - id: arudha.al.trikona.5
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 5
+    effect:
+      theme: education_children
+      polarity: supportive
+      base_strength: 64
+      statement: Arudha Lagna (AL) in the 5th house confers high esteem for intellect, mentorship, creative expression, and advisory capability.
+
+  - id: arudha.al.trikona.9
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 9
+    effect:
+      theme: luck_dharma
+      polarity: supportive
+      base_strength: 68
+      statement: Arudha Lagna (AL) in the 9th house indicates an honorable public standing associated with wisdom, ethical principles, and higher guidance.
+
+  - id: arudha.al.dusthana.8
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 8
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 55
+      statement: Arudha Lagna (AL) in the 8th house suggests working out of the public spotlight or in transformative, confidential, research-oriented domains.
+
+  - id: arudha.al.dusthana.12
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: AL
+          rel_house: 12
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 52
+      statement: Arudha Lagna (AL) in the 12th house favors operating behind the scenes, charitable endeavors, spiritual retreat, or foreign affiliations.
+
+  - id: arudha.a10.kendra.10
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: A10
+          rel_house: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 72
+      statement: Rajya Pada (A10) in the 10th house ensures that professional endeavors translate reliably into recognized leadership titles and career authority.
+
+  - id: arudha.ul.kendra.7
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: UL
+          rel_house: 7
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 66
+      statement: Upapada Lagna (UL) in the 7th house reinforces committed marital endurance, shared values, and mutual respect between families.
+
+  - id: arudha.a11.kendra.11
+    kind: arudha
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 9; BPHS Arudha Chapter"
+    reviewed: true
+    when:
+      all:
+        - fact: arudha
+          code: A11
+          rel_house: 11
+    effect:
+      theme: gains_network
+      polarity: supportive
+      base_strength: 65
+      statement: Labha Pada (A11) in the 11th house signifies that personal efforts yield tangible, visible financial growth and reliable support from community networks.
+
+  - id: karaka.ak.sun
+    kind: karaka
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 8; Jaimini Upadesha Sutras"
+    reviewed: true
+    when:
+      all:
+        - fact: karaka
+          karaka: AK
+          planet: sun
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 60
+      statement: Sun as Atmakaraka (AK) directs the soul journey toward learning authentic leadership, overcoming ego attachments, and cultivating inner sovereignty.
+
+  - id: karaka.amk.jupiter
+    kind: karaka
+    school: jaimini
+    source: "PVR Narasimha Rao Ch. 8; Jaimini Upadesha Sutras"
+    reviewed: true
+    when:
+      all:
+        - fact: karaka
+          karaka: AmK
+          planet: jupiter
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 65
+      statement: Jupiter as Amatyakaraka (AmK) indicates a professional path enriched by advisory roles, mentorship, strategic counsel, and educational or financial wisdom.
+
+  - id: special_lagna.hl.kendra.1
+    kind: special_lagna
+    school: parashari
+    source: "PVR Narasimha Rao Ch. 5; BPHS Special Lagnas"
+    reviewed: true
+    when:
+      all:
+        - fact: special_lagna
+          code: HL
+          rel_house: 1
+    effect:
+      theme: money_speech
+      polarity: supportive
+      base_strength: 65
+      statement: Hora Lagna (HL) in the 1st house confers natural financial acumen and steady ability to attract resources and commercial opportunities.
+
+  - id: special_lagna.gl.kendra.10
+    kind: special_lagna
+    school: parashari
+    source: "PVR Narasimha Rao Ch. 5; BPHS Special Lagnas"
+    reviewed: true
+    when:
+      all:
+        - fact: special_lagna
+          code: GL
+          rel_house: 10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 68
+      statement: Ghati Lagna (GL) in the 10th house is a classical sign of high administrative power, professional eminence, and executive authority.

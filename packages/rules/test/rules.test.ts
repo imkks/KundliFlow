@@ -19,6 +19,8 @@ import {
   lintRules,
   renderHouse,
   renderPlanet,
+  computeHouseArgala,
+  computeAllHouseArgalas,
 } from '../src/index.js';
 
 const ROOT_DIR = path.resolve(__dirname, '../../..');
@@ -132,10 +134,59 @@ describe('L2-M2: packages/rules evaluator, strength model & linter', () => {
       const h4Read = renderHouse(4, ws, findings, 'standard');
       expect(h4Read.tone).toBe('Mixed');
       expect(h4Read.evidenceChips.length).toBeGreaterThan(0);
+      expect(h4Read.bhavatBhavamNote).toBeDefined();
+      expect(h4Read.environmentalSupport).toBeDefined();
+      expect(h4Read.argalaNote).toBeDefined();
 
       const rahuRead = renderPlanet('rahu', ws, findings, 'standard');
       expect(rahuRead.house).toBe(4);
       expect(rahuRead.findings.length).toBeGreaterThan(0);
+    } finally {
+      ws.close();
+    }
+  });
+
+  it('evaluates Arudha & Argala rules and computes house interventions', () => {
+    const strengthConfig = loadStrengthConfig(STRENGTH_PATH);
+    const arudhaRulesPath = path.join(RULES_DIR, 'arudha_and_argala.yaml');
+    const { version, rules } = loadRuleFile(arudhaRulesPath);
+    expect(rules.length).toBeGreaterThanOrEqual(10);
+
+    const res = resolveBirthTime({
+      date: '1998-09-07',
+      time: '23:20:34',
+      tzId: 'Asia/Kolkata',
+      placeName: 'Jamshedpur',
+      lat: 22.8,
+      lon: 86.166667,
+      timeCertainty: 'exact',
+    });
+    if (!res.success) throw new Error(res.message);
+
+    const natal = computePositions(
+      eph,
+      res.resolved,
+      { name: 'Jamshedpur', lat: 22.8, lon: 86.166667 },
+      { ayanamsa: 'lahiri', nodeType: 'mean' },
+    );
+    const ws = buildChartWorkspace({ natal });
+    try {
+      const findings = evaluateRules(ws, rules, {
+        strengthConfig,
+        contentVersion: version,
+        persistToDb: false,
+      });
+      expect(findings.length).toBeGreaterThan(0);
+
+      // Verify Argala computation
+      const argalas = computeAllHouseArgalas(ws);
+      expect(Object.keys(argalas)).toHaveLength(12);
+      expect(argalas[10]).toBeDefined();
+      expect(argalas[10]!.interventions.length).toBeGreaterThan(0);
+
+      // Verify Level 2 renderHouse contains argalaNote
+      const h10 = renderHouse(10, ws, findings, 'standard');
+      expect(h10.argalaNote).toBeDefined();
     } finally {
       ws.close();
     }

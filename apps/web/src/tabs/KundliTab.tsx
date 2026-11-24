@@ -522,7 +522,7 @@ export const KundliTab: React.FC<KundliTabProps> = ({
                 { id: 'dual', label: 'Dual Transit Overlay' },
                 { id: 'bhavas', label: 'Bhava Chalit' },
                 { id: 'kp', label: 'KP System' },
-                { id: 'varshaphal', label: 'Varshaphal & Arudhas' },
+                { id: 'varshaphal', label: 'Varshaphal & Sahams' },
               ] as const
             ).map((m) => (
               <button
@@ -1247,6 +1247,27 @@ export const KundliTab: React.FC<KundliTabProps> = ({
                       {activePlanet.netBalance && (
                         <div style={{ fontSize: 12, color: 'var(--gold)', fontStyle: 'italic', lineHeight: 1.5 }}>
                           {activePlanet.netBalance}
+                        </div>
+                      )}
+
+                      {activePlanet.vargaNote && (
+                        <div style={{ fontSize: 12, color: 'var(--teal)', display: 'flex', alignItems: 'flex-start', gap: 6, lineHeight: 1.4 }}>
+                          <span>✦</span>
+                          <span>{activePlanet.vargaNote}</span>
+                        </div>
+                      )}
+
+                      {activePlanet.vaisheshikamsaNote && (
+                        <div style={{ fontSize: 12, color: 'var(--gold)', display: 'flex', alignItems: 'flex-start', gap: 6, lineHeight: 1.4 }}>
+                          <span>👑</span>
+                          <span>{activePlanet.vaisheshikamsaNote}</span>
+                        </div>
+                      )}
+
+                      {activePlanet.pushkaraNote && (
+                        <div style={{ fontSize: 12, color: 'var(--teal)', display: 'flex', alignItems: 'flex-start', gap: 6, lineHeight: 1.4 }}>
+                          <span>✨</span>
+                          <span>{activePlanet.pushkaraNote}</span>
                         </div>
                       )}
 

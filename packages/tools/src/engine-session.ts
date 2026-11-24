@@ -19,6 +19,7 @@ import {
   computeTransits,
   computeUpagrahas,
   computeVarshaphal,
+  computeAnnualSahams,
   computeVimshottariDashas,
   computeYoginiDashas,
   createNatalDigest,
@@ -320,6 +321,12 @@ export class EngineSession {
     const res = computeVarshaphal(this._eph, this.natal, targetYear);
     this._varshaphalCache.set(targetYear, res);
     return res;
+  }
+
+  getSahams() {
+    const sunH = houseFromSign(this.natal.grahas.sun.signIndex, this.natal.lagna?.signIndex ?? 0);
+    const isDay = sunH >= 7 && sunH <= 12;
+    return computeAnnualSahams(this.natal, isDay);
   }
 
   async getMuhurta(dateStr: string): Promise<DayView> {

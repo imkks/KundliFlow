@@ -208,6 +208,7 @@ describe('M3 Time Quality, Ashtakvarga & Transits Suite', () => {
         natal.lagna!.signIndex, // Taurus (1)
         natal.grahas.moon.signIndex, // Pisces (11)
         av.bhinna,
+        av.prastara,
       );
 
       // At birth instant:
@@ -224,6 +225,18 @@ describe('M3 Time Quality, Ashtakvarga & Transits Suite', () => {
       // Ashtakvarga bindus in transit sign for Saturn in Aries:
       // Aries is sign index 0. BAV for Saturn in Aries is 2 bindus.
       expect(transits.transits.saturn.ashtakvargaBindus).toBe(2);
+
+      // Gochara Vedha check is computed for all 9 planets
+      expect(transits.vedha).toBeDefined();
+      expect(transits.vedha?.saturn).toBeDefined();
+      expect(transits.transits.saturn.vedha).toBeDefined();
+
+      // Kakshya transit evaluation is computed when Prastara is passed
+      expect(transits.kakshya).toBeDefined();
+      expect(transits.kakshya?.evaluations.length).toBe(7);
+      expect(transits.transits.saturn.kakshya).toBeDefined();
+      expect(transits.transits.saturn.kakshya?.kakshyaIndex).toBeGreaterThanOrEqual(1);
+      expect(transits.transits.saturn.kakshya?.kakshyaIndex).toBeLessThanOrEqual(8);
     });
   });
 });
