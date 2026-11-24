@@ -1,24 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  HelpCircle,
   X,
   Compass,
   Calendar,
-  Layers,
   Award,
   Clock,
   Sparkles,
   BookOpen,
-  FlaskConical,
   Search,
-  ChevronRight,
-  ShieldCheck,
-  ShieldAlert,
+  Heart,
 } from 'lucide-react';
 
 interface PlainEnglishExplainerModalProps {
   onClose: () => void;
   initialTab?: string;
+  initialSearch?: string;
 }
 
 interface TermExplanation {
@@ -524,9 +520,26 @@ const GLOSSARY_CATEGORIES: TabCategory[] = [
 export const PlainEnglishExplainerModal: React.FC<PlainEnglishExplainerModalProps> = ({
   onClose,
   initialTab = 'kundli',
+  initialSearch = '',
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialTab);
-  const [searchQuery, setSearchQuery] = useState('');
+  const mappedInitial =
+    initialTab === 'today'
+      ? 'timequality'
+      : initialTab === 'timing'
+      ? 'dashas'
+      : initialTab === 'journal'
+      ? 'timequality'
+      : initialTab;
+  const [selectedCategory, setSelectedCategory] = useState<string>(mappedInitial);
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+
+  useEffect(() => {
+    setSelectedCategory(mappedInitial);
+  }, [mappedInitial]);
+
+  useEffect(() => {
+    setSearchQuery(initialSearch);
+  }, [initialSearch]);
 
   const activeCategory = GLOSSARY_CATEGORIES.find((c) => c.id === selectedCategory) || GLOSSARY_CATEGORIES[0]!;
 

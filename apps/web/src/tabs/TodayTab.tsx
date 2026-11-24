@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
-import { Clock, ShieldAlert, MapPin, Sparkles, ChevronDown, ChevronRight, HelpCircle, CheckCircle2, PenLine } from 'lucide-react';
+import {
+  Clock,
+  ShieldAlert,
+  MapPin,
+  Sparkles,
+  ChevronDown,
+  ChevronRight,
+  HelpCircle,
+  CheckCircle2,
+  PenLine,
+  Target,
+  Table2,
+  ArrowRight,
+} from 'lucide-react';
 import type { DayView, HourScore } from '@astro/engine';
-import { useReading } from '../context/ReadingContext.tsx';
+import { useReading, LIFE_TOPICS } from '../context/ReadingContext.tsx';
 import { GlossaryTerm } from '../components/GlossaryTerm.tsx';
 import { API_BASE_URL } from '../config.ts';
 import { GooglePlaceAutocomplete } from '../components/GooglePlaceAutocomplete.tsx';
@@ -76,19 +89,27 @@ export const TodayTab: React.FC<TodayTabProps> = ({
   backendProfileId,
   onQuickCheckinSaved,
 }) => {
-  const { reading, openAskDrawer, setActiveTab } = useReading();
-  const [showHoras, setShowHoras] = useState(false);
-  const [quickMood, setQuickMood] = useState<number>(4);
+  const {
+    reading,
+    isGuided,
+    isQuant,
+    openAskDrawer,
+    setActiveTab,
+    focusLifeTopic,
+    openLifeEventModal,
+    openQuantMatrix,
+  } = useReading();
+
+  const [showScoreFactors, setShowScoreFactors] = useState(false);
+  const [selectedHourIdx, setSelectedHourIdx] = useState<number>(() => new Date().getHours());
+  const [quickMood, setQuickMood] = useState<number>(3);
   const [quickNote, setQuickNote] = useState('');
-  const [checkinSaved, setCheckinSaved] = useState(false);
+  const [checkinStatus, setCheckinStatus] = useState<'idle' | 'saving' | 'saved' | 'local_only'>('idle');
 
   const todayMoon = reading?.panchang?.todayMoon;
-  const activeDasha = reading?.dashas?.[0];
-  const yogini = reading?.extendedDashas?.yogini;
-  const chara = reading?.extendedDashas?.chara;
   const transitPlanets = reading?.transits?.planets ?? [];
+  const topTransits = transitPlanets.filter((tp: any) => ['saturn', 'jupiter', 'moon', 'rahu', 'mars'].includes(tp.planet)).slice(0, 3);
 
-  // Resolve real active Hora ruler from currentScore, dayView.horas, or weekday lord
   const activeHoraRuler: string = (() => {
     if (currentScore?.horaRuler) return currentScore.horaRuler;
     const nowMs = Date.now();
@@ -122,7 +143,7 @@ export const TodayTab: React.FC<TodayTabProps> = ({
         horaRuler: hora,
         moonSign: todayMoon?.sign ?? 'unknown',
         moonNakshatra: todayMoon?.taraName?.split(' (')[0] ?? 'unknown',
-        dasha: activeDasha?.lord ?? 'unknown',
+        dasha: reading?.dashas?.[0]?.lord ?? 'unknown',
         factors: (currentScore?.factors ?? []).map((f: any) => ({
           description: f.description ?? f.summary ?? '',
           points: f.points ?? f.value ?? 0,
@@ -138,10 +159,12 @@ export const TodayTab: React.FC<TodayTabProps> = ({
       localStorage.setItem('astro_journal_entries_v1', JSON.stringify(updated));
       onQuickCheckinSaved?.(updated);
     } catch {
-      // ignore storage errors
+      // ignore
     }
 
+    setQuickNote('');
     if (backendProfileId) {
+      setCheckinStatus('saving');
       fetch(`${API_BASE_URL}/api/journal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -155,12 +178,14 @@ export const TodayTab: React.FC<TodayTabProps> = ({
           mood: quickMood,
           skySnapshot: newEntry.snapshot,
         }),
-      }).catch(() => {});
+      })
+        .then((res) => setCheckinStatus(res.ok ? 'saved' : 'local_only'))
+        .catch(() => setCheckinStatus('local_only'))
+        .finally(() => setTimeout(() => setCheckinStatus('idle'), 4000));
+    } else {
+      setCheckinStatus('local_only');
+      setTimeout(() => setCheckinStatus('idle'), 4000);
     }
-
-    setQuickNote('');
-    setCheckinSaved(true);
-    setTimeout(() => setCheckinSaved(false), 4000);
   };
 
   if (!dayView) {
@@ -171,9 +196,11 @@ export const TodayTab: React.FC<TodayTabProps> = ({
     );
   }
 
+  const factorsExpanded = isQuant || showScoreFactors;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* Location & Active Timing Strip */}
+      {/* Location & Quick Almanac Modal Bar */}
       <div
         className="card"
         style={{
@@ -189,7 +216,7 @@ export const TodayTab: React.FC<TodayTabProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <MapPin size={15} style={{ color: 'var(--teal)' }} />
             <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
-              Your location today:
+              Location today:
             </span>
           </div>
           <GooglePlaceAutocomplete
@@ -206,29 +233,37 @@ export const TodayTab: React.FC<TodayTabProps> = ({
             onTextChange={(txt) => onCityChange?.(txt)}
             placeholder="Search city worldwide or use GPS…"
             showCurrentLocationBtn={true}
-            style={{ width: 'auto', minWidth: 260, maxWidth: 380 }}
+            style={{ width: 'auto', minWidth: 240, maxWidth: 340 }}
           />
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-            Used for sunrise, Hora &amp; Rahu Kalam
-          </span>
         </div>
 
-        <button
-          onClick={() => openAskDrawer('How should I plan my day given today’s Moon, Hora, and transits?')}
-          className="btn btn-outline"
-          style={{ fontSize: 12 }}
-        >
-          <HelpCircle size={13} /> Ask AI about Today
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => openQuantMatrix('horas')}
+            className="btn btn-outline"
+            style={{ fontSize: 12 }}
+          >
+            <Table2 size={13} style={{ color: 'var(--gold)' }} /> Full Panchang &amp; 24 Horas
+          </button>
+          <button
+            type="button"
+            onClick={() => openAskDrawer('How should I plan my day given today’s Moon, Hora, and transits?')}
+            className="btn btn-outline"
+            style={{ fontSize: 12 }}
+          >
+            <HelpCircle size={13} style={{ color: 'var(--teal)' }} /> Ask AI about Today
+          </button>
+        </div>
       </div>
 
-      {/* Current Time Quality Hero + Today's Moon & Active Dashas */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+      {/* Hero Row: Time Quality Score + Personal Alignment & Windows */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: 16 }}>
         {currentScore && (
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
               <span className="serif-title" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                CURRENT TIME QUALITY
+                {isGuided ? 'TODAY’S VIBE & BEST TIMING' : 'CURRENT TIME QUALITY'}
               </span>
               <span className="gold-badge" style={{ fontSize: 11 }}>
                 {dayView.date} • {activeCityName}
@@ -276,40 +311,13 @@ export const TodayTab: React.FC<TodayTabProps> = ({
                   {(currentScore as any).tierLabel ?? currentScore.bandLabel}
                 </h2>
                 <p style={{ fontSize: 12.5, color: 'var(--text-muted)', margin: 0 }}>
-                  Hora Ruler: <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{activeHoraRuler}</strong> • {(currentScore as any).summary ?? currentScore.text}
+                  {isGuided ? 'Focus window: ' : 'Hora Ruler: '}
+                  <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>{activeHoraRuler}</strong> • {(currentScore as any).summary ?? currentScore.text}
                 </p>
               </div>
             </div>
 
-            <div style={{ background: 'var(--surface-alt)', padding: 10, borderRadius: 8 }}>
-              <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--gold)', marginBottom: 6 }}>
-                SCORE ATTRIBUTION FACTORS
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                {currentScore.factors.map((f: any, i: number) => {
-                  const pts = f.points ?? f.value ?? 0;
-                  return (
-                    <div
-                      key={i}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        fontSize: 12,
-                        borderBottom: '1px solid var(--border-subtle)',
-                        paddingBottom: 4,
-                      }}
-                    >
-                      <span style={{ color: 'var(--text-main)' }}>{f.description ?? f.summary}</span>
-                      <span style={{ fontWeight: 700, color: pts > 0 ? 'var(--teal)' : pts < 0 ? 'var(--amber)' : 'var(--text-muted)' }}>
-                        {pts > 0 ? `+${pts}` : pts}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Current Hora Action Hint */}
+            {/* Hora Action Hint */}
             {HORA_GUIDANCE[activeHoraRuler.toLowerCase()] && (
               <div
                 style={{
@@ -317,190 +325,151 @@ export const TodayTab: React.FC<TodayTabProps> = ({
                   borderRadius: 8,
                   background: 'rgba(212, 175, 55, 0.08)',
                   border: '1px solid rgba(212, 175, 55, 0.22)',
-                  fontSize: 11.5,
+                  fontSize: 12,
                   color: 'var(--text-main)',
                 }}
               >
                 <strong style={{ color: 'var(--gold)', textTransform: 'capitalize' }}>
-                  {activeHoraRuler} Hora Best For:{' '}
+                  Best right now ({activeHoraRuler}):{' '}
                 </strong>
                 {HORA_GUIDANCE[activeHoraRuler.toLowerCase()]}
               </div>
             )}
 
             {/* 24-Hour Day Energy Sparkline */}
-            {Array.isArray(dayView.hourlyScores) && dayView.hourlyScores.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5, color: 'var(--text-muted)' }}>
-                  <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>24-HOUR ENERGY CURVE</span>
-                  <span>00:00 → 12:00 → 23:00</span>
+            {Array.isArray(dayView.hourlyScores) && dayView.hourlyScores.length > 0 && (() => {
+              const activeHour = dayView.hourlyScores[selectedHourIdx] ?? dayView.hourlyScores[0];
+              const activeSc = Number(activeHour?.score ?? 0);
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>24-HOUR ENERGY CURVE</span>
+                    <span>
+                      {String(selectedHourIdx).padStart(2, '0')}:00 ·{' '}
+                      <strong style={{ color: activeSc > 1 ? 'var(--teal)' : activeSc < -1 ? 'var(--amber)' : 'var(--gold)' }}>
+                        {activeSc > 0 ? `+${activeSc}` : activeSc}
+                      </strong>{' '}
+                      {(activeHour as any)?.bandLabel ? `(${(activeHour as any).bandLabel})` : ''}
+                    </span>
+                  </div>
+                  <div
+                    role="group"
+                    aria-label="24-hour energy curve"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${dayView.hourlyScores.length}, minmax(0, 1fr))`,
+                      gap: 2,
+                      alignItems: 'end',
+                      height: 42,
+                      padding: '4px 6px',
+                      borderRadius: 8,
+                      background: 'var(--surface-alt)',
+                    }}
+                  >
+                    {dayView.hourlyScores.map((h: any, idx: number) => {
+                      const sc = Number(h.score ?? 0);
+                      const norm = Math.max(18, Math.min(100, Math.round(((sc + 6) / 12) * 100)));
+                      const barColor = sc > 1 ? 'var(--teal)' : sc < -1 ? 'var(--amber)' : 'var(--gold)';
+                      const isCurrent = idx === new Date().getHours();
+                      const isSelected = idx === selectedHourIdx;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedHourIdx(idx)}
+                          aria-label={`${String(idx).padStart(2, '0')}:00 score ${sc > 0 ? `+${sc}` : sc}`}
+                          aria-pressed={isSelected}
+                          title={`${String(idx).padStart(2, '0')}:00 • Score ${sc > 0 ? `+${sc}` : sc} (${h.bandLabel ?? ''})`}
+                          style={{
+                            height: `${norm}%`,
+                            borderRadius: 3,
+                            background: barColor,
+                            opacity: isSelected || isCurrent ? 1 : 0.65,
+                            boxShadow: isSelected ? '0 0 0 2px #ffffff' : isCurrent ? '0 0 0 1px rgba(255,255,255,0.6)' : 'none',
+                            padding: 0,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-                <div
+              );
+            })()}
+
+            {/* Score Attribution (Collapsible in Guided/Explorer, open in Quant) */}
+            {!isGuided && (
+              <div style={{ background: 'var(--surface-alt)', padding: '8px 10px', borderRadius: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowScoreFactors((v) => !v)}
+                  aria-expanded={factorsExpanded}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${dayView.hourlyScores.length}, minmax(0, 1fr))`,
-                    gap: 2,
-                    alignItems: 'end',
-                    height: 36,
-                    padding: '4px 6px',
-                    borderRadius: 8,
-                    background: 'var(--surface-alt)',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: 11.5,
+                    fontWeight: 700,
+                    color: 'var(--gold)',
+                    padding: '2px 0',
                   }}
                 >
-                  {dayView.hourlyScores.map((h: any, idx: number) => {
-                    const sc = Number(h.score ?? 0);
-                    const norm = Math.max(18, Math.min(100, Math.round(((sc + 6) / 12) * 100)));
-                    const barColor = sc > 1 ? 'var(--teal)' : sc < -1 ? 'var(--amber)' : 'var(--gold)';
-                    const isCurrent = idx === new Date().getHours();
-                    return (
-                      <div
-                        key={idx}
-                        title={`${String(idx).padStart(2, '0')}:00 • Score ${sc > 0 ? `+${sc}` : sc} (${h.bandLabel ?? ''})`}
-                        style={{
-                          height: `${norm}%`,
-                          borderRadius: 3,
-                          background: barColor,
-                          opacity: isCurrent ? 1 : 0.72,
-                          outline: isCurrent ? '2px solid #ffffff' : 'none',
-                        }}
-                      />
-                    );
-                  })}
-                </div>
+                  <span>Score factors ({currentScore.factors.length})</span>
+                  {factorsExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </button>
+
+                {factorsExpanded && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 8 }}>
+                    {currentScore.factors.map((f: any, i: number) => {
+                      const pts = f.points ?? f.value ?? 0;
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            fontSize: 12,
+                            borderBottom: '1px solid var(--border-subtle)',
+                            paddingBottom: 4,
+                          }}
+                        >
+                          <span style={{ color: 'var(--text-main)' }}>{f.description ?? f.summary}</span>
+                          <span style={{ fontWeight: 700, color: pts > 0 ? 'var(--teal)' : pts < 0 ? 'var(--amber)' : 'var(--text-muted)' }}>
+                            {pts > 0 ? `+${pts}` : pts}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
 
-        {/* Today's Moon + Active Dasha Snapshot */}
+        {/* Right Hero: Best Windows, Caution Windows & Current Life Chapter */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="serif-title" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              PERSONAL ALIGNMENT TODAY
+              ACTION WINDOWS &amp; ALIGNMENT
             </span>
             <button
+              type="button"
               onClick={() => setActiveTab('timing')}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--teal)',
-                fontSize: 11.5,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
+              style={{ color: 'var(--teal)', fontSize: 11.5, fontWeight: 600 }}
             >
               Full Timing →
             </button>
           </div>
 
-          {todayMoon ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 5 }}>
-                  <GlossaryTerm term="Chandrabala" /> &amp; <GlossaryTerm term="Tarabala" />
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  <span className={todayMoon.chandraBalaSupportive ? 'teal-badge' : 'amber-badge'} style={{ fontSize: 11 }}>
-                    {todayMoon.chandraBalaSupportive ? '✓ Supportive' : '⚠ Watch'} • Moon in {todayMoon.sign} (H{todayMoon.houseFromMoon} from Natal Moon)
-                  </span>
-                  <span className={todayMoon.taraSupportive ? 'teal-badge' : 'amber-badge'} style={{ fontSize: 11 }}>
-                    {todayMoon.taraName}
-                  </span>
-                  {reading?.transits?.sadeSati && (
-                    <span
-                      className={
-                        reading.transits.sadeSati.isActive || reading.transits.sadeSati.isAshtamaShani
-                          ? 'amber-badge'
-                          : 'teal-badge'
-                      }
-                      style={{ fontSize: 11 }}
-                    >
-                      {reading.transits.sadeSati.isActive
-                        ? `♄ Sade Sati (${reading.transits.sadeSati.phase})`
-                        : reading.transits.sadeSati.isAshtamaShani
-                        ? '♄ Ashtama Shani (8th)'
-                        : reading.transits.sadeSati.isKantakaShani
-                        ? `♄ Kantaka Shani (H${reading.transits.sadeSati.houseFromMoon})`
-                        : '✓ No Sade Sati'}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              Connect API for Tarabala &amp; Chandrabala alignment.
-            </div>
-          )}
-
-          {((reading?.dashas?.length ?? 0) > 0 || yogini || chara) && (
-            <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gold)', display: 'flex', alignItems: 'center', gap: 5 }}>
-                <Sparkles size={12} /> ACTIVE LIFE CHAPTERS
-              </div>
-              {(reading?.dashas ?? []).slice(0, 3).map((dr: any) => {
-                const prog = computeDashaProgress(dr.startUtc, dr.endUtc);
-                const levelLabel = dr.level === 1 ? 'Mahadasha' : dr.level === 2 ? 'Antardasha' : 'Pratyantar';
-                return (
-                  <div key={dr.periodId ?? dr.level} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
-                      <span>
-                        <strong style={{ color: dr.level === 1 ? 'var(--teal)' : 'var(--gold)', textTransform: 'capitalize' }}>
-                          {levelLabel}: {dr.lord}
-                        </strong>
-                      </span>
-                      <span style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>
-                        {prog ? `${prog.pct}% • ${prog.remainingLabel}` : String(dr.endUtc ?? '').slice(0, 10)}
-                      </span>
-                    </div>
-                    {prog && (
-                      <div style={{ height: 4, borderRadius: 3, background: 'var(--surface)', overflow: 'hidden' }}>
-                        <div style={{ width: `${prog.pct}%`, height: '100%', background: dr.level === 1 ? 'var(--teal)' : 'var(--gold)', borderRadius: 3 }} />
-                      </div>
-                    )}
-                    {dr.level === 1 && dr.summary && (
-                      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.4 }}>{dr.summary}</div>
-                    )}
-                  </div>
-                );
-              })}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingTop: 4, borderTop: '1px solid var(--border-subtle)', fontSize: 11.5, color: 'var(--text-muted)' }}>
-                {yogini && (
-                  <span>
-                    <strong style={{ color: 'var(--gold)' }}>Yogini:</strong> {yogini.maha} ({yogini.mahaLord})
-                    {yogini.antar ? ` / ${yogini.antar}` : ''}
-                  </span>
-                )}
-                {chara && (
-                  <span>
-                    <strong style={{ color: 'var(--teal)' }}>Chara:</strong> {chara.mahaSign} (H{chara.mahaHouse})
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Best Action Windows Today + Today's Live Panchang */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
-        {/* Best Action Windows */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--teal)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Sparkles size={15} /> Best Action Windows Today
-            </h3>
-            <span className="teal-badge" style={{ fontSize: 10 }}>
-              Day Avg: {dayView.wakingMeanScore > 0 ? `+${dayView.wakingMeanScore.toFixed(1)}` : dayView.wakingMeanScore.toFixed(1)}
-            </span>
-          </div>
+          {/* Best Flowing Windows */}
           {(dayView.flowingWindows ?? []).length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {dayView.flowingWindows.map((w, idx) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {dayView.flowingWindows.slice(0, 2).map((w, idx) => (
                 <div
                   key={idx}
                   style={{
-                    padding: '10px 12px',
+                    padding: '9px 12px',
                     borderRadius: 8,
                     background: 'rgba(95, 194, 179, 0.1)',
                     borderLeft: '3px solid var(--teal)',
@@ -511,254 +480,288 @@ export const TodayTab: React.FC<TodayTabProps> = ({
                 >
                   <div>
                     <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-main)' }}>
-                      {w.startHour} — {w.endHour}
+                      ★ Best Window: {w.startHour} — {w.endHour}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{w.bandLabel}</div>
                   </div>
-                  <span className="teal-badge" style={{ fontSize: 11 }}>
-                    +{w.avgScore.toFixed(1)}
-                  </span>
+                  <span className="teal-badge" style={{ fontSize: 11 }}>+{w.avgScore.toFixed(1)}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-              Today has a steady, even pace ({dayView.dayBandLabel}) — great for consistent execution and routine progress outside caution windows.
+            <div style={{ padding: '9px 12px', borderRadius: 8, background: 'var(--surface-alt)', fontSize: 12, color: 'var(--text-muted)' }}>
+              Steady pace today ({dayView.dayBandLabel}) — great for routine progress outside caution windows.
             </div>
           )}
 
-          {/* Retrograde Sky Watch */}
-          {transitPlanets.some((p: any) => p.retrograde) && (
-            <div style={{ padding: '8px 10px', borderRadius: 8, background: 'rgba(217, 119, 54, 0.08)', border: '1px solid rgba(217, 119, 54, 0.28)', fontSize: 11.5 }}>
-              <strong style={{ color: 'var(--amber)' }}>↺ Retrograde in Sky Today: </strong>
-              {transitPlanets
-                .filter((p: any) => p.retrograde)
-                .map((p: any) => `${String(p.planet).toUpperCase()} (${p.sign})`)
-                .join(' • ')}
+          {/* Condensed Caution Windows */}
+          <div style={{ padding: 10, borderRadius: 8, background: 'rgba(217, 119, 54, 0.08)', border: '1px solid rgba(217, 119, 54, 0.25)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <ShieldAlert size={13} /> PAUSE BIG LAUNCHES DURING
             </div>
-          )}
-        </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 8, fontSize: 11.5 }}>
+              <div>
+                <div style={{ color: 'var(--amber)', fontWeight: 700, fontSize: 10.5 }}>Rahu Kalam</div>
+                <div style={{ fontWeight: 600 }}>
+                  {(dayView as any).inauspicious?.rahuKalam?.startFormatted ?? '—'}–{(dayView as any).inauspicious?.rahuKalam?.endFormatted ?? '—'}
+                </div>
+              </div>
+              {!isGuided && (
+                <>
+                  <div>
+                    <div style={{ color: 'var(--gold)', fontWeight: 700, fontSize: 10.5 }}>Yamaganda</div>
+                    <div style={{ fontWeight: 600 }}>
+                      {(dayView as any).inauspicious?.yamaganda?.startFormatted ?? '—'}–{(dayView as any).inauspicious?.yamaganda?.endFormatted ?? '—'}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--teal)', fontWeight: 700, fontSize: 10.5 }}>Gulika</div>
+                    <div style={{ fontWeight: 600 }}>
+                      {(dayView as any).inauspicious?.gulika?.startFormatted ?? '—'}–{(dayView as any).inauspicious?.gulika?.endFormatted ?? '—'}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
 
-        {/* Today's Live Panchang */}
-        {dayView.panchang && (
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0 }}>
-                Today&apos;s Live Panchang
-              </h3>
-              <span className="gold-badge" style={{ fontSize: 10 }}>
-                {dayView.panchang.wara.name} ({dayView.panchang.wara.lord.toUpperCase()})
+          {/* Personal Moon + Active Dasha Snapshot */}
+          {todayMoon && !isGuided && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center', fontSize: 11.5 }}>
+              <GlossaryTerm term="Chandrabala" />
+              <span className={todayMoon.chandraBalaSupportive ? 'teal-badge' : 'amber-badge'} style={{ fontSize: 11 }}>
+                Moon: {todayMoon.sign} (H{todayMoon.houseFromMoon})
+              </span>
+              <GlossaryTerm term="Tarabala" />
+              <span className={todayMoon.taraSupportive ? 'teal-badge' : 'amber-badge'} style={{ fontSize: 11 }}>
+                {todayMoon.taraName}
               </span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))', gap: 8 }}>
-              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Tithi (Lunar Day)</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)', marginTop: 2 }}>
-                  {dayView.panchang.tithi.paksha} {dayView.panchang.tithi.name}
-                </div>
-                <div style={{ height: 4, borderRadius: 3, background: 'var(--surface)', marginTop: 6, overflow: 'hidden' }}>
-                  <div style={{ width: `${Math.round(dayView.panchang.tithi.elapsedFraction * 100)}%`, height: '100%', background: 'var(--teal)' }} />
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>
-                  {(dayView.panchang.tithi.elapsedFraction * 100).toFixed(0)}% elapsed • {dayView.panchang.tithi.paksha === 'Shukla' ? 'Waxing' : 'Waning'}
-                </div>
-              </div>
-              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Yoga (Luni-Solar)</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gold)', marginTop: 2 }}>
-                  {dayView.panchang.yoga.name}
-                </div>
-                <div style={{ height: 4, borderRadius: 3, background: 'var(--surface)', marginTop: 6, overflow: 'hidden' }}>
-                  <div style={{ width: `${Math.round(dayView.panchang.yoga.elapsedFraction * 100)}%`, height: '100%', background: 'var(--gold)' }} />
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>
-                  {(dayView.panchang.yoga.elapsedFraction * 100).toFixed(0)}% elapsed
-                </div>
-              </div>
-              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Karana (Half-Tithi)</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: dayView.panchang.karana.isVishtiBhadra ? 'var(--amber)' : 'var(--teal)', marginTop: 2 }}>
-                  {dayView.panchang.karana.name}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-                  {dayView.panchang.karana.isVishtiBhadra ? '⚠ Bhadra caution for launches' : '✓ Clear for execution'}
-                </div>
-              </div>
-              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Day Rhythm</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--teal)', marginTop: 2 }}>
-                  {dayView.dayBandLabel}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-                  Avg {dayView.wakingMeanScore > 0 ? `+${dayView.wakingMeanScore.toFixed(1)}` : dayView.wakingMeanScore.toFixed(1)} waking score
-                </div>
-              </div>
-              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Sunrise / Sunset</div>
-                <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-main)', marginTop: 2 }}>
-                  {(dayView.horas?.[0] as any)?.startFormatted ?? (dayView.horas?.[0] as any)?.startIso?.slice(11, 16) ?? '—'} /{' '}
-                  {(dayView.horas?.[11] as any)?.endFormatted ?? (dayView.horas?.[11] as any)?.endIso?.slice(11, 16) ?? '—'}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-                  {activeCityName} local solar day
-                </div>
-              </div>
-              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Transit Moon</div>
-                <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-main)', marginTop: 2, textTransform: 'capitalize' }}>
-                  {todayMoon?.sign ?? '—'} {todayMoon?.houseFromMoon ? `(H${todayMoon.houseFromMoon})` : ''}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-                  {todayMoon?.taraName?.split(' (')[0] ?? 'Tarabala active'}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
 
-      {/* Inauspicious Windows */}
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
-            <ShieldAlert size={16} /> Caution Windows Today
-          </h3>
-          <span className="amber-badge" style={{ fontSize: 10 }}>
-            Traditional Muhurta Guards
-          </span>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-          <div style={{ background: 'var(--surface-alt)', padding: 12, borderRadius: 8, borderLeft: '3px solid var(--amber)' }}>
-            <div style={{ fontSize: 11, color: 'var(--amber)', fontWeight: 700 }}>RAHU KALAM</div>
-            <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>
-              {(dayView as any).inauspicious?.rahuKalam?.startFormatted ?? (dayView as any).rahuKalam?.start ?? '—'} — {(dayView as any).inauspicious?.rahuKalam?.endFormatted ?? (dayView as any).rahuKalam?.end ?? '—'}
+          {(reading?.dashas?.length ?? 0) > 0 && (
+            <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gold)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                <Sparkles size={12} /> ACTIVE LIFE CHAPTER
+              </div>
+              {(reading?.dashas ?? []).slice(0, isGuided ? 2 : 3).map((dr: any) => {
+                const prog = computeDashaProgress(dr.startUtc, dr.endUtc);
+                const levelLabel = dr.level === 1 ? 'Main Chapter' : dr.level === 2 ? 'Sub-Chapter' : 'Micro-Cycle';
+                return (
+                  <div key={dr.periodId ?? dr.level} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                      <strong style={{ color: dr.level === 1 ? 'var(--teal)' : 'var(--gold)', textTransform: 'capitalize' }}>
+                        {isGuided ? levelLabel : dr.level === 1 ? 'Mahadasha' : dr.level === 2 ? 'Antardasha' : 'Pratyantar'}: {dr.lord}
+                      </strong>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                        {prog ? `${prog.pct}% • ${prog.remainingLabel}` : String(dr.endUtc ?? '').slice(0, 10)}
+                      </span>
+                    </div>
+                    {prog && (
+                      <div style={{ height: 4, borderRadius: 3, background: 'var(--surface)', overflow: 'hidden' }}>
+                        <div style={{ width: `${prog.pct}%`, height: '100%', background: dr.level === 1 ? 'var(--teal)' : 'var(--gold)' }} />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-              Avoid launching major contracts or travels
-            </div>
-          </div>
-
-          <div style={{ background: 'var(--surface-alt)', padding: 12, borderRadius: 8, borderLeft: '3px solid var(--gold)' }}>
-            <div style={{ fontSize: 11, color: 'var(--gold)', fontWeight: 700 }}>YAMAGANDA</div>
-            <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>
-              {(dayView as any).inauspicious?.yamaganda?.startFormatted ?? '—'} — {(dayView as any).inauspicious?.yamaganda?.endFormatted ?? '—'}
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-              Unfavorable for financial beginnings
-            </div>
-          </div>
-
-          <div style={{ background: 'var(--surface-alt)', padding: 12, borderRadius: 8, borderLeft: '3px solid var(--teal)' }}>
-            <div style={{ fontSize: 11, color: 'var(--teal)', fontWeight: 700 }}>GULIKA KALAM</div>
-            <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>
-              {(dayView as any).inauspicious?.gulika?.startFormatted ?? '—'} — {(dayView as any).inauspicious?.gulika?.endFormatted ?? '—'}
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-              Saturnian focus window; routine &amp; review work well
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Key Transits Today */}
-      {transitPlanets.length > 0 && (
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+      {/* Lens-Adaptive Middle Card */}
+      {isGuided ? (
+        <div
+          className="card"
+          style={{
+            background: 'linear-gradient(135deg, rgba(95, 194, 179, 0.12), rgba(227, 173, 70, 0.08))',
+            border: '1px solid rgba(95, 194, 179, 0.35)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
             <div>
-              <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0 }}>
-                Live Planetary Transits (Gochar) &amp; <GlossaryTerm term="BAV" /> Cushion
+              <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Target size={16} style={{ color: 'var(--teal)' }} /> Understand Your Life Events with AI
               </h3>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                All {transitPlanets.length} Vedic grahas mapped to your Lagna &amp; Moon houses (4+ BAV bindus = supportive cushion)
-              </div>
+              <p style={{ margin: '4px 0 0', fontSize: 12.5, color: 'var(--text-muted)' }}>
+                Pick a real milestone (job change, move, relationship, or turning point) or ask AI anything in plain English.
+              </p>
             </div>
             <button
-              onClick={() => setActiveTab('timing')}
-              style={{ background: 'transparent', border: 'none', color: 'var(--teal)', fontSize: 11.5, fontWeight: 600, cursor: 'pointer' }}
+              type="button"
+              onClick={() => openLifeEventModal()}
+              className="btn btn-primary"
+              style={{ fontSize: 12.5, padding: '8px 14px' }}
             >
-              See Full Calendar &amp; Dashas →
+              <Target size={14} /> Decode a Life Event
             </button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(245px, 1fr))', gap: 10 }}>
-            {transitPlanets.map((tp: any) => {
-              const bindus = Number(tp.bindus ?? 0);
-              const bavPct = Math.min(100, Math.round((bindus / 8) * 100));
-              const bavColor = tp.bavQuality === 'supportive' ? 'var(--teal)' : tp.bavQuality === 'cautious' ? 'var(--amber)' : 'var(--gold)';
-              const lagnaArea = HOUSE_SHORT_AREAS[Number(tp.houseFromLagna)] ?? `House ${tp.houseFromLagna}`;
-              return (
-                <div
-                  key={tp.planet}
-                  style={{
-                    padding: 11,
-                    borderRadius: 10,
-                    background: 'var(--surface-alt)',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: 12,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 6,
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
-                    <span style={{ fontWeight: 700, textTransform: 'capitalize', color: 'var(--text-main)' }}>
-                      {tp.planet}{' '}
-                      {tp.retrograde && (
-                        <span style={{ fontSize: 10, color: 'var(--amber)', fontWeight: 700 }}>(Rx)</span>
-                      )}{' '}
-                      → {tp.sign}
-                    </span>
-                    <span
-                      className={tp.bavQuality === 'supportive' ? 'teal-badge' : tp.bavQuality === 'cautious' ? 'amber-badge' : 'gold-badge'}
-                      style={{ fontSize: 10 }}
-                    >
-                      {tp.bavQuality === 'supportive' ? '✓' : tp.bavQuality === 'cautious' ? '⚠' : '•'} BAV {bindus}/8
-                    </span>
-                  </div>
 
-                  {/* BAV mini gauge */}
-                  <div style={{ height: 4, borderRadius: 3, background: 'var(--surface)', overflow: 'hidden' }}>
-                    <div style={{ width: `${bavPct}%`, height: '100%', background: bavColor, borderRadius: 3 }} />
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: 'var(--text-muted)' }}>
-                    <span>
-                      <strong style={{ color: 'var(--gold)' }}>H{tp.houseFromLagna}</strong> ({lagnaArea}) • H{tp.houseFromMoon} Moon
-                    </span>
-                  </div>
-
-                  {tp.plainMeaning && (
-                    <div style={{ fontSize: 11.5, lineHeight: 1.45, color: 'var(--text-main)' }}>
-                      {tp.plainMeaning}
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: 2 }}>
-                    <button
-                      onClick={() =>
-                        openAskDrawer(
-                          `How is transit ${tp.planet} in ${tp.sign} (House ${tp.houseFromLagna} from Lagna, BAV ${bindus}/8) affecting me right now?`,
-                        )
-                      }
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        padding: 0,
-                        fontSize: 10.5,
-                        fontWeight: 600,
-                        color: 'var(--teal)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Ask AI about this transit →
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {[
+              'What is my current life chapter pushing me to focus on?',
+              'Why have things felt intense or fast-moving lately?',
+              'What opportunities are opening for my career this year?',
+            ].map((q) => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => openAskDrawer(q)}
+                style={{
+                  padding: '7px 11px',
+                  borderRadius: 10,
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-main)',
+                  fontSize: 12,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <Sparkles size={12} style={{ color: 'var(--teal)' }} /> {q}
+              </button>
+            ))}
           </div>
         </div>
+      ) : isQuant ? (
+        dayView.panchang && (
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0 }}>
+                Today&apos;s Live Panchang Telemetry
+              </h3>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span className="gold-badge" style={{ fontSize: 10.5 }}>
+                  {dayView.panchang.wara.name} ({dayView.panchang.wara.lord.toUpperCase()})
+                </span>
+                <button type="button" onClick={() => openQuantMatrix('radars')} className="btn btn-outline" style={{ fontSize: 11.5 }}>
+                  Kakshya &amp; Navatara ↗
+                </button>
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 8 }}>
+              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Tithi</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{dayView.panchang.tithi.paksha} {dayView.panchang.tithi.name}</div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>{(dayView.panchang.tithi.elapsedFraction * 100).toFixed(0)}% elapsed</div>
+              </div>
+              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Yoga</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>{dayView.panchang.yoga.name}</div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>{(dayView.panchang.yoga.elapsedFraction * 100).toFixed(0)}% elapsed</div>
+              </div>
+              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Karana</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: dayView.panchang.karana.isVishtiBhadra ? 'var(--amber)' : 'var(--teal)' }}>
+                  {dayView.panchang.karana.name}
+                </div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>{dayView.panchang.karana.isVishtiBhadra ? '⚠ Bhadra' : '✓ Clear'}</div>
+              </div>
+              <div style={{ padding: 10, borderRadius: 8, background: 'var(--surface-alt)' }}>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Sunrise / Sunset</div>
+                <div style={{ fontSize: 12.5, fontWeight: 700 }}>
+                  {(dayView.horas?.[0] as any)?.startFormatted ?? '—'} / {(dayView.horas?.[11] as any)?.endFormatted ?? '—'}
+                </div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Waking mean: {dayView.wakingMeanScore.toFixed(1)}</div>
+              </div>
+            </div>
+          </div>
+        )
+      ) : (
+        topTransits.length > 0 && (
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0 }}>
+                Key Sky Highlights Today (Top 3 Transits)
+              </h3>
+              <button type="button" onClick={() => setActiveTab('timing')} style={{ color: 'var(--teal)', fontSize: 12, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                All {transitPlanets.length} Gochar Transits &amp; Dashas <ArrowRight size={13} />
+              </button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 10 }}>
+              {topTransits.map((tp: any) => {
+                const lagnaArea = HOUSE_SHORT_AREAS[Number(tp.houseFromLagna)] ?? `House ${tp.houseFromLagna}`;
+                return (
+                  <div key={tp.planet} style={{ padding: 11, borderRadius: 10, background: 'var(--surface-alt)', border: '1px solid var(--border-subtle)', fontSize: 12, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ textTransform: 'capitalize' }}>
+                        {tp.planet} {tp.retrograde ? '(R)' : ''} → {tp.sign}
+                      </strong>
+                      <span className={tp.bavQuality === 'supportive' ? 'teal-badge' : tp.bavQuality === 'cautious' ? 'amber-badge' : 'gold-badge'} style={{ fontSize: 10.5 }}>
+                        BAV {tp.bindus}/8
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <strong style={{ color: 'var(--gold)' }}>H{tp.houseFromLagna}</strong> ({lagnaArea}) • H{tp.houseFromMoon} from Moon
+                    </div>
+                    {tp.plainMeaning && <div style={{ fontSize: 11.5, lineHeight: 1.45 }}>{tp.plainMeaning}</div>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )
       )}
+
+      {/* Highlighted Life Topics Strip (Direct Entry to Kundli) */}
+      <div
+        className="card"
+        style={{
+          background: 'linear-gradient(135deg, rgba(227, 173, 70, 0.09), rgba(95, 194, 179, 0.06))',
+          border: '1px solid rgba(227, 173, 70, 0.3)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h3 className="serif-title" style={{ fontSize: 14.5, color: 'var(--gold)', margin: 0 }}>
+              Explore Your Kundli by Life Topic
+            </h3>
+            <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
+              Pick a life area to jump directly to its ruling house, chart pattern &amp; divisional chart.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab('kundli')}
+            style={{ color: 'var(--teal)', fontSize: 12, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+          >
+            Open Full Kundli <ArrowRight size={13} />
+          </button>
+        </div>
+
+        <div className="topic-focus-grid">
+          {LIFE_TOPICS.map((t) => {
+            const hData = (reading?.houses ?? []).find((h: any) => h.house === t.house);
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => focusLifeTopic(t.id)}
+                className="topic-focus-card"
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 16 }}>{t.icon}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--gold)' }}>
+                    {t.id === 'year' ? 'Annual' : `H${t.house} · ${t.varga}`}
+                  </span>
+                </div>
+                <strong style={{ fontSize: 12.5, color: 'var(--text-main)' }}>{t.shortLabel}</strong>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}>
+                  {hData ? `${hData.sign.toUpperCase()} • ${hData.tone === 'Mostly supportive' ? 'Supportive' : hData.tone === 'Needs attention' ? 'Needs care' : 'Balanced'}` : t.tagline}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* 1-Tap Mood Check-in */}
       <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -768,12 +771,17 @@ export const TodayTab: React.FC<TodayTabProps> = ({
               <PenLine size={14} /> 1-Tap Daily Check-in
             </h3>
             <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
-              Log how today feels — paired with today&apos;s Moon, Hora ({activeHoraRuler}) &amp; Dasha in your Journal.
+              Log how today feels — paired automatically with today&apos;s Moon &amp; Dasha in your Timeline.
             </span>
           </div>
-          {checkinSaved && (
-            <span style={{ fontSize: 11, color: 'var(--teal)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
-              <CheckCircle2 size={13} /> Saved to Journal
+          {checkinStatus === 'saved' && (
+            <span style={{ fontSize: 11.5, color: 'var(--teal)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
+              <CheckCircle2 size={13} /> Saved &amp; synced
+            </span>
+          )}
+          {checkinStatus === 'local_only' && (
+            <span style={{ fontSize: 11.5, color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
+              <CheckCircle2 size={13} /> Saved locally
             </span>
           )}
         </div>
@@ -785,13 +793,13 @@ export const TodayTab: React.FC<TodayTabProps> = ({
           ].map((m) => (
             <button
               key={m.val}
+              type="button"
               onClick={() => setQuickMood(m.val)}
               style={{
-                padding: '6px 10px',
+                padding: '7px 11px',
                 borderRadius: 8,
                 fontSize: 12,
                 fontWeight: 600,
-                cursor: 'pointer',
                 background: quickMood === m.val ? 'var(--teal)' : 'var(--surface-alt)',
                 color: quickMood === m.val ? '#15132b' : 'var(--text-main)',
                 border: quickMood === m.val ? '1px solid var(--teal)' : '1px solid var(--border-subtle)',
@@ -810,71 +818,15 @@ export const TodayTab: React.FC<TodayTabProps> = ({
               background: 'var(--surface-alt)',
               border: '1px solid var(--border-subtle)',
               borderRadius: 8,
-              padding: '6px 10px',
+              padding: '7px 10px',
               fontSize: 12,
               color: 'var(--text-main)',
             }}
           />
-          <button onClick={handleSaveQuickCheckin} className="btn" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-            Save
+          <button type="button" onClick={handleSaveQuickCheckin} disabled={checkinStatus === 'saving'} className="btn btn-primary" style={{ fontSize: 12 }}>
+            {checkinStatus === 'saving' ? 'Saving…' : 'Save'}
           </button>
         </div>
-      </div>
-
-      {/* Collapsible 24 Unequal Horas */}
-      <div className="card">
-        <button
-          onClick={() => setShowHoras((v) => !v)}
-          style={{
-            width: '100%',
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            color: 'var(--gold)',
-          }}
-        >
-          <span className="serif-title" style={{ fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Clock size={15} /> 24 Unequal Day &amp; Night Horas
-          </span>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-            {showHoras ? 'Hide calculation' : 'Show 24 hourly windows'}
-            {showHoras ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
-          </span>
-        </button>
-
-        {showHoras && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginTop: 12 }}>
-            {(dayView.horas || []).map((h: any) => {
-              const isNight = !h.isDayHora;
-              return (
-                <div
-                  key={h.index}
-                  style={{
-                    background: 'var(--surface-alt)',
-                    padding: '8px 10px',
-                    borderRadius: 6,
-                    border: '1px solid var(--border-subtle)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-muted)' }}>
-                    <span>#{h.index} {isNight ? 'Night' : 'Day'}</span>
-                    <span style={{ color: 'var(--gold)', textTransform: 'capitalize', fontWeight: 600 }}>{h.lord}</span>
-                  </div>
-                  <div style={{ fontSize: 12, fontWeight: 600 }}>
-                    {h.startFormatted || h.startIso?.slice(11, 16) || '—'} - {h.endFormatted || h.endIso?.slice(11, 16) || '—'}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </div>
     </div>
   );

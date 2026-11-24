@@ -1,5 +1,4 @@
 import React from 'react';
-import { SIGNS, type Sign } from '@astro/engine';
 
 export interface ChartPlacement {
   signIndex: number; // 0 = Aries .. 11 = Pisces
@@ -17,6 +16,7 @@ interface NorthIndianChartProps {
   selectedHouse?: number;
   highlightHouse?: number;
   selectedPlanet?: string;
+  maxWidth?: number;
   onSelectHouse?: (house: number) => void;
   onSelectPlanet?: (planet: string) => void;
 }
@@ -59,51 +59,36 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
   selectedHouse,
   highlightHouse,
   selectedPlanet,
+  maxWidth = 360,
   onSelectHouse,
   onSelectPlanet,
 }) => {
-  // Map sign index to placed items
   const signItemsMap = new Map<number, ChartPlacement['items']>();
   for (const p of placements) {
     signItemsMap.set(p.signIndex, p.items);
   }
 
-  // 12 Houses in standard North Indian layout coordinates:
-  // House 1: Top diamond (center 180, 90)
-  // House 2: Top-left triangle (center 90, 45)
-  // House 3: Left-top triangle (center 45, 90)
-  // House 4: Left diamond (center 90, 180)
-  // House 5: Left-bottom triangle (center 45, 270)
-  // House 6: Bottom-left triangle (center 90, 315)
-  // House 7: Bottom diamond (center 180, 270)
-  // House 8: Bottom-right triangle (center 270, 315)
-  // House 9: Right-bottom triangle (center 315, 270)
-  // House 10: Right diamond (center 270, 180)
-  // House 11: Right-top triangle (center 315, 90)
-  // House 12: Top-right triangle (center 270, 45)
   const houseCoords = [
-    { numX: 180, numY: 65, textX: 180, textY: 95 },   // H1
-    { numX: 95,  numY: 30, textX: 95,  textY: 50 },   // H2
-    { numX: 30,  numY: 95, textX: 45,  textY: 120 },  // H3
-    { numX: 85,  numY: 165, textX: 85, textY: 195 },  // H4
-    { numX: 30,  numY: 265, textX: 45, textY: 290 },  // H5
-    { numX: 95,  numY: 335, textX: 95, textY: 355 },  // H6
-    { numX: 180, numY: 255, textX: 180, textY: 285 }, // H7
-    { numX: 265, numY: 335, textX: 265, textY: 355 }, // H8
-    { numX: 330, numY: 265, textX: 315, textY: 290 }, // H9
-    { numX: 275, numY: 165, textX: 275, textY: 195 }, // H10
-    { numX: 330, numY: 95, textX: 315, textY: 120 },  // H11
-    { numX: 265, numY: 30, textX: 265, textY: 50 },   // H12
+    { numX: 180, numY: 54, textX: 180, textY: 82 },   // H1
+    { numX: 90, numY: 22, textX: 90, textY: 42 },     // H2
+    { numX: 28, numY: 82, textX: 40, textY: 102 },    // H3
+    { numX: 90, numY: 150, textX: 90, textY: 178 },   // H4
+    { numX: 28, numY: 254, textX: 40, textY: 274 },   // H5
+    { numX: 90, numY: 320, textX: 90, textY: 340 },   // H6
+    { numX: 180, numY: 244, textX: 180, textY: 272 }, // H7
+    { numX: 270, numY: 320, textX: 270, textY: 340 }, // H8
+    { numX: 332, numY: 254, textX: 320, textY: 274 }, // H9
+    { numX: 270, numY: 150, textX: 270, textY: 178 }, // H10
+    { numX: 332, numY: 82, textX: 320, textY: 102 },  // H11
+    { numX: 270, numY: 22, textX: 270, textY: 42 },   // H12
   ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      {title && <h4 className="serif-title" style={{ fontSize: 13, marginBottom: 8, color: 'var(--gold)' }}>{title}</h4>}
-      <svg viewBox="0 0 360 360" className="chart-svg" style={{ maxWidth: 360, width: '100%' }}>
-        {/* Outer Box */}
+      {title && <h4 className="serif-title" style={{ fontSize: 13.5, marginBottom: 8, color: 'var(--gold)' }}>{title}</h4>}
+      <svg viewBox="0 0 360 360" className="chart-svg" style={{ maxWidth, width: '100%' }} role="img" aria-label={title || 'North Indian Kundli Chart'}>
         <rect width="360" height="360" fill="var(--surface-alt)" stroke="var(--gold)" strokeWidth="1.8" />
 
-        {/* Clickable House Polygons */}
         {HOUSE_POLYGONS.map((pts, i) => {
           const hNum = i + 1;
           const isSelected = selectedHouse === hNum;
@@ -112,26 +97,33 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
             <polygon
               key={`poly-${hNum}`}
               points={pts}
+              className="svg-focusable"
+              role={onSelectHouse ? 'button' : undefined}
+              tabIndex={onSelectHouse ? 0 : undefined}
+              aria-label={`House ${hNum}`}
               fill={
                 isSelected
-                  ? 'rgba(227, 173, 70, 0.18)'
+                  ? 'rgba(227, 173, 70, 0.2)'
                   : isLinked
                   ? 'rgba(95, 194, 179, 0.14)'
                   : 'transparent'
               }
               style={{ cursor: onSelectHouse ? 'pointer' : 'default' }}
               onClick={() => onSelectHouse?.(hNum)}
+              onKeyDown={(e) => {
+                if (onSelectHouse && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  onSelectHouse(hNum);
+                }
+              }}
             />
           );
         })}
 
-        {/* Diagonals */}
         <line x1="0" y1="0" x2="360" y2="360" stroke="var(--gold)" strokeWidth="1.2" opacity="0.9" pointerEvents="none" />
         <line x1="360" y1="0" x2="0" y2="360" stroke="var(--gold)" strokeWidth="1.2" opacity="0.9" pointerEvents="none" />
-        {/* Inner Diamond */}
         <polygon points="180,0 360,180 180,360 0,180" fill="none" stroke="var(--gold)" strokeWidth="1.4" pointerEvents="none" />
 
-        {/* Dashed House -> Lord Placement Connector */}
         {selectedHouse && highlightHouse && selectedHouse !== highlightHouse && (
           <line
             x1={houseCoords[selectedHouse - 1]?.textX ?? 180}
@@ -139,28 +131,26 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
             x2={houseCoords[highlightHouse - 1]?.textX ?? 180}
             y2={houseCoords[highlightHouse - 1]?.textY ?? 95}
             stroke="var(--teal)"
-            strokeWidth="1.5"
+            strokeWidth="1.6"
             strokeDasharray="4 3"
-            opacity="0.7"
+            opacity="0.75"
             pointerEvents="none"
           />
         )}
 
-        {/* 12 Houses content */}
         {houseCoords.map((h, i) => {
           const hNum = i + 1;
           const signIdx = (lagnaSignIndex + i) % 12;
-          const signNumber = signIdx + 1; // 1 = Aries .. 12 = Pisces
+          const signNumber = signIdx + 1;
           const items = signItemsMap.get(signIdx) || [];
 
           return (
             <g key={i}>
-              {/* Sign Number */}
               <text
                 x={h.numX}
                 y={h.numY}
                 fill={selectedHouse === hNum ? 'var(--gold)' : 'var(--teal)'}
-                fontSize="11"
+                fontSize="10.5"
                 fontWeight="700"
                 textAnchor="middle"
                 style={{ cursor: onSelectHouse ? 'pointer' : 'default' }}
@@ -169,30 +159,34 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
                 {signNumber}
               </text>
 
-              {/* Grahas in this House / Sign */}
               {items.length > 0 && (
                 <text
                   x={h.textX}
                   y={h.textY}
                   fill="var(--text-main)"
-                  fontSize="10"
-                  fontWeight="500"
+                  fontSize="10.5"
+                  fontWeight="600"
                   textAnchor="middle"
                 >
                   {items.map((item, idx) => {
                     const planetId = LABEL_TO_PLANET[item.label];
                     const isSelectedPlanet = Boolean(planetId && selectedPlanet === planetId);
+                    const shouldBreak = idx > 0 && idx % 2 === 0;
                     return (
                       <tspan
                         key={idx}
+                        x={shouldBreak ? h.textX : undefined}
+                        dy={shouldBreak ? '13' : undefined}
                         fill={
                           item.isLagna
                             ? 'var(--gold)'
                             : isSelectedPlanet
                             ? 'var(--teal)'
+                            : item.isRetrograde
+                            ? 'var(--amber)'
                             : 'var(--text-main)'
                         }
-                        fontWeight={item.isLagna || isSelectedPlanet ? '700' : '500'}
+                        fontWeight={item.isLagna || isSelectedPlanet ? '700' : '600'}
                         style={{
                           cursor: planetId && onSelectPlanet ? 'pointer' : 'default',
                           textDecoration: isSelectedPlanet ? 'underline' : 'none',
@@ -204,9 +198,9 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
                           }
                         }}
                       >
-                        {idx > 0 ? ' ' : ''}
+                        {idx > 0 && !shouldBreak ? ' ' : ''}
                         {item.label}
-                        {item.isRetrograde ? '°' : ''}
+                        {item.isRetrograde ? 'ᴿ' : ''}
                       </tspan>
                     );
                   })}
@@ -216,6 +210,9 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
           );
         })}
       </svg>
+      <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginTop: 6, textAlign: 'center' }}>
+        <span style={{ color: 'var(--amber)', fontWeight: 700 }}>ᴿ</span> = Retrograde • Dashed line = House → Lord placement
+      </div>
     </div>
   );
 };

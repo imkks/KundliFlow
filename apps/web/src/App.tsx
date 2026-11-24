@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Sparkles,
   Compass,
@@ -22,9 +22,10 @@ import {
   Plus,
   Trash2,
   Users,
+  Calculator,
+  Target,
 } from 'lucide-react';
 import {
-  degToDms,
   calculateVargaSign,
   type NatalChart,
   type DayView,
@@ -45,10 +46,17 @@ import { CITIES } from '@astro/content';
 import { type ChartPlacement } from './components/NorthIndianChart.tsx';
 import { OnboardingModal, type UserProfileInput } from './components/OnboardingModal.tsx';
 import { FirstVisitOnboarding } from './components/FirstVisitOnboarding.tsx';
-import { AskCopilotDrawer } from './components/AskCopilotDrawer.tsx';
 import { AuthOnboardingGate } from './components/AuthOnboardingGate.tsx';
+import { AskCopilotDrawer } from './components/AskCopilotDrawer.tsx';
 import { type JournalEntry } from './components/JournalExplorer.tsx';
-import { ReadingProvider, useReading, type MainTab } from './context/ReadingContext.tsx';
+import {
+  ReadingProvider,
+  useReading,
+  LENS_META,
+  LIFE_TOPICS,
+  type MainTab,
+  type ReadingDepth,
+} from './context/ReadingContext.tsx';
 import { TodayTab } from './tabs/TodayTab.tsx';
 import { KundliTab } from './tabs/KundliTab.tsx';
 import { TimingTab } from './tabs/TimingTab.tsx';
@@ -56,7 +64,7 @@ import { StrengthsTab } from './tabs/StrengthsTab.tsx';
 import { JournalTab } from './tabs/JournalTab.tsx';
 import { API_BASE_URL } from './config.ts';
 
-// Lazy-load secondary and report modals to optimize initial bundle size
+// Lazy-load secondary, calculation-matrix, and report modals to keep initial JS lean
 const PrintableNatalReport = React.lazy(() =>
   import('./components/PrintableNatalReport.tsx').then((m) => ({ default: m.PrintableNatalReport }))
 );
@@ -78,13 +86,28 @@ const CommandPaletteModal = React.lazy(() =>
 const GoogleAuthModal = React.lazy(() =>
   import('./components/GoogleAuthModal.tsx').then((m) => ({ default: m.GoogleAuthModal }))
 );
+const LifeEventModal = React.lazy(() =>
+  import('./components/LifeEventModal.tsx').then((m) => ({ default: m.LifeEventModal }))
+);
+const PatternDecoderModal = React.lazy(() =>
+  import('./components/PatternDecoderModal.tsx').then((m) => ({ default: m.PatternDecoderModal }))
+);
+const QuantMatrixModal = React.lazy(() =>
+  import('./components/QuantMatrixModal.tsx').then((m) => ({ default: m.QuantMatrixModal }))
+);
+const ChartSystemsModal = React.lazy(() =>
+  import('./components/ChartSystemsModal.tsx').then((m) => ({ default: m.ChartSystemsModal }))
+);
+const DoshaAuditModal = React.lazy(() =>
+  import('./components/DoshaAuditModal.tsx').then((m) => ({ default: m.DoshaAuditModal }))
+);
 import {
   fetchOrCreateStaticBundle,
   fetchTodaySky,
+  clearTodaySkyCache,
   syncDeltaWithServer,
   fetchAuthMe,
   logoutAuth,
-  activateProfileOnServer,
   deleteProfileOnServer,
   type AuthUser,
   type ServerProfileSummary,
@@ -94,7 +117,6 @@ import {
   useAppStore,
   appStore,
   type ChartStyle,
-  DEMO_PROFILE,
 } from './store/useAppStore.ts';
 
 const ACTIVE_PROFILE_KEY = 'astro_active_profile_v1';
@@ -138,11 +160,11 @@ interface AppShellProps {
   serverLevel1?: any;
   calibrationLogs: SubjectiveLog[];
   onEntriesChange: (entries: JournalEntry[]) => void;
-  onOpenOnboarding: () => void;
+  onOpenEditProfile: () => void;
+  onOpenAddProfile: () => void;
   onOpenPrintReport: () => void;
   onOpenLlmDossier: () => void;
   onOpenDataVault: () => void;
-  onOpenPlainGuide: (cat: string) => void;
   authUser: AuthUser | null;
   savedProfiles: ServerProfileSummary[];
   onOpenAuthModal: () => void;
@@ -155,14 +177,21 @@ const AppShell: React.FC<AppShellProps> = (props) => {
   const {
     depth,
     setDepth,
+    isGuided,
+    isQuant,
     reading,
     apiOffline,
     retryReading,
     activeTab,
     setActiveTab,
-    setSelectedHouse,
+    activeTopic,
+    focusLifeTopic,
     askOpen,
     setAskOpen,
+    openLifeEventModal,
+    glossaryRequest,
+    openGlossaryModal,
+    closeGlossaryModal,
   } = useReading();
 
   const [showShareBlueprint, setShowShareBlueprint] = useState(false);
@@ -182,12 +211,15 @@ const AppShell: React.FC<AppShellProps> = (props) => {
     setAvatarBroken(false);
   }, [props.authUser?.picture]);
 
-  // Global Cmd+K / Ctrl+K shortcut for Quick Search
+  // Global Cmd+K / Ctrl+K shortcut for Quick Search & Escape to close menus
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setShowCommandPalette((o) => !o);
+      } else if (e.key === 'Escape') {
+        setChartsMenuOpen(false);
+        setAccountMenuOpen(false);
       }
     };
     window.addEventListener('keydown', onKeyDown);
@@ -203,25 +235,25 @@ const AppShell: React.FC<AppShellProps> = (props) => {
     }
   };
 
-  const TABS: { id: MainTab; label: string; Icon: React.FC<any> }[] = [
+  const TABS: { id: MainTab; label: string; mobileLabel?: string; badge?: string; featured?: boolean; Icon: React.FC<any> }[] = [
     { id: 'today', label: 'Today', Icon: Clock },
-    { id: 'kundli', label: 'Kundli & Systems', Icon: Compass },
+    { id: 'kundli', label: 'Kundli', mobileLabel: 'Kundli', badge: 'D1–D60', featured: true, Icon: Compass },
     { id: 'timing', label: 'Timing', Icon: Layers },
-    { id: 'strengths', label: 'Strengths & Yogas', Icon: Award },
-    { id: 'journal', label: 'Journal', Icon: PenLine },
+    { id: 'strengths', label: 'Yogas & Power', mobileLabel: 'Yogas', Icon: Award },
+    { id: 'journal', label: 'Timeline', Icon: PenLine },
   ];
 
-  const jumpToTopic = (house: number, varga: VargaType) => {
-    setSelectedHouse(house);
-    props.onVargaChange(varga);
-    setActiveTab('kundli');
-  };
+  const LENS_BUTTONS: Array<{ id: ReadingDepth; Icon: React.FC<any> }> = [
+    { id: 'simple', Icon: Bot },
+    { id: 'standard', Icon: Compass },
+    { id: 'detailed', Icon: Calculator },
+  ];
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Full-Width Sticky Top Bar */}
-      <header className="app-topbar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+      <header className="app-topbar" style={{ flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <button
             onClick={() => setActiveTab('today')}
             style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
@@ -245,58 +277,70 @@ const AppShell: React.FC<AppShellProps> = (props) => {
               border: '1px solid var(--border-subtle)',
               color: 'var(--text-muted)',
               fontSize: 12,
-              minWidth: 200,
+              minWidth: 185,
               justifyContent: 'space-between',
             }}
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <Search size={13} style={{ color: 'var(--gold)' }} />
-              Search chart, houses, topics…
+              Search chart, houses…
             </span>
             <kbd style={{ fontSize: 10, padding: '1px 5px', borderRadius: 4, background: 'var(--surface)', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
               ⌘K
             </kbd>
           </button>
+
+          {/* 3-Lens Experience Switcher (Noob / Some Knowledge / Expert) */}
+          <div
+            role="radiogroup"
+            aria-label="Experience level lens"
+            className="lens-switcher"
+            title="Switch between Guided AI (simple), Chart Explorer (standard), and Quant Pro (detailed)"
+          >
+            {LENS_BUTTONS.map(({ id, Icon }) => {
+              const meta = LENS_META[id];
+              const isSelected = depth === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => setDepth(id)}
+                  title={`${meta.title}: ${meta.subtitle}`}
+                  className={`lens-btn ${isSelected ? `active-${id}` : ''}`}
+                >
+                  <Icon size={13} />
+                  <span>{meta.shortLabel}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Right Global Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          {/* Reading Depth Pill */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: 'var(--surface-alt)',
-              padding: 3,
-              borderRadius: 9,
-              border: '1px solid var(--border-subtle)',
-              gap: 2,
-            }}
-            title="Reading Depth for Level 2 explanations"
+          <button
+            type="button"
+            onClick={() => openLifeEventModal()}
+            className="btn btn-outline"
+            style={{ fontSize: 12, borderColor: 'rgba(95, 194, 179, 0.4)' }}
+            title="Decode a life event date with Dashas & AI"
           >
-            <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', padding: '0 6px', textTransform: 'uppercase' }}>
-              Depth
-            </span>
-            {(['simple', 'standard', 'detailed'] as const).map((lvl) => (
-              <button
-                key={lvl}
-                onClick={() => setDepth(lvl)}
-                style={{
-                  padding: '4px 9px',
-                  borderRadius: 6,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'capitalize',
-                  border: 'none',
-                  cursor: 'pointer',
-                  background: depth === lvl ? 'var(--gold)' : 'transparent',
-                  color: depth === lvl ? '#15132b' : 'var(--text-muted)',
-                }}
-              >
-                {lvl}
-              </button>
-            ))}
-          </div>
+            <Target size={13} style={{ color: 'var(--teal)' }} /> Life Events
+          </button>
+
+          {isQuant && (
+            <button
+              type="button"
+              onClick={props.onOpenLlmDossier}
+              className="btn btn-outline"
+              style={{ fontSize: 12 }}
+              title="Export structured JSON/Markdown chart dossier"
+            >
+              <Bot size={13} style={{ color: 'var(--gold)' }} /> Dossier
+            </button>
+          )}
 
           <button
             onClick={() => setShowShareBlueprint(true)}
@@ -307,18 +351,8 @@ const AppShell: React.FC<AppShellProps> = (props) => {
             <Share2 size={13} style={{ color: 'var(--teal)' }} /> Share
           </button>
 
-          <button
-            onClick={() => setAskOpen(true)}
-            className="ask-ai-cta"
-            title={`Ask Jyotish AI Copilot about ${props.userName}`}
-          >
-            <Sparkles size={14} />
-            <span>Ask AI</span>
-            <span className="ask-ai-pulse" />
-          </button>
-
-          {/* 1. Saved Charts / Active Profile Switcher (Separate from Account Photo) */}
-          <div style={{ position: 'relative' }}>
+          {/* 1. Saved Charts / Active Profile Switcher (Mobile only; desktop uses sidebar) */}
+          <div className="mobile-only-inline" style={{ position: 'relative' }}>
             <button
               onClick={() => {
                 setChartsMenuOpen((o) => !o);
@@ -360,7 +394,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
                     <button
                       onClick={() => {
                         setChartsMenuOpen(false);
-                        props.onOpenOnboarding();
+                        props.onOpenAddProfile();
                       }}
                       style={{ fontSize: 11, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}
                     >
@@ -396,7 +430,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
                               <div style={{ fontSize: 12, fontWeight: isCurrent ? 700 : 600, color: isCurrent ? 'var(--teal)' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {isCurrent ? '✓ ' : ''}{sp.name}
                               </div>
-                              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                              <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>
                                 {sp.birthDate} • {sp.cityName}
                               </div>
                             </button>
@@ -414,19 +448,21 @@ const AppShell: React.FC<AppShellProps> = (props) => {
                       })}
                     </div>
                   ) : (
-                    <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>Saving chart…</div>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
+                      {props.authUser ? 'Saving chart…' : 'Local guest chart active'}
+                    </div>
                   )}
 
                   <div style={{ paddingTop: 6, borderTop: '1px solid var(--border-subtle)' }}>
                     <button
                       onClick={() => {
                         setChartsMenuOpen(false);
-                        props.onOpenOnboarding();
+                        props.onOpenEditProfile();
                       }}
                       className="btn btn-outline"
                       style={{ width: '100%', fontSize: 11.5, justifyContent: 'center' }}
                     >
-                      <User size={12} /> Edit Current Chart Details
+                      <User size={12} /> Edit Current Chart
                     </button>
                   </div>
                 </div>
@@ -434,8 +470,8 @@ const AppShell: React.FC<AppShellProps> = (props) => {
             )}
           </div>
 
-          {/* 2. Separate Google Account Photo Button */}
-          {props.authUser && (
+          {/* 2. Google Account Photo Button OR Guest Sign-In Button */}
+          {props.authUser ? (
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => {
@@ -543,6 +579,16 @@ const AppShell: React.FC<AppShellProps> = (props) => {
                 </>
               )}
             </div>
+          ) : (
+            <button
+              type="button"
+              onClick={props.onOpenAuthModal}
+              className="btn btn-outline"
+              style={{ fontSize: 12, borderColor: 'rgba(227, 173, 70, 0.35)' }}
+              title="Sign in with Google to sync charts across devices"
+            >
+              <LogIn size={13} style={{ color: 'var(--gold)' }} /> Sign in
+            </button>
           )}
         </div>
       </header>
@@ -558,27 +604,38 @@ const AppShell: React.FC<AppShellProps> = (props) => {
                 {props.userName}
               </strong>
               <button
-                onClick={props.onOpenOnboarding}
-                style={{ fontSize: 10.5, color: 'var(--teal)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+                onClick={props.onOpenEditProfile}
+                style={{ fontSize: 11, color: 'var(--teal)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 600 }}
               >
                 Edit
               </button>
             </div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: 3 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <Calendar size={11} style={{ color: 'var(--gold)' }} /> {props.birthDate} • {props.birthTime.slice(0, 5)}
+                <Calendar size={11} style={{ color: 'var(--gold)' }} /> {props.birthDate} • {props.birthTime.slice(0, 8)}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <MapPin size={11} style={{ color: 'var(--teal)' }} /> {props.cityName}
               </span>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 2 }}>
-              <span className="gold-badge" style={{ fontSize: 10, padding: '2px 7px' }}>
+              <span className="gold-badge" style={{ fontSize: 10.5, padding: '2px 7px' }}>
                 Asc: {props.natalChart.lagna?.sign?.toUpperCase() ?? 'CHANDRA'}
               </span>
-              <span className="teal-badge" style={{ fontSize: 10, padding: '2px 7px', textTransform: 'capitalize' }}>
+              <span className="teal-badge" style={{ fontSize: 10.5, padding: '2px 7px', textTransform: 'capitalize' }}>
                 Moon: {props.natalChart.grahas.moon.sign}
               </span>
+              {props.natalChart.ayanamsa?.id && (
+                <button
+                  type="button"
+                  onClick={props.onOpenEditProfile}
+                  className={props.natalChart.ayanamsa.id === 'lahiri' ? 'badge' : 'amber-badge'}
+                  style={{ fontSize: 10, padding: '2px 7px', textTransform: 'uppercase', cursor: 'pointer' }}
+                  title="Active Ayanamsa (click to edit calculation settings)"
+                >
+                  {props.natalChart.ayanamsa.id.replace('_', ' ')}
+                </button>
+              )}
             </div>
           </div>
 
@@ -587,12 +644,12 @@ const AppShell: React.FC<AppShellProps> = (props) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
                 <Users size={12} style={{ color: 'var(--teal)' }} />
-                {props.authUser ? `Saved Charts (${props.savedProfiles.length})` : 'Account Sync'}
+                {props.authUser ? `Saved Charts (${props.savedProfiles.length})` : 'Cloud Sync'}
               </span>
               {props.authUser ? (
                 <button
-                  onClick={props.onOpenOnboarding}
-                  style={{ fontSize: 10.5, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}
+                  onClick={props.onOpenAddProfile}
+                  style={{ fontSize: 11, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}
                   title="Add another birth chart under your account"
                 >
                   <Plus size={11} /> Add
@@ -600,7 +657,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
               ) : (
                 <button
                   onClick={props.onOpenAuthModal}
-                  style={{ fontSize: 10.5, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700 }}
+                  style={{ fontSize: 11, color: 'var(--gold)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 700 }}
                 >
                   Sign in
                 </button>
@@ -671,11 +728,11 @@ const AppShell: React.FC<AppShellProps> = (props) => {
           </div>
 
           {/* Primary Navigation Links */}
-          <nav role="tablist" aria-label="Primary chart sections" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <nav role="tablist" aria-label="Primary chart sections" style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', padding: '0 8px 4px' }}>
               Explore
             </div>
-            {TABS.map(({ id, label, Icon }) => {
+            {TABS.map(({ id, label, badge, featured, Icon }) => {
               const isActive = activeTab === id;
               return (
                 <button
@@ -683,54 +740,95 @@ const AppShell: React.FC<AppShellProps> = (props) => {
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setActiveTab(id)}
+                  className={featured && !isActive ? 'nav-item-featured' : undefined}
                   style={{
                     width: '100%',
-                    padding: '9px 12px',
+                    padding: featured ? '10px 12px' : '9px 12px',
                     borderRadius: 10,
-                    fontSize: 13,
-                    fontWeight: isActive ? 700 : 500,
+                    fontSize: featured ? 13.5 : 13,
+                    fontWeight: isActive || featured ? 700 : 500,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 10,
+                    justifyContent: 'space-between',
+                    gap: 8,
                     textAlign: 'left',
-                    background: isActive ? 'rgba(227, 173, 70, 0.16)' : 'transparent',
-                    color: isActive ? 'var(--gold)' : 'var(--text-main)',
-                    border: isActive ? '1px solid rgba(227, 173, 70, 0.35)' : '1px solid transparent',
+                    background: isActive
+                      ? 'rgba(227, 173, 70, 0.2)'
+                      : featured
+                      ? 'rgba(227, 173, 70, 0.08)'
+                      : 'transparent',
+                    color: isActive || featured ? 'var(--gold)' : 'var(--text-main)',
+                    border: isActive
+                      ? '1px solid rgba(227, 173, 70, 0.55)'
+                      : featured
+                      ? '1px solid rgba(227, 173, 70, 0.28)'
+                      : '1px solid transparent',
                   }}
                 >
-                  <Icon size={15} /> {label}
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                    <Icon size={15} /> {label}
+                  </span>
+                  {badge && (
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        padding: '1px 6px',
+                        borderRadius: 6,
+                        background: isActive ? 'var(--gold)' : 'rgba(227, 173, 70, 0.16)',
+                        color: isActive ? '#15132b' : 'var(--gold)',
+                      }}
+                    >
+                      {badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Quick Life Topics */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', padding: '0 8px 4px' }}>
+          {/* Highlighted Life Topics Quick Focus */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingTop: 10, borderTop: '1px solid var(--border-subtle)' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--teal)', textTransform: 'uppercase', letterSpacing: '0.04em', padding: '0 8px 3px' }}>
               Life Topics
             </div>
-            {[
-              { label: '💼 Career & Calling', house: 10, varga: 'D10' as VargaType },
-              { label: '💞 Love & Marriage', house: 7, varga: 'D9' as VargaType },
-              { label: '💰 Wealth & Assets', house: 2, varga: 'D2' as VargaType },
-              { label: '🌿 Health & Peace', house: 4, varga: 'D9' as VargaType },
-            ].map((t) => (
-              <button
-                key={t.label}
-                onClick={() => jumpToTopic(t.house, t.varga)}
-                style={{
-                  width: '100%',
-                  textAlign: 'left',
-                  padding: '6px 10px',
-                  borderRadius: 8,
-                  fontSize: 12,
-                  color: 'var(--text-muted)',
-                  background: 'transparent',
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
+            {LIFE_TOPICS.map((t) => {
+              const isTopicActive = activeTab === 'kundli' && activeTopic === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    props.onVargaChange(t.varga);
+                    focusLifeTopic(t.id);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '6px 10px',
+                    borderRadius: 8,
+                    fontSize: 12,
+                    fontWeight: isTopicActive ? 700 : 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 6,
+                    textAlign: 'left',
+                    background: isTopicActive ? 'rgba(95, 194, 179, 0.16)' : 'transparent',
+                    color: isTopicActive ? 'var(--teal)' : 'var(--text-main)',
+                    border: isTopicActive ? '1px solid rgba(95, 194, 179, 0.35)' : '1px solid transparent',
+                  }}
+                  title={t.tagline}
+                >
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+                    <span>{t.icon}</span>
+                    <span>{t.shortLabel}</span>
+                  </span>
+                  <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                    {t.id === 'year' ? 'Annual' : `H${t.house}`}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Tools & Export */}
@@ -747,7 +845,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
             <button onClick={props.onOpenDataVault} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'left' }}>
               <HardDrive size={13} style={{ color: 'var(--teal)' }} /> Data Vault
             </button>
-            <button onClick={() => props.onOpenPlainGuide(activeTab)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'left' }}>
+            <button onClick={() => openGlossaryModal({ category: activeTab })} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'left' }}>
               <BookOpen size={13} style={{ color: 'var(--gold)' }} /> Plain English Glossary
             </button>
           </div>
@@ -760,28 +858,34 @@ const AppShell: React.FC<AppShellProps> = (props) => {
             <div
               style={{
                 marginBottom: 14,
-                padding: '8px 14px',
+                padding: '9px 14px',
                 borderRadius: 10,
                 background: 'rgba(217, 119, 54, 0.14)',
                 border: '1px solid var(--amber)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                flexWrap: 'wrap',
                 gap: 10,
                 fontSize: 12,
               }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <WifiOff size={14} style={{ color: 'var(--amber)' }} />
-                Backend API (localhost:8787) is offline — showing client-side ephemeris charts &amp; tables. Start `@astro/api` for Level 2 readings &amp; Ask AI.
+                Backend API is offline — showing cached chart data &amp; client calculations. Live AI chat is paused.
               </span>
-              <button onClick={retryReading} className="btn btn-outline" style={{ fontSize: 11 }}>
-                Retry
-              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={props.onOpenLlmDossier} className="btn btn-outline" style={{ fontSize: 11 }}>
+                  Copy AI Dossier
+                </button>
+                <button onClick={retryReading} className="btn btn-outline" style={{ fontSize: 11 }}>
+                  Retry
+                </button>
+              </div>
             </div>
           )}
 
-          {/* Dismissible First-Visit Guided Welcome Strip */}
+          {/* Dismissible Adaptive Quick-Start Strip */}
           {!welcomeDismissed && (
             <div
               className="card"
@@ -799,16 +903,46 @@ const AppShell: React.FC<AppShellProps> = (props) => {
               }}
             >
               <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
-                <strong style={{ color: 'var(--teal)' }}>✨ Start Here:</strong>
-                <button onClick={() => setActiveTab('today')} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
-                  1. Check Today&apos;s Briefing &amp; Mood
-                </button>
-                <button onClick={() => setActiveTab('kundli')} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
-                  2. Click Your Kundli &amp; Try &ldquo;Teach Me&rdquo;
-                </button>
-                <button onClick={() => setActiveTab('timing')} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
-                  3. Test Past Life Events
-                </button>
+                <strong style={{ color: 'var(--teal)' }}>
+                  ✨ {isGuided ? 'Guided Start:' : isQuant ? 'Quant Workspace:' : 'Explorer Start:'}
+                </strong>
+                {isGuided ? (
+                  <>
+                    <button onClick={() => openLifeEventModal()} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      1. Decode a Past or Future Life Event
+                    </button>
+                    <button onClick={() => setAskOpen(true)} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      2. Ask AI About Your Life
+                    </button>
+                    <button onClick={() => setActiveTab('today')} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      3. Check Today&apos;s Best Hours
+                    </button>
+                  </>
+                ) : isQuant ? (
+                  <>
+                    <button onClick={() => setActiveTab('kundli')} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      1. Inspect Degrees, Vargas &amp; KP
+                    </button>
+                    <button onClick={() => setActiveTab('strengths')} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      2. Shadbala &amp; Ashtakvarga Tables
+                    </button>
+                    <button onClick={props.onOpenLlmDossier} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      3. Export JSON/MD Dossier
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => setActiveTab('kundli')} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      1. Click Your Chart &amp; Trace Patterns
+                    </button>
+                    <button onClick={() => openLifeEventModal()} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      2. Test Past Life Events
+                    </button>
+                    <button onClick={() => openGlossaryModal({ category: 'kundli' })} style={{ color: 'var(--text-main)', textDecoration: 'underline', fontSize: 12 }}>
+                      3. Open Plain English Glossary
+                    </button>
+                  </>
+                )}
               </div>
               <button onClick={dismissWelcome} aria-label="Dismiss welcome guide" style={{ color: 'var(--text-muted)' }}>
                 <X size={14} />
@@ -899,7 +1033,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
               color: 'var(--text-muted)',
             }}
           >
-            <p>MyAstro Almanac • Swiss Ephemeris WASM &amp; Local SQLite • Local-First &amp; Private</p>
+            <p>MyAstro Almanac • Swiss Ephemeris &amp; Local-First Sync • Private by Default</p>
           </footer>
         </main>
       </div>
@@ -912,7 +1046,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
           aria-label={`Ask AI about ${props.userName}`}
         >
           <Sparkles size={15} />
-          <span>Ask AI · {props.userName.split(' ')[0]}</span>
+          <span>{isGuided ? 'Ask AI · Life & Chart' : `Ask AI · ${props.userName.split(' ')[0]}`}</span>
           <span className="ask-ai-pulse" />
         </button>
       )}
@@ -926,7 +1060,51 @@ const AppShell: React.FC<AppShellProps> = (props) => {
         ashtakvarga={props.ashtakvarga}
         dashas={props.dashas}
         transits={props.currentTransits}
+        onOpenDossier={props.onOpenLlmDossier}
       />
+
+      {/* Shared Progressive Disclosure Modals */}
+      <React.Suspense fallback={null}>
+        <LifeEventModal
+          natalChart={props.natalChart}
+          dashas={props.dashas}
+          yoginiDashas={props.yoginiDashas}
+          charaDashas={props.charaDashas}
+        />
+        <PatternDecoderModal
+          natalChart={props.natalChart}
+          charaKarakas={props.charaKarakas}
+        />
+        <QuantMatrixModal
+          natalChart={props.natalChart}
+          charaKarakas={props.charaKarakas}
+          shadbala={props.shadbala}
+          ashtakvarga={props.ashtakvarga}
+          sevenPlanetSigns={props.sevenPlanetSigns}
+          dayView={props.dayView}
+          currentTransits={props.currentTransits}
+        />
+        <ChartSystemsModal
+          profileId={props.backendProfileId}
+          natalChart={props.natalChart}
+          currentTransits={props.currentTransits}
+          chalit={props.chalit}
+          panchang={props.panchang}
+          avakahada={props.avakahada}
+          birthDate={props.birthDate}
+          birthTime={props.birthTime}
+          tzId={props.tzId}
+          chartStyle={props.chartStyle}
+        />
+        <DoshaAuditModal />
+        {glossaryRequest && (
+          <PlainEnglishExplainerModal
+            initialTab={glossaryRequest.category ?? activeTab}
+            initialSearch={glossaryRequest.term ?? ''}
+            onClose={closeGlossaryModal}
+          />
+        )}
+      </React.Suspense>
 
       {/* Cmd+K Global Search Palette */}
       {showCommandPalette && (
@@ -954,7 +1132,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
 
       {/* Mobile Sticky Bottom Tab Bar */}
       <nav className="nav-bar mobile-bottom-nav" aria-label="Mobile navigation">
-        {TABS.map(({ id, label, Icon }) => {
+        {TABS.map(({ id, label, mobileLabel, Icon }) => {
           const isActive = activeTab === id;
           return (
             <button
@@ -964,7 +1142,7 @@ const AppShell: React.FC<AppShellProps> = (props) => {
               aria-label={label}
             >
               <Icon size={18} />
-              <span>{id === 'kundli' ? 'Chart' : id === 'strengths' ? 'Strengths' : label}</span>
+              <span>{mobileLabel ?? label}</span>
             </button>
           );
         })}
@@ -973,19 +1151,9 @@ const AppShell: React.FC<AppShellProps> = (props) => {
   );
 };
 
-function loadSavedProfile(): UserProfileInput | null {
-  try {
-    const raw = localStorage.getItem(ACTIVE_PROFILE_KEY);
-    if (!raw) return null;
-    const p = JSON.parse(raw);
-    if (p && p.name && p.birthDate) return p;
-  } catch {
-    // ignore
-  }
-  return null;
-}
-
 export default function App() {
+  const [onboardingMode, setOnboardingMode] = useState<'add' | 'edit'>('edit');
+  const forceRecomputeRef = React.useRef(false);
   const store = useAppStore((s) => s);
   const {
     savedProfile,
@@ -1016,8 +1184,6 @@ export default function App() {
     showPrintReport,
     showDataSovereignty,
     showLlmDossier,
-    showPlainEnglishModal,
-    plainEnglishCategory,
     authChecked,
     authUser,
     savedProfiles,
@@ -1038,15 +1204,13 @@ export default function App() {
   const timeCertainty = activeProfile.timeCertainty;
   const ayanamsa = activeProfile.ayanamsa;
 
-  const setChartStyle = (s: ChartStyle) => appStore.setChartStyle(s);
-  const setSelectedVarga = (v: VargaType) => appStore.setState({ selectedVarga: v });
-  const setChartPerspective = (p: 'lagna' | 'chandra') => appStore.setState({ chartPerspective: p });
+  const setChartStyle = useCallback((s: ChartStyle) => appStore.setChartStyle(s), []);
+  const setSelectedVarga = useCallback((v: VargaType) => appStore.setState({ selectedVarga: v }), []);
+  const setChartPerspective = useCallback((p: 'lagna' | 'chandra') => appStore.setState({ chartPerspective: p }), []);
   const setShowOnboarding = (v: boolean) => appStore.setState({ showOnboarding: v });
   const setShowPrintReport = (v: boolean) => appStore.setState({ showPrintReport: v });
   const setShowDataSovereignty = (v: boolean) => appStore.setState({ showDataSovereignty: v });
   const setShowLlmDossier = (v: boolean) => appStore.setState({ showLlmDossier: v });
-  const setShowPlainEnglishModal = (v: boolean) => appStore.setState({ showPlainEnglishModal: v });
-  const setPlainEnglishCategory = (v: string) => appStore.setState({ plainEnglishCategory: v });
   const setShowAuthModal = (v: boolean) => appStore.setState({ showAuthModal: v });
   const setSelectedServerProfileId = (id: string | null) => appStore.setState({ selectedServerProfileId: id });
   const setBackendProfileId = (id: string | null) => appStore.setBackendProfileId(id);
@@ -1076,15 +1240,6 @@ export default function App() {
   const setPanchang = (p: any) => appStore.setState({ panchang: p });
   const setTodayLocation = (loc: any) => appStore.setState({ todayLocation: loc });
   const setTodayCityName = (name: string) => appStore.setState({ todayCityName: name });
-  const setUserName = (_name: string) => {};
-  const setBirthDate = (_b: string) => {};
-  const setBirthTime = (_t: string) => {};
-  const setCityName = (_c: string) => {};
-  const setLat = (_l: number) => {};
-  const setLon = (_l: number) => {};
-  const setTzId = (_tz: string) => {};
-  const setTimeCertainty = (_tc: any) => {};
-  const setAyanamsa = (_ay: any) => {};
 
   useEffect(() => {
     try {
@@ -1093,18 +1248,6 @@ export default function App() {
       // ignore
     }
   }, [chartStyle]);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem('astro_journal_entries_v1');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setJournalEntries(parsed);
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
 
   const applyServerProfileToState = (sp: ServerProfileSummary) => {
     const p: UserProfileInput = {
@@ -1121,17 +1264,8 @@ export default function App() {
     setSelectedServerProfileId(sp.id);
     setBackendProfileId(sp.id);
     setSavedProfile(p);
-    setUserName(p.name);
-    setBirthDate(p.birthDate);
-    setBirthTime(p.birthTime);
-    setCityName(p.cityName);
     setTodayCityName(p.cityName);
     setTodayLocation({ name: p.cityName, lat: p.lat, lon: p.lon, tzId: p.tzId });
-    setLat(p.lat);
-    setLon(p.lon);
-    setTzId(p.tzId);
-    setTimeCertainty(p.timeCertainty);
-    setAyanamsa(p.ayanamsa);
     try {
       localStorage.setItem(ACTIVE_PROFILE_KEY, JSON.stringify(p));
       localStorage.setItem('astro_backend_profile_id_v1', sp.id);
@@ -1150,7 +1284,16 @@ export default function App() {
           setAuthUser(res.user);
           setSavedProfiles(res.profiles);
           if (res.profiles.length > 0) {
-            const active = res.profiles.find((p) => p.isActive) ?? res.profiles[0]!;
+            let localId: string | null = null;
+            try {
+              localId = localStorage.getItem('astro_backend_profile_id_v1');
+            } catch {
+              // ignore
+            }
+            const active =
+              (localId ? res.profiles.find((p) => p.id === localId) : undefined) ??
+              res.profiles.find((p) => p.isActive) ??
+              res.profiles[0]!;
             applyServerProfileToState(active);
           } else {
             // Logged in but no saved charts yet -> show Step 2 birth details onboarding
@@ -1189,7 +1332,6 @@ export default function App() {
 
   const handleSwitchProfile = async (sp: ServerProfileSummary) => {
     applyServerProfileToState(sp);
-    activateProfileOnServer(sp.id).catch(() => {});
   };
 
   const handleDeleteProfile = async (profileIdToDelete: string) => {
@@ -1225,23 +1367,34 @@ export default function App() {
     }
   };
 
-  const handleSaveProfile = (p: UserProfileInput) => {
-    // Creating/editing a profile clears pinned server ID so POST /api/profiles creates/updates cleanly under current user
-    setSelectedServerProfileId(null);
-    if (backendProfileId) {
-      try {
-        localStorage.removeItem(`astro_bundle_cache_v1_${backendProfileId}`);
-      } catch {
-        // ignore
+  const handleSaveProfile = (p: UserProfileInput, mode: 'add' | 'edit' = 'add') => {
+    const preservedId = mode === 'edit' ? (selectedServerProfileId ?? backendProfileId ?? null) : null;
+    forceRecomputeRef.current = true;
+    try {
+      if (preservedId) {
+        localStorage.removeItem(`astro_bundle_cache_v1_${preservedId}`);
+        localStorage.removeItem(`astro_server_bundle_v2_${preservedId}`);
       }
+      if (backendProfileId && backendProfileId !== preservedId) {
+        localStorage.removeItem(`astro_bundle_cache_v1_${backendProfileId}`);
+        localStorage.removeItem(`astro_server_bundle_v2_${backendProfileId}`);
+      }
+      clearTodaySkyCache(preservedId);
+      clearTodaySkyCache(backendProfileId);
+    } catch {
+      // ignore
     }
-    appStore.setState({
+    appStore.setState((s) => ({
       savedProfile: p,
       activeProfile: p,
-      selectedServerProfileId: null,
+      selectedServerProfileId: preservedId,
       todayCityName: p.cityName,
       todayLocation: { name: p.cityName, lat: p.lat, lon: p.lon, tzId: p.tzId },
-    });
+      serverLevel1: null,
+      serverLevel2: null,
+      natalChart: null,
+      retryTick: s.retryTick + 1,
+    }));
     try {
       localStorage.setItem(ACTIVE_PROFILE_KEY, JSON.stringify(p));
     } catch {
@@ -1328,12 +1481,15 @@ export default function App() {
     async function loadFromServer() {
       setLoading(true);
       setServerError(null);
+      const forceRecompute = forceRecomputeRef.current;
+      forceRecomputeRef.current = false;
       const nowLocal = new Date();
       const todayStr = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
 
       try {
-        const { profileId, bundle } = await fetchOrCreateStaticBundle({
+        const { profileId, bundle, fromServerMutation } = await fetchOrCreateStaticBundle({
           ...(selectedServerProfileId ? { id: selectedServerProfileId } : {}),
+          forceRecompute,
           name: userName,
           birthDate,
           birthTime,
@@ -1347,8 +1503,8 @@ export default function App() {
         if (cancelled) return;
 
         setBackendProfileId(profileId);
-        // Refresh saved profiles list if signed in so new/updated chart appears immediately in sidebar
-        if (authUser) {
+        // Only refresh saved profiles list & sync delta when a profile was created or edited on the server
+        if (authUser && fromServerMutation) {
           fetchAuthMe()
             .then((me) => {
               if (!cancelled && me) setSavedProfiles(me.profiles);
@@ -1384,7 +1540,9 @@ export default function App() {
         const curHour = nowLocal.getHours();
         setCurrentScore(todayPayload.dayView?.hourlyScores?.[curHour] || todayPayload.dayView?.hourlyScores?.[12] || null);
 
-        syncDeltaWithServer(profileId).catch(() => {});
+        if (fromServerMutation) {
+          syncDeltaWithServer(profileId).catch(() => {});
+        }
       } catch (err: any) {
         if (!cancelled) {
           setServerError(err?.message ?? 'Could not connect to MyAstro API server.');
@@ -1486,29 +1644,34 @@ export default function App() {
     };
   }, [natalChart]);
 
-  // First-visit onboarding screen (no hardcoded chart forced on new visitors)
-  // Step 0: Restoring existing session
+  // Step 0: Restoring existing authenticated session
   if (!authChecked) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: 16 }}>
-        <Sparkles style={{ color: 'var(--gold)', animation: 'spin 3s linear infinite', width: 34, height: 34 }} />
+        <Sparkles style={{ color: 'var(--gold)', width: 34, height: 34 }} className="spin" />
         <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>Checking your account…</p>
       </div>
     );
   }
 
-  // Step 1 (Mandatory): Sign In / Create Account Gate
+  // Step 1 (Mandatory): Sign-In / Account Gate
   if (!authUser) {
     return <AuthOnboardingGate onSuccess={handleAuthSuccess} />;
   }
 
-  // Step 2: Signed in, but no saved chart found under this account -> Enter Birth Details
+  // Step 2: Signed in, no chart yet -> Enter Birth Details + Choose Experience Lens
   if (!savedProfile) {
     return (
       <>
         <FirstVisitOnboarding
-          onComplete={(p) => handleSaveProfile(p)}
-          onUseDemo={() => handleSaveProfile(DEMO_PROFILE)}
+          onComplete={(p, lens) => {
+            try {
+              localStorage.setItem('astro_reading_depth_v1', lens);
+            } catch {
+              // ignore
+            }
+            handleSaveProfile(p, 'add');
+          }}
         />
         <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 50, display: 'flex', alignItems: 'center', gap: 8 }}>
           <div
@@ -1551,12 +1714,30 @@ export default function App() {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: 14, padding: 24, textAlign: 'center' }}>
         <WifiOff size={36} style={{ color: 'var(--amber)' }} />
         <h2 className="serif-title" style={{ color: 'var(--gold)', margin: 0 }}>MyAstro Server Unreachable</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: 13, maxWidth: 420, margin: 0 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13, maxWidth: 440, margin: 0 }}>
           {serverError} Make sure the MyAstro API server is running at <code>{API_BASE_URL}</code>.
         </p>
-        <button onClick={() => setRetryTick((t) => t + 1)} className="btn btn-primary">
-          Retry Connection
-        </button>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button onClick={() => setRetryTick((t) => t + 1)} className="btn btn-primary">
+            Retry Connection
+          </button>
+          <button
+            onClick={() => {
+              setOnboardingMode('edit');
+              setShowOnboarding(true);
+            }}
+            className="btn btn-outline"
+          >
+            Edit Birth Details
+          </button>
+        </div>
+        <OnboardingModal
+          isOpen={showOnboarding}
+          mode={onboardingMode}
+          onClose={() => setShowOnboarding(false)}
+          currentProfile={currentProfile}
+          onSaveProfile={handleSaveProfile}
+        />
       </div>
     );
   }
@@ -1564,8 +1745,8 @@ export default function App() {
   if (loading || !natalChart || !natalChart.lagna) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: 16 }}>
-        <Sparkles style={{ color: 'var(--gold)', animation: 'spin 3s linear infinite', width: 36, height: 36 }} />
-        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Loading your chart bundle from MyAstro server...</p>
+        <Sparkles style={{ color: 'var(--gold)', width: 36, height: 36 }} className="spin" />
+        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Preparing your Vedic chart &amp; life readings…</p>
       </div>
     );
   }
@@ -1622,14 +1803,17 @@ export default function App() {
         backendProfileId={backendProfileId}
         calibrationLogs={calibrationLogs}
         onEntriesChange={setJournalEntries}
-        onOpenOnboarding={() => setShowOnboarding(true)}
+        onOpenEditProfile={() => {
+          setOnboardingMode('edit');
+          setShowOnboarding(true);
+        }}
+        onOpenAddProfile={() => {
+          setOnboardingMode('add');
+          setShowOnboarding(true);
+        }}
         onOpenPrintReport={() => setShowPrintReport(true)}
         onOpenLlmDossier={() => setShowLlmDossier(true)}
         onOpenDataVault={() => setShowDataSovereignty(true)}
-        onOpenPlainGuide={(cat) => {
-          setPlainEnglishCategory(cat);
-          setShowPlainEnglishModal(true);
-        }}
         authUser={authUser}
         savedProfiles={savedProfiles}
         onOpenAuthModal={() => setShowAuthModal(true)}
@@ -1650,6 +1834,7 @@ export default function App() {
 
       <OnboardingModal
         isOpen={showOnboarding}
+        mode={onboardingMode}
         onClose={() => setShowOnboarding(false)}
         currentProfile={currentProfile}
         onSaveProfile={handleSaveProfile}
@@ -1696,12 +1881,6 @@ export default function App() {
       {showLlmDossier && llmDossierInput && (
         <React.Suspense fallback={null}>
           <LlmDossierModal input={llmDossierInput} onClose={() => setShowLlmDossier(false)} />
-        </React.Suspense>
-      )}
-
-      {showPlainEnglishModal && (
-        <React.Suspense fallback={null}>
-          <PlainEnglishExplainerModal initialTab={plainEnglishCategory} onClose={() => setShowPlainEnglishModal(false)} />
         </React.Suspense>
       )}
     </ReadingProvider>

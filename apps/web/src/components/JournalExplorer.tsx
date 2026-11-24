@@ -126,10 +126,13 @@ export const JournalExplorer: React.FC<JournalExplorerProps> = ({
         moonSign: natalChart.grahas.moon.sign,
         moonNakshatra: natalChart.grahas.moon.nakshatra,
         dasha: 'Rahu - Saturn',
-        factors: currentScore?.factors ?? [
+        factors: (currentScore?.factors ?? [
           { description: 'Moon in Pisces (11th House of Gains)', points: 2 },
           { description: 'Hora Ruler is Sun (Natural Friend to Taurus Lagna)', points: 1 },
-        ],
+        ]).map((f: any) => ({
+          description: String(f.description ?? f.summary ?? ''),
+          points: Number(f.points ?? f.value ?? 0),
+        })),
       },
     };
     setEntries([defaultEntry]);
@@ -667,10 +670,24 @@ export const JournalExplorer: React.FC<JournalExplorerProps> = ({
             }}
           >
             <BookOpen size={32} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
-            <h4 style={{ fontSize: 14, color: 'var(--text-main)' }}>No matching entries found</h4>
+            <h4 style={{ fontSize: 14, color: 'var(--text-main)' }}>
+              {entries.length === 0 ? 'Your Sky Journal is empty' : 'No matching entries found'}
+            </h4>
             <p style={{ fontSize: 12, color: 'var(--text-muted)', maxWidth: 360 }}>
-              Try loosening your filters, or log a fresh sky reflection to begin tracking your personal rhythms.
+              {entries.length === 0
+                ? 'Log your first daily reflection to freeze a sky snapshot (Moon, Hora & Dasha) and spot personal patterns over time.'
+                : 'Try loosening your filters, or log a fresh sky reflection to begin tracking your personal rhythms.'}
             </p>
+            {entries.length === 0 && (
+              <button
+                type="button"
+                onClick={() => setShowLogModal(true)}
+                className="btn btn-primary"
+                style={{ marginTop: 4, fontSize: 12 }}
+              >
+                <PlusCircle size={14} /> Log First Sky Entry
+              </button>
+            )}
           </div>
         ) : (
           filteredEntries.map((entry) => {

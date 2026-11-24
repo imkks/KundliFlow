@@ -1,15 +1,22 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { HelpCircle, Clock, Target, Plus, Trash2, Calendar, Radio, Compass, ShieldAlert, Activity, CheckCircle2 } from 'lucide-react';
+import {
+  HelpCircle,
+  Clock,
+  Target,
+  Plus,
+  Trash2,
+  Calendar,
+  Radio,
+  Activity,
+  ShieldAlert,
+  Sparkles,
+  GitBranch,
+} from 'lucide-react';
 import {
   SIGNS,
-  computeSpecialNakshatras,
-  computeFullNavataraTable,
-  evaluateNavatara,
-  evaluateTransitNavatara,
   computeAshtakvarga,
   evaluateKakshyaTransits,
   checkTransitVedha,
-  type KakshyaTransitEvaluation,
   type VedhaCheckResult,
   type VedicGraha,
   type NatalChart,
@@ -23,34 +30,26 @@ import { CharaExplorer } from '../components/CharaExplorer.tsx';
 import { CalendarExplorer } from '../components/CalendarExplorer.tsx';
 import { useReading } from '../context/ReadingContext.tsx';
 import { GlossaryTerm } from '../components/GlossaryTerm.tsx';
-
-interface LifeEventItem {
-  id: string;
-  title: string;
-  date: string; // YYYY-MM-DD
-  category: 'career' | 'relationship' | 'move' | 'breakthrough';
-}
-
-const LIFE_EVENTS_KEY = 'astro_life_events_v1';
-
-const DEFAULT_EVENTS: LifeEventItem[] = [
-  { id: 'ev-1', title: 'First Career / Academic Turning Point', date: '2020-07-01', category: 'career' },
-  { id: 'ev-2', title: 'Major Shift / Relocation', date: '2024-03-01', category: 'move' },
-];
+import {
+  loadLifeEvents,
+  removeLifeEvent,
+  subscribeLifeEvents,
+  type LifeEventItem,
+} from '../utils/lifeEventsStore.ts';
 
 const HOUSE_MILESTONES: Record<number, { title: string; desc: string }> = {
-  1: { title: 'Identity & Vitality Reboot', desc: 'Major new life beginnings, personal health transformations & lifestyle milestones' },
-  2: { title: 'Wealth & Family Expansion', desc: 'Significant asset accumulation, bank balance growth & family milestone moments' },
-  3: { title: 'Initiatives & Creative Courage', desc: 'Bold personal projects, publications, skills mastering & short-journey leaps' },
-  4: { title: 'Home, Property & Inner Peace', desc: 'Property purchase, vehicle acquisition, domestic sanctuary & deep emotional contentment' },
-  5: { title: 'Children, Creativity & Investments', desc: 'Progeny milestone, creative breakthroughs, speculative growth & academic honors' },
-  6: { title: 'Competitive Triumph & Healing', desc: 'Overcoming longstanding health hurdles, resolving debts & victory over competitors' },
-  7: { title: 'Marriage & High-Stakes Partnership', desc: 'Marriage manifestation, deep relationship commitment & thriving business alliances' },
-  8: { title: 'Transformative Breakthroughs & Research', desc: 'Occult wisdom, unearned assets/inheritance & catalytic psychological breakthroughs' },
-  9: { title: 'Higher Fortune, Mentors & Dharma', desc: 'Spiritual blessings, father/guru milestones, higher learning & fortunate foreign journeys' },
-  10: { title: 'Career Leap & Public Elevation', desc: 'Major career promotion, executive appointments, honors & public reputation expansion' },
-  11: { title: 'Ambitions Fulfilled & Large Inflows', desc: 'Realization of major lifelong ambitions, lucrative cash windfalls & influential network leaps' },
-  12: { title: 'Foreign Relocation & Spiritual Liberation', desc: 'Relocation abroad, fruitful foreign ventures, spiritual retreat & release of old attachments' },
+  1: { title: 'Identity & Vitality Reboot', desc: 'Major new life beginnings, personal health & lifestyle milestones' },
+  2: { title: 'Wealth & Family Expansion', desc: 'Significant asset accumulation, savings growth & family moments' },
+  3: { title: 'Initiatives & Creative Courage', desc: 'Bold personal projects, publications, skills & short-journey leaps' },
+  4: { title: 'Home, Property & Inner Peace', desc: 'Property purchase, vehicle, sanctuary & deep emotional contentment' },
+  5: { title: 'Children, Creativity & Learning', desc: 'Progeny milestones, creative breakthroughs & academic honors' },
+  6: { title: 'Competitive Triumph & Healing', desc: 'Overcoming health hurdles, clearing debts & steady resilience' },
+  7: { title: 'Marriage & Key Partnerships', desc: 'Commitment, marriage & thriving business alliances' },
+  8: { title: 'Transformative Breakthroughs', desc: 'Deep research, shared resources & catalytic psychological shifts' },
+  9: { title: 'Higher Fortune, Mentors & Dharma', desc: 'Guidance, higher learning, long travel & fortunate openings' },
+  10: { title: 'Career Leap & Public Elevation', desc: 'Major career promotion, role expansion & reputation growth' },
+  11: { title: 'Ambitions Fulfilled & Inflows', desc: 'Realization of goals, financial inflows & network leaps' },
+  12: { title: 'Foreign Relocation & Retreat', desc: 'Relocation abroad, spiritual retreat & letting go of old baggage' },
 };
 
 function matchVimshottari(dashas: VimshottariDashaTree | null, dateStr: string): string {
@@ -127,44 +126,30 @@ export const TimingTab: React.FC<TimingTabProps> = ({
 }) => {
   const [subMode, setSubMode] = useState<'dashas' | 'calendar'>('dashas');
   const [dashaSystem, setDashaSystem] = useState<'vimshottari' | 'yogini' | 'chara'>('vimshottari');
-  const { reading, openAskDrawer, setActiveTab } = useReading();
+  const [showAllGochar, setShowAllGochar] = useState(false);
 
-  const [lifeEvents, setLifeEvents] = useState<LifeEventItem[]>(() => {
-    try {
-      const raw = localStorage.getItem(LIFE_EVENTS_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch {
-      // ignore
-    }
-    return DEFAULT_EVENTS;
-  });
-  const [eventTitle, setEventTitle] = useState('');
-  const [eventDate, setEventDate] = useState('2023-06-15');
-  const [eventCategory, setEventCategory] = useState<LifeEventItem['category']>('career');
+  const {
+    reading,
+    isGuided,
+    isQuant,
+    openAskDrawer,
+    setActiveTab,
+    openLifeEventModal,
+    openQuantMatrix,
+    openPatternDecoder,
+  } = useReading();
+
+  const [lifeEvents, setLifeEvents] = useState<LifeEventItem[]>(() => loadLifeEvents());
 
   useEffect(() => {
-    try {
-      localStorage.setItem(LIFE_EVENTS_KEY, JSON.stringify(lifeEvents));
-    } catch {
-      // ignore
-    }
-  }, [lifeEvents]);
-
-  const handleAddEvent = () => {
-    if (!eventTitle.trim() || !eventDate) return;
-    setLifeEvents((prev) => [
-      { id: `ev-${Date.now()}`, title: eventTitle.trim(), date: eventDate, category: eventCategory },
-      ...prev,
-    ]);
-    setEventTitle('');
-  };
+    const unsub = subscribeLifeEvents(setLifeEvents);
+    return unsub;
+  }, []);
 
   const dashaReadings = reading?.dashas ?? [];
   const extendedDashas = reading?.extendedDashas;
   const transitSummary = reading?.transits;
+  const ghatak = reading?.specials?.ghatak;
 
   const upcomingShifts = useMemo(() => {
     const items: Array<{ label: string; endIso: string; daysLeft: number }> = [];
@@ -211,15 +196,12 @@ export const TimingTab: React.FC<TimingTabProps> = ({
     const jH = Number(jupiter.houseFromLagna);
     if (!sH || !jH) return [];
 
-    // Saturn aspects: 1 (conjunction), 3, 7, 10
     const saturnAspects = new Set([
       sH,
       ((sH - 1 + 2) % 12) + 1,
       ((sH - 1 + 6) % 12) + 1,
       ((sH - 1 + 9) % 12) + 1,
     ]);
-
-    // Jupiter aspects: 1 (conjunction), 5, 7, 9
     const jupiterAspects = new Set([
       jH,
       ((jH - 1 + 4) % 12) + 1,
@@ -235,79 +217,17 @@ export const TimingTab: React.FC<TimingTabProps> = ({
       const sign = SIGNS[(lagnaSignIndex + h - 1) % 12];
       const milestone = HOUSE_MILESTONES[h] ?? { title: `House ${h}`, desc: 'Life area' };
       const sav = houseData?.sav ?? null;
-      const isConjunctionS = h === sH;
-      const isConjunctionJ = h === jH;
       return {
         house: h,
         sign,
         sav,
         title: milestone.title,
         desc: milestone.desc,
-        isConjunctionS,
-        isConjunctionJ,
-        saturnAspectNote: isConjunctionS ? 'Saturn transits here (1st/conjunction)' : `Saturn aspects (H${h})`,
-        jupiterAspectNote: isConjunctionJ ? 'Jupiter transits here (1st/conjunction)' : `Jupiter aspects (H${h})`,
+        saturnAspectNote: h === sH ? 'Saturn transits here' : `Saturn aspects (H${h})`,
+        jupiterAspectNote: h === jH ? 'Jupiter transits here' : `Jupiter aspects (H${h})`,
       };
     });
   }, [transitSummary, reading?.houses, natalChart]);
-
-  const [showFullNavatara, setShowFullNavatara] = useState(false);
-
-  const moonNakIndex = natalChart.grahas.moon?.nakshatraIndex ?? 0;
-  const lagnaNakIndex = natalChart.lagna?.nakshatraIndex;
-
-  const specialNakshatrasData = useMemo(() => {
-    const natalOccupants = (natalChart.grahasList ?? []).map((g) => ({
-      graha: g.id,
-      nakshatraIndex: g.nakshatraIndex,
-    }));
-
-    const transitOccupants: Array<{ graha: string; nakshatraIndex: number }> = [];
-    const transitGrahaMap: Partial<Record<VedicGraha, { nakshatraIndex: number }>> = {};
-
-    if (transitSummary?.planets) {
-      for (const tp of transitSummary.planets) {
-        let nIdx = tp.nakshatraIndex;
-        if (typeof nIdx !== 'number' && tp.signIndex !== undefined && tp.degInSign !== undefined) {
-          nIdx = Math.floor((tp.signIndex * 30 + tp.degInSign) / (360 / 27));
-        }
-        if (typeof nIdx === 'number') {
-          transitOccupants.push({ graha: tp.planet, nakshatraIndex: nIdx });
-          transitGrahaMap[tp.planet as VedicGraha] = { nakshatraIndex: nIdx };
-        }
-      }
-    }
-
-    const specials = computeSpecialNakshatras(moonNakIndex, natalOccupants);
-
-    const transitEval = evaluateTransitNavatara({
-      natalMoonNakshatraIndex: moonNakIndex,
-      natalLagnaNakshatraIndex: lagnaNakIndex,
-      transitGrahas: transitGrahaMap,
-    });
-
-    const fullTable = computeFullNavataraTable(moonNakIndex);
-
-    const todayMoonTransit = transitSummary?.planets?.find((p: any) => p.planet === 'moon');
-    let todayMoonTara: ReturnType<typeof evaluateNavatara> | null = null;
-    if (todayMoonTransit) {
-      let tMoonIdx = todayMoonTransit.nakshatraIndex;
-      if (typeof tMoonIdx !== 'number' && todayMoonTransit.signIndex !== undefined && todayMoonTransit.degInSign !== undefined) {
-        tMoonIdx = Math.floor((todayMoonTransit.signIndex * 30 + todayMoonTransit.degInSign) / (360 / 27));
-      }
-      if (typeof tMoonIdx === 'number') {
-        todayMoonTara = evaluateNavatara(moonNakIndex, tMoonIdx);
-      }
-    }
-
-    return {
-      specials,
-      transitEval,
-      fullTable,
-      todayMoonTara,
-      transitOccupants,
-    };
-  }, [natalChart, transitSummary, moonNakIndex, lagnaNakIndex]);
 
   const ashtakvargaData = useMemo(() => {
     try {
@@ -356,6 +276,9 @@ export const TimingTab: React.FC<TimingTabProps> = ({
     return results;
   }, [transitSummary]);
 
+  const allGochar = transitSummary?.planets ?? [];
+  const visibleGochar = isGuided && !showAllGochar ? allGochar.slice(0, 4) : allGochar;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Sub-mode Switcher */}
@@ -371,130 +294,213 @@ export const TimingTab: React.FC<TimingTabProps> = ({
           }}
         >
           <button
+            type="button"
             onClick={() => setSubMode('dashas')}
             style={{
-              padding: '5px 12px',
+              padding: '6px 12px',
               fontSize: 12,
               borderRadius: 7,
               fontWeight: subMode === 'dashas' ? 700 : 500,
               background: subMode === 'dashas' ? 'var(--gold)' : 'transparent',
               color: subMode === 'dashas' ? '#15132b' : 'var(--text-main)',
-              border: 'none',
-              cursor: 'pointer',
             }}
           >
-            Active Dashas &amp; Gochar
+            Life Chapters &amp; Transits
           </button>
           <button
+            type="button"
             onClick={() => setSubMode('calendar')}
             style={{
-              padding: '5px 12px',
+              padding: '6px 12px',
               fontSize: 12,
               borderRadius: 7,
               fontWeight: subMode === 'calendar' ? 700 : 500,
               background: subMode === 'calendar' ? 'var(--gold)' : 'transparent',
               color: subMode === 'calendar' ? '#15132b' : 'var(--text-main)',
-              border: 'none',
-              cursor: 'pointer',
             }}
           >
             Month Heatmap &amp; Year Transits
           </button>
         </div>
 
-        <button
-          onClick={() => openAskDrawer('What is my current Vimshottari Mahadasha and Antardasha activating?')}
-          className="btn btn-outline"
-          style={{ fontSize: 12 }}
-        >
-          <HelpCircle size={13} /> Ask AI about Timing
-        </button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => openQuantMatrix('radars')}
+            className="btn btn-outline"
+            style={{ fontSize: 12 }}
+          >
+            <Activity size={13} style={{ color: 'var(--gold)' }} /> Kakshya, Vedha &amp; Navatara
+          </button>
+          <button
+            type="button"
+            onClick={() => openAskDrawer('What is my current Vimshottari Mahadasha and Antardasha activating?')}
+            className="btn btn-outline"
+            style={{ fontSize: 12 }}
+          >
+            <HelpCircle size={13} /> Ask AI about Timing
+          </button>
+        </div>
       </div>
 
       {subMode === 'dashas' && (
         <>
-          {/* Upcoming Chapter Shifts Strip */}
-          {upcomingShifts.length > 0 && (
-            <div className="card" style={{ padding: '12px 16px', background: 'rgba(95, 194, 179, 0.05)', border: '1px solid rgba(95, 194, 179, 0.25)' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--teal)', marginBottom: 8 }}>
-                ⏳ Upcoming Period Shifts
+          {/* 1. Promoted Life Events AI Validator (Top Priority for Noob & Learner) */}
+          <div
+            className="card"
+            style={{
+              background: 'rgba(95, 194, 179, 0.06)',
+              border: '1px solid rgba(95, 194, 179, 0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <div>
+                <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Target size={16} style={{ color: 'var(--teal)' }} /> Test &amp; Explain Real Life Events
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
+                  Check which planetary chapters were running on any past or upcoming milestone date—and ask AI why.
+                </p>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8 }}>
-                {upcomingShifts.map((s) => (
-                  <div key={s.label} style={{ padding: '8px 10px', borderRadius: 8, background: 'var(--surface-alt)', fontSize: 12 }}>
-                    <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{s.label}</div>
-                    <div style={{ fontSize: 11, color: 'var(--gold)', marginTop: 2 }}>
-                      {s.endIso} • in {s.daysLeft} day{s.daysLeft === 1 ? '' : 's'}
-                    </div>
-                  </div>
+              <button
+                type="button"
+                onClick={() => openLifeEventModal()}
+                className="btn btn-primary"
+                style={{ fontSize: 12 }}
+              >
+                <Plus size={14} /> Check a Milestone Date
+              </button>
+            </div>
+
+            {lifeEvents.length === 0 ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {[
+                  { title: 'Started new job / career shift', category: 'career' as const },
+                  { title: 'Moved to a new city', category: 'move' as const },
+                  { title: 'Major relationship milestone', category: 'relationship' as const },
+                ].map((preset) => (
+                  <button
+                    key={preset.title}
+                    type="button"
+                    onClick={() => openLifeEventModal(preset)}
+                    className="btn btn-outline"
+                    style={{ fontSize: 11.5 }}
+                  >
+                    + {preset.title}
+                  </button>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
+                {lifeEvents.map((ev) => {
+                  const vimLabel = matchVimshottari(dashas, ev.date);
+                  return (
+                    <div key={ev.id} style={{ padding: 12, borderRadius: 10, background: 'var(--surface)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                        <strong style={{ fontSize: 13, color: 'var(--text-main)' }}>{ev.title}</strong>
+                        <button
+                          type="button"
+                          onClick={() => setLifeEvents(removeLifeEvent(ev.id))}
+                          aria-label={`Remove ${ev.title}`}
+                          style={{ color: 'var(--text-muted)', padding: 3 }}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--gold)', fontWeight: 600 }}>
+                        {ev.date} • {ev.category.toUpperCase()}
+                      </div>
+                      <div style={{ fontSize: 11.5, lineHeight: 1.45, color: 'var(--text-main)' }}>
+                        <div><strong>Vimshottari:</strong> {vimLabel}</div>
+                        {!isGuided && (
+                          <>
+                            <div><strong>Yogini:</strong> {matchYogini(yoginiDashas, ev.date)}</div>
+                            <div><strong>Chara:</strong> {matchChara(charaDashas, ev.date)}</div>
+                          </>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openAskDrawer(`Explain why "${ev.title}" (${ev.date}, ${ev.category}) happened during my ${vimLabel} planetary period in simple language.`)}
+                        style={{ alignSelf: 'flex-start', marginTop: 2, fontSize: 11.5, fontWeight: 700, color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                      >
+                        <Sparkles size={12} /> Explain with AI →
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
-          {/* This Month's Peak & Caution Days Mini-Card */}
-          {monthPeakSummary && (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {/* 2. Upcoming Shifts + Month Peak Days */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+            {upcomingShifts.length > 0 && (
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--teal)' }}>
+                  ⏳ Upcoming Chapter Shifts
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
+                  {upcomingShifts.map((s) => (
+                    <div key={s.label} style={{ padding: '8px 10px', borderRadius: 8, background: 'var(--surface-alt)', fontSize: 12 }}>
+                      <div style={{ fontWeight: 700 }}>{s.label}</div>
+                      <div style={{ fontSize: 11, color: 'var(--gold)', marginTop: 2 }}>
+                        {s.endIso} • in {s.daysLeft} day{s.daysLeft === 1 ? '' : 's'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {monthPeakSummary && (
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
                   <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <Calendar size={15} /> This Month&apos;s Peak &amp; Caution Dates
+                    <Calendar size={15} /> This Month&apos;s Key Dates
                   </h3>
-                  <span className="gold-badge" style={{ fontSize: 10 }}>
-                    {monthPeakSummary.ingressCount} planetary sign shift{monthPeakSummary.ingressCount === 1 ? '' : 's'} this month
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSubMode('calendar')}
+                    style={{ color: 'var(--teal)', fontSize: 11.5, fontWeight: 600 }}
+                  >
+                    Full Heatmap →
+                  </button>
                 </div>
-                <button
-                  onClick={() => setSubMode('calendar')}
-                  style={{ background: 'transparent', border: 'none', color: 'var(--teal)', fontSize: 11.5, fontWeight: 600, cursor: 'pointer' }}
-                >
-                  Open Full Muhurta Heatmap →
-                </button>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
-                <div style={{ padding: 10, borderRadius: 8, background: 'rgba(95, 194, 179, 0.08)', border: '1px solid rgba(95, 194, 179, 0.25)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--teal)', textTransform: 'uppercase' }}>
-                    ★ Top Flowing Days (Launches &amp; Key Meetings)
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--teal)', marginRight: 4 }}>★ Best:</span>
                     {monthPeakSummary.peakDays.map((d) => (
-                      <span key={d.date} className="teal-badge" style={{ fontSize: 11 }}>
+                      <span key={d.date} className="teal-badge" style={{ fontSize: 10.5 }}>
                         {d.date} ({d.dayScore > 0 ? `+${d.dayScore}` : d.dayScore})
                       </span>
                     ))}
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                    Highest Moon Tarabala + Hora alignment — prioritize outreach, signings, and bold starts.
-                  </div>
-                </div>
-                <div style={{ padding: 10, borderRadius: 8, background: 'rgba(217, 119, 54, 0.08)', border: '1px solid rgba(217, 119, 54, 0.25)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--amber)', textTransform: 'uppercase' }}>
-                    ⚠ Go-Gently Days (Rest, Audit &amp; Routine)
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--amber)', marginRight: 4 }}>⚠ Pace:</span>
                     {monthPeakSummary.cautionDays.map((d) => (
-                      <span key={d.date} className="amber-badge" style={{ fontSize: 11 }}>
+                      <span key={d.date} className="amber-badge" style={{ fontSize: 10.5 }}>
                         {d.date} ({d.dayScore > 0 ? `+${d.dayScore}` : d.dayScore})
                       </span>
                     ))}
-                  </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                    Lower lunar cushion — ideal for internal cleanup, research, and pacing yourself.
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* Level 2 Active Dasha Readings */}
-          {(dashaReadings.length > 0 || extendedDashas) && (
+          {/* 3. Current Planetary Chapters */}
+          {(dashaReadings.length > 0 || (!isGuided && extendedDashas)) && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Clock size={15} /> Current Planetary Chapters (Level 2)
+                <Clock size={15} /> Current Planetary Chapters
               </h3>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
-                {dashaReadings.map((dr: any) => {
+                {dashaReadings.slice(0, isGuided ? 2 : 3).map((dr: any) => {
                   const prog = periodProgress(dr.startUtc, dr.endUtc);
                   const lvlName = dr.level === 1 ? 'Mahadasha' : dr.level === 2 ? 'Antardasha' : 'Pratyantar';
                   return (
@@ -515,32 +521,25 @@ export const TimingTab: React.FC<TimingTabProps> = ({
                           {lvlName} • {dr.lord}
                         </strong>
                         {prog && (
-                          <span className="gold-badge" style={{ fontSize: 10 }}>
+                          <span className="gold-badge" style={{ fontSize: 10.5 }}>
                             {prog.pct}% • {prog.remText}
                           </span>
                         )}
                       </div>
 
-                      <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
                         {String(dr.startUtc).slice(0, 10)} → {String(dr.endUtc).slice(0, 10)}
                       </div>
 
                       {prog && (
                         <div style={{ height: 5, borderRadius: 4, background: 'var(--surface)', overflow: 'hidden' }}>
-                          <div
-                            style={{
-                              width: `${prog.pct}%`,
-                              height: '100%',
-                              background: dr.level === 1 ? 'var(--teal)' : 'var(--gold)',
-                              borderRadius: 4,
-                            }}
-                          />
+                          <div style={{ width: `${prog.pct}%`, height: '100%', background: dr.level === 1 ? 'var(--teal)' : 'var(--gold)' }} />
                         </div>
                       )}
 
                       <p style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--text-main)' }}>{dr.summary}</p>
 
-                      {dr.findings?.slice(0, 2).map((f: any) => (
+                      {!isGuided && dr.findings?.slice(0, 2).map((f: any) => (
                         <div key={f.id} style={{ fontSize: 11.5, color: 'var(--text-muted)', paddingLeft: 8, borderLeft: '2px solid var(--gold)', lineHeight: 1.45 }}>
                           {f.text}
                         </div>
@@ -548,8 +547,9 @@ export const TimingTab: React.FC<TimingTabProps> = ({
 
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: 2 }}>
                         <button
+                          type="button"
                           onClick={() => openAskDrawer(`What should I focus on during my ${dr.lord} ${lvlName} (${String(dr.startUtc).slice(0, 10)} to ${String(dr.endUtc).slice(0, 10)})?`)}
-                          style={{ background: 'transparent', border: 'none', padding: 0, fontSize: 10.5, fontWeight: 600, color: 'var(--teal)', cursor: 'pointer' }}
+                          style={{ fontSize: 11, fontWeight: 600, color: 'var(--teal)' }}
                         >
                           Ask AI about this chapter →
                         </button>
@@ -559,7 +559,7 @@ export const TimingTab: React.FC<TimingTabProps> = ({
                 })}
               </div>
 
-              {extendedDashas && (
+              {!isGuided && extendedDashas && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
                   {extendedDashas.yogini && (
                     <div style={{ padding: 12, borderRadius: 10, background: 'var(--surface-alt)', border: '1px solid var(--border-subtle)', fontSize: 12, display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -569,13 +569,8 @@ export const TimingTab: React.FC<TimingTabProps> = ({
                           {extendedDashas.yogini.antar ? ` / ${extendedDashas.yogini.antar}` : ''}
                         </span>
                         {daysUntil(extendedDashas.yogini.mahaEnd) !== null && (
-                          <span className="gold-badge" style={{ fontSize: 10 }}>
-                            {daysUntil(extendedDashas.yogini.mahaEnd)}d left
-                          </span>
+                          <span className="gold-badge" style={{ fontSize: 10.5 }}>{daysUntil(extendedDashas.yogini.mahaEnd)}d left</span>
                         )}
-                      </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                        Maha ends {extendedDashas.yogini.mahaEnd}{extendedDashas.yogini.antarEnd ? ` • Antar ends ${extendedDashas.yogini.antarEnd}` : ''}
                       </div>
                       <div style={{ lineHeight: 1.45, color: 'var(--text-main)' }}>{extendedDashas.yogini.plainSummary}</div>
                     </div>
@@ -588,13 +583,8 @@ export const TimingTab: React.FC<TimingTabProps> = ({
                           {extendedDashas.chara.antarSign ? ` / ${extendedDashas.chara.antarSign}` : ''}
                         </span>
                         {daysUntil(extendedDashas.chara.mahaEnd) !== null && (
-                          <span className="teal-badge" style={{ fontSize: 10 }}>
-                            {daysUntil(extendedDashas.chara.mahaEnd)}d left
-                          </span>
+                          <span className="teal-badge" style={{ fontSize: 10.5 }}>{daysUntil(extendedDashas.chara.mahaEnd)}d left</span>
                         )}
-                      </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                        Maha ends {extendedDashas.chara.mahaEnd}{extendedDashas.chara.antarEnd ? ` • Antar ends ${extendedDashas.chara.antarEnd}` : ''}
                       </div>
                       <div style={{ lineHeight: 1.45, color: 'var(--text-main)' }}>{extendedDashas.chara.plainSummary}</div>
                     </div>
@@ -604,57 +594,54 @@ export const TimingTab: React.FC<TimingTabProps> = ({
             </div>
           )}
 
-          {/* Dasha System Explorer */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'flex', gap: 8, background: 'var(--surface-alt)', padding: 4, borderRadius: 8, border: '1px solid var(--border-subtle)', alignSelf: 'flex-start' }}>
-              {(
-                [
-                  { id: 'vimshottari', label: 'Vimshottari Dasha (120y)' },
-                  { id: 'yogini', label: 'Yogini Dasha (36y)' },
-                  { id: 'chara', label: 'Chara Dasha (Jaimini)' },
-                ] as const
-              ).map((sys) => (
-                <button
-                  key={sys.id}
-                  onClick={() => setDashaSystem(sys.id)}
-                  style={{
-                    padding: '4px 12px',
-                    fontSize: 12,
-                    borderRadius: 6,
-                    cursor: 'pointer',
-                    border: 'none',
-                    fontWeight: dashaSystem === sys.id ? 600 : 400,
-                    background: dashaSystem === sys.id ? 'var(--gold)' : 'transparent',
-                    color: dashaSystem === sys.id ? '#15132b' : 'var(--text-main)',
-                  }}
-                >
-                  {sys.label}
-                </button>
-              ))}
-            </div>
+          {/* 4. Interactive Dasha Tree Explorer */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {!isGuided && (
+              <div style={{ display: 'flex', gap: 6, background: 'var(--surface-alt)', padding: 4, borderRadius: 8, border: '1px solid var(--border-subtle)', alignSelf: 'flex-start', flexWrap: 'wrap' }}>
+                {(
+                  [
+                    { id: 'vimshottari', label: 'Vimshottari (120y)' },
+                    { id: 'yogini', label: 'Yogini (36y)' },
+                    { id: 'chara', label: 'Chara (Jaimini)' },
+                  ] as const
+                ).map((sys) => (
+                  <button
+                    key={sys.id}
+                    type="button"
+                    onClick={() => setDashaSystem(sys.id)}
+                    style={{
+                      padding: '5px 12px',
+                      fontSize: 12,
+                      borderRadius: 6,
+                      fontWeight: dashaSystem === sys.id ? 700 : 400,
+                      background: dashaSystem === sys.id ? 'var(--gold)' : 'transparent',
+                      color: dashaSystem === sys.id ? '#15132b' : 'var(--text-main)',
+                    }}
+                  >
+                    {sys.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
-            {dashaSystem === 'vimshottari'
+            {isGuided || dashaSystem === 'vimshottari'
               ? dashas && <VimshottariExplorer dashas={dashas} />
               : dashaSystem === 'yogini'
               ? yoginiDashas && <YoginiExplorer yogini={yoginiDashas} />
               : charaDashas && <CharaExplorer chara={charaDashas} />}
           </div>
 
-          {/* Double Transit Radar (Jupiter + Saturn Simultaneous Gochara Blessing) */}
-          {doubleTransitHouses.length > 0 && (
+          {/* 5. Double Transit Manifestation Gates (Explorer & Quant) */}
+          {!isGuided && doubleTransitHouses.length > 0 && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
                 <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 7 }}>
                   <Radio size={16} style={{ color: 'var(--gold)' }} />
-                  Double Transit Radar (Saturn + Jupiter Parashari Blessing)
+                  Double Transit Gates (Saturn + Jupiter)
                 </h3>
-                <span className="teal-badge" style={{ fontSize: 11 }}>Classical Manifestation Gate</span>
+                <span className="teal-badge" style={{ fontSize: 11 }}>Joint Manifestation Window</span>
               </div>
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                Per classical Jyotish (Dr. K.S. Charak &amp; PVR Narasimha Rao), no milestone can materialize in life without the joint sanction of <strong>Saturn</strong> (Lord of Karma) and <strong>Jupiter</strong> (Lord of Grace). The houses highlighted below are receiving simultaneous transit influence from both planets right now.
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(255px, 1fr))', gap: 10 }}>
                 {doubleTransitHouses.map((dth) => {
                   const savHigh = dth.sav !== null && dth.sav >= 28;
                   return (
@@ -667,7 +654,7 @@ export const TimingTab: React.FC<TimingTabProps> = ({
                         border: '1px solid var(--gold)',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 5,
+                        gap: 6,
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -676,24 +663,23 @@ export const TimingTab: React.FC<TimingTabProps> = ({
                         </span>
                         {dth.sav !== null && (
                           <span className={savHigh ? 'teal-badge' : 'amber-badge'} style={{ fontSize: 10.5 }}>
-                            SAV {dth.sav} {savHigh ? '✓ Fertile' : '• Moderate'}
+                            SAV {dth.sav} {savHigh ? '✓' : '•'}
                           </span>
                         )}
                       </div>
-                      <div style={{ fontWeight: 600, fontSize: 12, color: 'var(--text-main)' }}>
-                        {dth.title}
+                      <div style={{ fontWeight: 600, fontSize: 12.5 }}>{dth.title}</div>
+                      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.4 }}>{dth.desc}</div>
+                      <div style={{ fontSize: 10.5, color: 'var(--text-muted)', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        <span style={{ background: 'var(--surface)', padding: '2px 6px', borderRadius: 4 }}>🪐 {dth.saturnAspectNote}</span>
+                        <span style={{ background: 'var(--surface)', padding: '2px 6px', borderRadius: 4 }}>✨ {dth.jupiterAspectNote}</span>
                       </div>
-                      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.35 }}>
-                        {dth.desc}
-                      </div>
-                      <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginTop: 4, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                        <span style={{ background: 'var(--surface)', padding: '2px 6px', borderRadius: 4 }}>
-                          🪐 {dth.saturnAspectNote}
-                        </span>
-                        <span style={{ background: 'var(--surface)', padding: '2px 6px', borderRadius: 4 }}>
-                          ✨ {dth.jupiterAspectNote}
-                        </span>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openPatternDecoder({ kind: 'house', house: dth.house })}
+                        style={{ alignSelf: 'flex-start', fontSize: 11, fontWeight: 700, color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 2 }}
+                      >
+                        <GitBranch size={12} /> Trace House {dth.house} Pattern →
+                      </button>
                     </div>
                   );
                 })}
@@ -701,52 +687,56 @@ export const TimingTab: React.FC<TimingTabProps> = ({
             </div>
           )}
 
-          {/* All 9 Gochar Transits & Sade Sati */}
+          {/* 6. Single Canonical Gochar Transits & Sade Sati */}
           {transitSummary && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
                 <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0 }}>
-                  All 9 Gochar Transits &amp; <GlossaryTerm term="Sade Sati" />
+                  Live Sky Transits (<GlossaryTerm term="Sade Sati" />)
                 </h3>
-                {transitSummary.sadeSati && (
-                  <span className={transitSummary.sadeSati.isActive ? 'amber-badge' : 'teal-badge'} style={{ fontSize: 11 }}>
-                    {transitSummary.sadeSati.isActive ? `⚠ Sade Sati Active (${transitSummary.sadeSati.phase})` : '✓ Sade Sati Inactive'}
-                  </span>
-                )}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                  {transitSummary.sadeSati && (
+                    <span className={transitSummary.sadeSati.isActive ? 'amber-badge' : 'teal-badge'} style={{ fontSize: 11 }}>
+                      {transitSummary.sadeSati.isActive ? `⚠ Sade Sati Active (${transitSummary.sadeSati.phase})` : '✓ Sade Sati Inactive'}
+                    </span>
+                  )}
+                  {isQuant && (
+                    <button type="button" onClick={() => openQuantMatrix('radars')} className="btn btn-outline" style={{ fontSize: 11 }}>
+                      Kakshya &amp; Navatara ↗
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 8 }}>
-                {(transitSummary.planets ?? []).map((tp: any) => {
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(235px, 1fr))', gap: 8 }}>
+                {visibleGochar.map((tp: any) => {
                   const v = vedhaData?.[tp.planet] ?? tp.vedha;
                   const k = kakshyaData?.evaluations.find((e) => e.planet === tp.planet) ?? tp.kakshya;
                   return (
                     <div
                       key={tp.planet}
                       style={{
-                        padding: 10,
+                        padding: 11,
                         borderRadius: 10,
                         background: 'var(--surface-alt)',
                         border: '1px solid var(--border-subtle)',
                         fontSize: 12,
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 4,
+                        gap: 5,
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 700, textTransform: 'capitalize', color: 'var(--text-main)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontWeight: 700, textTransform: 'capitalize' }}>
                           {tp.planet} {tp.retrograde ? '(R)' : ''} → {tp.sign}
                         </span>
                         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                          <span
-                            className={tp.bavQuality === 'supportive' ? 'teal-badge' : tp.bavQuality === 'cautious' ? 'amber-badge' : 'gold-badge'}
-                            style={{ fontSize: 10 }}
-                          >
-                            {tp.bavQuality === 'supportive' ? '✓' : tp.bavQuality === 'cautious' ? '⚠' : '•'} BAV {tp.bindus}
+                          <span className={tp.bavQuality === 'supportive' ? 'teal-badge' : tp.bavQuality === 'cautious' ? 'amber-badge' : 'gold-badge'} style={{ fontSize: 10 }}>
+                            <GlossaryTerm term="BAV">{tp.bindus}/8</GlossaryTerm>
                           </span>
-                          {k && (
-                            <span className={k.isBenefic ? 'teal-badge' : 'amber-badge'} style={{ fontSize: 9.5 }}>
-                              K{k.kakshyaIndex} {k.isBenefic ? '✓' : '0'}
+                          {isQuant && k && (
+                            <span className={k.isBenefic ? 'teal-badge' : 'amber-badge'} style={{ fontSize: 10 }}>
+                              K{k.kakshyaIndex}
                             </span>
                           )}
                         </div>
@@ -754,448 +744,62 @@ export const TimingTab: React.FC<TimingTabProps> = ({
                       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
                         H{tp.houseFromLagna} Lagna • H{tp.houseFromMoon} Moon
                       </div>
-                      {v && v.isFavourableHouse && (
-                        <div style={{ fontSize: 10.5, marginTop: 2 }}>
+                      {!isGuided && v && v.isFavourableHouse && (
+                        <div style={{ fontSize: 11 }}>
                           {v.isObstructed ? (
-                            <span style={{ color: '#f87171' }}>⚠ Vedha by {v.obstructingPlanets.map((p) => p.toUpperCase()).join(', ')}</span>
+                            <span style={{ color: '#f87171' }}>⚠ Vedha by {v.obstructingPlanets.map((p: string) => p.toUpperCase()).join(', ')}</span>
                           ) : (
                             <span style={{ color: 'var(--teal)' }}>✓ Unobstructed Flow</span>
                           )}
                         </div>
                       )}
-                      {tp.plainMeaning && <div style={{ fontSize: 11.5, lineHeight: 1.4, marginTop: 2 }}>{tp.plainMeaning}</div>}
+                      {tp.plainMeaning && <div style={{ fontSize: 11.5, lineHeight: 1.45 }}>{tp.plainMeaning}</div>}
+                      <button
+                        type="button"
+                        onClick={() => openAskDrawer(`How is transit ${tp.planet} in ${tp.sign} (House ${tp.houseFromLagna}, BAV ${tp.bindus}/8) affecting me right now?`)}
+                        style={{ alignSelf: 'flex-end', marginTop: 'auto', fontSize: 11, fontWeight: 600, color: 'var(--teal)' }}
+                      >
+                        Ask AI →
+                      </button>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          )}
 
-          {/* Kakshya Precision Radar & Gochara Vedha Card */}
-          {kakshyaData && (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
-                <div>
-                  <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <Activity size={16} /> Kakshya Precision Radar (3°45' Subdivisions) &amp; Gochara Vedha
-                  </h3>
-                  <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 2 }}>
-                    Micro-transit precision (PVR Rao Ch. 25.5 &amp; Charak Ch. XXX) — only Kakshyas with contributed bindus deliver fruition.
-                  </div>
-                </div>
-
-                <span
-                  className={kakshyaData.beneficCount >= 4 ? 'teal-badge' : kakshyaData.beneficCount >= 2 ? 'gold-badge' : 'amber-badge'}
-                  style={{ fontSize: 11.5, padding: '4px 10px' }}
-                >
-                  ✨ Daily Kakshya Score: {kakshyaData.beneficCount}/7 Benefic Points
-                </span>
-              </div>
-
-              {/* Classical Father-Son Vedha Exemption Banner */}
-              <div
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  background: 'var(--surface-alt)',
-                  border: '1px solid var(--border-subtle)',
-                  fontSize: 11.5,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  color: 'var(--text-muted)',
-                }}
-              >
-                <CheckCircle2 size={14} style={{ color: 'var(--teal)', flexShrink: 0 }} />
-                <span>
-                  <strong style={{ color: 'var(--text-main)' }}>Classical Father–Son Exemptions: </strong>
-                  Sun &amp; Saturn do NOT obstruct each other; Moon &amp; Mercury do NOT obstruct each other.
-                </span>
-              </div>
-
-              {/* 7 Planets Kakshya Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 10 }}>
-                {kakshyaData.evaluations.map((ev) => {
-                  const v = vedhaData?.[ev.planet];
-                  return (
-                    <div
-                      key={ev.planet}
-                      style={{
-                        padding: 10,
-                        borderRadius: 9,
-                        background: ev.isBenefic ? 'rgba(16, 185, 129, 0.04)' : 'var(--surface-alt)',
-                        border: ev.isBenefic ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-subtle)',
-                        fontSize: 11.5,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 4,
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 700, textTransform: 'capitalize', color: 'var(--text-main)', fontSize: 12 }}>
-                          {ev.planet} ({ev.degInSign.toFixed(1)}° in Sign)
-                        </span>
-                        <span
-                          className={ev.isBenefic ? 'teal-badge' : 'amber-badge'}
-                          style={{ fontSize: 10 }}
-                        >
-                          {ev.isBenefic ? '1 Bindu ✓' : '0 Bindus'}
-                        </span>
-                      </div>
-
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)' }}>
-                        <span>
-                          Kakshya {ev.kakshyaIndex}/8 ({ev.arcStartDeg}°–{ev.arcEndDeg}°)
-                        </span>
-                        <span style={{ fontWeight: 600, color: 'var(--gold)', textTransform: 'capitalize' }}>
-                          Ruler: {ev.kakshyaLord}
-                        </span>
-                      </div>
-
-                      {v && (
-                        <div style={{ fontSize: 10.5, marginTop: 2 }}>
-                          {v.isFavourableHouse ? (
-                            v.isObstructed ? (
-                              <span style={{ color: '#f87171' }}>
-                                ⚠ Vedha by {v.obstructingPlanets.map((p) => p.toUpperCase()).join(', ')} in H{v.obstructingHouse}
-                              </span>
-                            ) : (
-                              <span style={{ color: 'var(--teal)' }}>✓ Benefic House H{v.transitHouseFromMoon} Unobstructed</span>
-                            )
-                          ) : (
-                            <span style={{ color: 'var(--text-muted)' }}>Transit House H{v.transitHouseFromMoon} (Challenging)</span>
-                          )}
-                        </div>
-                      )}
-
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.35, marginTop: 2 }}>
-                        {ev.explanation}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Navatara & 11 Special Life-Department Nakshatras Compass */}
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
-              <div>
-                <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <Compass size={16} /> Navatara (9-Tara) &amp; 11 Special Life Stars Compass
-                </h3>
-                <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 2 }}>
-                  Classical Parasari transit radar (PVR Rao Table 64) mapping 27 stars from your Janma Nakshatra (
-                  <strong style={{ color: 'var(--text-main)' }}>
-                    {natalChart.grahas.moon?.nakshatra ? String(natalChart.grahas.moon.nakshatra).toUpperCase().replace('_', ' ') : '—'}
-                  </strong>
-                  )
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                {specialNakshatrasData.todayMoonTara && (
-                  <span
-                    className={
-                      specialNakshatrasData.todayMoonTara.isFavorable
-                        ? 'teal-badge'
-                        : specialNakshatrasData.todayMoonTara.category === 'mixed'
-                        ? 'gold-badge'
-                        : 'amber-badge'
-                    }
-                    style={{ fontSize: 11, padding: '4px 9px' }}
-                  >
-                    🌙 Today's Moon: {specialNakshatrasData.todayMoonTara.taraLabel} Tara ({specialNakshatrasData.todayMoonTara.englishLabel})
-                  </span>
-                )}
+              {isGuided && allGochar.length > 4 && (
                 <button
-                  onClick={() => setShowFullNavatara(!showFullNavatara)}
+                  type="button"
+                  onClick={() => setShowAllGochar((v) => !v)}
                   className="btn btn-outline"
-                  style={{ fontSize: 11.5, padding: '3px 9px' }}
+                  style={{ alignSelf: 'flex-start', fontSize: 11.5 }}
                 >
-                  {showFullNavatara ? 'Hide 27-Tara Wheel' : 'View Full 27-Star Table'}
+                  {showAllGochar ? 'Show fewer transits' : `Show all ${allGochar.length} transits`}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* 7. Personal Ghatak Timing Guardrails (Moved here from StrengthsTab!) */}
+          {!isGuided && ghatak && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <ShieldAlert size={15} style={{ color: 'var(--amber)' }} /> Personal Muhurta &amp; Ghatak Guardrails
+                </h3>
+                <button type="button" onClick={() => openQuantMatrix('horas')} className="btn btn-outline" style={{ fontSize: 11.5 }}>
+                  Full Amplifiers &amp; Horas ↗
                 </button>
               </div>
-            </div>
-
-            {/* Latta (Planetary Kick) Alert if any */}
-            {specialNakshatrasData.transitEval.lattaAfflictions.length > 0 ? (
-              <div
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  background: 'rgba(239, 68, 68, 0.08)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  fontSize: 12,
-                  color: '#f87171',
-                }}
-              >
-                <ShieldAlert size={15} />
-                <span>
-                  <strong>Active Planetary Latta (Kick): </strong>
-                  {specialNakshatrasData.transitEval.lattaAfflictions
-                    .map(
-                      (l) =>
-                        `${String(l.graha).toUpperCase()} in ${String(l.sourceNakshatra).toUpperCase()} strikes ${
-                          l.targetsJanmaNakshatra ? 'Janma star' : 'Lagna star'
-                        } (${String(l.kickedNakshatra).toUpperCase()}) via ${l.stepCount}th star ${
-                          l.direction === 'purolatta' ? 'forward' : 'backward'
-                        }`,
-                    )
-                    .join(' • ')}
-                  . Exercise extra patience and mindful health care today.
-                </span>
-              </div>
-            ) : (
-              <div
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: 6,
-                  background: 'rgba(16, 185, 129, 0.05)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
-                  fontSize: 11.5,
-                  color: 'var(--teal)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
-              >
-                <span>✓ No planetary Latta (kick) afflictions on your Janma or Lagna stars today.</span>
-              </div>
-            )}
-
-            {/* 11 Special Nakshatras Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(215px, 1fr))', gap: 10 }}>
-              {specialNakshatrasData.specials.map((s) => {
-                const transitHits = specialNakshatrasData.transitOccupants
-                  .filter((to) => to.nakshatraIndex === s.nakshatraIndex)
-                  .map((to) => to.graha);
-
-                const hasNatal = s.occupyingGrahas.length > 0;
-                const hasTransit = transitHits.length > 0;
-
-                const borderStyle = hasTransit
-                  ? '1px solid var(--gold)'
-                  : hasNatal
-                  ? '1px solid rgba(95, 194, 179, 0.4)'
-                  : '1px solid var(--border-subtle)';
-
-                const bgStyle = hasTransit
-                  ? 'rgba(217, 168, 77, 0.08)'
-                  : hasNatal
-                  ? 'rgba(95, 194, 179, 0.04)'
-                  : 'var(--surface-alt)';
-
-                return (
-                  <div
-                    key={s.def.key}
-                    style={{
-                      padding: 10,
-                      borderRadius: 9,
-                      background: bgStyle,
-                      border: borderStyle,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 4,
-                      fontSize: 11.5,
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: 12 }}>
-                        {s.def.name.split(' ')[0]} Star (#{s.def.offset})
-                      </span>
-                      <span
-                        className={
-                          s.def.significance === 'auspicious'
-                            ? 'teal-badge'
-                            : s.def.significance === 'inauspicious'
-                            ? 'amber-badge'
-                            : s.def.significance === 'vital'
-                            ? 'gold-badge'
-                            : ''
-                        }
-                        style={{ fontSize: 9.5, padding: '1px 5px', borderRadius: 4 }}
-                      >
-                        {s.def.sanskritName}
-                      </span>
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                      <span style={{ fontWeight: 600, color: 'var(--gold)', textTransform: 'uppercase', fontSize: 11 }}>
-                        {String(s.nakshatra).replace('_', ' ')}
-                      </span>
-                      <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
-                        {s.navatara.taraLabel} ({s.navatara.paryaya})
-                      </span>
-                    </div>
-
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}>
-                      {s.def.domain}
-                    </div>
-
-                    {/* Occupants Tags */}
-                    {(hasNatal || hasTransit) && (
-                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4 }}>
-                        {hasNatal && (
-                          <span
-                            style={{
-                              background: 'rgba(95, 194, 179, 0.15)',
-                              color: 'var(--teal)',
-                              padding: '1px 5px',
-                              borderRadius: 4,
-                              fontSize: 10,
-                              fontWeight: 600,
-                            }}
-                          >
-                            Natal: {s.occupyingGrahas.map((g) => String(g).toUpperCase()).join(', ')}
-                          </span>
-                        )}
-                        {hasTransit && (
-                          <span
-                            style={{
-                              background: 'rgba(217, 168, 77, 0.2)',
-                              color: 'var(--gold)',
-                              padding: '1px 5px',
-                              borderRadius: 4,
-                              fontSize: 10,
-                              fontWeight: 600,
-                            }}
-                          >
-                            Transit: {transitHits.map((g) => String(g).toUpperCase()).join(', ')}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Expandable 27-Star Navatara Wheel Table */}
-            {showFullNavatara && (
-              <div
-                style={{
-                  marginTop: 6,
-                  padding: 12,
-                  borderRadius: 10,
-                  background: 'var(--surface-alt)',
-                  border: '1px solid var(--border-subtle)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 10,
-                }}
-              >
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold)' }}>
-                  All 27 Nakshatras Mapped by 9-Tara Cycle (3 Paryayas)
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10, fontSize: 12 }}>
+                <div style={{ padding: 10, borderRadius: 8, background: 'rgba(95, 194, 179, 0.08)', border: '1px solid rgba(95, 194, 179, 0.25)' }}>
+                  <strong style={{ color: 'var(--teal)' }}>✓ Supportive Days:</strong> {(ghatak.luckyDays ?? []).join(', ')} · Lucky #{ghatak.luckyNumber}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 6, maxHeight: 340, overflowY: 'auto' }}>
-                  {specialNakshatrasData.fullTable.map((item) => (
-                    <div
-                      key={item.targetNakshatraIndex}
-                      style={{
-                        padding: '6px 8px',
-                        borderRadius: 6,
-                        background: 'var(--surface)',
-                        border: '1px solid var(--border-subtle)',
-                        fontSize: 11,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>
-                          #{item.offset} {String(item.targetNakshatra).replace('_', ' ')}
-                        </span>
-                        <div style={{ fontSize: 9.5, color: 'var(--text-muted)' }}>
-                          Cycle {item.paryayaNumber} ({item.paryaya})
-                        </div>
-                      </div>
-                      <span
-                        className={
-                          item.isFavorable ? 'teal-badge' : item.category === 'mixed' ? 'gold-badge' : 'amber-badge'
-                        }
-                        style={{ fontSize: 10 }}
-                      >
-                        {item.taraLabel}
-                      </span>
-                    </div>
-                  ))}
+                <div style={{ padding: 10, borderRadius: 8, background: 'rgba(217, 119, 54, 0.08)', border: '1px solid rgba(217, 119, 54, 0.25)' }}>
+                  <strong style={{ color: 'var(--amber)' }}>⚠ Ghatak Caution:</strong> {ghatak.badDay} • Tithi: {ghatak.badTithi} • Moon Sign: {ghatak.badRasi}
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* Past Life Events Validator */}
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-              <h3 className="serif-title" style={{ fontSize: 15, color: 'var(--gold)', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Target size={15} /> Test Your Chart Against Past Life Events
-              </h3>
-              <span className="teal-badge" style={{ fontSize: 10.5 }}>Dasha Accuracy Validator</span>
             </div>
-            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
-              Enter real milestones (job change, move, marriage, setback) to see which planetary periods were active on that exact date.
-            </p>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              <input
-                type="text"
-                value={eventTitle}
-                onChange={(e) => setEventTitle(e.target.value)}
-                placeholder="Milestone (e.g., Started new job in Bengaluru)"
-                style={{ flex: '2 1 200px', background: 'var(--surface-alt)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-main)' }}
-              />
-              <input
-                type="date"
-                value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
-                style={{ background: 'var(--surface-alt)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-main)' }}
-              />
-              <select
-                value={eventCategory}
-                onChange={(e) => setEventCategory(e.target.value as any)}
-                style={{ background: 'var(--surface-alt)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-main)' }}
-              >
-                <option value="career">Career</option>
-                <option value="relationship">Relationship</option>
-                <option value="move">Relocation</option>
-                <option value="breakthrough">Breakthrough</option>
-              </select>
-              <button onClick={handleAddEvent} className="btn btn-primary" style={{ fontSize: 12 }}>
-                <Plus size={13} /> Add Milestone
-              </button>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 10 }}>
-              {lifeEvents.map((ev) => (
-                <div key={ev.id} style={{ padding: 12, borderRadius: 10, background: 'var(--surface-alt)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
-                    <strong style={{ fontSize: 13, color: 'var(--text-main)' }}>{ev.title}</strong>
-                    <button
-                      onClick={() => setLifeEvents((prev) => prev.filter((x) => x.id !== ev.id))}
-                      aria-label="Remove event"
-                      style={{ color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer' }}
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                  <div style={{ fontSize: 11, color: 'var(--gold)', fontWeight: 600 }}>
-                    {ev.date} • {ev.category.toUpperCase()}
-                  </div>
-                  <div style={{ fontSize: 11.5, lineHeight: 1.5, color: 'var(--text-main)' }}>
-                    <div><strong>Vimshottari:</strong> {matchVimshottari(dashas, ev.date)}</div>
-                    <div><strong>Yogini:</strong> {matchYogini(yoginiDashas, ev.date)}</div>
-                    <div><strong>Chara:</strong> {matchChara(charaDashas, ev.date)}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </>
       )}
 
@@ -1203,10 +807,9 @@ export const TimingTab: React.FC<TimingTabProps> = ({
         <CalendarExplorer profileId={profileId} natalChart={natalChart} />
       )}
 
-      {/* Contextual Next-Step Footer */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 4 }}>
-        <button onClick={() => setActiveTab('journal')} className="btn btn-outline" style={{ fontSize: 12 }}>
-          Compare this period with your Journal →
+        <button type="button" onClick={() => setActiveTab('journal')} className="btn btn-outline" style={{ fontSize: 12 }}>
+          Compare this period with your Timeline →
         </button>
       </div>
     </div>
