@@ -40,9 +40,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.kundliflow.app.data.local.StoredAuthUser
+import com.kundliflow.app.data.mapper.BundleMappers
+import com.kundliflow.app.data.remote.GooglePlacesService
+import com.kundliflow.app.data.remote.OfflineCityItem
+import com.kundliflow.app.data.remote.ResolvedPlace
+import com.kundliflow.app.ui.common.BirthDatePickerField
+import com.kundliflow.app.ui.common.BirthTimePickerField
+import com.kundliflow.app.ui.common.PlacePickerSheet
 import com.kundliflow.app.ui.discovery.DiscoveryPathEngine
 import com.kundliflow.app.ui.theme.KundliColors
-import kotlinx.coroutines.delay
+import com.kundliflow.app.ui.theme.TelemetryNumberStyle
+import java.time.LocalDate
+import java.util.Locale
 
 data class OnboardingResult(
     val name: String,
@@ -57,18 +67,58 @@ data class OnboardingResult(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OnboardingFlow(
-    onComplete: (OnboardingResult) -> Unit,
+    placesService: GooglePlacesService,
+    offlineCities: List<OfflineCityItem>,
+    signedInUser: StoredAuthUser? = null,
+    authBusy: Boolean = false,
+    authMessage: String? = null,
+    computing: Boolean = false,
+    computeError: String? = null,
+    computedLevel1Json: String? = null,
+    onSignInWithEmail: (email: String, name: String) -> Unit = { _, _ -> },
+    onComputeProfile: (OnboardingResult, ResolvedPlace) -> Unit,
+    onComplete: () -> Unit,
 ) {
     var step by remember { mutableIntStateOf(1) } // 1..6
     val selectedGoals = remember { mutableStateListOf<String>() }
-    var name by remember { mutableStateOf("Priya") }
+    var name by remember { mutableStateOf(signedInUser?.name ?: "") }
+    var showSignInForm by remember { mutableStateOf(false) }
+    var authEmail by remember { mutableStateOf("") }
+    var authName by remember { mutableStateOf("") }
     var timeCertainty by remember { mutableStateOf("exact") }
     var birthDate by remember { mutableStateOf("1998-09-07") }
     var birthTime by remember { mutableStateOf("23:20:34") }
-    var cityName by remember { mutableStateOf("Jamshedpur") }
+    var selectedPlace by remember {
+        mutableStateOf(
+            offlineCities.firstOrNull()?.let { ResolvedPlace(it.name, it.lat, it.lon, it.tzId) }
+                ?: ResolvedPlace("Jamshedpur", 22.8, 86.1667, "Asia/Kolkata"),
+        )
+    }
     var ayanamsa by remember { mutableStateOf("lahiri") }
+    var showAyanamsaPicker by remember { mutableStateOf(false) }
+    var showPlacePicker by remember { mutableStateOf(false) }
     var triadTappedCount by remember { mutableIntStateOf(0) }
     var testYear by remember { mutableStateOf<Int?>(null) }
+
+    // Advance from Step 4 (Constellation Compute) to Step 5 once real bundle arrives
+    LaunchedEffect(computedLevel1Json, step) {
+        if (step == 4 && computedLevel1Json != null) {
+            step = 5
+        }
+    }
+
+    val natalSummary = remember(computedLevel1Json) {
+        computedLevel1Json?.let { BundleMappers.extractNatalSummaryFull(it) }
+            ?: com.kundliflow.app.data.mapper.NatalSummary("—", "—", "—", "—")
+    }
+    val lagnaSign = natalSummary.lagnaSign
+    val moonSign = natalSummary.moonSign
+    val moonNak = natalSummary.moonNakshatra
+    val sunSign = natalSummary.sunSign
+    val currentChapterSummary = remember(computedLevel1Json) {
+        computedLevel1Json?.let { BundleMappers.lookupDashaForYear(it, LocalDate.now().year) }
+            ?: "Current Chapter · Vimshottari Active"
+    }
 
     Column(
         modifier = Modifier
@@ -98,19 +148,79 @@ fun OnboardingFlow(
                     style = MaterialTheme.typography.bodyMedium,
                     color = KundliColors.TextMain,
                 )
+                if (signedInUser != null) {
+                    Surface(
+                        color = KundliColors.SurfaceAlt,
+                        border = BorderStroke(1.dp, KundliColors.Teal),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Text("Signed in for Cloud Sync", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
+                            Text("${signedInUser.name} · ${signedInUser.email}", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
+                        }
+                    }
+                }
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = { step = 2 },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
                 ) {
-                    Text("Continue with Google")
+                    Text(if (signedInUser != null) "Continue as ${signedInUser.name}" else "Get Started (Local-First)")
                 }
-                OutlinedButton(
-                    onClick = { step = 2 },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text("Local Dev Sign-In", color = KundliColors.TextMuted)
+                if (signedInUser == null) {
+                    OutlinedButton(
+                        onClick = { showSignInForm = !showSignInForm },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            if (showSignInForm) "Hide Sync Sign-In" else "Sign in for Cross-Device Sync",
+                            color = KundliColors.Teal,
+                        )
+                    }
+                }
+                if (showSignInForm && signedInUser == null) {
+                    Surface(
+                        color = KundliColors.Surface,
+                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text("Account Sync", style = MaterialTheme.typography.titleMedium, color = KundliColors.Gold)
+                            OutlinedTextField(
+                                value = authName,
+                                onValueChange = { authName = it },
+                                label = { Text("Display Name") },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                            OutlinedTextField(
+                                value = authEmail,
+                                onValueChange = { authEmail = it },
+                                label = { Text("Email") },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                            if (authMessage != null) {
+                                Text(authMessage, style = MaterialTheme.typography.bodySmall, color = KundliColors.Teal)
+                            }
+                            Button(
+                                onClick = {
+                                    if (authEmail.isNotBlank()) {
+                                        if (name.isBlank() && authName.isNotBlank()) name = authName
+                                        onSignInWithEmail(authEmail, authName.ifBlank { "Native" })
+                                    }
+                                },
+                                enabled = !authBusy && authEmail.isNotBlank(),
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Teal, contentColor = KundliColors.OrbInk),
+                            ) {
+                                Text(if (authBusy) "Connecting…" else "Sign in & Sync")
+                            }
+                        }
+                    }
                 }
             }
 
@@ -149,20 +259,80 @@ fun OnboardingFlow(
 
             3 -> {
                 Text("Birth Details", style = MaterialTheme.typography.headlineSmall, color = KundliColors.TextMain)
-                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    placeholder = { Text("Priya") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
                 Text("Time Certainty", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf("exact" to "Exact", "approx" to "Approx ±15m", "unknown" to "Unknown (Moon)").forEach { (id, label) ->
                         FilterChip(selected = timeCertainty == id, onClick = { timeCertainty = id }, label = { Text(label) })
                     }
                 }
-                OutlinedTextField(value = birthDate, onValueChange = { birthDate = it }, label = { Text("Birth Date (YYYY-MM-DD)") }, modifier = Modifier.fillMaxWidth())
+                BirthDatePickerField(
+                    birthDateIso = birthDate,
+                    onDateSelected = { birthDate = it },
+                )
                 if (timeCertainty != "unknown") {
-                    OutlinedTextField(value = birthTime, onValueChange = { birthTime = it }, label = { Text("Birth Time (HH:MM:SS)") }, modifier = Modifier.fillMaxWidth())
+                    BirthTimePickerField(
+                        birthTimeHms = birthTime,
+                        allowSeconds = timeCertainty == "exact",
+                        onTimeSelected = { birthTime = it },
+                    )
                 }
-                OutlinedTextField(value = cityName, onValueChange = { cityName = it }, label = { Text("Birth City") }, modifier = Modifier.fillMaxWidth())
+
+                // Google Places + GPS + Offline City Picker Trigger + Live Lat/Lon/TZ Pill
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showPlacePicker = true },
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Text("Birth City (Google Places / GPS)", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                        Spacer(Modifier.height(4.dp))
+                        Text(selectedPlace.name, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                        Text(
+                            text = String.format(Locale.US, "%.2f°, %.2f° · %s", selectedPlace.lat, selectedPlace.lon, selectedPlace.tzId),
+                            style = TelemetryNumberStyle,
+                            color = KundliColors.Teal,
+                        )
+                    }
+                }
+
+                TextButton(onClick = { showAyanamsaPicker = !showAyanamsaPicker }) {
+                    Text("Ayanamsa: ${ayanamsa.uppercase()} ▾", color = KundliColors.TextMuted)
+                }
+                if (showAyanamsaPicker) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        listOf("lahiri", "kp_new", "kp_old", "raman", "yukteshwar").forEach { ay ->
+                            FilterChip(selected = ayanamsa == ay, onClick = { ayanamsa = ay }, label = { Text(ay.uppercase()) })
+                        }
+                    }
+                }
+
                 Button(
-                    onClick = { step = 4 },
+                    onClick = {
+                        step = 4
+                        onComputeProfile(
+                            OnboardingResult(
+                                name = name.ifBlank { "Priya" },
+                                timeCertainty = timeCertainty,
+                                birthDate = birthDate,
+                                birthTime = birthTime,
+                                cityName = selectedPlace.name,
+                                ayanamsa = ayanamsa,
+                                goals = selectedGoals.toList(),
+                            ),
+                            selectedPlace,
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
                 ) {
@@ -171,37 +341,51 @@ fun OnboardingFlow(
             }
 
             4 -> {
-                var computeStage by remember { mutableIntStateOf(0) }
-                LaunchedEffect(Unit) {
-                    delay(450L); computeStage = 1
-                    delay(450L); computeStage = 2
-                    delay(450L); step = 5
-                }
                 Text("Mapping Your Sky", style = MaterialTheme.typography.headlineSmall, color = KundliColors.Gold)
+                if (computing) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth().height(4.dp),
+                        color = KundliColors.Teal,
+                        trackColor = KundliColors.Surface,
+                    )
+                }
                 listOf(
                     "Mapping Ascendant & Sidereal Degrees",
                     "Evaluating 537 Classical Rules",
                     "Aligning Vimshottari Dashas",
-                ).forEachIndexed { idx, label ->
+                ).forEach { label ->
                     Text(
-                        text = if (computeStage >= idx) "✓ $label" else "… $label",
+                        text = if (computedLevel1Json != null) "✓ $label" else "✦ $label",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = if (computeStage >= idx) KundliColors.Teal else KundliColors.TextMuted,
+                        color = if (computedLevel1Json != null) KundliColors.Teal else KundliColors.TextMuted,
                     )
+                }
+                if (computeError != null) {
+                    Surface(
+                        color = KundliColors.SurfaceAlt,
+                        border = BorderStroke(1.dp, KundliColors.AlertCrimson),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(computeError, style = MaterialTheme.typography.bodySmall, color = KundliColors.AlertCrimson)
+                            Button(onClick = { step = 3 }) { Text("Edit details & retry") }
+                        }
+                    }
                 }
             }
 
             5 -> {
                 Text("Your Cosmic Triad", style = MaterialTheme.typography.headlineSmall, color = KundliColors.TextMain)
                 Text(
-                    text = DiscoveryPathEngine.formatCombinatorialRarity("Taurus", "Leo", "Revati", timeCertainty),
+                    text = DiscoveryPathEngine.formatCombinatorialRarity(lagnaSign, sunSign, moonNak, timeCertainty),
                     style = MaterialTheme.typography.labelMedium,
                     color = KundliColors.Gold,
                 )
                 val triad = listOf(
-                    if (timeCertainty == "unknown") "Moon Nakshatra · Revati" else "Rising · Taurus",
-                    "Moon · Pisces",
-                    "Current Chapter · Venus–Saturn",
+                    if (timeCertainty == "unknown") "Moon Nakshatra · $moonNak" else "Rising · $lagnaSign",
+                    "Moon · $moonSign ($moonNak)",
+                    currentChapterSummary,
                 )
                 triad.forEachIndexed { idx, label ->
                     val revealed = triadTappedCount > idx
@@ -239,7 +423,7 @@ fun OnboardingFlow(
             else -> {
                 Text("Test the math on a year you remember", style = MaterialTheme.typography.headlineSmall, color = KundliColors.TextMain)
                 Text(
-                    "Pick any past year to see which planetary chapter and house were active.",
+                    "Pick any past year to see which planetary chapter was active in your verified chart.",
                     style = MaterialTheme.typography.bodySmall,
                     color = KundliColors.TextMuted,
                 )
@@ -249,13 +433,15 @@ fun OnboardingFlow(
                     }
                 }
                 if (testYear != null) {
+                    val dashaText = computedLevel1Json?.let { BundleMappers.lookupDashaForYear(it, testYear!!) }
+                        ?: "$testYear: Active Vimshottari chapter computed from your birth star."
                     Surface(
                         color = KundliColors.SurfaceAlt,
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(
-                            text = "$testYear: Venus–Saturn Antardasha · activated your 10th house (Career) & 4th house (Home).",
+                            text = dashaText,
                             style = MaterialTheme.typography.bodySmall,
                             color = KundliColors.Teal,
                             modifier = Modifier.padding(14.dp),
@@ -263,43 +449,32 @@ fun OnboardingFlow(
                     }
                 }
                 Button(
-                    onClick = {
-                        onComplete(
-                            OnboardingResult(
-                                name = name,
-                                timeCertainty = timeCertainty,
-                                birthDate = birthDate,
-                                birthTime = birthTime,
-                                cityName = cityName,
-                                ayanamsa = ayanamsa,
-                                goals = selectedGoals.toList(),
-                            ),
-                        )
-                    },
+                    onClick = onComplete,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
                 ) {
                     Text("Enter Today")
                 }
                 TextButton(
-                    onClick = {
-                        onComplete(
-                            OnboardingResult(
-                                name = name,
-                                timeCertainty = timeCertainty,
-                                birthDate = birthDate,
-                                birthTime = birthTime,
-                                cityName = cityName,
-                                ayanamsa = ayanamsa,
-                                goals = selectedGoals.toList(),
-                            ),
-                        )
-                    },
+                    onClick = onComplete,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                 ) {
                     Text("Skip", color = KundliColors.TextMuted)
                 }
             }
         }
+    }
+
+    if (showPlacePicker) {
+        PlacePickerSheet(
+            title = "Select Birth City",
+            placesService = placesService,
+            offlineCities = offlineCities,
+            onPlaceSelected = {
+                selectedPlace = it
+                showPlacePicker = false
+            },
+            onDismiss = { showPlacePicker = false },
+        )
     }
 }

@@ -1,10 +1,14 @@
 package com.kundliflow.app.ui.ask
 
 import androidx.compose.runtime.Immutable
+import com.kundliflow.app.ui.subject.PlanetId
+import com.kundliflow.app.ui.subject.Subject
+import com.kundliflow.app.ui.subject.SubjectFindingKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.util.Locale
 
 @Immutable
 data class AskUiMessage(
@@ -17,6 +21,7 @@ data class AskUiMessage(
     val traceSteps: List<String> = emptyList(),
     val createdAtMillis: Long,
     val contextTag: String? = null,
+    val deepMode: Boolean = false,
 )
 
 @Immutable
@@ -26,6 +31,13 @@ data class AskSessionSummary(
     val synopsis: String,
     val timestampLabel: String,
     val anchorMessageId: String,
+)
+
+@Immutable
+data class ResolvedEvidenceChip(
+    val rawId: String,
+    val label: String,
+    val subject: Subject,
 )
 
 sealed interface AskSseEvent {
@@ -38,6 +50,49 @@ sealed interface AskSseEvent {
     ) : AskSseEvent
 
     data class Error(val message: String) : AskSseEvent
+}
+
+object AskEvidenceResolver {
+    private val HOUSE_REGEX = Regex("""(?:^|[._])h(?:ouse)?[._]?([1-9]|1[0-2])(?:$|[._])""", RegexOption.IGNORE_CASE)
+
+    /**
+     * Converts raw engine evidence IDs (e.g. `rule.h10.saturn`, `planet.moon`, `dasha.venus.saturn`)
+     * into human-readable labels paired with the right typed Subject for SubjectSheet.
+     */
+    fun resolve(rawId: String): ResolvedEvidenceChip {
+        val lower = rawId.lowercase(Locale.US)
+
+        // Check for explicit planet match
+        val matchedPlanet = PlanetId.entries.firstOrNull { p ->
+            Regex("""(?:^|[._])${p.name.lowercase()}(?:$|[._])""").containsMatchIn(lower)
+        }
+        val houseMatch = HOUSE_REGEX.find(lower)?.groupValues?.getOrNull(1)?.toIntOrNull()
+
+        return when {
+            lower.contains("dasha") || lower.contains("period") -> {
+                val lordLabel = matchedPlanet?.displayName?.let { "$it Dasha" } ?: "Active Chapter"
+                ResolvedEvidenceChip(rawId, lordLabel, Subject.Period(rawId))
+            }
+            houseMatch != null && matchedPlanet != null -> {
+                ResolvedEvidenceChip(rawId, "H$houseMatch · ${matchedPlanet.displayName}", Subject.House(houseMatch))
+            }
+            houseMatch != null -> {
+                ResolvedEvidenceChip(rawId, "House $houseMatch", Subject.House(houseMatch))
+            }
+            matchedPlanet != null -> {
+                ResolvedEvidenceChip(rawId, matchedPlanet.displayName, Subject.Planet(matchedPlanet))
+            }
+            else -> {
+                val clean = rawId
+                    .removePrefix("rule.")
+                    .removePrefix("fact.")
+                    .replace(".", " · ")
+                    .replace("_", " ")
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                ResolvedEvidenceChip(rawId, clean, Subject.Finding(rawId, SubjectFindingKind.RULE))
+            }
+        }
+    }
 }
 
 object AskSseParser {
@@ -110,7 +165,9 @@ object AskSessionGrouper {
                 AskSessionSummary(
                     id = "sess_${group.first().id}",
                     contextTag = firstUser?.contextTag ?: "Chart Q&A ${idx + 1}",
-                    synopsis = firstAssistant?.content?.take(72) ?: firstUser?.content?.take(72) ?: "",
+                    synopsis = firstAssistant?.content?.replace("**", "")?.take(72)
+                        ?: firstUser?.content?.take(72)
+                        ?: "",
                     timestampLabel = "Recent",
                     anchorMessageId = group.first().id,
                 )

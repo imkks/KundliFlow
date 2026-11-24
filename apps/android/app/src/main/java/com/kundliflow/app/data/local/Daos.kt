@@ -14,6 +14,9 @@ interface ChartDao {
     @Query("SELECT * FROM chart_bundles")
     fun observeAllBundles(): Flow<List<ChartBundleEntity>>
 
+    @Query("SELECT * FROM chart_bundles")
+    suspend fun getAllBundlesOnce(): List<ChartBundleEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertBundle(bundle: ChartBundleEntity)
 
@@ -22,6 +25,12 @@ interface ChartDao {
 
     @Query("SELECT * FROM today_sky_cache WHERE cacheKey = :cacheKey")
     suspend fun getTodaySky(cacheKey: String): TodaySkyCacheEntity?
+
+    @Query("SELECT * FROM today_sky_cache WHERE date = :date")
+    fun observeTodaySkyForDate(date: String): Flow<List<TodaySkyCacheEntity>>
+
+    @Query("SELECT * FROM today_sky_cache WHERE profileId = :profileId ORDER BY fetchedAt DESC LIMIT 1")
+    suspend fun getLatestTodaySkyForProfile(profileId: String): TodaySkyCacheEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodaySky(entry: TodaySkyCacheEntity)
@@ -35,11 +44,29 @@ interface JournalDao {
     @Query("SELECT * FROM journal_entries WHERE profileId = :profileId AND deleted = 0 ORDER BY createdAt DESC")
     fun observeEntries(profileId: String): Flow<List<JournalEntryEntity>>
 
+    @Query("SELECT * FROM journal_entries WHERE profileId = :profileId AND deleted = 0 ORDER BY createdAt DESC")
+    suspend fun getEntriesOnce(profileId: String): List<JournalEntryEntity>
+
+    @Query("SELECT * FROM journal_entries WHERE synced = 0")
+    suspend fun getAllUnsyncedEntries(): List<JournalEntryEntity>
+
+    @Query("UPDATE journal_entries SET synced = 1 WHERE id IN (:ids)")
+    suspend fun markEntriesSynced(ids: List<String>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertEntry(entry: JournalEntryEntity)
 
     @Query("SELECT * FROM life_events WHERE profileId = :profileId AND deleted = 0 ORDER BY eventDate DESC")
     fun observeMilestones(profileId: String): Flow<List<LifeEventEntity>>
+
+    @Query("SELECT * FROM life_events WHERE profileId = :profileId AND deleted = 0 ORDER BY eventDate DESC")
+    suspend fun getMilestonesOnce(profileId: String): List<LifeEventEntity>
+
+    @Query("SELECT * FROM life_events WHERE synced = 0")
+    suspend fun getAllUnsyncedMilestones(): List<LifeEventEntity>
+
+    @Query("UPDATE life_events SET synced = 1 WHERE id IN (:ids)")
+    suspend fun markMilestonesSynced(ids: List<String>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMilestone(event: LifeEventEntity)

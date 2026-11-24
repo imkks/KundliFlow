@@ -48,6 +48,14 @@ data class DoshaAuditItem(
 )
 
 @Immutable
+data class YogaDetailItem(
+    val name: String,
+    val category: String,
+    val meaning: String,
+    val planets: String = "",
+)
+
+@Immutable
 data class ChartUiState(
     val ascendantSign: String,
     val moonSign: String,
@@ -58,12 +66,17 @@ data class ChartUiState(
     val shadbalaBars: List<ShadbalaBarItem>,
     val doshaAudits: List<DoshaAuditItem>,
     val activeYogaNames: List<String>,
+    val activeYogas: List<YogaDetailItem> = emptyList(),
+    val reference: ChartReference = ChartReference.LAGNA,
 ) {
     fun emotionalHeadline(): String {
         val goalHouseData = houses.firstOrNull { it.number == primaryGoalHouse }
         val lordName = goalHouseData?.lord?.displayName ?: "Saturn"
         return "$lordName rules your ${primaryGoalLabel.lowercase()} house"
     }
+
+    fun allPlanets(): List<ChartPlanetPlacement> =
+        houses.flatMap { it.planets }.sortedBy { it.id.ordinal }
 }
 
 object DrishtiCalculator {
@@ -82,6 +95,26 @@ object DrishtiCalculator {
             }
         }
         return offsets.map { offset -> ((fromHouse - 1 + offset - 1) % 12) + 1 }.sorted()
+    }
+
+    /**
+     * Finds every planet in the chart casting Parashari Graha Drishti onto targetHouse (1..12).
+     * Returns pairs of (planet placement, source house number).
+     */
+    fun incomingAspectsToHouse(
+        targetHouse: Int,
+        houses: List<ChartHouseData>,
+    ): List<Pair<ChartPlanetPlacement, Int>> {
+        val results = mutableListOf<Pair<ChartPlanetPlacement, Int>>()
+        houses.forEach { h ->
+            h.planets.forEach { planet ->
+                val targets = aspectHouses(h.number, listOf(planet.id))
+                if (targets.contains(targetHouse)) {
+                    results.add(planet to h.number)
+                }
+            }
+        }
+        return results
     }
 
     /**

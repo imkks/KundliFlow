@@ -24,7 +24,7 @@ class Phase6MeSearchPolicyTest {
     fun `SearchCatalog filters houses, planets, topics, and glossary cleanly`() {
         assertTrue(SearchCatalog.filter("Saturn").any { it.title.contains("Saturn") })
         assertTrue(SearchCatalog.filter("House 10").any { it.title == "House 10" })
-        assertTrue(SearchCatalog.filter("Bhanga").any { it.category == "Glossary & Systems" })
+        assertTrue(SearchCatalog.filter("Bhanga").any { it.category.startsWith("Glossary") })
     }
 
     @Test

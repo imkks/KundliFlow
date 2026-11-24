@@ -1,5 +1,6 @@
 package com.kundliflow.app.ui.chart
 
+import android.provider.Settings
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -54,17 +56,24 @@ fun KundliChartCanvas(
     onSelectHouse: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val reducedMotion = remember(context) {
+        runCatching {
+            Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+        }.getOrDefault(false)
+    }
     val haptics = LocalHapticFeedback.current
     val textMeasurer = rememberTextMeasurer()
     var drishtiOriginHouse by remember { mutableStateOf<Int?>(null) }
 
     val pulseTransition = rememberInfiniteTransition(label = "moon_pulse")
-    val moonPulseScale by pulseTransition.animateFloat(
+    val animatedPulse by pulseTransition.animateFloat(
         initialValue = 0.85f,
         targetValue = 1.25f,
         animationSpec = infiniteRepeatable(tween(1200), RepeatMode.Reverse),
         label = "moon_pulse_scale",
     )
+    val moonPulseScale = if (reducedMotion) 1.0f else animatedPulse
 
     Canvas(
         modifier = modifier

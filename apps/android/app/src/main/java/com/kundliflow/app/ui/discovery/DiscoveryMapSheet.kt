@@ -155,6 +155,50 @@ fun DiscoveryMapSheet(
                 }
             }
 
+            val ringLabels = listOf(
+                "core" to "Core Identity",
+                "timing" to "Timing & Dashas",
+                "houses" to "Life Houses",
+                "depth" to "Vedic Depth",
+            )
+            val completedRings = ringLabels.filter { (ringKey, _) ->
+                val inRing = orderedNodes.filter { it.ring == ringKey }
+                inRing.isNotEmpty() && inRing.all { litNodeIds.contains(it.id) }
+            }
+            if (completedRings.isNotEmpty()) {
+                Surface(
+                    color = KundliColors.SurfaceAlt,
+                    border = BorderStroke(1.dp, KundliColors.Gold),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text(
+                            text = "RING COMPLETION RECAP",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = KundliColors.Gold,
+                        )
+                        Text(
+                            text = "Completed: ${completedRings.joinToString(" · ") { it.second }}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = KundliColors.TextMain,
+                        )
+                        Text(
+                            text = if (completedRings.size == ringLabels.size) {
+                                "All rings of your natal constellation are lit. Act II evergreen lunar & Dasha cycles are now active on Today."
+                            } else {
+                                "Every lit star deepens your chart vocabulary without streaks or deadlines."
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = KundliColors.TextMuted,
+                        )
+                    }
+                }
+            }
+
             orderedNodes.forEach { node ->
                 val isLit = litNodeIds.contains(node.id)
                 Surface(

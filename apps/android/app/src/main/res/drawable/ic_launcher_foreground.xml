@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Sacred North-Indian outer frame & diamond in Antique Gold -->
+    <path
+        android:pathData="M28,28 L80,28 L80,80 L28,80 Z"
+        android:strokeColor="#E3AD46"
+        android:strokeWidth="2.5"
+        android:fillColor="#201D40" />
+    <path
+        android:pathData="M54,28 L80,54 L54,80 L28,54 Z"
+        android:strokeColor="#E3AD46"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M28,28 L80,80 M80,28 L28,80"
+        android:strokeColor="#E3AD46"
+        android:strokeWidth="1.5"
+        android:strokeAlpha="0.6" />
+    <!-- Celestial Teal inner star core -->
+    <path
+        android:fillColor="#5FC2B3"
+        android:pathData="M54,45 L56.5,51.5 L63,54 L56.5,56.5 L54,63 L51.5,56.5 L45,54 L51.5,51.5 Z" />
+</vector>

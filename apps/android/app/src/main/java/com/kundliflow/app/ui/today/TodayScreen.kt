@@ -34,6 +34,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -59,6 +61,7 @@ import com.kundliflow.app.ui.theme.TelemetryNumberStyle
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayScreen(
     sky: TodaySkyState,
@@ -67,6 +70,8 @@ fun TodayScreen(
     hasLoggedAtLeastOnce: Boolean,
     isEveningAfter19: Boolean,
     showConstructiveRedirect: Boolean,
+    isRefreshing: Boolean = false,
+    onRefresh: () -> Unit = {},
     onTapHeroPeek: () -> Unit,
     onQuickCheckIn: (mood: Int) -> Unit,
     onAddTagToLastCheckIn: (String) -> Unit,
@@ -87,61 +92,71 @@ fun TodayScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
-            .padding(bottom = 108.dp), // clear floating capsule dock
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
     ) {
-        // 1. Hero (1 per screen)
-        TodayHeroCard(
-            sky = sky,
-            personalHookLine = personalHookLine,
-            isEveningAfter19 = isEveningAfter19,
-            showConstructiveRedirect = showConstructiveRedirect,
-            nextDiscoveryTitle = (activeSlot as? TodayDynamicSlot.CuriosityNode)?.title ?: "your chart",
-            onTapHeroPeek = onTapHeroPeek,
-            onTapRedirect = { onTapSlotAction(activeSlot) },
-        )
-
-        // 2. Primary Action: 1-Tap Check-in w/ 1.5s Inline Sky Echo Morph
-        CheckInBarWithInlineEcho(
-            sky = sky,
-            echoMood = inlineEchoMood,
-            onSelectMood = { mood ->
-                inlineEchoMood = mood
-                onQuickCheckIn(mood)
-            },
-            onTapTag = onAddTagToLastCheckIn,
-            onTapAddNote = onOpenFullComposer,
-        )
-
-        // 3. Single Dynamic Slot (P1-P6 from resolveTodaySlot)
-        DynamicSlotCard(
-            slot = activeSlot,
-            onTap = { onTapSlotAction(activeSlot) },
-            onDismiss = { onDismissSlot(activeSlot) },
-        )
-
-        // 4. 40dp Collapsed Day Strip (Earned reveal after 1st check-in)
-        AnimatedVisibility(visible = hasLoggedAtLeastOnce) {
-            CollapsedDayStrip(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 108.dp), // clear floating capsule dock
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // 1. Hero (1 per screen)
+            TodayHeroCard(
                 sky = sky,
+                personalHookLine = personalHookLine,
                 isEveningAfter19 = isEveningAfter19,
-                onClick = { showWaveSheet = true },
+                showConstructiveRedirect = showConstructiveRedirect,
+                nextDiscoveryTitle = (activeSlot as? TodayDynamicSlot.CuriosityNode)?.title ?: "your chart",
+                onTapHeroPeek = onTapHeroPeek,
+                onTapRedirect = { onTapSlotAction(activeSlot) },
             )
-        }
 
-        // 5. Explore Horizontal Life Topics Reel
-        ExploreTopicsReel(onTapTopic = onTapExploreTopic)
+            // 2. Primary Action: 1-Tap Check-in w/ 1.5s Inline Sky Echo Morph
+            CheckInBarWithInlineEcho(
+                sky = sky,
+                echoMood = inlineEchoMood,
+                onSelectMood = { mood ->
+                    inlineEchoMood = mood
+                    onQuickCheckIn(mood)
+                },
+                onTapTag = onAddTagToLastCheckIn,
+                onTapAddNote = onOpenFullComposer,
+            )
+
+            // 3. Single Dynamic Slot (P1-P6 from resolveTodaySlot)
+            DynamicSlotCard(
+                slot = activeSlot,
+                onTap = { onTapSlotAction(activeSlot) },
+                onDismiss = { onDismissSlot(activeSlot) },
+            )
+
+            // 4. 40dp Collapsed Day Strip (Earned reveal after 1st check-in)
+            AnimatedVisibility(visible = hasLoggedAtLeastOnce) {
+                CollapsedDayStrip(
+                    sky = sky,
+                    isEveningAfter19 = isEveningAfter19,
+                    onClick = { showWaveSheet = true },
+                )
+            }
+
+            // 5. Explore Horizontal Life Topics Reel
+            ExploreTopicsReel(onTapTopic = onTapExploreTopic)
+        }
     }
 
     if (showWaveSheet) {
         DayWaveSheet(
             sky = sky,
             onTapCitySwitcher = onTapCitySwitcher,
+            onOpenFullMath = {
+                showWaveSheet = false
+                onTapHeroPeek()
+            },
             onDismiss = { showWaveSheet = false },
         )
     }
@@ -166,7 +181,10 @@ private fun TodayHeroCard(
             .clickable(onClick = if (showConstructiveRedirect) onTapRedirect else onTapHeroPeek),
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .drawBehind { drawRect(KundliColors.cosmicHeroRadial(size.width, size.height)) }
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -509,6 +527,7 @@ private fun ExploreTopicsReel(onTapTopic: (String) -> Unit) {
 private fun DayWaveSheet(
     sky: TodaySkyState,
     onTapCitySwitcher: () -> Unit,
+    onOpenFullMath: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val haptics = LocalHapticFeedback.current
@@ -618,6 +637,36 @@ private fun DayWaveSheet(
                         center = Offset(sx, sy),
                     )
                 }
+            }
+            sky.panchang?.let { p ->
+                Surface(
+                    color = KundliColors.SurfaceAlt,
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text("TODAY'S PANCHANG", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                        Text(
+                            text = "Tithi: ${p.tithi} · Nakshatra: ${p.nakshatra}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = KundliColors.TextMain,
+                        )
+                        Text(
+                            text = "Yoga: ${p.yoga} · Sunrise ${p.sunrise} / Sunset ${p.sunset}",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = KundliColors.TextMuted,
+                        )
+                    }
+                }
+            }
+            TextButton(
+                onClick = onOpenFullMath,
+                modifier = Modifier.align(Alignment.End),
+            ) {
+                Text("Inspect all ${sky.allHoras.size.coerceAtLeast(24)} Horas & scoring math →", color = KundliColors.Teal)
             }
             Spacer(Modifier.height(8.dp))
         }

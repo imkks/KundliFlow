@@ -25,11 +25,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -53,24 +59,35 @@ import com.kundliflow.app.ui.subject.Rung
 import com.kundliflow.app.ui.subject.Subject
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
+import java.time.LocalDate
+import java.time.YearMonth
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TimeScreen(
     state: TimeTabState,
     milestones: List<MilestoneUi>,
+    isCalendarLoading: Boolean = false,
     onOpenPeriodSubject: (Subject, Rung) -> Unit,
+    onChangeCalendarMonth: (year: Int, month: Int) -> Unit,
     onAddDateNote: (dayOfMonth: Int) -> Unit,
     onAddMilestone: (title: String, date: String, category: String) -> Unit,
+    lookupDashaForYear: (year: Int) -> String,
     onExplainYearWithAi: (year: Int) -> Unit,
 ) {
     var selectedSystem by remember { mutableStateOf(DashaSystem.VIMSHOTTARI) }
     var showNextShiftDelta by remember { mutableStateOf(false) }
     var selectedPurpose by remember { mutableStateOf("All") }
-    var selectedDay by remember { mutableStateOf(state.monthDays.firstOrNull()) }
+    var selectedDay by remember(state.calendarYear, state.calendarMonth, state.monthDays) {
+        val today = LocalDate.now()
+        val defaultCell = if (today.year == state.calendarYear && today.monthValue == state.calendarMonth) {
+            state.monthDays.firstOrNull { it.dayOfMonth == today.dayOfMonth }
+        } else null
+        mutableStateOf(defaultCell ?: state.monthDays.firstOrNull())
+    }
     var showAllSkyMovers by remember { mutableStateOf(false) }
     var showAddMilestoneSheet by remember { mutableStateOf(false) }
-    var timeMachineYear by remember { mutableIntStateOf(2024) }
+    var timeMachineYear by remember { mutableIntStateOf(LocalDate.now().year) }
 
     val activeDasha = state.activeDashas[selectedSystem] ?: state.activeDashas.values.first()
 
@@ -171,7 +188,49 @@ fun TimeScreen(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(state.monthTitle, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(
+                        onClick = {
+                            val prev = YearMonth.of(state.calendarYear, state.calendarMonth).minusMonths(1)
+                            onChangeCalendarMonth(prev.year, prev.monthValue)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                            contentDescription = "Previous month",
+                            tint = KundliColors.Gold,
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(state.monthTitle, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                        if (isCalendarLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(14.dp),
+                                strokeWidth = 2.dp,
+                                color = KundliColors.Gold,
+                            )
+                        }
+                    }
+                    IconButton(
+                        onClick = {
+                            val next = YearMonth.of(state.calendarYear, state.calendarMonth).plusMonths(1)
+                            onChangeCalendarMonth(next.year, next.monthValue)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                            contentDescription = "Next month",
+                            tint = KundliColors.Gold,
+                        )
+                    }
+                }
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     contentPadding = PaddingValues(end = 6.dp),
@@ -279,8 +338,36 @@ fun TimeScreen(
                         Text("• ${m.eventDate}: ${m.title}", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
                     }
                 }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OutlinedButton(
+                        onClick = { if (timeMachineYear > 1950) timeMachineYear-- },
+                    ) {
+                        Text("−1y", style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                    }
+                    Surface(
+                        color = KundliColors.SurfaceAlt,
+                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                        shape = RoundedCornerShape(12.dp),
+                    ) {
+                        Text(
+                            text = "$timeMachineYear",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = KundliColors.Gold,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = { if (timeMachineYear < 2060) timeMachineYear++ },
+                    ) {
+                        Text("+1y", style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                    }
+                }
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf(2020, 2022, 2024, 2026).forEach { yr ->
+                    listOf(2018, 2020, 2022, 2024, 2026, 2028).forEach { yr ->
                         FilterChip(
                             selected = timeMachineYear == yr,
                             onClick = { timeMachineYear = yr },
@@ -288,15 +375,19 @@ fun TimeScreen(
                         )
                     }
                 }
+                val resolvedYearDasha = remember(timeMachineYear, state.activeDashas) {
+                    lookupDashaForYear(timeMachineYear)
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "$timeMachineYear: ${activeDasha.mahadashaLord}–${activeDasha.antardashaLord}",
+                        text = resolvedYearDasha,
                         style = MaterialTheme.typography.bodySmall,
                         color = KundliColors.Teal,
+                        modifier = Modifier.weight(1f).padding(end = 8.dp),
                     )
                     OutlinedButton(onClick = { onExplainYearWithAi(timeMachineYear) }) {
                         Text("Explain with AI", color = KundliColors.Gold)
