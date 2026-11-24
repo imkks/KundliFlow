@@ -58,11 +58,27 @@ Then choose either:
 
 ```bash
 corepack pnpm install
-corepack pnpm test                      # 15 test suites, 74 tests
+corepack pnpm test                      # 19 test files, 102 tests
 corepack pnpm --filter @astro/api build
 corepack pnpm --filter @astro/api start # http://localhost:8787
 corepack pnpm --filter @astro/web dev   # http://localhost:5173
 ```
+
+---
+
+## Documentation & Agent Maps
+
+- **For Humans:**
+  - [Architecture & Data Flow](docs/ARCHITECTURE.md)
+  - [UX & Product Guide (3 Lenses, Kundli, Life Topics, Modals)](docs/UX_PRODUCT_GUIDE.md)
+  - [UI Contents & Visual Marker (Screens, Modals, Tokens, Android Parity)](docs/UI_CONTENTS.md)
+  - [API, Setup & Development Reference](docs/API_AND_DEVELOPMENT.md)
+  - [Decisions Log](docs/DECISIONS.md) · [Test Plan](docs/TEST_PLAN.md) · [Vedic Mathematical Specs](docs/VEDIC_ASTROLOGY_MATHEMATICAL_SPECIFICATIONS.md)
+- **For Coding Agents:**
+  - [Root Agent Map](AGENTS.md)
+  - [Web Frontend Map](apps/web/AGENTS.md)
+  - [API Server Map](apps/api/AGENTS.md)
+  - [Packages & Engine Pipeline Map](packages/AGENTS.md)
 
 ---
 

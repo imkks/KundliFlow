@@ -2,7 +2,7 @@ import type { AppRouter } from '../router/router.js';
 import type { ServerContext } from '../types.js';
 
 export function registerJournalRoutes(router: AppRouter, ctx: ServerContext) {
-  const { appDb } = ctx;
+  const { appDb, canAccessProfile } = ctx;
 
   // --- Two-Way Delta Sync (Journal Entries + Past Life Events) ---
   router.post('/api/sync', (c) => {
@@ -11,6 +11,11 @@ export function registerJournalRoutes(router: AppRouter, ctx: ServerContext) {
       const profileId = String(body.profileId || '');
       if (!profileId) {
         c.error('profileId is required', 400);
+        return;
+      }
+      const profile = appDb.getProfile(profileId);
+      if (profile && !canAccessProfile(profile, c.authUser)) {
+        c.error('Forbidden', 403);
         return;
       }
       const lastSyncedAt = body.lastSyncedAt ? String(body.lastSyncedAt) : undefined;
@@ -27,6 +32,8 @@ export function registerJournalRoutes(router: AppRouter, ctx: ServerContext) {
           energy: Number(je.energy ?? 3),
           focus: Number(je.focus ?? je.energy ?? 3),
           mood: Number(je.mood ?? 3),
+          kind: String(je.kind ?? 'checkin'),
+          tags: Array.isArray(je.tags) ? je.tags.map(String) : [],
           skySnapshot: je.skySnapshot ?? je.snapshot,
           createdAt: je.createdAt ?? je.atUtc,
           updatedAt: je.updatedAt ?? new Date().toISOString(),
@@ -62,6 +69,11 @@ export function registerJournalRoutes(router: AppRouter, ctx: ServerContext) {
   // --- Get Journal Entries ---
   router.get('/api/journal/:profileId', (c) => {
     const profileId = c.params.profileId;
+    const profile = appDb.getProfile(profileId);
+    if (profile && !canAccessProfile(profile, c.authUser)) {
+      c.error('Forbidden', 403);
+      return;
+    }
     c.json({ entries: appDb.getJournalEntries(profileId) });
   });
 
@@ -69,14 +81,22 @@ export function registerJournalRoutes(router: AppRouter, ctx: ServerContext) {
   router.post('/api/journal', (c) => {
     try {
       const body = c.body;
+      const profileId = String(body.profileId);
+      const profile = appDb.getProfile(profileId);
+      if (profile && !canAccessProfile(profile, c.authUser)) {
+        c.error('Forbidden', 403);
+        return;
+      }
       const entry = {
         id: String(body.id || `j_${Date.now()}`),
-        profileId: String(body.profileId),
+        profileId,
         entryDate: String(body.entryDate || new Date().toISOString().slice(0, 10)),
         note: String(body.note || ''),
         energy: Number(body.energy ?? 3),
         focus: Number(body.focus ?? 3),
         mood: Number(body.mood ?? 3),
+        kind: String(body.kind ?? 'checkin'),
+        tags: Array.isArray(body.tags) ? body.tags.map(String) : [],
         skySnapshot: body.skySnapshot ?? null,
       };
       appDb.saveJournalEntry(entry);

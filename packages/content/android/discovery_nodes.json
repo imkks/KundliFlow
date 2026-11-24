@@ -1,0 +1,397 @@
+{
+  "version": "2.0.0",
+  "totalNodes": 24,
+  "moonOnlyTotalNodes": 11,
+  "rings": [
+    { "id": "core", "label": "Core", "order": 1, "nodeCount": 4 },
+    { "id": "houses", "label": "Houses", "order": 2, "nodeCount": 12 },
+    { "id": "timing", "label": "Timing", "order": 3, "nodeCount": 4 },
+    { "id": "depth", "label": "Depth", "order": 4, "nodeCount": 4 }
+  ],
+  "nodes": [
+    {
+      "id": "core.rising_sign",
+      "ring": "core",
+      "defaultOrder": 1,
+      "title": "Rising sign",
+      "subtitle": "Lagna — your outer lens",
+      "moonOnlyEligible": false,
+      "onboardingTriad": true,
+      "subject": { "type": "House", "number": 1 },
+      "goalWeights": { "understanding_myself": 10, "career": 6, "relationships": 6, "home_family": 6, "money": 6, "daily_rhythm": 8 },
+      "story": {
+        "hookTemplate": "Your Lagna sets the stage for all 12 houses—yet one specific planet quietly steers how the world reads your first impression.",
+        "revealBinding": "level2Static.simple.houses[1]",
+        "reflectPrompt": "Notice how you naturally enter a room or start a new project today."
+      }
+    },
+    {
+      "id": "core.moon_sign",
+      "ring": "core",
+      "defaultOrder": 2,
+      "title": "Moon sign",
+      "subtitle": "Rashi — your emotional climate",
+      "moonOnlyEligible": true,
+      "onboardingTriad": true,
+      "subject": { "type": "Planet", "id": "moon" },
+      "goalWeights": { "daily_rhythm": 10, "understanding_myself": 9, "home_family": 8, "relationships": 7, "career": 5, "money": 5 },
+      "story": {
+        "hookTemplate": "In Jyotish tradition, your Moon sign shapes your inner weather far more than your Sun sign—especially when the sky shifts every 2.25 days.",
+        "revealBinding": "level2Static.simple.planets.moon",
+        "reflectPrompt": "What calmed your mind or drained your focus most noticeably today?"
+      }
+    },
+    {
+      "id": "core.moon_nakshatra",
+      "ring": "core",
+      "defaultOrder": 3,
+      "title": "Moon nakshatra",
+      "subtitle": "Janma Tara — your birth star",
+      "moonOnlyEligible": true,
+      "onboardingTriad": true,
+      "subject": { "type": "Planet", "id": "moon" },
+      "goalWeights": { "understanding_myself": 10, "daily_rhythm": 9, "relationships": 7, "career": 6, "home_family": 6, "money": 5 },
+      "story": {
+        "hookTemplate": "Beyond the 12 zodiac signs lie 27 lunar mansions. Your birth star sets the starting clock for every Dasha chapter of your life.",
+        "revealBinding": "level1Static.natal.grahas.moon.nakshatra",
+        "reflectPrompt": "Does the symbol or mood of your birth star feel familiar in how you recharge?"
+      }
+    },
+    {
+      "id": "core.sun_sign",
+      "ring": "core",
+      "defaultOrder": 4,
+      "title": "Sun sign",
+      "subtitle": "Surya — vitality & purpose",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "Planet", "id": "sun" },
+      "goalWeights": { "career": 8, "understanding_myself": 8, "money": 6, "daily_rhythm": 6, "relationships": 5, "home_family": 5 },
+      "story": {
+        "hookTemplate": "Your Moon reflects how you feel, while your Sun points to what gives you steady backbone—even when plans get tested.",
+        "revealBinding": "level2Static.simple.planets.sun",
+        "reflectPrompt": "Where did you feel a quiet sense of purpose or pride in your effort today?"
+      }
+    },
+    {
+      "id": "house.1",
+      "ring": "houses",
+      "defaultOrder": 5,
+      "title": "Self",
+      "subtitle": "1st house (Tanu Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 1 },
+      "goalWeights": { "understanding_myself": 10, "daily_rhythm": 7 },
+      "story": {
+        "hookTemplate": "Your 1st house describes your baseline temperament—but the house where its ruler actually sits shows where your energy naturally flows.",
+        "revealBinding": "level2Static.standard.houses[1]",
+        "reflectPrompt": "Where did your attention pull you without forcing it today?"
+      }
+    },
+    {
+      "id": "house.2",
+      "ring": "houses",
+      "defaultOrder": 6,
+      "title": "Money & voice",
+      "subtitle": "2nd house (Dhana Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 2 },
+      "goalWeights": { "money": 10, "home_family": 6 },
+      "story": {
+        "hookTemplate": "Classical texts pair savings and speech in the exact same house—suggesting what you value and how you speak move together.",
+        "revealBinding": "level2Static.standard.houses[2]",
+        "reflectPrompt": "Notice one conversation or spending choice today that felt grounded."
+      }
+    },
+    {
+      "id": "house.3",
+      "ring": "houses",
+      "defaultOrder": 7,
+      "title": "Siblings & courage",
+      "subtitle": "3rd house (Sahaja Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 3 },
+      "goalWeights": { "daily_rhythm": 7, "career": 5 },
+      "story": {
+        "hookTemplate": "Before big breakthroughs happen, the 3rd house tracks small daily acts of initiative, skill-building, and courage.",
+        "revealBinding": "level2Static.standard.houses[3]",
+        "reflectPrompt": "What small step did you take today that felt slightly outside your routine?"
+      }
+    },
+    {
+      "id": "house.4",
+      "ring": "houses",
+      "defaultOrder": 8,
+      "title": "Home & peace",
+      "subtitle": "4th house (Sukha Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 4 },
+      "goalWeights": { "home_family": 10, "daily_rhythm": 7 },
+      "story": {
+        "hookTemplate": "Your 4th house holds what restores your nervous system—home, roots, and inner quiet—often contrasting sharply with your public life.",
+        "revealBinding": "level2Static.standard.houses[4]",
+        "reflectPrompt": "What space or routine helped you exhale at the end of the day?"
+      }
+    },
+    {
+      "id": "house.5",
+      "ring": "houses",
+      "defaultOrder": 9,
+      "title": "Children & learning",
+      "subtitle": "5th house (Putra Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 5 },
+      "goalWeights": { "understanding_myself": 8, "relationships": 6 },
+      "story": {
+        "hookTemplate": "Creative sparks, mentorship, and discernment all live in the 5th house—revealing how you turn raw effort into original ideas.",
+        "revealBinding": "level2Static.standard.houses[5]",
+        "reflectPrompt": "Log one moment of curiosity or playful thinking from today."
+      }
+    },
+    {
+      "id": "house.6",
+      "ring": "houses",
+      "defaultOrder": 10,
+      "title": "Work routine & health",
+      "subtitle": "6th house (Ripu Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 6 },
+      "goalWeights": { "daily_rhythm": 9, "career": 7 },
+      "story": {
+        "hookTemplate": "Often misunderstood as obstacles, the 6th house is actually your engine of daily craft, service, and steady resilience.",
+        "revealBinding": "level2Static.standard.houses[6]",
+        "reflectPrompt": "Which daily habit kept your day steady despite minor friction?"
+      }
+    },
+    {
+      "id": "house.7",
+      "ring": "houses",
+      "defaultOrder": 11,
+      "title": "Partnership",
+      "subtitle": "7th house (Kalatra Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 7 },
+      "goalWeights": { "relationships": 10, "career": 5 },
+      "story": {
+        "hookTemplate": "Sitting directly opposite your 1st house, the 7th house acts as a mirror—showing the qualities you seek in close partners and allies.",
+        "revealBinding": "level2Static.standard.houses[7]",
+        "reflectPrompt": "How did a one-on-one conversation reflect your mood back to you today?"
+      }
+    },
+    {
+      "id": "house.8",
+      "ring": "houses",
+      "defaultOrder": 12,
+      "title": "Change & depth",
+      "subtitle": "8th house (Randhra Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 8 },
+      "goalWeights": { "understanding_myself": 8, "money": 5 },
+      "story": {
+        "hookTemplate": "The 8th house governs research, shared resources, and quiet inner transformations that only make sense in hindsight.",
+        "revealBinding": "level2Static.standard.houses[8]",
+        "reflectPrompt": "Notice a subtle shift in perspective you would not have had a month ago."
+      }
+    },
+    {
+      "id": "house.9",
+      "ring": "houses",
+      "defaultOrder": 13,
+      "title": "Luck & purpose",
+      "subtitle": "9th house (Dharma Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 9 },
+      "goalWeights": { "understanding_myself": 9, "career": 6 },
+      "story": {
+        "hookTemplate": "Your 9th house points to teachers, long horizons, and the quiet philosophy that turns experience into wisdom.",
+        "revealBinding": "level2Static.standard.houses[9]",
+        "reflectPrompt": "What principle or long-term view guided a decision today?"
+      }
+    },
+    {
+      "id": "house.10",
+      "ring": "houses",
+      "defaultOrder": 14,
+      "title": "Career",
+      "subtitle": "10th house (Karma Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 10 },
+      "goalWeights": { "career": 10, "money": 7 },
+      "story": {
+        "hookTemplate": "Your Moon shows how you feel inside, but your 10th house reveals the public role and work rhythm your chart naturally gravitates toward.",
+        "revealBinding": "level2Static.standard.houses[10]",
+        "reflectPrompt": "Did that land? Log how your energy felt during work hours today."
+      }
+    },
+    {
+      "id": "house.11",
+      "ring": "houses",
+      "defaultOrder": 15,
+      "title": "Gains & allies",
+      "subtitle": "11th house (Labha Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 11 },
+      "goalWeights": { "money": 9, "career": 8, "relationships": 6 },
+      "story": {
+        "hookTemplate": "The 11th house connects sustained effort with networks, communities, and the fruit of long-running goals.",
+        "revealBinding": "level2Static.standard.houses[11]",
+        "reflectPrompt": "Who in your wider circle offered helpful momentum or perspective recently?"
+      }
+    },
+    {
+      "id": "house.12",
+      "ring": "houses",
+      "defaultOrder": 16,
+      "title": "Retreat & rest",
+      "subtitle": "12th house (Vyaya Bhava)",
+      "moonOnlyEligible": false,
+      "onboardingTriad": false,
+      "subject": { "type": "House", "number": 12 },
+      "goalWeights": { "daily_rhythm": 8, "home_family": 6 },
+      "story": {
+        "hookTemplate": "Every cycle needs a quiet exhale. The 12th house governs solitude, sleep, behind-the-scenes work, and letting go.",
+        "revealBinding": "level2Static.standard.houses[12]",
+        "reflectPrompt": "Where do you need a little unscheduled quiet tonight?"
+      }
+    },
+    {
+      "id": "timing.current_chapter",
+      "ring": "timing",
+      "defaultOrder": 17,
+      "title": "Current chapter",
+      "subtitle": "Mahadasha & Antardasha",
+      "moonOnlyEligible": true,
+      "onboardingTriad": true,
+      "subject": { "type": "Period", "id": "current" },
+      "goalWeights": { "career": 9, "relationships": 9, "money": 9, "home_family": 9, "understanding_myself": 9, "daily_rhythm": 8 },
+      "story": {
+        "hookTemplate": "Two people born on the same day can live very different decades depending on which planetary chapter is active right now.",
+        "revealBinding": "level2Static.standard.dashas[0]",
+        "reflectPrompt": "Does the theme of your current planetary chapter match what has been center stage lately?"
+      }
+    },
+    {
+      "id": "timing.next_shift",
+      "ring": "timing",
+      "defaultOrder": 18,
+      "title": "Next shift",
+      "subtitle": "Upcoming Antardasha transition",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "Period", "id": "next" },
+      "goalWeights": { "career": 8, "relationships": 8, "money": 8, "home_family": 7 },
+      "story": {
+        "hookTemplate": "Chapters rarely change overnight—often the tone begins shifting weeks before the exact Antardasha boundary.",
+        "revealBinding": "level2Static.standard.dashas[1]",
+        "reflectPrompt": "What feels like it is winding down vs. quietly waking up in your week?"
+      }
+    },
+    {
+      "id": "timing.slow_transits",
+      "ring": "timing",
+      "defaultOrder": 19,
+      "title": "Slow transits",
+      "subtitle": "Saturn, Jupiter & Rahu/Ketu",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "Finding", "id": "transits.slow", "kind": "TRANSIT" },
+      "goalWeights": { "career": 7, "home_family": 7, "understanding_myself": 7 },
+      "story": {
+        "hookTemplate": "While the Moon shifts every two days, Saturn and Jupiter stay in a sign for 1 to 2.5 years—marking the long seasons of your chart.",
+        "revealBinding": "today.transits",
+        "reflectPrompt": "Where are you playing a patient, multi-month game right now?"
+      }
+    },
+    {
+      "id": "timing.sade_sati",
+      "ring": "timing",
+      "defaultOrder": 20,
+      "title": "Sade Sati status",
+      "subtitle": "Saturn relative to natal Moon",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "Finding", "id": "transits.sade_sati", "kind": "TRANSIT" },
+      "goalWeights": { "understanding_myself": 8, "daily_rhythm": 7 },
+      "story": {
+        "hookTemplate": "Often feared in folklore, Sade Sati is classically a season of maturity, pruning noise, and building things that actually last.",
+        "revealBinding": "today.sadeSati",
+        "reflectPrompt": "What responsibilities feel clearer or more non-negotiable for you this year?"
+      }
+    },
+    {
+      "id": "depth.divisional_charts",
+      "ring": "depth",
+      "defaultOrder": 21,
+      "title": "Divisional charts",
+      "subtitle": "D9 Navamsha & D10 Dashamsha",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "DivisionalChart", "varga": "D9" },
+      "goalWeights": { "relationships": 9, "career": 9 },
+      "story": {
+        "hookTemplate": "Your D1 birth chart is the tree; divisional charts like D9 and D10 zoom into the fruit—revealing hidden strength that the main chart hides.",
+        "revealBinding": "level1Static.vargas.D9",
+        "reflectPrompt": "Notice any area where your quiet staying power surprises people."
+      }
+    },
+    {
+      "id": "depth.yogas_doshas",
+      "ring": "depth",
+      "defaultOrder": 22,
+      "title": "Yogas & Doshas audit",
+      "subtitle": "Combinations & classical Bhanga",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "Finding", "id": "yogas.summary", "kind": "YOGA" },
+      "goalWeights": { "understanding_myself": 8, "relationships": 7, "career": 7 },
+      "story": {
+        "hookTemplate": "Most apps stop at scary labels. Classical Jyotish checks cancellation rules (Bhanga) first—and many apparent Doshas are naturally balanced.",
+        "revealBinding": "level2Static.standard.yogas",
+        "reflectPrompt": "How does viewing challenges as balanced rather than fixed change your perspective?"
+      }
+    },
+    {
+      "id": "depth.strengths_sav",
+      "ring": "depth",
+      "defaultOrder": 23,
+      "title": "Strengths & Ashtakvarga",
+      "subtitle": "Shadbala & 337 Bindus",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "Finding", "id": "strengths.summary", "kind": "PATTERN" },
+      "goalWeights": { "career": 6, "money": 6, "understanding_myself": 7 },
+      "story": {
+        "hookTemplate": "Every chart distributes 337 Ashtakvarga points across 12 signs—explaining why the same transit feels effortless in one area and heavy in another.",
+        "revealBinding": "level1Static.ashtakvarga.sarva",
+        "reflectPrompt": "Which domain of life feels naturally well-supported when you lean into it?"
+      }
+    },
+    {
+      "id": "depth.tools_room",
+      "ring": "depth",
+      "defaultOrder": 24,
+      "title": "Tools room",
+      "subtitle": "KP, Chalit, Varshaphal & Matrices",
+      "moonOnlyEligible": true,
+      "onboardingTriad": false,
+      "subject": { "type": "Finding", "id": "tools.intro", "kind": "RULE" },
+      "goalWeights": { "understanding_myself": 5, "career": 5 },
+      "story": {
+        "hookTemplate": "Beneath every plain-English insight sits a transparent mathematical engine—degrees, sub-lords, Sahams, and full calculation tables.",
+        "revealBinding": "level1Static.natal",
+        "reflectPrompt": "If you enjoy seeing the mechanics behind patterns, explore any system in the Tools room."
+      }
+    }
+  ]
+}
