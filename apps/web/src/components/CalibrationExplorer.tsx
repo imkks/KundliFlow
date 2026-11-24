@@ -16,6 +16,7 @@ import {
   generateSyntheticTestEntries,
   type SubjectiveLog,
 } from '@astro/engine';
+import { useReading } from '../context/ReadingContext.tsx';
 
 interface CalibrationExplorerProps {
   realJournalLogs: SubjectiveLog[];
@@ -27,8 +28,10 @@ export const CalibrationExplorer: React.FC<CalibrationExplorerProps> = ({
   realJournalLogs,
   onAddSyntheticLogs,
 }) => {
+  const { isQuant, openAskDrawer } = useReading();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [syntheticLogs, setSyntheticLogs] = useState<SubjectiveLog[]>([]);
+  const [showQuantDetails, setShowQuantDetails] = useState(false);
 
   // Combined logs: user's real entries + synthetic test data if loaded
   const combinedLogs = useMemo(() => {
@@ -86,51 +89,94 @@ export const CalibrationExplorer: React.FC<CalibrationExplorerProps> = ({
         </div>
 
         {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {syntheticLogs.length === 0 ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() =>
+              openAskDrawer(
+                `I have logged ${realJournalLogs.length} daily check-ins. How do my mood and energy check-ins line up with my Moon transits and active Dasha?`,
+              )
+            }
+            className="btn btn-primary"
+            style={{ fontSize: 12 }}
+          >
+            <Sparkles size={13} /> Ask AI About My Patterns
+          </button>
+
+          {(isQuant || showQuantDetails) && (
+            syntheticLogs.length === 0 ? (
+              <button
+                onClick={handleLoadSynthetic}
+                style={{
+                  background: 'var(--surface-alt)',
+                  color: 'var(--text-main)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 8,
+                  padding: '6px 12px',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontWeight: 600,
+                }}
+                title="Inject 45 realistic synthetic logs to test statistical calibration"
+              >
+                <Sparkles size={14} style={{ color: 'var(--gold)' }} />
+                Load Test Data (n=45)
+              </button>
+            ) : (
+              <button
+                onClick={handleClearSynthetic}
+                style={{
+                  background: 'var(--surface-alt)',
+                  color: 'var(--amber)',
+                  border: '1px solid var(--amber)',
+                  borderRadius: 8,
+                  padding: '6px 12px',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontWeight: 600,
+                }}
+              >
+                <RefreshCw size={14} />
+                Clear Test Data
+              </button>
+            )
+          )}
+
+          {!isQuant && (
             <button
-              onClick={handleLoadSynthetic}
-              style={{
-                background: 'var(--surface-alt)',
-                color: 'var(--text-main)',
-                border: '1px solid var(--border)',
-                borderRadius: 8,
-                padding: '6px 12px',
-                fontSize: 12,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                fontWeight: 600,
-              }}
-              title="Inject 45 realistic synthetic logs to test statistical calibration"
+              type="button"
+              onClick={() => setShowQuantDetails((v) => !v)}
+              className="btn btn-outline"
+              style={{ fontSize: 11.5 }}
             >
-              <Sparkles size={14} style={{ color: 'var(--gold)' }} />
-              Load Test Sample Data (n=45)
-            </button>
-          ) : (
-            <button
-              onClick={handleClearSynthetic}
-              style={{
-                background: 'var(--surface-alt)',
-                color: 'var(--amber)',
-                border: '1px solid var(--amber)',
-                borderRadius: 8,
-                padding: '6px 12px',
-                fontSize: 12,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                fontWeight: 600,
-              }}
-            >
-              <RefreshCw size={14} />
-              Clear Test Sample Data
+              {showQuantDetails ? 'Hide Quant Stats' : 'Advanced Stats (Bootstrap CI)'}
             </button>
           )}
         </div>
       </div>
+
+      {!isQuant && !showQuantDetails && (
+        <div style={{ padding: 14, borderRadius: 10, background: 'rgba(95, 194, 179, 0.08)', border: '1px solid rgba(95, 194, 179, 0.3)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12.5 }}>
+            <strong style={{ color: 'var(--teal)' }}>Personal Calibration Progress</strong>
+            <span style={{ fontWeight: 700 }}>{Math.min(30, realJournalLogs.length)} / 30 check-ins</span>
+          </div>
+          <div style={{ height: 7, borderRadius: 999, background: 'var(--surface-alt)', overflow: 'hidden' }}>
+            <div style={{ width: `${Math.min(100, Math.round((realJournalLogs.length / 30) * 100))}%`, height: '100%', background: 'var(--teal)' }} />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            {realJournalLogs.length >= 30
+              ? 'You have enough check-ins for statistical verification! Click "Advanced Stats" above or switch to Quant mode to inspect 95% confidence intervals.'
+              : `Log 1-tap check-ins from the Today screen (${30 - realJournalLogs.length} more to reach statistical calibration) to discover which transits genuinely shift your energy and mood.`}
+          </div>
+        </div>
+      )}
 
       {/* Baseline Stats Overview */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>

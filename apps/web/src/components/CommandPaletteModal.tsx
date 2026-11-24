@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Compass, Clock, Layers, Award, PenLine, Bot, Sparkles, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useReading, type MainTab } from '../context/ReadingContext.tsx';
 
 interface CommandItem {
   id: string;
   label: string;
   sublabel: string;
-  group: 'Life Topics' | 'Navigation' | 'Houses' | 'Planets';
+  group: 'Life Topics' | 'Navigation' | 'Modals & Tools' | 'Houses' | 'Planets';
   keywords: string;
   action: () => void;
 }
@@ -40,7 +40,18 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onOpenShare,
 }) => {
   const [query, setQuery] = useState('');
-  const { setActiveTab, setSelectedHouse, setSelectedPlanet, openAskDrawer } = useReading();
+  const {
+    setActiveTab,
+    setSelectedHouse,
+    setSelectedPlanet,
+    focusLifeTopic,
+    openAskDrawer,
+    openLifeEventModal,
+    openQuantMatrix,
+    openChartSystems,
+    openGlossaryModal,
+    openPatternDecoder,
+  } = useReading();
 
   useEffect(() => {
     if (isOpen) setQuery('');
@@ -63,15 +74,21 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     };
 
     const list: CommandItem[] = [
-      { id: 'topic-career', label: 'Career & Calling', sublabel: 'Jump to House 10 • Career, Purpose & Reputation', group: 'Life Topics', keywords: 'job work career promotion 10th d10', action: goHouse(10) },
-      { id: 'topic-love', label: 'Love & Partnerships', sublabel: 'Jump to House 7 • Marriage & Relationships', group: 'Life Topics', keywords: 'marriage love partner spouse 7th d9', action: goHouse(7) },
-      { id: 'topic-wealth', label: 'Wealth & Assets', sublabel: 'Jump to House 2 • Money, Speech & Family', group: 'Life Topics', keywords: 'money wealth finance income 2nd 11th', action: goHouse(2) },
-      { id: 'topic-peace', label: 'Home & Inner Peace', sublabel: 'Jump to House 4 • Home, Peace & Roots', group: 'Life Topics', keywords: 'home peace mother property health 4th', action: goHouse(4) },
-      { id: 'nav-today', label: 'Today Briefing & Horas', sublabel: 'Time quality score, best windows & 1-tap mood check-in', group: 'Navigation', keywords: 'today hora rahu kalam panchang tarabala', action: goTab('today') },
-      { id: 'nav-kundli', label: 'Kundli & Systems', sublabel: 'Interactive D1/D9 charts, Chalit, KP & Varshaphal', group: 'Navigation', keywords: 'chart kundli lagna varga kp chalit varshaphal', action: goTab('kundli') },
-      { id: 'nav-timing', label: 'Timing, Dashas & Muhurta', sublabel: 'Vimshottari, Yogini, Chara, Past Events & Calendar', group: 'Navigation', keywords: 'dasha timing gochar transit sade sati calendar muhurta', action: goTab('timing') },
-      { id: 'nav-strengths', label: 'Strengths, Yogas & Karakas', sublabel: 'Yogas, Doshas, Shadbala, Ashtakvarga & Arudhas', group: 'Navigation', keywords: 'yoga dosha shadbala ashtakvarga sav karaka arudha', action: goTab('strengths') },
-      { id: 'nav-journal', label: 'Journal & Life Patterns', sublabel: 'Daily reflections & n ≥ 30 calibration', group: 'Navigation', keywords: 'journal notes mood log calibration', action: goTab('journal') },
+      { id: 'topic-career', label: 'Career & Calling', sublabel: 'Jump to House 10 • Career, Purpose & Reputation', group: 'Life Topics', keywords: 'job work career promotion 10th d10', action: () => { focusLifeTopic('career'); onClose(); } },
+      { id: 'topic-love', label: 'Love & Marriage', sublabel: 'Jump to House 7 • Marriage & Relationships', group: 'Life Topics', keywords: 'marriage love partner spouse 7th d9', action: () => { focusLifeTopic('love'); onClose(); } },
+      { id: 'topic-wealth', label: 'Wealth & Assets', sublabel: 'Jump to House 2 • Money, Income & Savings', group: 'Life Topics', keywords: 'money wealth finance income 2nd 11th d2', action: () => { focusLifeTopic('wealth'); onClose(); } },
+      { id: 'topic-peace', label: 'Home & Inner Peace', sublabel: 'Jump to House 4 • Home, Peace & Roots', group: 'Life Topics', keywords: 'home peace mother property health 4th', action: () => { focusLifeTopic('health'); onClose(); } },
+      { id: 'topic-year', label: 'Year Ahead Cycle', sublabel: 'Varshaphal Muntha & Annual Cycle', group: 'Life Topics', keywords: 'year ahead varshaphal muntha annual', action: () => { focusLifeTopic('year'); onClose(); } },
+      { id: 'tool-life-event', label: 'Decode a Life Event with AI', sublabel: 'Test past or future milestone dates against Dashas', group: 'Modals & Tools', keywords: 'life event milestone past future ai why happened', action: () => { onClose(); openLifeEventModal(); } },
+      { id: 'tool-pattern', label: 'Trace Current House Pattern', sublabel: 'Open causal Pattern Decoder modal', group: 'Modals & Tools', keywords: 'pattern decode trace lordship aspect', action: () => { onClose(); openPatternDecoder({ kind: 'house', house: 1 }); } },
+      { id: 'tool-quant', label: 'Quant Calculation Workbench', sublabel: 'Degrees, Shadbala, Ashtakvarga, Kakshya, 24 Horas', group: 'Modals & Tools', keywords: 'degrees shadbala ashtakvarga prastara kakshya vedha horas', action: () => { onClose(); openQuantMatrix('degrees'); } },
+      { id: 'tool-systems', label: 'Chart Systems (Dual, Chalit, KP, Varshaphal)', sublabel: 'Inspect secondary Jyotish systems', group: 'Modals & Tools', keywords: 'dual transit chalit kp sublord varshaphal arudha', action: () => { onClose(); openChartSystems('dual'); } },
+      { id: 'tool-glossary', label: 'Plain English Astrology Glossary', sublabel: 'Demystify every Vedic term', group: 'Modals & Tools', keywords: 'glossary meaning learn terms', action: () => { onClose(); openGlossaryModal({ category: 'kundli' }); } },
+      { id: 'nav-today', label: 'Today Briefing & Windows', sublabel: 'Time quality score, best hours & daily check-in', group: 'Navigation', keywords: 'today hora rahu kalam panchang tarabala', action: goTab('today') },
+      { id: 'nav-kundli', label: 'Kundli & Life Topics', sublabel: 'Interactive D1/D9 Kundli, Life Focuses & Inspector', group: 'Navigation', keywords: 'chart kundli lagna varga', action: goTab('kundli') },
+      { id: 'nav-timing', label: 'Timing, Dashas & Muhurta', sublabel: 'Vimshottari, Yogini, Chara, Gochar & Calendar', group: 'Navigation', keywords: 'dasha timing gochar transit sade sati calendar muhurta', action: goTab('timing') },
+      { id: 'nav-strengths', label: 'Yogas & Power', sublabel: 'Yogas, Doshas, Shadbala, Ashtakvarga & Karakas', group: 'Navigation', keywords: 'yoga dosha shadbala ashtakvarga sav karaka', action: goTab('strengths') },
+      { id: 'nav-journal', label: 'Timeline & Personal Patterns', sublabel: 'Life milestones, check-ins & calibration', group: 'Navigation', keywords: 'journal timeline notes mood log calibration', action: goTab('journal') },
       { id: 'nav-ask', label: 'Ask AI Jyotish Copilot', sublabel: 'Chat with your chart using verified tool calls', group: 'Navigation', keywords: 'ai ask chat copilot question llm', action: () => { onClose(); openAskDrawer(); } },
       { id: 'nav-share', label: 'Share Cosmic Blueprint Card', sublabel: 'Generate a shareable summary of your chart', group: 'Navigation', keywords: 'share blueprint card export', action: () => { onClose(); onOpenShare(); } },
     ];
@@ -99,14 +116,14 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     }
 
     return list;
-  }, [setActiveTab, setSelectedHouse, setSelectedPlanet, openAskDrawer, onClose, onOpenShare]);
+  }, [setActiveTab, setSelectedHouse, setSelectedPlanet, focusLifeTopic, openAskDrawer, openLifeEventModal, openQuantMatrix, openChartSystems, openGlossaryModal, openPatternDecoder, onClose, onOpenShare]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return items.slice(0, 11);
+    if (!q) return items.slice(0, 12);
     return items
       .filter((i) => i.label.toLowerCase().includes(q) || i.sublabel.toLowerCase().includes(q) || i.keywords.includes(q))
-      .slice(0, 12);
+      .slice(0, 14);
   }, [items, query]);
 
   if (!isOpen) return null;
@@ -114,6 +131,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   return (
     <div
       role="dialog"
+      aria-modal="true"
       aria-label="Quick Search"
       onClick={onClose}
       style={{
@@ -152,7 +170,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
               if (e.key === 'Escape') onClose();
               if (e.key === 'Enter' && filtered[0]) filtered[0].action();
             }}
-            placeholder="Search career, Saturn, house 7, Sade Sati, Muhurta, journal…"
+            placeholder="Search career, life event, Saturn, house 7, KP, Shadbala…"
             style={{
               flex: 1,
               background: 'transparent',
@@ -162,12 +180,12 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
               fontSize: 14,
             }}
           />
-          <button onClick={onClose} style={{ color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+          <button onClick={onClose} aria-label="Close search" style={{ color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer' }}>
             <X size={16} />
           </button>
         </div>
 
-        <div style={{ maxHeight: 400, overflowY: 'auto', padding: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div style={{ maxHeight: 420, overflowY: 'auto', padding: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
           {filtered.length === 0 ? (
             <div style={{ padding: 20, textAlign: 'center', fontSize: 12.5, color: 'var(--text-muted)' }}>
               No matches for &ldquo;{query}&rdquo;. Try searching a planet, house number, or life topic.
@@ -198,7 +216,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                   <div style={{ fontSize: 13, fontWeight: 600 }}>{item.label}</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.sublabel}</div>
                 </div>
-                <span className="gold-badge" style={{ fontSize: 9.5, padding: '2px 7px' }}>
+                <span className="gold-badge" style={{ fontSize: 10, padding: '2px 7px' }}>
                   {item.group}
                 </span>
               </button>

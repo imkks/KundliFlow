@@ -1,73 +1,116 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   calculateKpPlacement,
   degToDms,
+  VEDIC_GRAHAS,
   type NatalChart,
   type KpPlacement,
+  type VedicGraha,
 } from '@astro/engine';
 
 interface KpTableProps {
   natal: NatalChart;
 }
 
+const SHORT_PLANET: Record<string, string> = {
+  sun: 'SUN',
+  moon: 'MON',
+  mars: 'MAR',
+  mercury: 'MER',
+  jupiter: 'JUP',
+  venus: 'VEN',
+  saturn: 'SAT',
+  rahu: 'RAH',
+  ketu: 'KET',
+};
+
 export const KpTable: React.FC<KpTableProps> = ({ natal }) => {
-  // Compute KP details for each graha
-  const planetRows: Array<{ id: string; name: string; kp: KpPlacement }> = Object.entries(
-    natal.grahas,
-  ).map(([id, g]) => ({
-    id,
-    name: g.name,
-    kp: calculateKpPlacement(g.lon),
-  }));
+  const { planetRows, cusps, houseSignificators, planetSignifications } = useMemo(() => {
+    const lagnaLon = natal.lagna?.lon ?? 0;
+    const lagnaSignIndex = natal.lagna?.signIndex ?? 0;
 
-  // Add Lagna
-  if (natal.lagna) {
-    planetRows.unshift({
-      id: 'ascendant',
-      name: 'Ascendant',
-      kp: calculateKpPlacement(natal.lagna.lon),
+    const rows: Array<{ id: string; name: string; house: number; kp: KpPlacement }> = [];
+    const planetStarLord: Record<string, VedicGraha> = {};
+    const occupantsByHouse: Record<number, VedicGraha[]> = {};
+    for (let h = 1; h <= 12; h++) occupantsByHouse[h] = [];
+
+    for (const gId of VEDIC_GRAHAS) {
+      const g = natal.grahas[gId];
+      if (!g) continue;
+      const kp = calculateKpPlacement(g.lon);
+      const house = g.houses?.houseFromLagna ?? (((g.signIndex - lagnaSignIndex + 12) % 12) + 1);
+      planetStarLord[gId] = kp.starLord;
+      occupantsByHouse[house]?.push(gId);
+      rows.push({ id: gId, name: g.name, house, kp });
+    }
+
+    if (natal.lagna) {
+      rows.unshift({
+        id: 'ascendant',
+        name: 'Ascendant',
+        house: 1,
+        kp: calculateKpPlacement(natal.lagna.lon),
+      });
+    }
+
+    const cuspList: Array<{ cusp: number; deg: number; kp: KpPlacement }> = [];
+    for (let c = 1; c <= 12; c++) {
+      const cuspLon = (lagnaLon + (c - 1) * 30) % 360;
+      cuspList.push({
+        cusp: c,
+        deg: cuspLon,
+        kp: calculateKpPlacement(cuspLon),
+      });
+    }
+
+    // Classical 4-tier KP House Significators computed dynamically from active NatalChart:
+    // A: Planets in the star of occupants of house H
+    // B: Occupants of house H
+    // C: Planets in the star of lord of house H
+    // D: Lord of house H
+    const planetToHouses: Record<string, number[]> = {};
+    for (const gId of VEDIC_GRAHAS) planetToHouses[gId] = [];
+
+    const hSigList = cuspList.map((c) => {
+      const occ = occupantsByHouse[c.cusp] ?? [];
+      const houseLord = c.kp.rashiLord as VedicGraha;
+      const orderedSet = new Set<VedicGraha>();
+
+      // Tier A: in star of occupants
+      for (const p of VEDIC_GRAHAS) {
+        if (occ.includes(planetStarLord[p]!)) orderedSet.add(p);
+      }
+      // Tier B: occupants
+      for (const p of occ) orderedSet.add(p);
+      // Tier C: in star of house lord
+      for (const p of VEDIC_GRAHAS) {
+        if (planetStarLord[p] === houseLord) orderedSet.add(p);
+      }
+      // Tier D: house lord
+      orderedSet.add(houseLord);
+
+      const planetsArr = Array.from(orderedSet);
+      for (const p of planetsArr) {
+        planetToHouses[p]?.push(c.cusp);
+      }
+      return {
+        house: c.cusp,
+        planets: planetsArr.map((p) => SHORT_PLANET[p] ?? p.toUpperCase()).join(', '),
+      };
     });
-  }
 
-  // 12 Cusps
-  const cusps: Array<{ cusp: number; deg: number; kp: KpPlacement }> = [];
-  const lagnaLon = natal.lagna?.lon ?? 0;
-  for (let c = 1; c <= 12; c++) {
-    const cuspLon = (lagnaLon + (c - 1) * 30) % 360;
-    cusps.push({
-      cusp: c,
-      deg: cuspLon,
-      kp: calculateKpPlacement(cuspLon),
-    });
-  }
+    const pSigList = VEDIC_GRAHAS.map((gId) => ({
+      planet: gId.charAt(0).toUpperCase() + gId.slice(1),
+      houses: (planetToHouses[gId] ?? []).join(', ') || '—',
+    }));
 
-  // Classical KP House Significators (Page 10 of AstroSage Report)
-  const houseSignificators: Array<{ house: number; planets: string }> = [
-    { house: 1, planets: 'SUN, VEN' },
-    { house: 2, planets: 'MAR, MER' },
-    { house: 3, planets: 'SUN, MON, MAR, MER, VEN, RAH' },
-    { house: 4, planets: 'SUN, MAR, MER' },
-    { house: 5, planets: 'MAR, MER' },
-    { house: 6, planets: 'SUN, VEN' },
-    { house: 7, planets: 'MAR' },
-    { house: 8, planets: 'JUP' },
-    { house: 9, planets: 'MON, MER, SAT, KET' },
-    { house: 10, planets: 'MON, JUP, SAT, KET' },
-    { house: 11, planets: 'MON, JUP, SAT, KET' },
-    { house: 12, planets: 'MAR' },
-  ];
-
-  const planetSignifications: Array<{ planet: string; houses: string }> = [
-    { planet: 'Sun', houses: '1, 3, 4, 6' },
-    { planet: 'Moon', houses: '3, 9, 10, 11' },
-    { planet: 'Mars', houses: '2, 3, 4, 5, 7, 12' },
-    { planet: 'Mercury', houses: '2, 3, 4, 5, 9' },
-    { planet: 'Jupiter', houses: '8, 10, 11' },
-    { planet: 'Venus', houses: '1, 3, 6' },
-    { planet: 'Saturn', houses: '9, 10, 11' },
-    { planet: 'Rahu', houses: '3, 5, 9, 11' },
-    { planet: 'Ketu', houses: '3, 9, 10, 11' },
-  ];
+    return {
+      planetRows: rows,
+      cusps: cuspList,
+      houseSignificators: hSigList,
+      planetSignifications: pSigList,
+    };
+  }, [natal]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -75,15 +118,15 @@ export const KpTable: React.FC<KpTableProps> = ({ natal }) => {
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)' }}>
-            KP System & Nakshatra Nadi (Sub-Lord Details)
+            KP System &amp; Nakshatra Nadi (Sub-Lord Details)
           </h3>
-          <span className="gold-badge" style={{ fontSize: 10 }}>
+          <span className="gold-badge" style={{ fontSize: 10.5 }}>
             KP Sub-Lords &amp; Significators
           </span>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11, textAlign: 'left' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5, textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>
                 <th style={{ padding: '6px 4px' }}>Planet</th>
@@ -125,11 +168,11 @@ export const KpTable: React.FC<KpTableProps> = ({ natal }) => {
       {/* 12 Cusps Table */}
       <div className="card">
         <h3 className="serif-title" style={{ fontSize: 14, color: 'var(--gold)', marginBottom: 12 }}>
-          12 House Cuspal Positions & Sub-Lords
+          12 House Cuspal Positions &amp; Sub-Lords
         </h3>
 
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11, textAlign: 'left' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5, textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>
                 <th style={{ padding: '6px 4px' }}>Cusp</th>
@@ -160,14 +203,13 @@ export const KpTable: React.FC<KpTableProps> = ({ natal }) => {
         </div>
       </div>
 
-      {/* Dual Tables: Significators of Houses & Planet Signification */}
+      {/* Dynamic KP Significators */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-        {/* Significators of Houses */}
         <div className="card">
-          <h3 className="serif-title" style={{ fontSize: 13, color: 'var(--gold)', marginBottom: 10 }}>
-            Significators of Houses
+          <h3 className="serif-title" style={{ fontSize: 13.5, color: 'var(--gold)', marginBottom: 10 }}>
+            Significators of Houses (4-Tier)
           </h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11, textAlign: 'left' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5, textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>
                 <th style={{ padding: '5px 4px' }}>House</th>
@@ -185,12 +227,11 @@ export const KpTable: React.FC<KpTableProps> = ({ natal }) => {
           </table>
         </div>
 
-        {/* Planet Signification */}
         <div className="card">
-          <h3 className="serif-title" style={{ fontSize: 13, color: 'var(--gold)', marginBottom: 10 }}>
+          <h3 className="serif-title" style={{ fontSize: 13.5, color: 'var(--gold)', marginBottom: 10 }}>
             Planet Significations
           </h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11, textAlign: 'left' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5, textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>
                 <th style={{ padding: '5px 4px' }}>Planet</th>

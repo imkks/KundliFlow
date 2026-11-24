@@ -16,6 +16,7 @@ interface DualKundliChartProps {
   transits?: TransitOverview;
   onSelectHouse?: (houseNumber: number) => void;
   selectedHouse?: number;
+  defaultChartStyle?: 'north' | 'south';
 }
 
 const GRAHA_ABBR: Record<string, string> = {
@@ -54,9 +55,14 @@ export const DualKundliChart: React.FC<DualKundliChartProps> = ({
   transits,
   onSelectHouse,
   selectedHouse = 1,
+  defaultChartStyle = 'north',
 }) => {
-  const [chartStyle, setChartStyle] = useState<'north' | 'south'>('north');
+  const [chartStyle, setChartStyle] = useState<'north' | 'south'>(defaultChartStyle);
   const [displayMode, setDisplayMode] = useState<'dual' | 'natal' | 'transit'>('dual');
+
+  React.useEffect(() => {
+    setChartStyle(defaultChartStyle);
+  }, [defaultChartStyle]);
 
   const lagnaSignIndex = natalChart.lagna?.signIndex ?? 1;
 

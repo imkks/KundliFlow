@@ -152,16 +152,6 @@ export function logoutAuth() {
   }
 }
 
-export async function activateProfileOnServer(profileId: string): Promise<ServerProfileSummary | null> {
-  const res = await fetch(`${API_BASE_URL}/api/profiles/${encodeURIComponent(profileId)}/activate`, {
-    method: 'POST',
-    headers: authHeaders(),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.profile ?? null;
-}
-
 export async function deleteProfileOnServer(profileId: string): Promise<ServerProfileSummary[]> {
   const res = await fetch(`${API_BASE_URL}/api/profiles/${encodeURIComponent(profileId)}`, {
     method: 'DELETE',
@@ -210,12 +200,52 @@ export async function fetchProfileBundleById(profileId: string): Promise<StaticB
   return bundle;
 }
 
+function profileMatchesBundle(
+  stored: ServerProfileSummary | undefined,
+  input: {
+    name: string;
+    birthDate: string;
+    birthTime: string;
+    cityName: string;
+    lat: number;
+    lon: number;
+    tzId: string;
+    timeCertainty: string;
+    ayanamsa: string;
+  },
+): boolean {
+  if (!stored) return false;
+  return (
+    stored.name === input.name &&
+    stored.birthDate === input.birthDate &&
+    stored.birthTime === input.birthTime &&
+    stored.tzId === input.tzId &&
+    stored.cityName === input.cityName &&
+    Math.abs(Number(stored.lat) - Number(input.lat)) < 1e-4 &&
+    Math.abs(Number(stored.lon) - Number(input.lon)) < 1e-4 &&
+    stored.timeCertainty === input.timeCertainty &&
+    stored.ayanamsa === input.ayanamsa
+  );
+}
+
 /**
  * Creates (or updates) a profile on the server (server computes Level 1 + Level 2 once),
  * then caches its static bundle locally keyed by profileId.
  */
+export function clearTodaySkyCache(profileId?: string | null) {
+  try {
+    localStorage.removeItem(TODAY_CACHE_KEY);
+    if (profileId) {
+      localStorage.removeItem(`${TODAY_CACHE_KEY}_${profileId}`);
+    }
+  } catch {
+    // ignore
+  }
+}
+
 export async function fetchOrCreateStaticBundle(profileInput: {
   id?: string;
+  forceRecompute?: boolean;
   name: string;
   birthDate: string;
   birthTime: string;
@@ -225,15 +255,40 @@ export async function fetchOrCreateStaticBundle(profileInput: {
   tzId: string;
   timeCertainty: string;
   ayanamsa: string;
-}): Promise<{ profileId: string; bundle: StaticBundleResponse }> {
-  // If we already have a server profileId, fetch via ETag/304 first!
-  if (profileInput.id) {
+}): Promise<{ profileId: string; bundle: StaticBundleResponse; fromServerMutation: boolean }> {
+  // 1. Local-first: if full bundle is already stored locally and matches inputs, zero network calls!
+  if (profileInput.id && !profileInput.forceRecompute) {
+    try {
+      const raw = localStorage.getItem(`${BUNDLE_CACHE_PREFIX}${profileInput.id}`);
+      if (raw) {
+        const cached = JSON.parse(raw) as { etag?: string; bundle?: StaticBundleResponse };
+        if (cached?.bundle && profileMatchesBundle(cached.bundle.profile, profileInput)) {
+          localStorage.setItem('astro_backend_profile_id_v1', profileInput.id);
+          return { profileId: profileInput.id, bundle: cached.bundle, fromServerMutation: false };
+        }
+      }
+    } catch {
+      // fall through
+    }
+
+    // 2. First time loading this server profile on this browser: fetch & cache locally
     try {
       const bundle = await fetchProfileBundleById(profileInput.id);
-      return { profileId: profileInput.id, bundle };
+      if (profileMatchesBundle(bundle.profile, profileInput)) {
+        return { profileId: profileInput.id, bundle, fromServerMutation: false };
+      }
     } catch {
       // fall through to POST /api/profiles
     }
+  }
+
+  if (profileInput.id) {
+    try {
+      localStorage.removeItem(`${BUNDLE_CACHE_PREFIX}${profileInput.id}`);
+    } catch {
+      // ignore
+    }
+    clearTodaySkyCache(profileInput.id);
   }
 
   const createRes = await fetch(`${API_BASE_URL}/api/profiles`, {
@@ -274,7 +329,8 @@ export async function fetchOrCreateStaticBundle(profileInput: {
   } catch {
     // ignore
   }
-  return { profileId, bundle };
+  clearTodaySkyCache(profileId);
+  return { profileId, bundle, fromServerMutation: true };
 }
 
 export async function fetchTodaySky(
@@ -287,8 +343,9 @@ export async function fetchTodaySky(
   const latStr = typeof lat === 'number' ? lat.toFixed(4) : '';
   const lonStr = typeof lon === 'number' ? lon.toFixed(4) : '';
   const cacheKey = `${profileId}|${dateStr}|${tzId}|${latStr}|${lonStr}`;
+  const storageKey = `${TODAY_CACHE_KEY}_${profileId}`;
   try {
-    const raw = localStorage.getItem(TODAY_CACHE_KEY);
+    const raw = localStorage.getItem(storageKey);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed?.cacheKey === cacheKey && parsed?.data) {
@@ -312,7 +369,7 @@ export async function fetchTodaySky(
   }
   const data = (await res.json()) as TodayPayloadResponse;
   try {
-    localStorage.setItem(TODAY_CACHE_KEY, JSON.stringify({ cacheKey, data }));
+    localStorage.setItem(storageKey, JSON.stringify({ cacheKey, data }));
   } catch {
     // ignore
   }

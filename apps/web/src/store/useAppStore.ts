@@ -20,10 +20,10 @@ import type { JournalEntry } from '../components/JournalExplorer.tsx';
 
 export type ChartStyle = 'north' | 'south';
 
-export const DEMO_PROFILE: UserProfileInput = {
-  name: 'Sample Native',
-  birthDate: '2000-04-14',
-  birthTime: '06:30:00',
+export const EMPTY_PROFILE: UserProfileInput = {
+  name: '',
+  birthDate: '1995-08-15',
+  birthTime: '09:30:00',
   cityName: 'New Delhi',
   lat: 28.6139,
   lon: 77.209,
@@ -126,18 +126,14 @@ export interface AppState {
   showPrintReport: boolean;
   showDataSovereignty: boolean;
   showLlmDossier: boolean;
-  showPlainEnglishModal: boolean;
-  plainEnglishCategory: string;
   showAuthModal: boolean;
-  showShareBlueprint: boolean;
-  showCommandPalette: boolean;
 
   // Journal
   journalEntries: JournalEntry[];
 }
 
 const initialSavedProfile = loadInitialProfile();
-const initialActiveProfile = initialSavedProfile ?? DEMO_PROFILE;
+const initialActiveProfile = initialSavedProfile ?? EMPTY_PROFILE;
 
 const defaultTodayLocation = (() => {
   const matched = CITIES.find((c) => c.name.toLowerCase() === initialActiveProfile.cityName.toLowerCase());
@@ -192,11 +188,7 @@ let state: AppState = {
   showPrintReport: false,
   showDataSovereignty: false,
   showLlmDossier: false,
-  showPlainEnglishModal: false,
-  plainEnglishCategory: 'kundli',
   showAuthModal: false,
-  showShareBlueprint: false,
-  showCommandPalette: false,
 
   journalEntries: loadInitialJournalEntries(),
 };
@@ -214,12 +206,16 @@ export const appStore = {
 
   setState: (updater: Partial<AppState> | ((prev: AppState) => Partial<AppState>)) => {
     const patch = typeof updater === 'function' ? updater(state) : updater;
-    state = { ...state, ...patch };
+    const keys = Object.keys(patch) as Array<keyof AppState>;
+    const changed = keys.some((k) => !Object.is(state[k], patch[k]));
+    if (!changed) return;
 
+    const next = { ...state, ...patch };
     // Update activeProfile derived state if savedProfile changed
     if ('savedProfile' in patch) {
-      state.activeProfile = state.savedProfile ?? DEMO_PROFILE;
+      next.activeProfile = next.savedProfile ?? EMPTY_PROFILE;
     }
+    state = next;
 
     emitChange();
   },
