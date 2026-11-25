@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.kundliflow.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.evertrail.kundliflow"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 1
         versionName = project.findProperty("versionName")?.toString()?.takeIf { it.isNotBlank() } ?: "1.0.0"
 
