@@ -75,16 +75,13 @@ fun OnboardingFlow(
     computing: Boolean = false,
     computeError: String? = null,
     computedLevel1Json: String? = null,
-    onSignInWithEmail: (email: String, name: String) -> Unit = { _, _ -> },
+    onSignInWithGoogle: () -> Unit = {},
     onComputeProfile: (OnboardingResult, ResolvedPlace) -> Unit,
     onComplete: () -> Unit,
 ) {
     var step by remember { mutableIntStateOf(1) } // 1..6
     val selectedGoals = remember { mutableStateListOf<String>() }
     var name by remember { mutableStateOf(signedInUser?.name ?: "") }
-    var showSignInForm by remember { mutableStateOf(false) }
-    var authEmail by remember { mutableStateOf("") }
-    var authName by remember { mutableStateOf("") }
     var timeCertainty by remember { mutableStateOf("exact") }
     var birthDate by remember { mutableStateOf("1998-09-07") }
     var birthTime by remember { mutableStateOf("23:20:34") }
@@ -162,65 +159,35 @@ fun OnboardingFlow(
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                Button(
-                    onClick = { step = 2 },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
-                ) {
-                    Text(if (signedInUser != null) "Continue as ${signedInUser.name}" else "Get Started (Local-First)")
-                }
                 if (signedInUser == null) {
+                    Button(
+                        onClick = onSignInWithGoogle,
+                        enabled = !authBusy,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
+                    ) {
+                        Text(if (authBusy) "Connecting to Google…" else "Continue with Google (Gmail)")
+                    }
                     OutlinedButton(
-                        onClick = { showSignInForm = !showSignInForm },
+                        onClick = { step = 2 },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(
-                            if (showSignInForm) "Hide Sync Sign-In" else "Sign in for Cross-Device Sync",
-                            color = KundliColors.Teal,
-                        )
+                        Text("Continue as Guest (Local-First)", color = KundliColors.Teal)
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            if (name.isBlank()) name = signedInUser.name
+                            step = 2
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
+                    ) {
+                        Text("Continue as ${signedInUser.name}")
                     }
                 }
-                if (showSignInForm && signedInUser == null) {
-                    Surface(
-                        color = KundliColors.Surface,
-                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Text("Account Sync", style = MaterialTheme.typography.titleMedium, color = KundliColors.Gold)
-                            OutlinedTextField(
-                                value = authName,
-                                onValueChange = { authName = it },
-                                label = { Text("Display Name") },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                            OutlinedTextField(
-                                value = authEmail,
-                                onValueChange = { authEmail = it },
-                                label = { Text("Email") },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                            if (authMessage != null) {
-                                Text(authMessage, style = MaterialTheme.typography.bodySmall, color = KundliColors.Teal)
-                            }
-                            Button(
-                                onClick = {
-                                    if (authEmail.isNotBlank()) {
-                                        if (name.isBlank() && authName.isNotBlank()) name = authName
-                                        onSignInWithEmail(authEmail, authName.ifBlank { "Native" })
-                                    }
-                                },
-                                enabled = !authBusy && authEmail.isNotBlank(),
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Teal, contentColor = KundliColors.OrbInk),
-                            ) {
-                                Text(if (authBusy) "Connecting…" else "Sign in & Sync")
-                            }
-                        }
-                    }
+                if (!authMessage.isNullOrBlank()) {
+                    Text(authMessage, style = MaterialTheme.typography.bodySmall, color = KundliColors.Teal)
                 }
             }
 

@@ -56,6 +56,9 @@ interface JournalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertEntry(entry: JournalEntryEntity)
 
+    @Query("UPDATE journal_entries SET deleted = 1, synced = 0 WHERE id = :id")
+    suspend fun softDeleteEntry(id: String)
+
     @Query("SELECT * FROM life_events WHERE profileId = :profileId AND deleted = 0 ORDER BY eventDate DESC")
     fun observeMilestones(profileId: String): Flow<List<LifeEventEntity>>
 

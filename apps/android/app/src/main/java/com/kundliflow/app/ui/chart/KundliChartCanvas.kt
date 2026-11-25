@@ -53,6 +53,7 @@ fun KundliChartCanvas(
     style: ChartStyle,
     selectedHouse: Int?,
     highlightedHouses: Set<Int> = emptySet(),
+    showAspectsForSelectedHouse: Boolean = false,
     onSelectHouse: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -77,7 +78,6 @@ fun KundliChartCanvas(
 
     Canvas(
         modifier = modifier
-            .fillMaxWidth()
             .aspectRatio(1f)
             .clip(RoundedCornerShape(18.dp))
             .background(KundliColors.Surface)
@@ -122,12 +122,13 @@ fun KundliChartCanvas(
                 )
             },
     ) {
+        val effectiveDrishtiOrigin = drishtiOriginHouse ?: if (showAspectsForSelectedHouse) selectedHouse else null
         if (style == ChartStyle.NORTH) {
             drawNorthIndianChart(
                 chart = chart,
                 selectedHouse = selectedHouse,
                 highlightedHouses = highlightedHouses,
-                drishtiOriginHouse = drishtiOriginHouse,
+                drishtiOriginHouse = effectiveDrishtiOrigin,
                 moonPulseScale = moonPulseScale,
                 textMeasurer = textMeasurer,
             )
@@ -136,7 +137,7 @@ fun KundliChartCanvas(
                 chart = chart,
                 selectedHouse = selectedHouse,
                 highlightedHouses = highlightedHouses,
-                drishtiOriginHouse = drishtiOriginHouse,
+                drishtiOriginHouse = effectiveDrishtiOrigin,
                 moonPulseScale = moonPulseScale,
                 textMeasurer = textMeasurer,
             )

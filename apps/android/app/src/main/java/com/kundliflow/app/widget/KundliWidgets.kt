@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 object KundliWidgetUpdater {
-    const val EXTRA_LAUNCH_ACTION = "com.kundliflow.app.EXTRA_LAUNCH_ACTION"
+    const val EXTRA_LAUNCH_ACTION = "com.evertrail.kundliflow.EXTRA_LAUNCH_ACTION"
     const val ACTION_OPEN_TODAY = "today"
     const val ACTION_OPEN_CHECKIN = "checkin"
 

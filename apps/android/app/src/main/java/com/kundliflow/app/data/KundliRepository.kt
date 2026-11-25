@@ -27,6 +27,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.time.DayOfWeek
@@ -74,6 +75,40 @@ class KundliRepository(
         api.loginWithGoogleIdToken(idToken.trim()).mapCatching { raw ->
             parseAndPersistAuthUser(raw)
         }
+    }
+
+    /**
+     * Pulls any cloud profiles belonging to the signed-in Google account from `GET /api/profiles`
+     * and hydrates their immutable bundles into Room so Web UI charts appear on Android seamlessly.
+     */
+    suspend fun syncCloudProfilesToRoom(): Int = withContext(Dispatchers.IO) {
+        val rawList = api.listProfiles().getOrNull() ?: return@withContext 0
+        var syncedCount = 0
+        runCatching {
+            val root = json.parseToJsonElement(rawList).jsonObject
+            val profilesArr = root["profiles"]?.jsonArray ?: return@runCatching
+            for (el in profilesArr) {
+                val pObj = el.jsonObject
+                val pid = pObj["id"]?.jsonPrimitive?.content ?: continue
+                if (db.chartDao().getBundle(pid) != null) continue
+                val bundleRes = api.fetchBundle(pid).getOrNull() ?: continue
+                if (bundleRes.statusCode != 200 || bundleRes.body.isBlank()) continue
+                val bRoot = json.parseToJsonElement(bundleRes.body).jsonObject
+                val version = bRoot["bundleVersion"]?.jsonPrimitive?.intOrNull ?: 1
+                val entity = ChartBundleEntity(
+                    profileId = pid,
+                    bundleVersion = version,
+                    etag = bundleRes.etag ?: "\"bundle-$pid-v$version\"",
+                    profileJson = bRoot["profile"]?.toString() ?: pObj.toString(),
+                    level1Json = bRoot["level1Static"]?.toString() ?: "{}",
+                    level2Json = bRoot["level2Static"]?.toString() ?: "{}",
+                    computedAt = bRoot["computedAt"]?.jsonPrimitive?.content ?: Instant.now().toString(),
+                )
+                db.chartDao().upsertBundle(entity)
+                syncedCount++
+            }
+        }
+        syncedCount
     }
 
     fun signOut() {

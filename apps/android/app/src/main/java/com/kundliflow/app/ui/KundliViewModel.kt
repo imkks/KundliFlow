@@ -1,6 +1,7 @@
 package com.kundliflow.app.ui
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.kundliflow.app.KundliFlowApplication
@@ -12,6 +13,7 @@ import com.kundliflow.app.data.local.StoredAuthUser
 import com.kundliflow.app.data.mapper.BundleMappers
 import com.kundliflow.app.data.mapper.NatalSummary
 import com.kundliflow.app.data.mapper.ProfileMeta
+import com.kundliflow.app.data.remote.GoogleSignInHelper
 import com.kundliflow.app.data.remote.OfflineCityItem
 import com.kundliflow.app.data.remote.ResolvedPlace
 import com.kundliflow.app.ui.ask.AskSseEvent
@@ -84,6 +86,7 @@ data class KundliAppUiState(
     val savedProfiles: List<OrbitProfileItem> = emptyList(),
     val todaySky: TodaySkyState? = null,
     val isRefreshingToday: Boolean = false,
+    val staleStatusLine: String? = null,
     val personalHookLine: String = "",
     val activeSlot: TodayDynamicSlot = TodayDynamicSlot.CuriosityNode("core.moon_sign", "Moon sign", "Tap to discover."),
     val isEveningAfter19: Boolean = false,
@@ -296,9 +299,22 @@ class KundliViewModel(application: Application) : AndroidViewModel(application) 
                 lastSeenHora = sky.currentHora.ruler.name,
             )
             repo.savePreferences(prefs)
-            _uiState.update { it.copy(showConstructiveRedirect = redirect) }
+            val cached = repo.db.chartDao().getLatestTodaySkyForProfile(meta.id)
+            val staleLine = computeStaleStatusLine(activeTodayJson != null, cached?.fetchedAt)
+            _uiState.update { it.copy(showConstructiveRedirect = redirect, staleStatusLine = staleLine) }
             runCatching { KundliWidgetUpdater.updateAllWidgets(app) }
         }
+    }
+
+    private fun computeStaleStatusLine(hasTodayData: Boolean, fetchedAtMs: Long?): String? {
+        if (!hasTodayData) return "Offline · Connect to refresh today's sky"
+        if (fetchedAtMs == null) return null
+        val ageHours = (System.currentTimeMillis() - fetchedAtMs) / 3_600_000L
+        if (ageHours >= 6L) {
+            val hhmm = Instant.ofEpochMilli(fetchedAtMs).atZone(ZoneId.systemDefault()).toLocalTime()
+            return String.format(Locale.US, "Showing your sky from %02d:%02d", hhmm.hour, hhmm.minute)
+        }
+        return null
     }
 
     private fun recomputeDerivedState(
@@ -676,6 +692,51 @@ class KundliViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun signInWithGoogle(activityContext: Context) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(authBusy = true, authMessage = null) }
+            val idTokenRes = GoogleSignInHelper.requestGoogleIdToken(activityContext)
+            idTokenRes.onFailure { err ->
+                _uiState.update {
+                    it.copy(
+                        authBusy = false,
+                        authMessage = err.message ?: "Google Sign-In could not complete.",
+                        statusBanner = err.message ?: "Google Sign-In could not complete.",
+                    )
+                }
+                return@launch
+            }
+            val idToken = idTokenRes.getOrThrow()
+            repo.signInWithGoogleIdToken(idToken).onSuccess { user ->
+                val synced = repo.syncCloudProfilesToRoom()
+                val msg = if (synced > 0) {
+                    "Signed in as ${user.email} · Synced $synced chart(s) from your account."
+                } else {
+                    "Signed in as ${user.email}."
+                }
+                _uiState.update {
+                    it.copy(
+                        authBusy = false,
+                        signedInUser = user,
+                        authMessage = msg,
+                        statusBanner = msg,
+                    )
+                }
+                if (synced > 0 && activeBundle == null) {
+                    repo.db.chartDao().getAllBundlesOnce().firstOrNull()?.let { activateLocalBundle(it) }
+                }
+            }.onFailure { err ->
+                _uiState.update {
+                    it.copy(
+                        authBusy = false,
+                        authMessage = "Server verification failed (${err.message ?: "offline"}).",
+                        statusBanner = "Google sign-in server verification failed.",
+                    )
+                }
+            }
+        }
+    }
+
     fun signInWithEmail(email: String, name: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(authBusy = true, authMessage = null) }
@@ -778,6 +839,38 @@ class KundliViewModel(application: Application) : AndroidViewModel(application) 
 
     fun clearDistressFlag() {
         _uiState.update { it.copy(distressTriggered = false) }
+    }
+
+    fun openSupportHelplines() {
+        _uiState.update { it.copy(distressTriggered = true) }
+    }
+
+    fun editLatestCheckInMood(newMood: Int) {
+        val meta = _uiState.value.activeProfile ?: return
+        val latest = _uiState.value.journalEntries.firstOrNull() ?: return
+        val nowIso = Instant.now().toString()
+        val updated = JournalEntryEntity(
+            id = latest.id,
+            profileId = meta.id,
+            entryDate = latest.timestampLabel,
+            mood = newMood.coerceIn(1, 5),
+            energy = latest.energy,
+            focus = latest.energy,
+            kind = latest.kind,
+            tagsJson = json.encodeToString(ListSerializer(String.serializer()), latest.tags),
+            note = latest.note,
+            skySnapshotJson = FrozenSkySnapshotCodec.encode(latest.sky),
+            createdAt = Instant.ofEpochMilli(latest.createdAtMillis).toString(),
+            updatedAt = nowIso,
+        )
+        viewModelScope.launch { repo.saveJournalEntryAndSync(updated) }
+    }
+
+    fun undoLatestCheckIn() {
+        val latest = _uiState.value.journalEntries.firstOrNull() ?: return
+        viewModelScope.launch {
+            repo.db.journalDao().softDeleteEntry(latest.id)
+        }
     }
 
     fun resetDataVault() {

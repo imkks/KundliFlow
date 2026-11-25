@@ -21,7 +21,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +32,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,10 +57,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
-import kotlinx.coroutines.delay
+import java.time.LocalTime
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,29 +72,27 @@ fun TodayScreen(
     personalHookLine: String,
     activeSlot: TodayDynamicSlot,
     hasLoggedAtLeastOnce: Boolean,
+    latestCheckInMoodThisHour: Int? = null,
+    discoveryLitCount: Int = 0,
+    discoveryTotalCount: Int = 24,
     isEveningAfter19: Boolean,
     showConstructiveRedirect: Boolean,
     isRefreshing: Boolean = false,
     onRefresh: () -> Unit = {},
     onTapHeroPeek: () -> Unit,
     onQuickCheckIn: (mood: Int) -> Unit,
+    onEditCheckInMood: (mood: Int) -> Unit = {},
+    onUndoCheckIn: () -> Unit = {},
     onAddTagToLastCheckIn: (String) -> Unit,
     onOpenFullComposer: () -> Unit,
     onTapSlotAction: (TodayDynamicSlot) -> Unit,
     onDismissSlot: (TodayDynamicSlot) -> Unit,
+    onOpenDiscoveryMap: () -> Unit = {},
     onTapExploreTopic: (String) -> Unit,
     onTapCitySwitcher: () -> Unit,
 ) {
-    var showWaveSheet by remember { mutableStateOf(false) }
-    var inlineEchoMood by remember { mutableStateOf<Int?>(null) }
-
-    // 1.5s -> 8s Inline Sky Echo reset
-    LaunchedEffect(inlineEchoMood) {
-        if (inlineEchoMood != null) {
-            delay(8000L)
-            inlineEchoMood = null
-        }
-    }
+    var waveSheetInitialHour by remember { mutableStateOf<Int?>(null) }
+    var editingCheckIn by remember { mutableStateOf(false) }
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -103,9 +105,9 @@ fun TodayScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 108.dp), // clear floating capsule dock
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            // 1. Hero (1 per screen)
+            // 1. Hero (v3/v4 <= 210dp: Greeting, Soft Band Ring, 2 concise lines + "more")
             TodayHeroCard(
                 sky = sky,
                 personalHookLine = personalHookLine,
@@ -116,48 +118,69 @@ fun TodayScreen(
                 onTapRedirect = { onTapSlotAction(activeSlot) },
             )
 
-            // 2. Primary Action: 1-Tap Check-in w/ 1.5s Inline Sky Echo Morph
-            CheckInBarWithInlineEcho(
+            // 2. Persistent Check-In Row (stays Logged X/5 · Edit · Undo for current hour!)
+            CheckInBarPersistent(
                 sky = sky,
-                echoMood = inlineEchoMood,
+                loggedMood = latestCheckInMoodThisHour,
+                isEditing = editingCheckIn,
                 onSelectMood = { mood ->
-                    inlineEchoMood = mood
-                    onQuickCheckIn(mood)
+                    if (latestCheckInMoodThisHour != null) {
+                        onEditCheckInMood(mood)
+                    } else {
+                        onQuickCheckIn(mood)
+                    }
+                    editingCheckIn = false
+                },
+                onRequestEdit = { editingCheckIn = true },
+                onUndo = {
+                    editingCheckIn = false
+                    onUndoCheckIn()
                 },
                 onTapTag = onAddTagToLastCheckIn,
                 onTapAddNote = onOpenFullComposer,
             )
 
-            // 3. Single Dynamic Slot (P1-P6 from resolveTodaySlot)
+            // 3. Single Dynamic Slot (P1-P6) with inline Discovery Map progress
             DynamicSlotCard(
                 slot = activeSlot,
+                discoveryLitCount = discoveryLitCount,
+                discoveryTotalCount = discoveryTotalCount,
                 onTap = { onTapSlotAction(activeSlot) },
                 onDismiss = { onDismissSlot(activeSlot) },
+                onOpenDiscoveryMap = onOpenDiscoveryMap,
             )
 
-            // 4. 40dp Collapsed Day Strip (Earned reveal after 1st check-in)
+            // 4. Horizontal 24-Hora Ribbon (auto-scrolled to NOW pill)
+            HoraRibbonRail(
+                sky = sky,
+                onSelectHour = { hr -> waveSheetInitialHour = hr },
+            )
+
+            // 5. Collapsed Day Strip (Earned reveal after 1st check-in + Day-2 Dasha subtitle)
             AnimatedVisibility(visible = hasLoggedAtLeastOnce) {
                 CollapsedDayStrip(
                     sky = sky,
                     isEveningAfter19 = isEveningAfter19,
-                    onClick = { showWaveSheet = true },
+                    onClick = { waveSheetInitialHour = LocalTime.now().hour },
                 )
             }
 
-            // 5. Explore Horizontal Life Topics Reel
+            // 6. Explore Horizontal Cards Rail
             ExploreTopicsReel(onTapTopic = onTapExploreTopic)
         }
     }
 
-    if (showWaveSheet) {
+    val startHour = waveSheetInitialHour
+    if (startHour != null) {
         DayWaveSheet(
             sky = sky,
+            initialHour = startHour,
             onTapCitySwitcher = onTapCitySwitcher,
             onOpenFullMath = {
-                showWaveSheet = false
+                waveSheetInitialHour = null
                 onTapHeroPeek()
             },
-            onDismiss = { showWaveSheet = false },
+            onDismiss = { waveSheetInitialHour = null },
         )
     }
 }
@@ -184,7 +207,7 @@ private fun TodayHeroCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .drawBehind { drawRect(KundliColors.cosmicHeroRadial(size.width, size.height)) }
-                .padding(20.dp),
+                .padding(horizontal = 20.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -193,7 +216,7 @@ private fun TodayHeroCard(
                 color = KundliColors.TextMuted,
                 modifier = Modifier.align(Alignment.Start),
             )
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(10.dp))
 
             if (showConstructiveRedirect) {
                 Text(
@@ -201,11 +224,13 @@ private fun TodayHeroCard(
                     style = MaterialTheme.typography.titleMedium,
                     color = KundliColors.Gold,
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "While you wait for ${sky.nextShiftTime}, explore $nextDiscoveryTitle or reflect in your Journal.",
+                    text = "While waiting for ${sky.nextShiftTime}, explore $nextDiscoveryTitle or reflect in Journal.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = KundliColors.TextMain,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             } else {
                 // Soft Band Ring
@@ -218,30 +243,41 @@ private fun TodayHeroCard(
                         text = sky.currentBand.label,
                         style = MaterialTheme.typography.displaySmall,
                         color = sky.currentBand.color,
-                        modifier = Modifier.padding(horizontal = 28.dp, vertical = 10.dp),
+                        modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp),
                     )
                 }
-                Spacer(Modifier.height(14.dp))
-                Text(
-                    text = personalHookLine,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = KundliColors.TextMain,
-                )
-                Spacer(Modifier.height(8.dp))
-                val shiftLine = if (isEveningAfter19 && sky.tomorrowOpeningSummary != null) {
+                Spacer(Modifier.height(10.dp))
+                // Line 1: Hora + next shift (or Tomorrow opening after 19:00)
+                val line1 = if (isEveningAfter19 && sky.tomorrowOpeningSummary != null) {
                     sky.tomorrowOpeningSummary
                 } else {
-                    "Next shift ${sky.nextShiftTime}: ${sky.nextShiftHora.displayName} hour, ${sky.nextShiftBand.label}"
+                    "${sky.currentHora.ruler.displayName} hour until ${sky.nextShiftTime}, then ${sky.nextShiftHora.displayName}"
                 }
                 Text(
-                    text = shiftLine,
+                    text = line1,
                     style = MaterialTheme.typography.labelMedium,
                     color = KundliColors.TextMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
-                if (sky.currentChapterSubtitle != null) {
-                    Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(4.dp))
+                // Line 2: Personal Hook (max 2 lines) + explicit "more" affordance
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
                     Text(
-                        text = sky.currentChapterSubtitle,
+                        text = personalHookLine,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = KundliColors.TextMain,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = "more",
                         style = MaterialTheme.typography.labelMedium,
                         color = KundliColors.Gold,
                     )
@@ -252,20 +288,24 @@ private fun TodayHeroCard(
 }
 
 @Composable
-private fun CheckInBarWithInlineEcho(
+private fun CheckInBarPersistent(
     sky: TodaySkyState,
-    echoMood: Int?,
+    loggedMood: Int?,
+    isEditing: Boolean,
     onSelectMood: (Int) -> Unit,
+    onRequestEdit: () -> Unit,
+    onUndo: () -> Unit,
     onTapTag: (String) -> Unit,
     onTapAddNote: () -> Unit,
 ) {
+    val showPicker = loggedMood == null || isEditing
     Surface(
         color = KundliColors.Surface,
         shape = RoundedCornerShape(18.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        AnimatedContent(targetState = echoMood, label = "inline_sky_echo") { savedMood ->
-            if (savedMood == null) {
+        AnimatedContent(targetState = showPicker, label = "persistent_checkin") { picker ->
+            if (picker) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -274,39 +314,60 @@ private fun CheckInBarWithInlineEcho(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "How does now feel?",
+                        text = if (isEditing) "Update mood" else "How does now feel?",
                         style = MaterialTheme.typography.titleMedium,
                         color = KundliColors.TextMain,
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         (1..5).forEach { mood ->
+                            val isCurrent = loggedMood == mood
                             Box(
                                 modifier = Modifier
                                     .size(34.dp)
                                     .clip(CircleShape)
-                                    .background(KundliColors.SurfaceAlt)
+                                    .background(if (isCurrent) KundliColors.Gold else KundliColors.SurfaceAlt)
                                     .clickable { onSelectMood(mood) },
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Text(
                                     text = "$mood",
                                     style = TelemetryNumberStyle,
-                                    color = KundliColors.Gold,
+                                    color = if (isCurrent) KundliColors.OrbInk else KundliColors.Gold,
                                 )
                             }
                         }
                     }
                 }
             } else {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Saved ($savedMood/5) · Bottled under ${sky.currentHora.ruler.displayName} Hora · ${sky.currentBand.label}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.Teal,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf("Work", "Focus", "Calm").forEach { tag ->
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "Logged $loggedMood/5 · ${sky.currentHora.ruler.displayName} Hora",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = KundliColors.Teal,
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Text(
+                                text = "Edit",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = KundliColors.Gold,
+                                modifier = Modifier.clickable(onClick = onRequestEdit),
+                            )
+                            Text(
+                                text = "Undo",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = KundliColors.TextMuted,
+                                modifier = Modifier.clickable(onClick = onUndo),
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        itemsIndexed(listOf("Work", "Focus", "Calm", "Creative", "Rest")) { _, tag ->
                             FilterChip(
                                 selected = false,
                                 onClick = { onTapTag(tag.lowercase()) },
@@ -317,14 +378,72 @@ private fun CheckInBarWithInlineEcho(
                                 ),
                             )
                         }
-                        FilterChip(
-                            selected = false,
-                            onClick = onTapAddNote,
-                            label = { Text("+ Note") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = KundliColors.SurfaceAlt,
-                                labelColor = KundliColors.Gold,
-                            ),
+                        item {
+                            FilterChip(
+                                selected = false,
+                                onClick = onTapAddNote,
+                                label = { Text("+ Note") },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    containerColor = KundliColors.SurfaceAlt,
+                                    labelColor = KundliColors.Gold,
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HoraRibbonRail(
+    sky: TodaySkyState,
+    onSelectHour: (Int) -> Unit,
+) {
+    if (sky.hourlyWave.isEmpty()) return
+    val nowHour = LocalTime.now().hour.coerceIn(0, sky.hourlyWave.lastIndex)
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(sky.hourlyWave.size) {
+        listState.scrollToItem((nowHour - 1).coerceAtLeast(0))
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = "HORA RIBBON · SWIPE 24H",
+            style = MaterialTheme.typography.labelMedium,
+            color = KundliColors.TextMuted,
+        )
+        LazyRow(
+            state = listState,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(end = 8.dp),
+        ) {
+            itemsIndexed(sky.hourlyWave) { idx, pt ->
+                val isNow = idx == nowHour
+                Surface(
+                    color = if (isNow) KundliColors.SurfaceAlt else KundliColors.Surface,
+                    border = BorderStroke(
+                        width = if (isNow) 1.5.dp else 1.dp,
+                        color = if (isNow) pt.band.color else KundliColors.SubtleDivider,
+                    ),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.clickable { onSelectHour(idx) },
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = if (isNow) "NOW" else String.format(Locale.US, "%02d:00", pt.hour),
+                            style = TelemetryNumberStyle,
+                            color = if (isNow) pt.band.color else KundliColors.TextMuted,
+                        )
+                        Text(
+                            text = pt.horaRuler.displayName,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = KundliColors.TextMain,
                         )
                     }
                 }
@@ -336,8 +455,11 @@ private fun CheckInBarWithInlineEcho(
 @Composable
 private fun DynamicSlotCard(
     slot: TodayDynamicSlot,
+    discoveryLitCount: Int,
+    discoveryTotalCount: Int,
     onTap: () -> Unit,
     onDismiss: () -> Unit,
+    onOpenDiscoveryMap: () -> Unit,
 ) {
     if (slot is TodayDynamicSlot.DistressOverride) return
 
@@ -396,7 +518,7 @@ private fun DynamicSlotCard(
             .fillMaxWidth()
             .clickable(onClick = onTap),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(14.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -422,12 +544,32 @@ private fun DynamicSlotCard(
                 style = MaterialTheme.typography.titleMedium,
                 color = KundliColors.TextMain,
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(3.dp))
             Text(
                 text = body as String,
                 style = MaterialTheme.typography.bodySmall,
                 color = KundliColors.TextMuted,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
+            Spacer(Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Discovered $discoveryLitCount of $discoveryTotalCount",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = KundliColors.TextMuted,
+                )
+                Text(
+                    text = "Open map →",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = KundliColors.Teal,
+                    modifier = Modifier.clickable(onClick = onOpenDiscoveryMap),
+                )
+            }
         }
     }
 }
@@ -452,7 +594,7 @@ private fun CollapsedDayStrip(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text("Your day", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                Text("Tap to scrub 24h", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                Text("Scrub 24h", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
             }
             Spacer(Modifier.height(8.dp))
             Canvas(
@@ -487,35 +629,49 @@ private fun CollapsedDayStrip(
                 style = MaterialTheme.typography.labelMedium,
                 color = KundliColors.TextMuted,
             )
+            if (!sky.currentChapterSubtitle.isNullOrBlank()) {
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = sky.currentChapterSubtitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = KundliColors.Gold,
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun ExploreTopicsReel(onTapTopic: (String) -> Unit) {
-    val topics = listOf("Career", "Home", "Love", "Money", "Year")
+    val topics = listOf(
+        "Career" to "House 10",
+        "Love" to "House 7",
+        "Money" to "House 2",
+        "Home" to "House 4",
+        "Strengths" to "Yogas & SAV",
+        "Year" to "Dashas & Time",
+    )
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = "Explore",
+            text = "EXPLORE YOUR CHART",
             style = MaterialTheme.typography.labelMedium,
             color = KundliColors.TextMuted,
         )
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(end = 8.dp),
         ) {
-            items(topics) { topic ->
+            itemsIndexed(topics) { _, (topic, sub) ->
                 Surface(
                     color = KundliColors.SurfaceAlt,
-                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.clickable { onTapTopic(topic) },
                 ) {
-                    Text(
-                        text = topic,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = KundliColors.TextMain,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                    )
+                    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
+                        Text(topic, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                        Text(sub, style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                    }
                 }
             }
         }
@@ -526,12 +682,14 @@ private fun ExploreTopicsReel(onTapTopic: (String) -> Unit) {
 @Composable
 private fun DayWaveSheet(
     sky: TodaySkyState,
+    initialHour: Int,
     onTapCitySwitcher: () -> Unit,
     onOpenFullMath: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val haptics = LocalHapticFeedback.current
-    var selectedHour by remember { mutableIntStateOf(12.coerceAtMost((sky.hourlyWave.size - 1).coerceAtLeast(0))) }
+    val maxIdx = (sky.hourlyWave.size - 1).coerceAtLeast(0)
+    var selectedHour by remember(initialHour) { mutableIntStateOf(initialHour.coerceIn(0, maxIdx)) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -543,7 +701,7 @@ private fun DayWaveSheet(
                 .fillMaxWidth()
                 .navigationBarsPadding()
                 .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -551,8 +709,8 @@ private fun DayWaveSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text("24-Hour Sky Wave", style = MaterialTheme.typography.headlineSmall)
-                TextButton(onClick = onTapCitySwitcher) {
-                    Text("${sky.cityName} ▾", color = KundliColors.Gold)
+                OutlinedButton(onClick = onTapCitySwitcher, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)) {
+                    Text(sky.cityName, color = KundliColors.Gold, style = MaterialTheme.typography.labelMedium)
                 }
             }
 
@@ -592,7 +750,7 @@ private fun DayWaveSheet(
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(140.dp)
                     .semantics { contentDescription = "Scrubbable 24-hour energy wave" }
                     .pointerInput(sky.hourlyWave.size) {
                         detectHorizontalDragGestures { change, _ ->
@@ -638,6 +796,21 @@ private fun DayWaveSheet(
                     )
                 }
             }
+
+            // TalkBack-friendly hour steppers (v3 §7)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextButton(onClick = { if (selectedHour > 0) selectedHour-- }) {
+                    Text("← Prev hour", color = KundliColors.TextMuted)
+                }
+                TextButton(onClick = { if (selectedHour < maxIdx) selectedHour++ }) {
+                    Text("Next hour →", color = KundliColors.TextMuted)
+                }
+            }
+
             sky.panchang?.let { p ->
                 Surface(
                     color = KundliColors.SurfaceAlt,

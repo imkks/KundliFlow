@@ -23,12 +23,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +40,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.CalendarMonth
@@ -47,9 +50,12 @@ import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material.icons.rounded.Verified
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -89,6 +95,39 @@ import com.kundliflow.app.ui.theme.KundliColors
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
+fun AskCopilotPage(
+    profileName: String,
+    originContextLabel: String,
+    messages: List<AskUiMessage>,
+    liveStepTicker: String?,
+    liveTraceSteps: List<String> = emptyList(),
+    onSendQuestion: (question: String, deep: Boolean) -> Unit,
+    onClearHistory: () -> Unit,
+    onTapEvidence: (Subject) -> Unit,
+    onJumpToTiming: () -> Unit,
+    onOpenReflect: (String) -> Unit,
+    onExportDossier: () -> Unit,
+    onBack: () -> Unit,
+) {
+    AskCopilotBody(
+        isFullPage = true,
+        profileName = profileName,
+        originContextLabel = originContextLabel,
+        messages = messages,
+        liveStepTicker = liveStepTicker,
+        liveTraceSteps = liveTraceSteps,
+        onSendQuestion = onSendQuestion,
+        onClearHistory = onClearHistory,
+        onTapEvidence = onTapEvidence,
+        onJumpToTiming = onJumpToTiming,
+        onOpenReflect = onOpenReflect,
+        onExportDossier = onExportDossier,
+        onBack = onBack,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
 fun AskCopilotSheet(
     profileName: String,
     originContextLabel: String,
@@ -104,46 +143,6 @@ fun AskCopilotSheet(
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val listState = rememberLazyListState()
-    val haptics = LocalHapticFeedback.current
-
-    var inputText by remember { mutableStateOf("") }
-    var deepMode by remember { mutableStateOf(false) }
-    var showPromptBuilder by remember { mutableStateOf(false) }
-    var showEventDateBar by remember { mutableStateOf(false) }
-    var selectedEventDate by remember { mutableStateOf<String?>(null) }
-    var builderTopic by remember { mutableStateOf("Career") }
-    var builderWindow by remember { mutableStateOf("Next 6 months") }
-    var expandLiveTrace by remember { mutableStateOf(false) }
-    var confirmClear by remember { mutableStateOf(false) }
-
-    val isStreaming = liveStepTicker != null
-    val recentSessions = remember(messages) { AskSessionGrouper.groupIntoRecentSessions(messages) }
-
-    // Smooth auto-scroll whenever messages or streaming steps update
-    LaunchedEffect(messages.size, liveStepTicker) {
-        val lastIndex = (messages.size + if (isStreaming) 1 else 0) - 1
-        if (lastIndex >= 0) {
-            listState.animateScrollToItem(lastIndex.coerceAtLeast(0))
-        }
-    }
-
-    fun dispatchQuestion(raw: String) {
-        val trimmed = raw.trim()
-        if (trimmed.isEmpty() || isStreaming) return
-        val fullQ = if (selectedEventDate != null) {
-            "[$selectedEventDate] $trimmed"
-        } else {
-            trimmed
-        }
-        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-        inputText = ""
-        selectedEventDate = null
-        showEventDateBar = false
-        showPromptBuilder = false
-        onSendQuestion(fullQ, deepMode)
-    }
-
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
@@ -159,94 +158,188 @@ fun AskCopilotSheet(
             )
         },
     ) {
-        Column(
+        AskCopilotBody(
+            isFullPage = false,
+            profileName = profileName,
+            originContextLabel = originContextLabel,
+            messages = messages,
+            liveStepTicker = liveStepTicker,
+            liveTraceSteps = liveTraceSteps,
+            onSendQuestion = onSendQuestion,
+            onClearHistory = onClearHistory,
+            onTapEvidence = onTapEvidence,
+            onJumpToTiming = onJumpToTiming,
+            onOpenReflect = onOpenReflect,
+            onExportDossier = onExportDossier,
+            onBack = onDismiss,
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AskCopilotBody(
+    isFullPage: Boolean,
+    profileName: String,
+    originContextLabel: String,
+    messages: List<AskUiMessage>,
+    liveStepTicker: String?,
+    liveTraceSteps: List<String> = emptyList(),
+    onSendQuestion: (question: String, deep: Boolean) -> Unit,
+    onClearHistory: () -> Unit,
+    onTapEvidence: (Subject) -> Unit,
+    onJumpToTiming: () -> Unit,
+    onOpenReflect: (String) -> Unit,
+    onExportDossier: () -> Unit,
+    onBack: () -> Unit,
+) {
+    val listState = rememberLazyListState()
+    val haptics = LocalHapticFeedback.current
+
+    var inputText by remember { mutableStateOf("") }
+    var deepMode by remember { mutableStateOf(false) }
+    var showPromptBuilder by remember { mutableStateOf(false) }
+    var showEventDateBar by remember { mutableStateOf(false) }
+    var selectedEventDate by remember { mutableStateOf<String?>(null) }
+    var builderTopic by remember { mutableStateOf("Career") }
+    var builderWindow by remember { mutableStateOf("Next 6 months") }
+    var expandLiveTrace by remember { mutableStateOf(false) }
+    var showHeaderOverflow by remember { mutableStateOf(false) }
+
+    val isStreaming = liveStepTicker != null
+    val recentSessions = remember(messages) { AskSessionGrouper.groupIntoRecentSessions(messages) }
+
+    LaunchedEffect(messages.size, liveStepTicker) {
+        val lastIndex = (messages.size + if (isStreaming) 1 else 0) - 1
+        if (lastIndex >= 0) {
+            listState.animateScrollToItem(lastIndex.coerceAtLeast(0))
+        }
+    }
+
+    fun dispatchQuestion(raw: String) {
+        val trimmed = raw.trim()
+        if (trimmed.isEmpty() || isStreaming) return
+        val fullQ = if (selectedEventDate != null) "[$selectedEventDate] $trimmed" else trimmed
+        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        inputText = ""
+        selectedEventDate = null
+        showEventDateBar = false
+        showPromptBuilder = false
+        onSendQuestion(fullQ, deepMode)
+    }
+
+    val containerModifier = if (isFullPage) {
+        Modifier
+            .fillMaxSize()
+            .background(KundliColors.BgInk)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding()
+    } else {
+        Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.92f)
+            .navigationBarsPadding()
+            .imePadding()
+    }
+
+    Column(modifier = containerModifier) {
+        // 1. Header Bar (Full-Page Back Arrow + Fast/Deep + Overflow Menu)
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.92f)
-                .navigationBarsPadding()
-                .imePadding(),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            // 1. Calm Luxury Header Bar
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.weight(1f),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(34.dp)
-                            .clip(CircleShape)
-                            .background(KundliColors.AskOrbBrush),
-                        contentAlignment = Alignment.Center,
-                    ) {
+                if (isFullPage) {
+                    IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.Rounded.AutoAwesome,
-                            contentDescription = null,
-                            tint = KundliColors.OrbInk,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = "Ask · $profileName",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = KundliColors.TextMain,
-                        )
-                        Text(
-                            text = originContextLabel,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = KundliColors.Teal,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = "Back",
+                            tint = KundliColors.Gold,
                         )
                     }
                 }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(CircleShape)
+                        .background(KundliColors.AskOrbBrush),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    FastDeepSegmentedPill(
-                        deepMode = deepMode,
-                        onChange = {
-                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            deepMode = it
-                        },
+                    Icon(
+                        imageVector = Icons.Rounded.AutoAwesome,
+                        contentDescription = null,
+                        tint = KundliColors.OrbInk,
+                        modifier = Modifier.size(18.dp),
                     )
-                    if (messages.isNotEmpty()) {
-                        if (confirmClear) {
-                            TextButton(
+                }
+                Column {
+                    Text(
+                        text = "Ask · $profileName",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = KundliColors.TextMain,
+                    )
+                    Text(
+                        text = originContextLabel,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = KundliColors.Teal,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                FastDeepSegmentedPill(
+                    deepMode = deepMode,
+                    onChange = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        deepMode = it
+                    },
+                )
+                Box {
+                    IconButton(onClick = { showHeaderOverflow = true }, modifier = Modifier.size(36.dp)) {
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = "More options",
+                            tint = KundliColors.TextMuted,
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showHeaderOverflow,
+                        onDismissRequest = { showHeaderOverflow = false },
+                        containerColor = KundliColors.Surface,
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Export AI Dossier (.md)", color = KundliColors.TextMain) },
+                            onClick = {
+                                showHeaderOverflow = false
+                                onExportDossier()
+                            },
+                        )
+                        if (messages.isNotEmpty()) {
+                            DropdownMenuItem(
+                                text = { Text("Clear conversation", color = KundliColors.AlertCrimson) },
                                 onClick = {
-                                    confirmClear = false
+                                    showHeaderOverflow = false
                                     onClearHistory()
                                 },
-                                contentPadding = PaddingValues(horizontal = 8.dp),
-                            ) {
-                                Text("Clear?", color = KundliColors.AlertCrimson, style = MaterialTheme.typography.labelMedium)
-                            }
-                        } else {
-                            IconButton(
-                                onClick = { confirmClear = true },
-                                modifier = Modifier.size(34.dp),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.DeleteOutline,
-                                    contentDescription = "Clear conversation",
-                                    tint = KundliColors.TextMuted,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
+                            )
                         }
                     }
                 }
             }
+        }
 
             HorizontalDivider(color = KundliColors.SubtleDivider)
 
@@ -509,7 +602,6 @@ fun AskCopilotSheet(
             }
         }
     }
-}
 
 @Composable
 private fun FastDeepSegmentedPill(
@@ -746,24 +838,45 @@ private fun AssistantEditorialCard(
                         modifier = Modifier.size(16.dp),
                     )
                     Text(
-                        text = if (msg.responseType == "level2_fallback") "Classical Rule Synthesis" else "Jyotish Copilot",
+                        text = if (msg.responseType == "level2_fallback") "FROM YOUR CHART · OFFLINE" else "FROM YOUR CHART",
                         style = MaterialTheme.typography.labelMedium,
                         color = KundliColors.Teal,
                     )
                 }
-                IconButton(
-                    onClick = {
-                        clipboard.setText(AnnotatedString(msg.content))
-                        copied = true
-                    },
-                    modifier = Modifier.size(28.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ContentCopy,
-                        contentDescription = "Copy answer",
-                        tint = if (copied) KundliColors.Gold else KundliColors.TextMuted,
-                        modifier = Modifier.size(15.dp),
-                    )
+                var showCardMenu by remember { mutableStateOf(false) }
+                Box {
+                    IconButton(
+                        onClick = { showCardMenu = true },
+                        modifier = Modifier.size(28.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = "Answer actions",
+                            tint = if (copied) KundliColors.Gold else KundliColors.TextMuted,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showCardMenu,
+                        onDismissRequest = { showCardMenu = false },
+                        containerColor = KundliColors.Surface,
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(if (copied) "Copied ✓" else "Copy answer", color = KundliColors.TextMain) },
+                            onClick = {
+                                clipboard.setText(AnnotatedString(msg.content))
+                                copied = true
+                                showCardMenu = false
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Export AI Dossier (.md)", color = KundliColors.Gold) },
+                            onClick = {
+                                showCardMenu = false
+                                onExportDossier()
+                            },
+                        )
+                    }
                 }
             }
 

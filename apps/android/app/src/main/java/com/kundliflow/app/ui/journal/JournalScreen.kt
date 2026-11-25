@@ -42,9 +42,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+private fun humanDateHeader(isoDate: String): String = runCatching {
+    val d = LocalDate.parse(isoDate.take(10))
+    val today = LocalDate.now()
+    when (d) {
+        today -> "TODAY"
+        today.minusDays(1) -> "YESTERDAY"
+        else -> d.format(DateTimeFormatter.ofPattern("EEE d MMM", Locale.getDefault())).uppercase()
+    }
+}.getOrDefault(isoDate)
+
+private fun format24hTime(createdAtMillis: Long): String = runCatching {
+    if (createdAtMillis <= 0L) "" else {
+        val lt = Instant.ofEpochMilli(createdAtMillis).atZone(ZoneId.systemDefault()).toLocalTime()
+        String.format(Locale.US, "%02d:%02d", lt.hour, lt.minute)
+    }
+}.getOrDefault("")
 
 @Composable
 fun JournalScreen(
@@ -67,11 +90,15 @@ fun JournalScreen(
     }
 
     val patternStage = remember(entries) { JournalPatternsCalculator.computeCalibrationStage(entries) }
+    var expandPatterns by remember { mutableStateOf(false) }
     var showPatternMath by remember { mutableStateOf(false) }
 
     val filteredEntries = remember(entries, activeFilter, selectedTag) {
         if (activeFilter == JournalFilter.MILESTONES) emptyList()
         else entries.filter { selectedTag == null || it.tags.contains(selectedTag) }
+    }
+    val groupedEntries = remember(filteredEntries) {
+        filteredEntries.groupBy { humanDateHeader(it.timestampLabel) }
     }
     val filteredMilestones = remember(milestones, activeFilter) {
         if (activeFilter == JournalFilter.ENTRIES) emptyList() else milestones
@@ -84,26 +111,41 @@ fun JournalScreen(
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            // 1. Your Patterns Card (Progressive 5/10/15/20/30)
+            // 1. Your Patterns Card (2-line collapsed by default, expands on tap)
             item {
                 Surface(
                     color = KundliColors.Surface,
                     shape = RoundedCornerShape(18.dp),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { expandPatterns = !expandPatterns },
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = patternStage.headline,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = KundliColors.Gold,
-                        )
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = patternStage.headline,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = KundliColors.Gold,
+                            )
+                            Text(
+                                text = if (expandPatterns) "Less" else "More",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = KundliColors.Teal,
+                            )
+                        }
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = patternStage.body,
                             style = MaterialTheme.typography.bodySmall,
                             color = KundliColors.TextMuted,
+                            maxLines = if (expandPatterns) 10 else 2,
+                            overflow = TextOverflow.Ellipsis,
                         )
-                        if (patternStage.fullUnlocked && patternStage.mathDetail != null) {
+                        if (expandPatterns && patternStage.fullUnlocked && patternStage.mathDetail != null) {
                             Spacer(Modifier.height(6.dp))
                             AnimatedVisibility(visible = showPatternMath) {
                                 Text(
@@ -207,12 +249,22 @@ fun JournalScreen(
                     }
                 }
 
-                items(filteredEntries, key = { it.id }) { entry ->
-                    JournalEntryCard(
-                        entry = entry,
-                        onTapSky = { onTapSkySnapshot(entry.sky) },
-                        onTapTag = { selectedTag = it },
-                    )
+                groupedEntries.forEach { (dateHeader, dayEntries) ->
+                    item(key = "hdr_$dateHeader") {
+                        Text(
+                            text = dateHeader,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = KundliColors.Gold,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
+                    items(dayEntries, key = { it.id }) { entry ->
+                        JournalEntryCard(
+                            entry = entry,
+                            onTapSky = { onTapSkySnapshot(entry.sky) },
+                            onTapTag = { selectedTag = it },
+                        )
+                    }
                 }
             }
 
@@ -306,7 +358,8 @@ private fun JournalEntryCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(entry.timestampLabel, style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                val timeLabel = format24hTime(entry.createdAtMillis).ifBlank { entry.timestampLabel }
+                Text(timeLabel, style = TelemetryNumberStyle, color = KundliColors.TextMuted)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("${entry.mood}/5", style = TelemetryNumberStyle, color = KundliColors.Gold)
                     Surface(
