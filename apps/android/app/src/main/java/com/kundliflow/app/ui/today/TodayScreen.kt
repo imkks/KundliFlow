@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -76,6 +78,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
 import com.kundliflow.app.ui.time.SkyMoverItem
@@ -303,9 +306,9 @@ private fun TodayHeroCard(
                     textAlign = TextAlign.Center,
                 )
             } else {
-                // Signature Stitch Centered Glowing Circular Gradient Ring (164 dp)
+                // Signature Stitch Centered Glowing Circular Gradient Ring (176 dp)
                 Box(
-                    modifier = Modifier.size(164.dp),
+                    modifier = Modifier.size(176.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Canvas(modifier = Modifier.fillMaxSize()) {
@@ -336,16 +339,21 @@ private fun TodayHeroCard(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier.padding(horizontal = 14.dp),
                     ) {
                         Text(
                             text = "ATMOSPHERE",
                             style = MaterialTheme.typography.labelSmall,
                             color = KundliColors.TextMuted,
+                            maxLines = 1,
                         )
                         Text(
                             text = sky.currentBand.label.uppercase(),
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.headlineSmall,
                             color = bandColor,
+                            maxLines = 1,
+                            softWrap = false,
+                            textAlign = TextAlign.Center,
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -421,7 +429,7 @@ private fun TodayHeroCard(
                             HorizontalDivider(color = KundliColors.SubtleDivider)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 val f1 = sky.activeFactors.first()
@@ -430,12 +438,19 @@ private fun TodayHeroCard(
                                     text = "${f1.name}: ${if (f1.value >= 0) "+${f1.value}" else "${f1.value}"}",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = if (f1.value >= 0) KundliColors.Teal else KundliColors.Amber,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f),
                                 )
                                 if (f2 != null) {
                                     Text(
                                         text = "${f2.name}: ${if (f2.value >= 0) "+${f2.value}" else "${f2.value}"}",
                                         style = MaterialTheme.typography.labelSmall,
                                         color = KundliColors.Gold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        textAlign = TextAlign.End,
+                                        modifier = Modifier.weight(1f),
                                     )
                                 } else {
                                     Text("Tap math →", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
@@ -564,9 +579,10 @@ private fun CheckInBarStitch(
                             )
                             Text(
                                 text = label,
-                                style = MaterialTheme.typography.labelSmall,
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, letterSpacing = 0.2.sp),
                                 color = if (isSelected) KundliColors.OrbInk.copy(alpha = 0.85f) else KundliColors.TextMuted,
                                 maxLines = 1,
+                                softWrap = false,
                             )
                         }
                     }
@@ -840,91 +856,104 @@ private fun TodayPanchangMatrixCard(
                 }
             }
 
-            // 2x2 Recessed Matrix (Always visible on scroll — Stitch!)
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            // 2x2 Recessed Matrix (Equal-height flush rows via IntrinsicSize.Min)
+            Row(
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
                 PanchangMatrixTile(
                     label = "TITHI",
                     value = p?.tithi ?: "Computing…",
                     accent = KundliColors.Teal,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 PanchangMatrixTile(
                     label = "NAKSHATRA",
                     value = p?.nakshatra ?: "Computing…",
                     accent = KundliColors.Gold,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
                 PanchangMatrixTile(
                     label = "YOGA",
                     value = p?.yoga ?: "—",
                     accent = KundliColors.Teal,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 PanchangMatrixTile(
                     label = "KARANA",
                     value = p?.karana ?: "—",
                     accent = KundliColors.TextMuted,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
             }
 
-            // 3-Column Bottom Strip: Sunrise | Sunset | Amber Bordered Rahu Kalam
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // 3-Column Bottom Strip: Sunrise | Sunset | Amber Bordered Rahu Kalam (equal height)
+            Row(
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 Surface(
                     color = KundliColors.SurfaceRecessed,
                     border = BorderStroke(1.dp, KundliColors.SubtleDivider),
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 6.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
-                        Text("SUNRISE", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        Text("SUNRISE", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, maxLines = 1)
                         Spacer(Modifier.height(2.dp))
-                        Text(p?.sunrise ?: "--:--", style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                        Text(p?.sunrise ?: "—", style = TelemetryNumberStyle.copy(fontSize = 13.sp), color = KundliColors.TextMain, maxLines = 1, softWrap = false)
                     }
                 }
                 Surface(
                     color = KundliColors.SurfaceRecessed,
                     border = BorderStroke(1.dp, KundliColors.SubtleDivider),
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 6.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
-                        Text("SUNSET", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        Text("SUNSET", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, maxLines = 1)
                         Spacer(Modifier.height(2.dp))
-                        Text(p?.sunset ?: "--:--", style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                        Text(p?.sunset ?: "—", style = TelemetryNumberStyle.copy(fontSize = 13.sp), color = KundliColors.TextMain, maxLines = 1, softWrap = false)
                     }
                 }
                 Surface(
                     color = KundliColors.Amber.copy(alpha = 0.14f),
                     border = BorderStroke(1.dp, KundliColors.Amber.copy(alpha = 0.55f)),
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.weight(1.3f),
+                    modifier = Modifier.weight(1.45f).fillMaxHeight(),
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 6.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(3.dp),
                         ) {
                             Icon(Icons.Rounded.WarningAmber, contentDescription = null, tint = KundliColors.Amber, modifier = Modifier.size(12.dp))
-                            Text("RAHU KALAM", style = MaterialTheme.typography.labelSmall, color = KundliColors.Amber)
+                            Text("RAHU KALAM", style = MaterialTheme.typography.labelSmall, color = KundliColors.Amber, maxLines = 1, softWrap = false)
                         }
                         Spacer(Modifier.height(2.dp))
                         Text(
-                            text = sky.rahuKalamLabel.replace("Rahu Kalam", "", ignoreCase = true).trim().ifBlank { "Check wave" },
-                            style = TelemetryNumberStyle,
+                            text = sky.rahuKalamLabel.replace("Rahu Kalam", "", ignoreCase = true).replace(" to ", "–").trim().ifBlank { "—" },
+                            style = TelemetryNumberStyle.copy(fontSize = 12.sp),
                             color = KundliColors.Amber,
                             maxLines = 1,
+                            softWrap = false,
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
@@ -1235,7 +1264,7 @@ private fun ExploreYourChartGrid(onTapTopic: (String) -> Unit) {
 
         items.chunked(2).forEach { pair ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 pair.forEach { item ->
@@ -1245,6 +1274,7 @@ private fun ExploreYourChartGrid(onTapTopic: (String) -> Unit) {
                         shape = RoundedCornerShape(18.dp),
                         modifier = Modifier
                             .weight(1f)
+                            .fillMaxHeight()
                             .clickable { onTapTopic(item.topic) },
                     ) {
                         Column(

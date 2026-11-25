@@ -7,10 +7,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -282,17 +284,17 @@ private fun ChaptersSubPage(
                     )
                 }
 
-                // Left Gold-Bordered Editorial Quote Box (Stitch)
+                // Left Gold-Bordered Editorial Quote Box (Exact height via IntrinsicSize.Min)
                 Surface(
                     color = KundliColors.SurfaceRecessed,
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
                         Box(
                             modifier = Modifier
                                 .width(3.dp)
-                                .height(88.dp)
+                                .fillMaxHeight()
                                 .background(KundliColors.Gold),
                         )
                         Text(
@@ -367,7 +369,20 @@ private fun ChaptersSubPage(
                     )
                 }
             }
-            upcomingLords.forEach { (lord, subLabel, isMajor) ->
+            val renderedUpcoming = if (state.upcomingPeriods.isNotEmpty()) {
+                state.upcomingPeriods
+            } else {
+                upcomingLords.map { (lord, subLabel, isMajor) ->
+                    UpcomingDashaItem(
+                        title = if (isMajor) "$lord Mahadasha Begins" else "$lord Antardasha",
+                        subtitle = subLabel,
+                        dateRange = "Explore →",
+                        isMajorTransition = isMajor,
+                    )
+                }
+            }
+            renderedUpcoming.forEach { item ->
+                val isMajor = item.isMajorTransition
                 Surface(
                     color = KundliColors.Surface,
                     border = BorderStroke(1.dp, if (isMajor) KundliColors.GoldHairline else KundliColors.SubtleDivider),
@@ -376,12 +391,15 @@ private fun ChaptersSubPage(
                         .fillMaxWidth()
                         .clickable(onClick = onOpenTimeMachinePage),
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         if (isMajor) {
                             Box(
                                 modifier = Modifier
                                     .width(4.dp)
-                                    .height(64.dp)
+                                    .fillMaxHeight()
                                     .background(KundliColors.Gold),
                             )
                         }
@@ -400,13 +418,34 @@ private fun ChaptersSubPage(
                             )
                             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
-                                    text = if (isMajor) "$lord Mahadasha Begins" else "$lord Antardasha",
+                                    text = item.title,
                                     style = MaterialTheme.typography.titleSmall,
                                     color = if (isMajor) KundliColors.Gold else KundliColors.TextMain,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
-                                Text(subLabel, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                Text(
+                                    text = item.subtitle,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = KundliColors.TextMuted,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
                             }
-                            Text("Explore →", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                            Surface(
+                                color = KundliColors.SurfaceRecessed,
+                                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                shape = RoundedCornerShape(999.dp),
+                            ) {
+                                Text(
+                                    text = item.dateRange,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (isMajor) KundliColors.Gold else KundliColors.Teal,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                                )
+                            }
                         }
                     }
                 }
@@ -655,12 +694,12 @@ private fun MahadashaHorizonRibbon(
                                 if (isActive) KundliColors.Gold else KundliColors.SubtleDivider,
                             ),
                             shape = RoundedCornerShape(14.dp),
-                            modifier = Modifier.width(cardWidth),
+                            modifier = Modifier.width(cardWidth).height(80.dp),
                         ) {
                             Column(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
+                                modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                                verticalArrangement = Arrangement.Center,
                             ) {
                                 if (isActive) {
                                     Text("ACTIVE", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)

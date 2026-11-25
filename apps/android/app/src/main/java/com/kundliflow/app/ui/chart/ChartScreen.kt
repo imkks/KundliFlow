@@ -6,9 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -335,14 +337,23 @@ fun ChartScreen(
                 item {
                     val otherSelected = !TOP_VARGAS.contains(selectedVarga)
                     Box {
-                        Text(
-                            text = if (otherSelected) "${selectedVarga.label} ▾" else "More (D3–D60) ▾",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (otherSelected) KundliColors.Gold else KundliColors.TextMuted,
-                            modifier = Modifier
-                                .clickable { showMoreVargasMenu = true }
-                                .padding(bottom = 8.dp),
-                        )
+                        Column(
+                            modifier = Modifier.clickable { showMoreVargasMenu = true },
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = if (otherSelected) "● ${selectedVarga.label} ▾" else "More (D3–D60) ▾",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = if (otherSelected) KundliColors.Gold else KundliColors.TextMuted,
+                                modifier = Modifier.padding(bottom = 6.dp),
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .width(64.dp)
+                                    .height(2.dp)
+                                    .background(if (otherSelected) KundliColors.Gold else Color.Transparent),
+                            )
+                        }
                         DropdownMenu(
                             expanded = showMoreVargasMenu,
                             onDismissRequest = { showMoreVargasMenu = false },
@@ -487,31 +498,37 @@ fun ChartScreen(
                     }
                 }
 
-                // 2x2 Recessed Telemetry Cards Grid (Stitch)
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                // 2x2 Recessed Telemetry Cards Grid (Equal height via IntrinsicSize.Min)
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
                     TelemetryGridCard(
                         label = "SIGN & ELEMENT",
                         headline = currentHouseData.signName,
                         subline = signElementMeta(currentHouseData.signName),
                         headlineColor = KundliColors.TextMain,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
                     )
                     TelemetryGridCard(
                         label = "LORDSHIP",
                         headline = "${currentHouseData.lord.displayName} · H${currentHouseData.lordHouse}",
                         subline = lordPlacement?.let { "In ${it.signName} (${it.dignity})" } ?: "Placed in House ${currentHouseData.lordHouse}",
                         headlineColor = KundliColors.Gold,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
                     )
                 }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
                     TelemetryGridCard(
                         label = "SAV BINDUS",
                         headline = "${currentHouseData.savBindus} / 337",
                         subline = if (currentHouseData.savBindus >= 28) "Above average support" else "Focused effort domain",
                         headlineColor = if (currentHouseData.savBindus >= 28) KundliColors.Teal else KundliColors.Gold,
                         badge = if (currentHouseData.savBindus >= 28) "Strong" else null,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
                     )
                     val occHeadline = if (currentHouseData.planets.isEmpty()) "Unoccupied" else currentHouseData.planets.joinToString(" · ") { it.shortGlyph }
                     val occSub = if (incomingAspects.isEmpty()) "No incoming Drishti" else "${incomingAspects.size} Drishti aspect(s)"
@@ -520,7 +537,7 @@ fun ChartScreen(
                         headline = occHeadline,
                         subline = occSub,
                         headlineColor = KundliColors.TextMain,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
                     )
                 }
 
@@ -646,9 +663,12 @@ fun ChartScreen(
                 )
             }
 
-            // 2-Up Yoga Cards
+            // 2-Up Yoga Cards (Equal height via IntrinsicSize.Min)
             if (displayedChart.activeYogas.isNotEmpty()) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
                     displayedChart.activeYogas.take(2).forEachIndexed { idx, yoga ->
                         val accent = if (idx == 0) KundliColors.Gold else KundliColors.Teal
                         Surface(
@@ -657,6 +677,7 @@ fun ChartScreen(
                             shape = RoundedCornerShape(16.dp),
                             modifier = Modifier
                                 .weight(1f)
+                                .fillMaxHeight()
                                 .clickable(onClick = onOpenStrengthsPage),
                         ) {
                             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -713,27 +734,32 @@ fun ChartScreen(
                             Text("SHADBALA SPOTLIGHT", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMain)
                             Text("Positional & Directional Ratio", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
                         }
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
                             topShadbala.forEachIndexed { idx, bar ->
                                 val color = if (idx == 0) KundliColors.Teal else KundliColors.Gold
                                 Surface(
                                     color = KundliColors.SurfaceRecessed,
                                     border = BorderStroke(1.dp, KundliColors.SubtleDivider),
                                     shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.weight(1f).fillMaxHeight(),
                                 ) {
                                     Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                        Text(bar.planet.displayName, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                        Text(bar.planet.displayName, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, maxLines = 1)
                                         Text(
                                             text = String.format(Locale.US, "%.2fx", bar.ratio),
                                             style = TelemetryNumberStyle,
                                             color = color,
                                         )
                                         Text(
-                                            text = if (bar.ratio >= 1.0f) "Above baseline" else "Developing",
+                                            text = bar.rupas?.let { String.format(Locale.US, "%.1f Rupa", it) }
+                                                ?: if (bar.ratio >= 1.0f) "Strong" else "Steady",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = KundliColors.TextMuted,
                                             maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
                                         )
                                     }
                                 }
@@ -843,23 +869,25 @@ fun ChartScreen(
         ) {
             Button(
                 onClick = { onAskAboutHouse(selectedHouse ?: 1) },
-                modifier = Modifier.weight(1f).height(48.dp),
+                modifier = Modifier.weight(1.15f).height(48.dp),
                 shape = RoundedCornerShape(14.dp),
+                contentPadding = PaddingValues(horizontal = 10.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
             ) {
                 Icon(Icons.Rounded.AutoAwesome, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("Ask AI about H${selectedHouse ?: 1}", style = MaterialTheme.typography.labelLarge)
+                Text("Ask AI · H${selectedHouse ?: 1}", style = MaterialTheme.typography.labelLarge, maxLines = 1, softWrap = false)
             }
             OutlinedButton(
                 onClick = onReflectInJournal,
-                modifier = Modifier.weight(1f).height(48.dp),
+                modifier = Modifier.weight(0.85f).height(48.dp),
                 shape = RoundedCornerShape(14.dp),
+                contentPadding = PaddingValues(horizontal = 10.dp),
                 border = BorderStroke(1.dp, KundliColors.SubtleDivider),
             ) {
                 Icon(Icons.Rounded.EditNote, contentDescription = null, tint = KundliColors.TextMain, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("Reflect", color = KundliColors.TextMain, style = MaterialTheme.typography.labelLarge)
+                Text("Reflect", color = KundliColors.TextMain, style = MaterialTheme.typography.labelLarge, maxLines = 1, softWrap = false)
             }
         }
     }

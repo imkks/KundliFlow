@@ -23,6 +23,7 @@ import com.kundliflow.app.ui.time.MonthDayCell
 import com.kundliflow.app.ui.time.NextShiftDelta
 import com.kundliflow.app.ui.time.SkyMoverItem
 import com.kundliflow.app.ui.time.TimeTabState
+import com.kundliflow.app.ui.time.UpcomingDashaItem
 import com.kundliflow.app.ui.today.HoraSlot
 import com.kundliflow.app.ui.today.HourlyScorePoint
 import com.kundliflow.app.ui.today.PanchangSummary
@@ -152,7 +153,8 @@ object BundleMappers {
     ): FrozenSkySnapshot {
         val root = todayJson?.let { runCatching { json.parseToJsonElement(it).jsonObject }.getOrNull() }
         val tr = root?.obj("transits")
-        val moonObj = tr?.obj("planets")?.obj("moon")
+        val moonObj = tr?.obj("transits")?.obj("moon")
+            ?: tr?.obj("planets")?.obj("moon")
             ?: tr?.arr("planets")?.firstOrNull { it.jsonObject.str("id") == "moon" }?.jsonObject
         val moonSign = cap(moonObj?.str("sign") ?: extractNatalSummaryFull(level1Json ?: "").moonSign)
         val moonSignIdx = moonObj?.int("signIndex")
@@ -259,7 +261,7 @@ object BundleMappers {
             ?: dayView.obj("inauspicious")?.obj("rahuKalam")?.str("startFormatted") ?: "—"
         val rahuEnd = dayView.obj("rahuKalam")?.str("end")
             ?: dayView.obj("inauspicious")?.obj("rahuKalam")?.str("endFormatted") ?: "—"
-        val rahuLabel = if (rahuStart != "—") "$rahuStart to $rahuEnd" else "—"
+        val rahuLabel = if (rahuStart != "—") "$rahuStart–$rahuEnd" else "—"
 
         val bestWin = dayView.arr("flowingWindows").firstOrNull()?.jsonObject
         val bestLabel = if (bestWin != null) "${bestWin.str("startHour")} to ${bestWin.str("endHour")}" else "Steady day"
@@ -271,16 +273,31 @@ object BundleMappers {
         val chapterSubtitle = extractActiveChapterSubtitle(root, level2Json)
 
         val panchangObj = dayView.obj("panchang") ?: root.obj("panchang")
+        // Real Sunrise = Hora 1 start; Real Sunset = Hora 12 end / Hora 13 start from buildDay()
+        val sunriseFromHoras = horas.firstOrNull()?.first?.startTime
+        val sunsetFromHoras = horas.getOrNull(11)?.first?.endTime ?: horas.getOrNull(12)?.first?.startTime
         val panchangSummary = panchangObj?.let { p ->
             fun readPanchangField(key: String): String =
                 p.str(key) ?: p.obj(key)?.str("name") ?: p.obj(key)?.str("label") ?: "—"
+            val tithiObj = p.obj("tithi")
+            val tithiFull = if (tithiObj != null) {
+                val paksha = tithiObj.str("paksha")?.takeIf { it.isNotBlank() }
+                val name = tithiObj.str("name") ?: "—"
+                if (paksha != null && !name.contains(paksha, ignoreCase = true)) "$paksha $name" else name
+            } else readPanchangField("tithi")
+            val nakObj = p.obj("nakshatra")
+            val nakFull = if (nakObj != null) {
+                val name = nakObj.str("name") ?: "—"
+                val pada = nakObj.int("pada")
+                if (pada != null) "$name · Pada $pada" else name
+            } else readPanchangField("nakshatra")
             PanchangSummary(
-                tithi = readPanchangField("tithi"),
-                nakshatra = readPanchangField("nakshatra"),
+                tithi = tithiFull,
+                nakshatra = nakFull,
                 yoga = readPanchangField("yoga"),
                 karana = readPanchangField("karana"),
-                sunrise = p.str("sunriseFormatted") ?: p.str("sunrise") ?: dayView.str("sunriseFormatted") ?: "—",
-                sunset = p.str("sunsetFormatted") ?: p.str("sunset") ?: dayView.str("sunsetFormatted") ?: "—",
+                sunrise = p.str("sunriseFormatted") ?: p.str("sunrise") ?: dayView.str("sunriseFormatted") ?: sunriseFromHoras ?: "—",
+                sunset = p.str("sunsetFormatted") ?: p.str("sunset") ?: dayView.str("sunsetFormatted") ?: sunsetFromHoras ?: "—",
             )
         }
 
@@ -433,15 +450,21 @@ object BundleMappers {
             )
         }
 
-        // Shadbala bars from level2Static.standard.strengths.planets
+        // Shadbala bars from level2Static.standard.strengths.planets (includes rupas, baladi, plainSummary)
         val shadbalaBars = l2.obj("standard")?.obj("strengths")?.arr("planets")?.mapNotNull { el ->
             val o = el.jsonObject
             val pName = o.str("planet") ?: return@mapNotNull null
             val ratio = o.flt("ratio") ?: return@mapNotNull null
-            ShadbalaBarItem(parsePlanetId(pName), ratio)
+            ShadbalaBarItem(
+                planet = parsePlanetId(pName),
+                ratio = ratio,
+                rupas = o.flt("rupas"),
+                baladi = o.str("baladi")?.takeIf { it != "—" } ?: "",
+                plainSummary = o.str("plainSummary") ?: "",
+            )
         } ?: emptyList()
 
-        // Yogas & Doshas from level2Static.standard.yogas
+        // Yogas & Doshas from level2Static.standard.yogas (backend emits plainMeaning + cancellationNote)
         val allYogas = l2.obj("standard")?.arr("yogas") ?: JsonArray(emptyList())
         val activeYogas = allYogas.mapNotNull { el ->
             val o = el.jsonObject
@@ -453,7 +476,7 @@ object BundleMappers {
                 YogaDetailItem(
                     name = name,
                     category = cap(o.str("category") ?: "Classical"),
-                    meaning = o.str("meaning") ?: o.str("description") ?: o.str("summary") ?: "Classical Parashari combination active in your natal chart.",
+                    meaning = o.str("plainMeaning") ?: o.str("meaning") ?: o.str("description") ?: o.str("summary") ?: "Classical Parashari combination active in your natal chart.",
                     planets = planetsText,
                 )
             } else null
@@ -463,7 +486,8 @@ object BundleMappers {
             val o = el.jsonObject
             if (o.str("category") == "dosha") {
                 val present = o.bool("presence") == true
-                val cancelled = o.bool("cancelled") == true || o.str("status")?.contains("cancel", ignoreCase = true) == true
+                val cancelNote = o.str("cancellationNote")?.takeIf { it.isNotBlank() }
+                val cancelled = cancelNote != null || o.bool("cancelled") == true || o.str("status")?.contains("cancel", ignoreCase = true) == true
                 val statusLabel = when {
                     cancelled -> "Cancelled by Bhanga"
                     !present -> "Verified Absent"
@@ -473,16 +497,17 @@ object BundleMappers {
                     name = o.str("name") ?: "Dosha",
                     status = statusLabel,
                     bhangaCancelled = cancelled || !present,
-                    explanation = o.str("meaning") ?: o.str("description") ?: "",
+                    explanation = cancelNote ?: o.str("plainMeaning") ?: o.str("meaning") ?: o.str("description") ?: "",
                 )
             } else null
         }
 
-        // Live transit Moon house from /today transits
+        // Live transit Moon house from /today transits (nested under transits.transits.moon)
         val liveMoonHouse = todayJson?.let { tj ->
             runCatching {
                 val trRoot = json.parseToJsonElement(tj).jsonObject.obj("transits")
-                val moonTr = trRoot?.obj("planets")?.obj("moon")
+                val moonTr = trRoot?.obj("transits")?.obj("moon")
+                    ?: trRoot?.obj("planets")?.obj("moon")
                     ?: trRoot?.arr("planets")?.firstOrNull { it.jsonObject.str("id") == "moon" }?.jsonObject
                 if (reference == ChartReference.MOON) {
                     moonTr?.int("houseFromMoon") ?: moonTr?.int("houseFromLagna")
@@ -743,24 +768,24 @@ object BundleMappers {
             DashaSystem.YOGINI to ActiveDashaState(
                 system = DashaSystem.YOGINI,
                 mahadashaLord = cap(yog?.str("maha") ?: "—"),
-                mahadashaProgress = computeElapsedProgress(yog?.str("mahaStart"), yog?.str("mahaEnd"), nowEpochMs),
-                mahadashaRange = yog?.str("mahaRange") ?: "${yog?.str("mahaStart")?.take(4) ?: "—"}–${yog?.str("mahaEnd")?.take(4) ?: "—"}",
-                antardashaLord = cap(yog?.str("antar") ?: "—"),
-                antardashaProgress = computeElapsedProgress(yog?.str("antarStart"), yog?.str("antarEnd"), nowEpochMs),
-                antardashaRange = yog?.str("antarRange") ?: "${yog?.str("antarStart")?.take(7) ?: "—"}–${yog?.str("antarEnd")?.take(7) ?: "—"}",
-                pratyantarLord = cap(yog?.str("mahaLord") ?: "—"),
-                plainMeaning = yog?.str("theme") ?: "36-year Yogini cycle perspective.",
+                mahadashaProgress = computeElapsedProgress(yog?.str("mahaStart"), yog?.str("mahaEnd"), nowEpochMs).takeIf { it > 0f } ?: 0.5f,
+                mahadashaRange = yog?.str("mahaRange") ?: yog?.str("mahaEnd")?.let { "Ends $it" } ?: "—",
+                antardashaLord = cap(yog?.str("antar") ?: yog?.str("mahaLord") ?: "—"),
+                antardashaProgress = computeElapsedProgress(yog?.str("antarStart"), yog?.str("antarEnd"), nowEpochMs).takeIf { it > 0f } ?: 0.5f,
+                antardashaRange = yog?.str("antarRange") ?: yog?.str("antarEnd")?.let { "Ends $it" } ?: "—",
+                pratyantarLord = cap(yog?.str("antarLord") ?: yog?.str("mahaLord") ?: "—"),
+                plainMeaning = yog?.str("plainSummary") ?: yog?.str("theme") ?: "36-year Yogini cycle perspective.",
             ),
             DashaSystem.CHARA to ActiveDashaState(
                 system = DashaSystem.CHARA,
                 mahadashaLord = cap(cha?.str("mahaSign") ?: "—"),
-                mahadashaProgress = computeElapsedProgress(cha?.str("mahaStart"), cha?.str("mahaEnd"), nowEpochMs),
-                mahadashaRange = cha?.str("mahaRange") ?: "${cha?.str("mahaStart")?.take(4) ?: "—"}–${cha?.str("mahaEnd")?.take(4) ?: "—"}",
+                mahadashaProgress = computeElapsedProgress(cha?.str("mahaStart"), cha?.str("mahaEnd"), nowEpochMs).takeIf { it > 0f } ?: 0.5f,
+                mahadashaRange = cha?.str("mahaRange") ?: cha?.str("mahaEnd")?.let { "Ends $it" } ?: "—",
                 antardashaLord = cap(cha?.str("antarSign") ?: "—"),
-                antardashaProgress = computeElapsedProgress(cha?.str("antarStart"), cha?.str("antarEnd"), nowEpochMs),
-                antardashaRange = cha?.str("antarRange") ?: "${cha?.str("antarStart")?.take(7) ?: "—"}–${cha?.str("antarEnd")?.take(7) ?: "—"}",
+                antardashaProgress = computeElapsedProgress(cha?.str("antarStart"), cha?.str("antarEnd"), nowEpochMs).takeIf { it > 0f } ?: 0.5f,
+                antardashaRange = cha?.str("antarRange") ?: cha?.str("antarEnd")?.let { "Ends $it" } ?: "—",
                 pratyantarLord = "House ${cha?.int("mahaHouse") ?: 1}",
-                plainMeaning = "Jaimini sign-based Chara Dasha chapter.",
+                plainMeaning = cha?.str("plainSummary") ?: "Jaimini sign-based Chara Dasha chapter.",
             ),
         )
 
@@ -798,22 +823,81 @@ object BundleMappers {
             )
         }
 
-        val transitList = std?.obj("transits")?.arr("planets")?.map { el ->
+        // Merge live /today transits (transits.transits) with level2 plainMeaning & order slow movers first
+        val l2MeaningsByPlanet = std?.obj("transits")?.arr("planets")?.associate { el ->
             val o = el.jsonObject
-            SkyMoverItem(
-                planet = parsePlanetId(o.str("planet") ?: o.str("id")),
-                signName = cap(o.str("sign") ?: ""),
-                houseFromLagna = o.int("houseFromLagna") ?: 1,
-                houseFromMoon = o.int("houseFromMoon") ?: 1,
-                plainMeaning = o.str("plainMeaning") ?: o.str("summary") ?: "Active transit",
-                vedhaNote = o.str("vedhaNote") ?: "Clear transit",
-                kakshyaLabel = o.str("kakshya") ?: "K1",
-            )
-        } ?: emptyList()
+            parsePlanetId(o.str("planet") ?: o.str("id")) to (o.str("plainMeaning") ?: o.str("summary") ?: "")
+        } ?: emptyMap()
 
-        val sadeSati = std?.obj("transits")?.obj("sadeSati")?.str("phase")
-            ?: std?.obj("transits")?.obj("sadeSati")?.str("status")
-            ?: "Not currently active"
+        val todayTransitsRoot = todayJson?.let { runCatching { json.parseToJsonElement(it).jsonObject.obj("transits") }.getOrNull() }
+        val liveTransitsMap = todayTransitsRoot?.obj("transits")
+        val priorityOrder = listOf(
+            PlanetId.SATURN, PlanetId.JUPITER, PlanetId.RAHU, PlanetId.KETU,
+            PlanetId.MOON, PlanetId.MARS, PlanetId.VENUS, PlanetId.MERCURY, PlanetId.SUN,
+        )
+
+        val transitList: List<SkyMoverItem> = if (liveTransitsMap != null && liveTransitsMap.isNotEmpty()) {
+            priorityOrder.mapNotNull { pid ->
+                val o = liveTransitsMap.obj(pid.name.lowercase()) ?: return@mapNotNull null
+                val sign = cap(o.str("sign") ?: "")
+                val hLagna = o.int("houseFromLagna") ?: 1
+                val hMoon = o.int("houseFromMoon") ?: 1
+                val bindus = o.int("ashtakvargaBindus")
+                val retro = o.bool("retrograde") == true
+                val vedhaBlocked = o.obj("vedha")?.bool("hasVedha") == true
+                val kakshyaLord = o.obj("kakshya")?.str("kakshyaLord")?.let { cap(it) }
+                val fallbackMeaning = buildString {
+                    append("${pid.displayName} transits $sign (House $hLagna from Lagna, House $hMoon from Moon)")
+                    if (bindus != null) append(" with $bindus/8 BAV bindus")
+                    if (retro) append(" · Retrograde")
+                }
+                SkyMoverItem(
+                    planet = pid,
+                    signName = sign,
+                    houseFromLagna = hLagna,
+                    houseFromMoon = hMoon,
+                    plainMeaning = l2MeaningsByPlanet[pid]?.takeIf { it.isNotBlank() } ?: fallbackMeaning,
+                    vedhaNote = if (vedhaBlocked) "Vedha obstruction active" else "Clear Gochar transit",
+                    kakshyaLabel = when {
+                        kakshyaLord != null -> "$kakshyaLord Kakshya"
+                        bindus != null -> "$bindus/8 Bindus"
+                        else -> if (retro) "Retrograde" else "Direct"
+                    },
+                )
+            }
+        } else {
+            (std?.obj("transits")?.arr("planets")?.map { el ->
+                val o = el.jsonObject
+                val bindus = o.int("bindus")
+                SkyMoverItem(
+                    planet = parsePlanetId(o.str("planet") ?: o.str("id")),
+                    signName = cap(o.str("sign") ?: ""),
+                    houseFromLagna = o.int("houseFromLagna") ?: 1,
+                    houseFromMoon = o.int("houseFromMoon") ?: 1,
+                    plainMeaning = o.str("plainMeaning") ?: o.str("summary") ?: "Active transit",
+                    vedhaNote = o.str("bavQuality")?.let { "${cap(it)} BAV transit" } ?: "Clear transit",
+                    kakshyaLabel = if (bindus != null) "$bindus/8 Bindus" else (o.str("kakshya") ?: "Direct"),
+                )
+            } ?: emptyList()).sortedBy { priorityOrder.indexOf(it.planet).let { i -> if (i < 0) 99 else i } }
+        }
+
+        val sadeObj = todayTransitsRoot?.obj("sadeSati") ?: std?.obj("transits")?.obj("sadeSati")
+        val sadeSati = if (sadeObj != null) {
+            val active = sadeObj.bool("isActive") == true
+            val phase = sadeObj.str("phase")?.takeIf { it != "none" && it.isNotBlank() }
+            val satHouse = sadeObj.int("houseFromMoon")
+            val ashtama = sadeObj.bool("isAshtamaShani") == true
+            val kantaka = sadeObj.bool("isKantakaShani") == true
+            when {
+                active && phase != null -> "Active · ${cap(phase)} phase (Saturn in H${satHouse ?: 1} from Moon)"
+                ashtama -> "Ashtama Shani (Saturn in 8th from Moon)"
+                kantaka -> "Kantaka Shani (Saturn in H${satHouse ?: 4} from Moon)"
+                satHouse != null -> "Inactive · Saturn in H$satHouse from Moon"
+                else -> "Inactive"
+            }
+        } else {
+            "Not currently active"
+        }
 
         val nextShift = resolveRealNextShiftDelta(
             level1Json = level1Json,
@@ -821,10 +905,12 @@ object BundleMappers {
             fallbackEndDate = antarEnd?.take(10),
             nowEpochMs = nowEpochMs,
         )
+        val upcomingPeriods = resolveUpcomingPeriods(level1Json, nowEpochMs)
 
         return TimeTabState(
             activeDashas = dashaMap,
             nextShift = nextShift,
+            upcomingPeriods = upcomingPeriods,
             calendarYear = year,
             calendarMonth = month,
             monthTitle = monthTitle,
@@ -902,6 +988,53 @@ object BundleMappers {
             houseFocusShift = "Open 'Now' chapter for full period timeline",
         )
     }
+
+    /**
+     * Reads the next 3 real upcoming Antardashas / Mahadasha transitions directly from level1Static.dashas
+     * with exact dates and natal house focus.
+     */
+    fun resolveUpcomingPeriods(
+        level1Json: String,
+        nowEpochMs: Long = System.currentTimeMillis(),
+    ): List<UpcomingDashaItem> = runCatching {
+        val nowIso = Instant.ofEpochMilli(nowEpochMs).toString().take(10)
+        val l1 = json.parseToJsonElement(level1Json).jsonObject
+        val mahaList = l1.obj("dashas")?.arr("mahadashas")
+            ?.ifEmpty { l1.obj("dashas")?.arr("periods") ?: JsonArray(emptyList()) }
+            ?: JsonArray(emptyList())
+
+        data class FlatAntar(val mahaLord: String, val antarLord: String, val start: String, val end: String, val isFirstInMaha: Boolean)
+        val flat = mutableListOf<FlatAntar>()
+        mahaList.forEach { mEl ->
+            val m = mEl.jsonObject
+            val mLord = cap(m.str("lord") ?: "")
+            val antars = m.arr("antardashas").ifEmpty { m.arr("subPeriods") }
+            antars.forEachIndexed { idx, aEl ->
+                val a = aEl.jsonObject
+                val aLord = cap(a.str("lord") ?: "")
+                val s = (a.str("startUtc") ?: a.str("start") ?: "").take(10)
+                val e = (a.str("endUtc") ?: a.str("end") ?: "").take(10)
+                if (s.isNotBlank() && e.isNotBlank()) {
+                    flat.add(FlatAntar(mLord, aLord, s, e, idx == 0))
+                }
+            }
+        }
+        val currentIdx = flat.indexOfFirst { nowIso >= it.start && nowIso <= it.end }
+        if (currentIdx < 0) return@runCatching emptyList()
+        val currentMaha = flat[currentIdx].mahaLord
+
+        flat.drop(currentIdx + 1).take(3).map { item ->
+            val isMajor = item.mahaLord != currentMaha && item.isFirstInMaha
+            val h = findHoraRulerNatalHouse(level1Json, parsePlanetId(if (isMajor) item.mahaLord else item.antarLord))
+            val theme = if (h != null) "Activates House $h (${houseShortTheme(h)})" else "${item.mahaLord}–${item.antarLord} cycle"
+            UpcomingDashaItem(
+                title = if (isMajor) "${item.mahaLord} Mahadasha Begins" else "${item.antarLord} Antardasha",
+                subtitle = "$theme · ${item.mahaLord} Maha",
+                dateRange = "${item.start.take(7)} – ${item.end.take(7)}",
+                isMajorTransition = isMajor,
+            )
+        }
+    }.getOrDefault(emptyList())
 
     /**
      * Detects P4 Live Sky Events locally (Antardasha shift within 48h from /bundle,

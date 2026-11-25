@@ -53,9 +53,18 @@ data class SkyMoverItem(
 )
 
 @Immutable
+data class UpcomingDashaItem(
+    val title: String,
+    val subtitle: String,
+    val dateRange: String,
+    val isMajorTransition: Boolean = false,
+)
+
+@Immutable
 data class TimeTabState(
     val activeDashas: Map<DashaSystem, ActiveDashaState>,
     val nextShift: NextShiftDelta,
+    val upcomingPeriods: List<UpcomingDashaItem> = emptyList(),
     val calendarYear: Int,
     val calendarMonth: Int,
     val monthTitle: String,

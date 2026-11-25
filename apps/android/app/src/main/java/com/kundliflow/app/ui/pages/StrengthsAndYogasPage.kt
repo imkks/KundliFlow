@@ -48,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.chart.ChartUiState
 import com.kundliflow.app.ui.subject.PlanetId
@@ -62,7 +63,7 @@ fun StrengthsAndYogasPage(
     onAskAboutStrengths: () -> Unit,
     onBack: () -> Unit,
 ) {
-    val tabs = listOf("Yogas & Audits", "Planetary Power", "Soul & Maitri")
+    val tabs = listOf("Yogas & Audits", "Power & SAV", "Soul & Maitri")
     val pagerState = rememberPagerState(pageCount = { tabs.size })
     val scope = rememberCoroutineScope()
 
@@ -174,7 +175,7 @@ fun StrengthsAndYogasPage(
                             .clickable { scope.launch { pagerState.animateScrollToPage(idx) } },
                     ) {
                         Box(
-                            modifier = Modifier.padding(vertical = 8.dp),
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
@@ -182,6 +183,8 @@ fun StrengthsAndYogasPage(
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (active) KundliColors.Gold else KundliColors.TextMuted,
                                 maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
                     }
@@ -336,9 +339,13 @@ private fun PlanetaryPowerTab(chart: ChartUiState) {
                             }
                         }
                         Text(
-                            text = if (above) "Above 1.00× threshold" else "Developing vitality",
+                            text = bar.rupas?.let { r ->
+                                "${String.format(Locale.US, "%.1f", r)} Rupa" + if (bar.baladi.isNotBlank()) " · ${bar.baladi}" else ""
+                            } ?: if (above) "Above 1.00× threshold" else "Developing vitality",
                             style = MaterialTheme.typography.labelSmall,
                             color = if (above) KundliColors.Teal else KundliColors.TextMuted,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
@@ -364,7 +371,11 @@ private fun PlanetaryPowerTab(chart: ChartUiState) {
                     }
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(bar.planet.displayName, style = MaterialTheme.typography.bodySmall, color = if (bar.ratio >= 1.2f) KundliColors.Teal else KundliColors.TextMain)
+                            Text(
+                                text = bar.planet.displayName + (bar.rupas?.let { " · ${String.format(Locale.US, "%.1f", it)} Rupa" } ?: ""),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (bar.ratio >= 1.2f) KundliColors.Teal else KundliColors.TextMain,
+                            )
                             Text(String.format(Locale.US, "%.2fx", bar.ratio), style = TelemetryNumberStyle, color = barColor)
                         }
                         LinearProgressIndicator(

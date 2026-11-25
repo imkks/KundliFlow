@@ -37,6 +37,9 @@ data class ChartHouseData(
 data class ShadbalaBarItem(
     val planet: PlanetId,
     val ratio: Float, // >= 1.0f meets classical threshold
+    val rupas: Float? = null,
+    val baladi: String = "",
+    val plainSummary: String = "",
 )
 
 @Immutable

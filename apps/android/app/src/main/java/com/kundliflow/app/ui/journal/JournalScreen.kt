@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -338,11 +340,14 @@ fun JournalScreen(
                         shape = RoundedCornerShape(18.dp),
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
                             Box(
                                 modifier = Modifier
                                     .width(4.dp)
-                                    .height(82.dp)
+                                    .fillMaxHeight()
                                     .background(KundliColors.Gold),
                             )
                             Column(
@@ -498,6 +503,8 @@ private fun WeeklyRhythmCard(
                             text = shortBand,
                             style = MaterialTheme.typography.labelSmall,
                             color = if (filled) dotColor else KundliColors.TextMuted,
+                            maxLines = 1,
+                            softWrap = false,
                         )
                     }
                 }
@@ -547,9 +554,11 @@ private fun JournalEntryCard(
                 modifier = Modifier.clickable(onClick = onTapSky),
             ) {
                 Text(
-                    text = "● ${entry.sky.band.label} · ${entry.sky.moonSign} · ${entry.sky.horaRuler} Hora",
+                    text = "● ${entry.sky.band.label} · ${entry.sky.moonSign} · ${entry.sky.horaRuler.displayName} Hora",
                     style = MaterialTheme.typography.labelMedium,
                     color = KundliColors.OrbInk,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
                 )
             }
