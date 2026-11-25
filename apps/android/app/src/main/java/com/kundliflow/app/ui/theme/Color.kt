@@ -9,20 +9,21 @@ import androidx.compose.ui.graphics.Color
  * Preserves 100% of the Midnight Indigo, Gold, Celestial Teal, Amber & Parchment palette.
  */
 object KundliColors {
-    val BgInk = Color(0xFF15132B)
-    val Surface = Color(0xFF201D40)
-    val SurfaceAlt = Color(0xFF2A2652)
-    val GlassDockIndigo = Color(0xEB201D40) // 92% alpha
-    val TextMain = Color(0xFFF3EEE2)
-    val TextMuted = Color(0xFFA6A0BA)
+    val BgInk = Color(0xFF121028)            // Stitch nocturnal space canvas
+    val Surface = Color(0xFF1E1B38)          // Stitch primary almanac card
+    val SurfaceRecessed = Color(0xFF14122B)  // Stitch dark inner telemetry tile
+    val SurfaceAlt = Color(0xFF29264B)       // Stitch elevated active chip/tile
+    val GlassDockIndigo = Color(0xF01C1936)  // 94% alpha floating capsule dock
+    val TextMain = Color(0xFFF3EEE2)         // Warm Parchment
+    val TextMuted = Color(0xFFA6A0BA)        // Muted Lavender-Grey
 
     val Gold = Color(0xFFE3AD46)       // Steady band, active tab, chart lines, lit discovery
     val Teal = Color(0xFF5FC2B3)       // Flowing band, NOW markers, Ask orb, Bhanga, Moon pulse
     val Amber = Color(0xFFD97736)      // Go gently band (never red for astrological states)
     val AlertCrimson = Color(0xFFF87171) // Destructive UI actions & network errors ONLY
 
-    val GoldHairline = Color(0x33E3AD46)   // 20% alpha
-    val SubtleDivider = Color(0x14F3EEE2)  // 8% alpha
+    val GoldHairline = Color(0x3BE3AD46)   // 23% alpha crisp jewel hairline
+    val SubtleDivider = Color(0x1CF3EEE2)  // 11% alpha subtle border
     val OrbInk = Color(0xFF121026)
 
     val AskOrbBrush = Brush.linearGradient(
@@ -34,11 +35,11 @@ object KundliColors {
     fun cosmicHeroRadial(width: Float, height: Float): Brush =
         Brush.radialGradient(
             colors = listOf(
-                Gold.copy(alpha = 0.14f),
-                Teal.copy(alpha = 0.06f),
-                BgInk,
+                Gold.copy(alpha = 0.16f),
+                Teal.copy(alpha = 0.08f),
+                Surface,
             ),
-            center = Offset(width * 0.85f, height * 0.12f),
-            radius = maxOf(width, height) * 0.9f,
+            center = Offset(width * 0.5f, height * 0.30f),
+            radius = maxOf(width, height) * 0.72f,
         )
 }

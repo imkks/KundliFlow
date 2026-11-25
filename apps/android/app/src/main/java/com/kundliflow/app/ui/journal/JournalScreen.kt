@@ -3,6 +3,7 @@ package com.kundliflow.app.ui.journal
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -133,34 +135,66 @@ fun JournalScreen(
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // 1. Your Patterns Card (readable 3-line summary + 1-tap expand for full note & math)
+            // 1. Your Sky Patterns · Calibration Explorer Card (Stitch journal_expansive.png)
             item {
+                val remaining = (30 - entries.size).coerceAtLeast(0)
                 Surface(
                     color = KundliColors.Surface,
                     border = BorderStroke(1.dp, KundliColors.GoldHairline),
-                    shape = RoundedCornerShape(18.dp),
+                    shape = RoundedCornerShape(20.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp)
                         .clickable { expandPatterns = !expandPatterns },
                 ) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalAlignment = Alignment.Top,
                         ) {
-                            Text(
-                                text = patternStage.headline,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = KundliColors.Gold,
-                            )
-                            Text(
-                                text = if (expandPatterns) "Less ▲" else "Insights ▾",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = KundliColors.Teal,
-                            )
+                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Your Sky Patterns · Calibration",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = KundliColors.TextMain,
+                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    Surface(
+                                        color = KundliColors.Gold.copy(alpha = 0.14f),
+                                        shape = RoundedCornerShape(999.dp),
+                                    ) {
+                                        Text(
+                                            text = "${entries.size} of 30 entries logged",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = KundliColors.Gold,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                        )
+                                    }
+                                    Text("· No deadline", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                }
+                            }
+                            Surface(
+                                color = KundliColors.SurfaceRecessed,
+                                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.clickable {
+                                    expandPatterns = true
+                                    showPatternMath = !showPatternMath
+                                },
+                            ) {
+                                Text(
+                                    text = if (showPatternMath) "Hide math" else "Show math",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = KundliColors.Gold,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                )
+                            }
                         }
+
                         Text(
                             text = patternStage.body,
                             style = MaterialTheme.typography.bodySmall,
@@ -168,56 +202,65 @@ fun JournalScreen(
                             maxLines = if (expandPatterns) 10 else 3,
                             overflow = TextOverflow.Ellipsis,
                         )
-                        // Visual Band Comparison Bars (Stitch Calibration Explorer)
-                        if (entries.isNotEmpty()) {
-                            Spacer(Modifier.height(4.dp))
-                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+
+                        // Recessed Dark Band Comparison Bars Box (Stitch)
+                        Surface(
+                            color = KundliColors.SurfaceRecessed,
+                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                            shape = RoundedCornerShape(14.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 bandAverages.forEach { (band, avg, count) ->
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    ) {
-                                        Text(
-                                            text = band.label,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = band.color,
-                                            modifier = Modifier.weight(0.28f),
-                                        )
+                                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Text("● ${band.label} hours", style = MaterialTheme.typography.labelSmall, color = band.color)
+                                            Text(
+                                                text = if (count > 0) "${String.format(Locale.US, "%.1f", avg)} / 5" else "—",
+                                                style = TelemetryNumberStyle,
+                                                color = KundliColors.TextMain,
+                                            )
+                                        }
                                         LinearProgressIndicator(
-                                            progress = { (avg / 5f).coerceIn(0.04f, 1f) },
-                                            modifier = Modifier
-                                                .weight(0.52f)
-                                                .height(6.dp)
-                                                .clip(RoundedCornerShape(3.dp)),
+                                            progress = { if (count > 0) (avg / 5f).coerceIn(0.06f, 1f) else 0.04f },
+                                            modifier = Modifier.fillMaxWidth().height(7.dp).clip(RoundedCornerShape(4.dp)),
                                             color = if (count > 0) band.color else KundliColors.SubtleDivider,
-                                            trackColor = KundliColors.SurfaceAlt,
-                                        )
-                                        Text(
-                                            text = if (count > 0) "${String.format(Locale.US, "%.1f", avg)}/5" else "—",
-                                            style = TelemetryNumberStyle,
-                                            color = KundliColors.TextMuted,
-                                            modifier = Modifier.weight(0.20f),
+                                            trackColor = KundliColors.Surface,
                                         )
                                     }
                                 }
                             }
                         }
-                        if (expandPatterns && patternStage.fullUnlocked && patternStage.mathDetail != null) {
-                            Spacer(Modifier.height(6.dp))
-                            AnimatedVisibility(visible = showPatternMath) {
-                                Text(
-                                    text = patternStage.mathDetail,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = KundliColors.Teal,
-                                )
-                            }
-                            TextButton(onClick = { showPatternMath = !showPatternMath }) {
-                                Text(
-                                    text = if (showPatternMath) "Hide the math" else "Show the math",
-                                    color = KundliColors.Gold,
-                                )
-                            }
+
+                        AnimatedVisibility(visible = showPatternMath && patternStage.mathDetail != null) {
+                            Text(
+                                text = patternStage.mathDetail.orEmpty(),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = KundliColors.Teal,
+                            )
+                        }
+
+                        // Calibration Unlock Progress Banner (Stitch)
+                        Surface(
+                            color = KundliColors.SurfaceRecessed,
+                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = if (remaining > 0) {
+                                    "✦ $remaining more entries to unlock 95% Bootstrap CI calibration"
+                                } else {
+                                    "✓ 95% Bootstrap CI personal sky calibration unlocked"
+                                },
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (remaining > 0) KundliColors.Gold else KundliColors.Teal,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+                            )
                         }
                     }
                 }
@@ -290,32 +333,62 @@ fun JournalScreen(
             } else {
                 items(filteredMilestones, key = { "ms_${it.id}" }) { milestone ->
                     Surface(
-                        color = KundliColors.SurfaceAlt,
-                        shape = RoundedCornerShape(16.dp),
+                        color = KundliColors.Surface,
+                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                        shape = RoundedCornerShape(18.dp),
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Row(
-                            modifier = Modifier.padding(14.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column {
-                                Text("MILESTONE · ${milestone.category.uppercase()}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                                Text(milestone.title, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .width(4.dp)
+                                    .height(82.dp)
+                                    .background(KundliColors.Gold),
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text("${milestone.eventDate} Milestone", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                                    Surface(
+                                        color = KundliColors.Gold.copy(alpha = 0.14f),
+                                        shape = RoundedCornerShape(999.dp),
+                                    ) {
+                                        Text(
+                                            text = milestone.category,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = KundliColors.Gold,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                        )
+                                    }
+                                }
+                                Text(
+                                    text = milestone.title.uppercase(),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = KundliColors.TextMain,
+                                )
                             }
-                            Text(milestone.eventDate, style = TelemetryNumberStyle, color = KundliColors.TextMuted)
                         }
                     }
                 }
 
                 groupedEntries.forEach { (dateHeader, dayEntries) ->
                     item(key = "hdr_$dateHeader") {
-                        Text(
-                            text = dateHeader,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = KundliColors.Gold,
-                            modifier = Modifier.padding(top = 4.dp),
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text("● $dateHeader", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                            Text("${dayEntries.size} log${if (dayEntries.size == 1) "" else "s"}", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        }
                     }
                     items(dayEntries, key = { it.id }) { entry ->
                         JournalEntryCard(
@@ -330,18 +403,19 @@ fun JournalScreen(
             item { Spacer(Modifier.height(148.dp)) }
         }
 
-        // Primary Action CTA
+        // Floating Solid Gold "+ Check in" Pill (Stitch journal_expansive.png)
         Button(
             onClick = { showComposer = true },
+            shape = RoundedCornerShape(999.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = KundliColors.Gold,
                 contentColor = KundliColors.OrbInk,
             ),
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 96.dp),
+                .align(Alignment.BottomEnd)
+                .padding(end = 20.dp, bottom = 98.dp),
         ) {
-            Text("Check in")
+            Text("+ Check in", style = MaterialTheme.typography.labelLarge)
         }
     }
 
@@ -366,39 +440,68 @@ private fun WeeklyRhythmCard(
     Surface(
         color = KundliColors.Surface,
         border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(18.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text("This week", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("This week", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                Text(
+                    text = "${daysLogged.size} of 7 days logged (Mon reset)",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = KundliColors.Teal,
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
                 labels.forEachIndexed { idx, letter ->
                     val filled = daysLogged.contains(idx)
-                    val dotColor = dayBandByWeekday[idx]?.color ?: KundliColors.Teal
-                    Box(
-                        modifier = Modifier
-                            .size(22.dp)
-                            .clip(CircleShape)
-                            .background(if (filled) dotColor else KundliColors.SurfaceAlt),
-                        contentAlignment = Alignment.Center,
+                    val band = dayBandByWeekday[idx]
+                    val dotColor = band?.color ?: KundliColors.Teal
+                    val shortBand = when (band) {
+                        SkyBand.Flowing -> "Flow"
+                        SkyBand.Steady -> "Steady"
+                        SkyBand.GoGently -> "Gently"
+                        null -> if (filled) "Logged" else "--"
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(5.dp),
                     ) {
+                        Text(letter, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(CircleShape)
+                                .background(if (filled) dotColor.copy(alpha = 0.16f) else KundliColors.SurfaceRecessed)
+                                .border(
+                                    width = if (filled) 1.5.dp else 1.dp,
+                                    color = if (filled) dotColor else KundliColors.SubtleDivider,
+                                    shape = CircleShape,
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(if (filled) 10.dp else 4.dp)
+                                    .clip(CircleShape)
+                                    .background(if (filled) dotColor else KundliColors.TextMuted.copy(alpha = 0.35f)),
+                            )
+                        }
                         Text(
-                            text = letter,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (filled) KundliColors.OrbInk else KundliColors.TextMuted,
+                            text = shortBand,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (filled) dotColor else KundliColors.TextMuted,
                         )
                     }
                 }
             }
-            Text(
-                text = "${daysLogged.size} of $goal days",
-                style = TelemetryNumberStyle,
-                color = KundliColors.TextMuted,
-            )
         }
     }
 }
@@ -411,32 +514,44 @@ private fun JournalEntryCard(
 ) {
     Surface(
         color = KundliColors.Surface,
-        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(18.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val timeLabel = format24hTime(entry.createdAtMillis).ifBlank { entry.timestampLabel }
-                Text(timeLabel, style = TelemetryNumberStyle, color = KundliColors.TextMuted)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("${entry.mood}/5", style = TelemetryNumberStyle, color = KundliColors.Gold)
-                    Surface(
-                        color = entry.sky.band.color.copy(alpha = 0.16f),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.clickable(onClick = onTapSky),
-                    ) {
-                        Text(
-                            text = "${entry.sky.band.label} · ${entry.sky.moonSign}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = entry.sky.band.color,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        )
-                    }
+                Text(timeLabel, style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                Text("·", color = KundliColors.TextMuted)
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(999.dp),
+                ) {
+                    Text(
+                        text = "${entry.mood}/5",
+                        style = TelemetryNumberStyle,
+                        color = KundliColors.Gold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                    )
                 }
+            }
+            // Signature Stitch Solid Colored Frozen Sky Pill!
+            Surface(
+                color = entry.sky.band.color,
+                shape = RoundedCornerShape(999.dp),
+                modifier = Modifier.clickable(onClick = onTapSky),
+            ) {
+                Text(
+                    text = "● ${entry.sky.band.label} · ${entry.sky.moonSign} · ${entry.sky.horaRuler} Hora",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = KundliColors.OrbInk,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                )
             }
             if (entry.note.isNotBlank()) {
                 Spacer(Modifier.height(6.dp))

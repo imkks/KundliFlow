@@ -1,7 +1,5 @@
 package com.kundliflow.app.ui.today
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -10,6 +8,8 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,9 +27,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.Bedtime
+import androidx.compose.material.icons.rounded.EditNote
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Savings
+import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.WarningAmber
+import androidx.compose.material.icons.rounded.WorkOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -49,14 +61,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.theme.KundliColors
@@ -98,8 +115,6 @@ fun TodayScreen(
 ) {
     var waveSheetInitialHour by remember { mutableStateOf<Int?>(null) }
     var editingCheckIn by remember { mutableStateOf(false) }
-    var expandPanchang by remember { mutableStateOf(false) }
-    var expandFactors by remember { mutableStateOf(false) }
 
     LaunchedEffect(externalOpenWave) {
         if (externalOpenWave) {
@@ -118,10 +133,10 @@ fun TodayScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
-                .padding(bottom = 112.dp), // clear floating capsule dock
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(top = 6.dp, bottom = 116.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            // 1. Hero (Spacious Band Ring, Hora + next shift, personal hook)
+            // 1. Cosmic Hero Card (Stitch: Centered Glowing Ring + Recessed Callout + Next Shift Pill)
             TodayHeroCard(
                 sky = sky,
                 personalHookLine = personalHookLine,
@@ -132,17 +147,13 @@ fun TodayScreen(
                 onTapRedirect = { onTapSlotAction(activeSlot) },
             )
 
-            // 2. Persistent Check-In Row (stays Logged X/5 · Edit · Undo for current hour!)
-            CheckInBarPersistent(
+            // 2. "How does now feel?" Check-In Card (Stitch: 5 Tall Square Tiles + Solid Gold Active)
+            CheckInBarStitch(
                 sky = sky,
                 loggedMood = latestCheckInMoodThisHour,
                 isEditing = editingCheckIn,
                 onSelectMood = { mood ->
-                    if (latestCheckInMoodThisHour != null) {
-                        onEditCheckInMood(mood)
-                    } else {
-                        onQuickCheckIn(mood)
-                    }
+                    if (latestCheckInMoodThisHour != null) onEditCheckInMood(mood) else onQuickCheckIn(mood)
                     editingCheckIn = false
                 },
                 onRequestEdit = { editingCheckIn = true },
@@ -154,37 +165,8 @@ fun TodayScreen(
                 onTapAddNote = onOpenFullComposer,
             )
 
-            // 3. Co-Star style 2-Column "Lean Into / Go Gently" Action Card
-            LeanIntoGoGentlyCard(
-                sky = sky,
-                onTapWave = { waveSheetInitialHour = LocalTime.now().hour },
-            )
-
-            // 4. Always-Visible 24h Rhythm & Windows Strip (1-tap opens scrubbable DayWaveSheet)
-            CollapsedDayStrip(
-                sky = sky,
-                isEveningAfter19 = isEveningAfter19,
-                onClick = { waveSheetInitialHour = LocalTime.now().hour },
-            )
-
-            // 5. Horizontal 24-Hora Ribbon (auto-scrolled to NOW pill)
-            HoraRibbonRail(
-                sky = sky,
-                onSelectHour = { hr -> waveSheetInitialHour = hr },
-            )
-
-            // 6. 2-Up Daily Context Bento Row (Glance + 1-Tap Inline Expand)
-            DailyContextBentoSection(
-                sky = sky,
-                expandPanchang = expandPanchang,
-                expandFactors = expandFactors,
-                onTogglePanchang = { expandPanchang = !expandPanchang },
-                onToggleFactors = { expandFactors = !expandFactors },
-                onOpenFullMath = onTapHeroPeek,
-            )
-
-            // 7. Single Dynamic Slot (P1-P6) with inline Discovery Map progress
-            DynamicSlotCard(
+            // 3. Single Dynamic Slot / "IN THE SKY TODAY" Card (Stitch)
+            DynamicSlotCardStitch(
                 slot = activeSlot,
                 discoveryLitCount = discoveryLitCount,
                 discoveryTotalCount = discoveryTotalCount,
@@ -193,16 +175,30 @@ fun TodayScreen(
                 onOpenDiscoveryMap = onOpenDiscoveryMap,
             )
 
-            // 8. Live Sky Movers Preview Rail (Stitch Today section)
+            // 4. ALWAYS-OPEN Today's Panchang & Sky 2x2 Matrix + Solar & Rahu Kalam Strip (Stitch)
+            TodayPanchangMatrixCard(
+                sky = sky,
+                onTapCity = onTapCitySwitcher,
+            )
+
+            // 5. 24-Hora Ribbon & Day Wave Card + Evening Horizon Hook (Stitch)
+            HoraRibbonAndWaveCard(
+                sky = sky,
+                isEveningAfter19 = isEveningAfter19,
+                onSelectHour = { hr -> waveSheetInitialHour = hr },
+                onOpenFullWave = { waveSheetInitialHour = LocalTime.now().hour },
+            )
+
+            // 6. Live Sky Movers & Transits Vertical Card (Stitch)
             if (skyMovers.isNotEmpty()) {
-                TodaySkyMoversPreview(
+                TodaySkyMoversCard(
                     movers = skyMovers.take(3),
                     onSeeAll = onJumpToTransits,
                 )
             }
 
-            // 9. Explore Horizontal Cards Rail
-            ExploreTopicsReel(onTapTopic = onTapExploreTopic)
+            // 7. Personal Archetypes — Explore Your Chart 2x2 Grid (Stitch)
+            ExploreYourChartGrid(onTapTopic = onTapExploreTopic)
         }
     }
 
@@ -231,9 +227,18 @@ private fun TodayHeroCard(
     onTapHeroPeek: () -> Unit,
     onTapRedirect: () -> Unit,
 ) {
+    val bandColor = sky.currentBand.color
+    val scoreText = if (sky.currentScore >= 0) "+${sky.currentScore}" else "${sky.currentScore}"
+    val nakTag = sky.panchang?.let { p ->
+        listOf(p.nakshatra, p.tithi.split(" ").firstOrNull().orEmpty())
+            .filter { it.isNotBlank() }
+            .joinToString(" · ")
+            .uppercase()
+    }
+
     Surface(
         color = KundliColors.Surface,
-        border = BorderStroke(1.dp, sky.currentBand.color.copy(alpha = 0.28f)),
+        border = BorderStroke(1.dp, KundliColors.GoldHairline),
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -243,135 +248,232 @@ private fun TodayHeroCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .drawBehind { drawRect(KundliColors.cosmicHeroRadial(size.width, size.height)) }
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = 20.dp, vertical = 22.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = sky.greeting,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = KundliColors.TextMuted,
-                )
-                sky.panchang?.nakshatra?.takeIf { it.isNotBlank() }?.let { nak ->
-                    Surface(
-                        color = KundliColors.SurfaceAlt,
-                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
-                        shape = RoundedCornerShape(999.dp),
+            // Centered Nakshatra & Paksha Tag Pill
+            if (!nakTag.isNullOrBlank()) {
+                Surface(
+                    color = KundliColors.SurfaceRecessed.copy(alpha = 0.85f),
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(999.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(KundliColors.Teal),
+                        )
                         Text(
-                            text = nak,
+                            text = nakTag,
                             style = MaterialTheme.typography.labelSmall,
-                            color = KundliColors.Gold,
+                            color = KundliColors.TextMuted,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
                         )
                     }
                 }
             }
-            Spacer(Modifier.height(12.dp))
+
+            // Big Centered Cinzel Greeting
+            Text(
+                text = sky.greeting.uppercase(),
+                style = MaterialTheme.typography.displaySmall,
+                color = KundliColors.TextMain,
+                textAlign = TextAlign.Center,
+            )
 
             if (showConstructiveRedirect) {
                 Text(
                     text = "Sky unchanged since ${sky.currentHora.startTime}",
                     style = MaterialTheme.typography.titleMedium,
                     color = KundliColors.Gold,
+                    textAlign = TextAlign.Center,
                 )
-                Spacer(Modifier.height(6.dp))
                 Text(
                     text = "While waiting for ${sky.nextShiftTime}, explore $nextDiscoveryTitle or reflect in Journal.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = KundliColors.TextMain,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
                 )
             } else {
-                // Glowing Double-Ring Celestial Band Pill
-                Surface(
-                    color = sky.currentBand.color.copy(alpha = 0.08f),
-                    border = BorderStroke(1.dp, sky.currentBand.color.copy(alpha = 0.35f)),
-                    shape = RoundedCornerShape(40.dp),
+                // Signature Stitch Centered Glowing Circular Gradient Ring (164 dp)
+                Box(
+                    modifier = Modifier.size(164.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Surface(
-                        color = sky.currentBand.color.copy(alpha = 0.16f),
-                        border = BorderStroke(1.5.dp, sky.currentBand.color),
-                        shape = RoundedCornerShape(32.dp),
-                        modifier = Modifier.padding(5.dp),
-                    ) {
-                        Text(
-                            text = sky.currentBand.label,
-                            style = MaterialTheme.typography.displaySmall,
-                            color = sky.currentBand.color,
-                            modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp),
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val radius = size.minDimension / 2f - 4.dp.toPx()
+                        drawCircle(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    bandColor.copy(alpha = 0.16f),
+                                    KundliColors.SurfaceRecessed.copy(alpha = 0.92f),
+                                ),
+                            ),
+                            radius = radius,
+                        )
+                        drawCircle(
+                            brush = Brush.sweepGradient(
+                                colors = listOf(
+                                    KundliColors.Gold,
+                                    bandColor,
+                                    bandColor.copy(alpha = 0.35f),
+                                    KundliColors.Gold.copy(alpha = 0.85f),
+                                    KundliColors.Gold,
+                                ),
+                            ),
+                            radius = radius,
+                            style = Stroke(width = 2.5.dp.toPx()),
                         )
                     }
-                }
-                Spacer(Modifier.height(12.dp))
-                // Line 1: Hora + next shift (or Tomorrow opening after 19:00)
-                val line1 = if (isEveningAfter19 && sky.tomorrowOpeningSummary != null) {
-                    sky.tomorrowOpeningSummary
-                } else {
-                    "${sky.currentHora.ruler.displayName} hour until ${sky.nextShiftTime}, then ${sky.nextShiftHora.displayName}"
-                }
-                Text(
-                    text = line1,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = KundliColors.TextMuted,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(Modifier.height(4.dp))
-                // Line 2: Personal Hook (max 2 lines) + explicit "more" affordance
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        text = personalHookLine,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = KundliColors.TextMain,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false),
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = "more",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = KundliColors.Gold,
-                    )
-                }
-                // Compact Factor Breakdown Bar (Stitch Hero telemetry strip)
-                if (sky.activeFactors.isNotEmpty()) {
-                    Spacer(Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
-                        sky.activeFactors.take(3).forEach { f ->
-                            val sign = if (f.value >= 0) "+" else ""
-                            val tint = when {
-                                f.value > 0 -> KundliColors.Teal
-                                f.value < 0 -> KundliColors.Amber
-                                else -> KundliColors.Gold
+                        Text(
+                            text = "ATMOSPHERE",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.TextMuted,
+                        )
+                        Text(
+                            text = sky.currentBand.label.uppercase(),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = bandColor,
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(3.dp),
+                        ) {
+                            Text(
+                                text = scoreText,
+                                style = TelemetryNumberStyle,
+                                color = KundliColors.Gold,
+                            )
+                            Text(
+                                text = "/7 SCORE",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = KundliColors.TextMuted,
+                            )
+                        }
+                    }
+                }
+
+                // Recessed Dark Hook & Factor Harmony Box (Stitch)
+                Surface(
+                    color = KundliColors.SurfaceRecessed.copy(alpha = 0.88f),
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.Top,
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(22.dp)
+                                    .clip(CircleShape)
+                                    .background(KundliColors.Gold.copy(alpha = 0.16f)),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Star,
+                                    contentDescription = null,
+                                    tint = KundliColors.Gold,
+                                    modifier = Modifier.size(13.dp),
+                                )
                             }
-                            Surface(
-                                color = KundliColors.SurfaceAlt.copy(alpha = 0.85f),
-                                shape = RoundedCornerShape(999.dp),
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(3.dp),
                             ) {
                                 Text(
-                                    text = "${f.name.split(" ").first()} $sign${f.value}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = tint,
-                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                                    text = personalHookLine,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = KundliColors.TextMain,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                val subtitleLine = sky.currentChapterSubtitle
+                                    ?: "${sky.currentHora.ruler.displayName} Hora active in ${sky.cityName}"
+                                Text(
+                                    text = subtitleLine,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = KundliColors.TextMuted,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }
+
+                        if (sky.activeFactors.isNotEmpty()) {
+                            HorizontalDivider(color = KundliColors.SubtleDivider)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                val f1 = sky.activeFactors.first()
+                                val f2 = sky.activeFactors.getOrNull(1)
+                                Text(
+                                    text = "${f1.name}: ${if (f1.value >= 0) "+${f1.value}" else "${f1.value}"}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (f1.value >= 0) KundliColors.Teal else KundliColors.Amber,
+                                )
+                                if (f2 != null) {
+                                    Text(
+                                        text = "${f2.name}: ${if (f2.value >= 0) "+${f2.value}" else "${f2.value}"}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = KundliColors.Gold,
+                                    )
+                                } else {
+                                    Text("Tap math →", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Bottom Next Shift Indicator Pill
+                Surface(
+                    color = KundliColors.SurfaceRecessed.copy(alpha = 0.72f),
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(999.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Schedule,
+                            contentDescription = null,
+                            tint = KundliColors.Gold,
+                            modifier = Modifier.size(14.dp),
+                        )
+                        val shiftText = if (isEveningAfter19 && !sky.tomorrowOpeningSummary.isNullOrBlank()) {
+                            sky.tomorrowOpeningSummary
+                        } else {
+                            "Next: ${sky.nextShiftTime} ${sky.nextShiftHora.displayName} hour · ${sky.nextShiftBand.label}"
+                        }
+                        Text(
+                            text = shiftText,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.TextMain,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }
@@ -379,8 +481,9 @@ private fun TodayHeroCard(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun CheckInBarPersistent(
+private fun CheckInBarStitch(
     sky: TodaySkyState,
     loggedMood: Int?,
     isEditing: Boolean,
@@ -390,59 +493,108 @@ private fun CheckInBarPersistent(
     onTapTag: (String) -> Unit,
     onTapAddNote: () -> Unit,
 ) {
-    val showPicker = loggedMood == null || isEditing
+    val haptics = LocalHapticFeedback.current
+    val labels = listOf(1 to "LOW", 2 to "HEAVY", 3 to "STEADY", 4 to "FLOW", 5 to "PEAK")
+    val quickTags = listOf("work", "focus", "calm", "rest", "clarity")
+    val nowTime = remember {
+        val lt = LocalTime.now()
+        String.format(Locale.US, "%02d:%02d", lt.hour, lt.minute)
+    }
+
     Surface(
         color = KundliColors.Surface,
-        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        AnimatedContent(targetState = showPicker, label = "persistent_checkin") { picker ->
-            if (picker) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Text(
-                        text = if (isEditing) "Update mood" else "How does now feel?",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = KundliColors.TextMain,
+                    Icon(
+                        imageVector = Icons.Rounded.AutoAwesome,
+                        contentDescription = null,
+                        tint = KundliColors.Gold,
+                        modifier = Modifier.size(18.dp),
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        (1..5).forEach { mood ->
-                            val isCurrent = loggedMood == mood
-                            Box(
-                                modifier = Modifier
-                                    .size(34.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isCurrent) KundliColors.Gold else KundliColors.SurfaceAlt)
-                                    .clickable { onSelectMood(mood) },
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Text(
-                                    text = "$mood",
-                                    style = TelemetryNumberStyle,
-                                    color = if (isCurrent) KundliColors.OrbInk else KundliColors.Gold,
-                                )
-                            }
+                    Text("How does now feel?", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                }
+                Text(nowTime, style = TelemetryNumberStyle, color = KundliColors.TextMuted)
+            }
+
+            // 5 Tall Rounded Square Mood Tiles (Stitch: Solid Gold Active Tile!)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                labels.forEach { (moodVal, label) ->
+                    val isSelected = loggedMood == moodVal && !isEditing
+                    Surface(
+                        color = if (isSelected) KundliColors.Gold else KundliColors.SurfaceRecessed,
+                        border = BorderStroke(
+                            1.dp,
+                            if (isSelected) KundliColors.Gold else KundliColors.SubtleDivider,
+                        ),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable {
+                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                onSelectMood(moodVal)
+                            },
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(3.dp),
+                        ) {
+                            Text(
+                                text = "$moodVal",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = if (isSelected) KundliColors.OrbInk else KundliColors.TextMain,
+                            )
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (isSelected) KundliColors.OrbInk.copy(alpha = 0.85f) else KundliColors.TextMuted,
+                                maxLines = 1,
+                            )
                         }
                     }
                 }
-            } else {
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            }
+
+            // Inline Saved Sky Echo Status Box
+            if (loggedMood != null) {
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Logged $loggedMood/5 · ${sky.currentHora.ruler.displayName} Hora",
+                            text = "✓ Logged $loggedMood/5 · ${sky.currentHora.ruler.displayName} Hora",
                             style = MaterialTheme.typography.bodySmall,
                             color = KundliColors.Teal,
+                            modifier = Modifier.weight(1f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             Text(
                                 text = "Edit",
                                 style = MaterialTheme.typography.labelMedium,
@@ -457,87 +609,51 @@ private fun CheckInBarPersistent(
                             )
                         }
                     }
-                    Spacer(Modifier.height(6.dp))
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        itemsIndexed(listOf("Work", "Focus", "Calm", "Creative", "Rest")) { _, tag ->
-                            FilterChip(
-                                selected = false,
-                                onClick = { onTapTag(tag.lowercase()) },
-                                label = { Text(tag) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    containerColor = KundliColors.SurfaceAlt,
-                                    labelColor = KundliColors.TextMain,
-                                ),
-                            )
-                        }
-                        item {
-                            FilterChip(
-                                selected = false,
-                                onClick = onTapAddNote,
-                                label = { Text("+ Note") },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    containerColor = KundliColors.SurfaceAlt,
-                                    labelColor = KundliColors.Gold,
-                                ),
-                            )
-                        }
-                    }
                 }
             }
-        }
-    }
-}
 
-@Composable
-private fun HoraRibbonRail(
-    sky: TodaySkyState,
-    onSelectHour: (Int) -> Unit,
-) {
-    if (sky.hourlyWave.isEmpty()) return
-    val nowHour = LocalTime.now().hour.coerceIn(0, sky.hourlyWave.lastIndex)
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(sky.hourlyWave.size) {
-        listState.scrollToItem((nowHour - 1).coerceAtLeast(0))
-    }
-
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(
-            text = "HORA RIBBON · SWIPE 24H",
-            style = MaterialTheme.typography.labelMedium,
-            color = KundliColors.TextMuted,
-        )
-        LazyRow(
-            state = listState,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(end = 8.dp),
-        ) {
-            itemsIndexed(sky.hourlyWave) { idx, pt ->
-                val isNow = idx == nowHour
-                Surface(
-                    color = if (isNow) KundliColors.SurfaceAlt else KundliColors.Surface,
-                    border = BorderStroke(
-                        width = if (isNow) 1.5.dp else 1.dp,
-                        color = if (isNow) pt.band.color else KundliColors.SubtleDivider,
-                    ),
-                    shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier.clickable { onSelectHour(idx) },
-                ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+            // Quick Action Tags Wrap Row
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                quickTags.forEach { tag ->
+                    Surface(
+                        color = KundliColors.SurfaceRecessed,
+                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                        shape = RoundedCornerShape(999.dp),
+                        modifier = Modifier.clickable { onTapTag(tag) },
                     ) {
                         Text(
-                            text = if (isNow) "NOW" else String.format(Locale.US, "%02d:00", pt.hour),
-                            style = TelemetryNumberStyle,
-                            color = if (isNow) pt.band.color else KundliColors.TextMuted,
-                        )
-                        Text(
-                            text = pt.horaRuler.displayName,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = KundliColors.TextMain,
+                            text = "#$tag",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.TextMuted,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         )
                     }
+                }
+            }
+
+            // Footer: + Note | Private to journal
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.clickable(onClick = onTapAddNote),
+                ) {
+                    Icon(Icons.Rounded.EditNote, contentDescription = null, tint = KundliColors.Gold, modifier = Modifier.size(16.dp))
+                    Text("+ Note", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(Icons.Rounded.Lock, contentDescription = null, tint = KundliColors.TextMuted, modifier = Modifier.size(13.dp))
+                    Text("Private to journal", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
                 }
             }
         }
@@ -545,7 +661,7 @@ private fun HoraRibbonRail(
 }
 
 @Composable
-private fun DynamicSlotCard(
+private fun DynamicSlotCardStitch(
     slot: TodayDynamicSlot,
     discoveryLitCount: Int,
     discoveryTotalCount: Int,
@@ -553,112 +669,130 @@ private fun DynamicSlotCard(
     onDismiss: () -> Unit,
     onOpenDiscoveryMap: () -> Unit,
 ) {
-    if (slot is TodayDynamicSlot.DistressOverride) return
-
-    val (eyebrow, title, body, accent) = when (slot) {
+    val (eyebrow, title, body, accentColor) = when (slot) {
         is TodayDynamicSlot.WelcomeBackDigest -> listOf(
-            "WELCOME BACK",
-            "What shifted in ${slot.daysAway} days",
+            "✦ WELCOME BACK · ${slot.daysAway} DAYS",
+            "What shifted while you were away",
             slot.shiftSummary,
-            KundliColors.Teal,
-        )
-        is TodayDynamicSlot.AhaMomentComparison -> listOf(
-            "YOUR FIRST TWO MOODS",
-            slot.headline,
-            slot.detail,
             KundliColors.Gold,
         )
+        is TodayDynamicSlot.AhaMomentComparison -> listOf(
+            "✦ SKY SNAPSHOT ANALYSIS",
+            slot.headline,
+            slot.detail,
+            KundliColors.Teal,
+        )
         is TodayDynamicSlot.SundayWeeklyReview -> listOf(
-            "YOUR WEEK IN THE SKY",
-            "${slot.entriesCountThisWeek} check-ins this week",
+            "✦ WEEKLY PATTERN REVIEW",
             slot.patternHeadline,
+            "${slot.entriesCountThisWeek} entries logged this week · Tap to review",
             KundliColors.Teal,
         )
         is TodayDynamicSlot.LiveSkyEvent -> listOf(
-            "SKY MOVERS",
+            "✦ IN THE SKY TODAY",
             slot.title,
             slot.detail,
             KundliColors.Gold,
         )
         is TodayDynamicSlot.FirstWeekNudge -> listOf(
-            "DAY ${slot.dayNumber}",
+            "✦ DAY ${slot.dayNumber} GUIDE",
             slot.title,
             slot.body,
-            KundliColors.Gold,
+            KundliColors.Teal,
         )
         is TodayDynamicSlot.CuriosityNode -> listOf(
-            "IN THE SKY TODAY",
+            "✦ IN THE SKY TODAY",
             slot.title,
             slot.hookLine,
             KundliColors.Gold,
         )
         is TodayDynamicSlot.ActTwoCycle -> listOf(
-            slot.cycleKind.uppercase(),
+            "✦ ${slot.cycleKind.uppercase()}",
             slot.title,
             slot.body,
-            KundliColors.Teal,
+            KundliColors.Gold,
         )
         TodayDynamicSlot.DistressOverride -> return
     }
 
-    val accentColor = accent as androidx.compose.ui.graphics.Color
+    val accent = accentColor as Color
     Surface(
         color = KundliColors.Surface,
-        border = BorderStroke(1.dp, accentColor.copy(alpha = 0.25f)),
-        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(1.dp, accent.copy(alpha = 0.28f)),
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onTap),
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = eyebrow as String,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = accentColor,
-                )
+                Text(eyebrow as String, style = MaterialTheme.typography.labelSmall, color = accent)
                 if (slot !is TodayDynamicSlot.CuriosityNode && slot !is TodayDynamicSlot.ActTwoCycle) {
                     Text(
                         text = "Dismiss",
-                        style = MaterialTheme.typography.labelMedium,
+                        style = MaterialTheme.typography.labelSmall,
                         color = KundliColors.TextMuted,
                         modifier = Modifier.clickable(onClick = onDismiss),
                     )
                 }
             }
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = title as String,
-                style = MaterialTheme.typography.titleMedium,
-                color = KundliColors.TextMain,
-            )
-            Spacer(Modifier.height(3.dp))
-            Text(
-                text = body as String,
-                style = MaterialTheme.typography.bodySmall,
-                color = KundliColors.TextMuted,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = (title as String).uppercase(),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = KundliColors.TextMain,
+                    )
+                    Text(
+                        text = body as String,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = KundliColors.TextMuted,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.35f)),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.size(48.dp),
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Rounded.Bedtime,
+                            contentDescription = null,
+                            tint = KundliColors.Teal,
+                            modifier = Modifier.size(22.dp),
+                        )
+                    }
+                }
+            }
+            HorizontalDivider(color = KundliColors.SubtleDivider)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Discovered $discoveryLitCount of $discoveryTotalCount",
-                    style = MaterialTheme.typography.labelMedium,
+                    text = "Discovered $discoveryLitCount of $discoveryTotalCount nodes",
+                    style = MaterialTheme.typography.labelSmall,
                     color = KundliColors.TextMuted,
                 )
                 Text(
-                    text = "Open map →",
+                    text = "Open Constellation Map →",
                     style = MaterialTheme.typography.labelMedium,
-                    color = KundliColors.Teal,
+                    color = KundliColors.Gold,
                     modifier = Modifier.clickable(onClick = onOpenDiscoveryMap),
                 )
             }
@@ -667,102 +801,475 @@ private fun DynamicSlotCard(
 }
 
 @Composable
-private fun CollapsedDayStrip(
+private fun TodayPanchangMatrixCard(
     sky: TodaySkyState,
-    isEveningAfter19: Boolean,
-    onClick: () -> Unit,
+    onTapCity: () -> Unit,
 ) {
+    val p = sky.panchang
     Surface(
         color = KundliColors.Surface,
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Your day", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                Text("Scrub 24h", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-            }
-            Spacer(Modifier.height(8.dp))
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(22.dp),
-            ) {
-                val points = sky.hourlyWave
-                if (points.size >= 2) {
-                    val stepX = size.width / (points.size - 1)
-                    val path = Path()
-                    points.forEachIndexed { idx, pt ->
-                        val x = idx * stepX
-                        val normY = 1f - ((pt.score + 7f) / 14f).coerceIn(0f, 1f)
-                        val y = 4f + normY * (size.height - 8f)
-                        if (idx == 0) path.moveTo(x, y) else path.lineTo(x, y)
-                    }
-                    drawPath(
-                        path = path,
-                        color = KundliColors.Teal,
-                        style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round),
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("EPHEMERIS TELEMETRY", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                    Text("TODAY'S PANCHANG & SKY", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                }
+                Surface(
+                    color = KundliColors.Gold.copy(alpha = 0.14f),
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(999.dp),
+                    modifier = Modifier.clickable(onClick = onTapCity),
+                ) {
+                    Text(
+                        text = sky.cityName.take(12).uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.Gold,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                     )
                 }
             }
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = if (isEveningAfter19 && sky.tomorrowOpeningSummary != null) {
-                    sky.tomorrowOpeningSummary
-                } else {
-                    "Go gently ${sky.goGentlyLabel} · Best ${sky.bestWindowLabel}"
-                },
-                style = MaterialTheme.typography.labelMedium,
-                color = KundliColors.TextMuted,
-            )
-            if (!sky.currentChapterSubtitle.isNullOrBlank()) {
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = sky.currentChapterSubtitle,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = KundliColors.Gold,
+
+            // 2x2 Recessed Matrix (Always visible on scroll — Stitch!)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                PanchangMatrixTile(
+                    label = "TITHI",
+                    value = p?.tithi ?: "Computing…",
+                    accent = KundliColors.Teal,
+                    modifier = Modifier.weight(1f),
                 )
+                PanchangMatrixTile(
+                    label = "NAKSHATRA",
+                    value = p?.nakshatra ?: "Computing…",
+                    accent = KundliColors.Gold,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                PanchangMatrixTile(
+                    label = "YOGA",
+                    value = p?.yoga ?: "—",
+                    accent = KundliColors.Teal,
+                    modifier = Modifier.weight(1f),
+                )
+                PanchangMatrixTile(
+                    label = "KARANA",
+                    value = p?.karana ?: "—",
+                    accent = KundliColors.TextMuted,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            // 3-Column Bottom Strip: Sunrise | Sunset | Amber Bordered Rahu Kalam
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text("SUNRISE", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        Spacer(Modifier.height(2.dp))
+                        Text(p?.sunrise ?: "--:--", style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                    }
+                }
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text("SUNSET", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        Spacer(Modifier.height(2.dp))
+                        Text(p?.sunset ?: "--:--", style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                    }
+                }
+                Surface(
+                    color = KundliColors.Amber.copy(alpha = 0.14f),
+                    border = BorderStroke(1.dp, KundliColors.Amber.copy(alpha = 0.55f)),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.weight(1.3f),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(3.dp),
+                        ) {
+                            Icon(Icons.Rounded.WarningAmber, contentDescription = null, tint = KundliColors.Amber, modifier = Modifier.size(12.dp))
+                            Text("RAHU KALAM", style = MaterialTheme.typography.labelSmall, color = KundliColors.Amber)
+                        }
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = sky.rahuKalamLabel.replace("Rahu Kalam", "", ignoreCase = true).trim().ifBlank { "Check wave" },
+                            style = TelemetryNumberStyle,
+                            color = KundliColors.Amber,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ExploreTopicsReel(onTapTopic: (String) -> Unit) {
-    val topics = listOf(
-        "Career" to "House 10",
-        "Love" to "House 7",
-        "Money" to "House 2",
-        "Home" to "House 4",
-        "Strengths" to "Yogas & SAV",
-        "Year" to "Dashas & Time",
-    )
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = "EXPLORE YOUR CHART",
-            style = MaterialTheme.typography.labelMedium,
-            color = KundliColors.TextMuted,
-        )
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(end = 8.dp),
+private fun PanchangMatrixTile(
+    label: String,
+    value: String,
+    accent: Color,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = KundliColors.SurfaceRecessed,
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(14.dp),
+        modifier = modifier,
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            itemsIndexed(topics) { _, (topic, sub) ->
+            Text(label, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleSmall,
+                color = KundliColors.TextMain,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Box(
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(2.dp)
+                    .clip(RoundedCornerShape(1.dp))
+                    .background(accent.copy(alpha = 0.65f)),
+            )
+        }
+    }
+}
+
+@Composable
+private fun HoraRibbonAndWaveCard(
+    sky: TodaySkyState,
+    isEveningAfter19: Boolean,
+    onSelectHour: (Int) -> Unit,
+    onOpenFullWave: () -> Unit,
+) {
+    val currentHour = LocalTime.now().hour
+    val listState = rememberLazyListState()
+    LaunchedEffect(sky.hourlyWave.size, currentHour) {
+        val idx = sky.hourlyWave.indexOfFirst { it.hour == currentHour }.coerceAtLeast(0)
+        listState.scrollToItem((idx - 1).coerceAtLeast(0))
+    }
+
+    Surface(
+        color = KundliColors.Surface,
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("TEMPORAL CYCLE", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                    Text("24-HORA RIBBON & WAVE", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                }
                 Surface(
-                    color = KundliColors.SurfaceAlt,
-                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.clickable { onTapTopic(topic) },
+                    color = KundliColors.Teal.copy(alpha = 0.14f),
+                    border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.4f)),
+                    shape = RoundedCornerShape(999.dp),
+                    modifier = Modifier.clickable(onClick = onOpenFullWave),
                 ) {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-                        Text(topic, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                        Text(sub, style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                    Text(
+                        text = "● Scrub 24h",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.Teal,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    )
+                }
+            }
+
+            // Horizontal Hora Cards (Active NOW tile gets crisp 2dp Gold Border!)
+            if (sky.hourlyWave.isNotEmpty()) {
+                LazyRow(
+                    state = listState,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    itemsIndexed(sky.hourlyWave, key = { _, pt -> pt.hour }) { _, pt ->
+                        val isNow = pt.hour == currentHour
+                        val scoreSign = if (pt.score >= 0) "+${pt.score}" else "${pt.score}"
+                        Surface(
+                            color = if (isNow) KundliColors.SurfaceAlt else KundliColors.SurfaceRecessed,
+                            border = BorderStroke(
+                                if (isNow) 2.dp else 1.dp,
+                                if (isNow) KundliColors.Gold else KundliColors.SubtleDivider,
+                            ),
+                            shape = RoundedCornerShape(14.dp),
+                            modifier = Modifier
+                                .width(136.dp)
+                                .clickable { onSelectHour(pt.hour) },
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Text(
+                                        text = if (isNow) "● ${pt.hour.toString().padStart(2, '0')}:00" else "${pt.hour.toString().padStart(2, '0')}:00",
+                                        style = TelemetryNumberStyle,
+                                        color = if (isNow) KundliColors.Gold else KundliColors.TextMuted,
+                                    )
+                                    Text(
+                                        text = scoreSign,
+                                        style = TelemetryNumberStyle,
+                                        color = pt.band.color,
+                                    )
+                                }
+                                Text(
+                                    text = "${pt.horaRuler.displayName} · ${pt.band.label}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (isNow) KundliColors.TextMain else KundliColors.TextMuted,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Embedded Evening Horizon / Best Window Hook Banner (Stitch)
+            Surface(
+                color = KundliColors.SurfaceRecessed,
+                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onOpenFullWave),
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(Icons.Rounded.Bedtime, contentDescription = null, tint = KundliColors.Gold, modifier = Modifier.size(18.dp))
+                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            text = if (isEveningAfter19) "EVENING HORIZON HOOK" else "TODAY'S PRIME WINDOWS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.TextMuted,
+                        )
+                        Text(
+                            text = if (isEveningAfter19 && !sky.tomorrowOpeningSummary.isNullOrBlank()) {
+                                "${sky.tomorrowOpeningSummary} · Best: ${sky.bestWindowLabel}"
+                            } else {
+                                "Best: ${sky.bestWindowLabel} · Gentle: ${sky.goGentlyLabel}"
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = KundliColors.TextMain,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    Text(">", style = MaterialTheme.typography.bodyMedium, color = KundliColors.Gold)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TodaySkyMoversCard(
+    movers: List<SkyMoverItem>,
+    onSeeAll: () -> Unit,
+) {
+    Surface(
+        color = KundliColors.Surface,
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("ACTIVE INFLUENCES", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                    Text("LIVE SKY MOVERS & TRANSITS", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                }
+                Text(
+                    text = "Gochar →",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = KundliColors.Gold,
+                    modifier = Modifier.clickable(onClick = onSeeAll),
+                )
+            }
+
+            movers.forEach { mover ->
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onSeeAll),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.Top,
+                    ) {
+                        Surface(
+                            color = KundliColors.SurfaceAlt,
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.size(36.dp),
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = mover.planet.displayName.take(2).uppercase(),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = KundliColors.Teal,
+                                )
+                            }
+                        }
+                        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = "${mover.planet.displayName} in ${mover.signName}",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = KundliColors.TextMain,
+                                    modifier = Modifier.weight(1f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Surface(
+                                    color = KundliColors.Teal.copy(alpha = 0.14f),
+                                    shape = RoundedCornerShape(999.dp),
+                                ) {
+                                    Text(
+                                        text = "House ${mover.houseFromLagna}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = KundliColors.Teal,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                    )
+                                }
+                            }
+                            Text(
+                                text = mover.plainMeaning,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = KundliColors.TextMuted,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExploreYourChartGrid(onTapTopic: (String) -> Unit) {
+    data class ArchetypeItem(val topic: String, val label: String, val subtitle: String, val icon: ImageVector, val accent: Color)
+    val items = listOf(
+        ArchetypeItem("Career", "CAREER H10", "Vocation & public standing", Icons.Rounded.WorkOutline, KundliColors.Gold),
+        ArchetypeItem("Love", "LOVE H7", "Partnerships & resonance", Icons.Rounded.FavoriteBorder, KundliColors.Amber),
+        ArchetypeItem("Money", "WEALTH H2", "Resources & accumulation", Icons.Rounded.Savings, KundliColors.Teal),
+        ArchetypeItem("Home", "HOME H4", "Roots & emotional peace", Icons.Rounded.Home, KundliColors.Gold),
+    )
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column {
+                Text("PERSONAL ARCHETYPES", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                Text("EXPLORE YOUR CHART", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+            }
+            Text("Natal D1", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+        }
+
+        items.chunked(2).forEach { pair ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                pair.forEach { item ->
+                    Surface(
+                        color = KundliColors.Surface,
+                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                        shape = RoundedCornerShape(18.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { onTapTopic(item.topic) },
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Surface(
+                                color = KundliColors.SurfaceRecessed,
+                                border = BorderStroke(1.dp, item.accent.copy(alpha = 0.25f)),
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.size(34.dp),
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(item.icon, contentDescription = null, tint = item.accent, modifier = Modifier.size(18.dp))
+                                }
+                            }
+                            Text(item.label, style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain)
+                            Text(
+                                text = item.subtitle,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = item.accent,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     }
                 }
             }
@@ -889,7 +1396,6 @@ private fun DayWaveSheet(
                 }
             }
 
-            // TalkBack-friendly hour steppers (v3 §7)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -934,337 +1440,6 @@ private fun DayWaveSheet(
                 Text("Inspect all ${sky.allHoras.size.coerceAtLeast(24)} Horas & scoring math →", color = KundliColors.Teal)
             }
             Spacer(Modifier.height(8.dp))
-        }
-    }
-}
-
-@Composable
-private fun LeanIntoGoGentlyCard(
-    sky: TodaySkyState,
-    onTapWave: () -> Unit,
-) {
-    val positiveCue = sky.activeFactors.firstOrNull { it.value > 0 }?.summary
-        ?: "${sky.currentHora.ruler.displayName} Hora supports steady focus"
-    val gentleCue = sky.activeFactors.firstOrNull { it.value < 0 }?.summary
-        ?: "Avoid rushing major commitments during Rahu Kalam"
-
-    Surface(
-        color = KundliColors.Surface,
-        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-        shape = RoundedCornerShape(18.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onTapWave),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text("LEAN INTO", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
-                Text(
-                    text = sky.bestWindowLabel,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = KundliColors.TextMain,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = positiveCue,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = KundliColors.TextMuted,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(64.dp)
-                    .background(KundliColors.SubtleDivider)
-                    .align(Alignment.CenterVertically),
-            )
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text("GO GENTLY", style = MaterialTheme.typography.labelMedium, color = KundliColors.Amber)
-                Text(
-                    text = sky.rahuKalamLabel.ifBlank { sky.goGentlyLabel },
-                    style = MaterialTheme.typography.titleSmall,
-                    color = KundliColors.TextMain,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = gentleCue,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = KundliColors.TextMuted,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun DailyContextBentoSection(
-    sky: TodaySkyState,
-    expandPanchang: Boolean,
-    expandFactors: Boolean,
-    onTogglePanchang: () -> Unit,
-    onToggleFactors: () -> Unit,
-    onOpenFullMath: () -> Unit,
-) {
-    val topFactor = sky.activeFactors.maxByOrNull { kotlin.math.abs(it.value) }
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            // Left Bento Card: Today's Panchang
-            Surface(
-                color = KundliColors.Surface,
-                border = BorderStroke(1.dp, if (expandPanchang) KundliColors.GoldHairline else KundliColors.SubtleDivider),
-                shape = RoundedCornerShape(18.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(onClick = onTogglePanchang),
-            ) {
-                Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("PANCHANG", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                    Text(
-                        text = sky.panchang?.tithi ?: "Daily Almanac",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = KundliColors.TextMain,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = sky.panchang?.nakshatra ?: sky.cityName,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.TextMuted,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = if (expandPanchang) "Hide details ▲" else "Sun & Yoga ▾",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = KundliColors.Teal,
-                    )
-                }
-            }
-
-            // Right Bento Card: Why Today Feels This Way
-            Surface(
-                color = KundliColors.Surface,
-                border = BorderStroke(1.dp, if (expandFactors) KundliColors.Teal.copy(alpha = 0.4f) else KundliColors.SubtleDivider),
-                shape = RoundedCornerShape(18.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(onClick = onToggleFactors),
-            ) {
-                Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("WHY TODAY", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
-                    Text(
-                        text = topFactor?.name ?: "${sky.activeFactors.size} Factors",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = KundliColors.TextMain,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = if (topFactor != null) {
-                            val sign = if (topFactor.value >= 0) "+" else ""
-                            "$sign${topFactor.value} · ${topFactor.summary}"
-                        } else {
-                            "Tap to see sky signals"
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.TextMuted,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = if (expandFactors) "Hide factors ▲" else "All ${sky.activeFactors.size} factors ▾",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = KundliColors.Gold,
-                    )
-                }
-            }
-        }
-
-        // Inline 1-tap disclosure: 2x2 Vedic Panchang Matrix + Solar & Rahu Kalam Strip (Stitch)
-        AnimatedVisibility(visible = expandPanchang && sky.panchang != null) {
-            sky.panchang?.let { p ->
-                Surface(
-                    color = KundliColors.SurfaceAlt,
-                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text("VEDIC PANCHANG · ${sky.cityName.uppercase()}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            PanchangMatrixCell("TITHI", p.tithi, Modifier.weight(1f))
-                            PanchangMatrixCell("NAKSHATRA", p.nakshatra, Modifier.weight(1f))
-                        }
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            PanchangMatrixCell("YOGA", p.yoga, Modifier.weight(1f))
-                            PanchangMatrixCell("KARANA", p.karana, Modifier.weight(1f))
-                        }
-                        Surface(
-                            color = KundliColors.BgInk.copy(alpha = 0.6f),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text("Sunrise ${p.sunrise} · Sunset ${p.sunset}", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
-                                if (sky.rahuKalamLabel.isNotBlank()) {
-                                    Text(sky.rahuKalamLabel, style = MaterialTheme.typography.labelSmall, color = KundliColors.Amber)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Inline 1-tap disclosure for Active Scoring Factors
-        AnimatedVisibility(visible = expandFactors && sky.activeFactors.isNotEmpty()) {
-            Surface(
-                color = KundliColors.SurfaceAlt,
-                border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.3f)),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text("ACTIVE SKY FACTORS", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
-                        Text(
-                            text = "Full math →",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = KundliColors.Gold,
-                            modifier = Modifier.clickable(onClick = onOpenFullMath),
-                        )
-                    }
-                    sky.activeFactors.take(4).forEach { factor ->
-                        val sign = if (factor.value >= 0) "+" else ""
-                        val pillColor = when {
-                            factor.value > 0 -> KundliColors.Teal
-                            factor.value < 0 -> KundliColors.Amber
-                            else -> KundliColors.Gold
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(factor.name, style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMain)
-                                Text(factor.summary, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
-                            }
-                            Text(
-                                text = "$sign${factor.value}",
-                                style = TelemetryNumberStyle,
-                                color = pillColor,
-                                modifier = Modifier.padding(start = 10.dp),
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun PanchangMatrixCell(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        color = KundliColors.BgInk.copy(alpha = 0.55f),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier,
-    ) {
-        Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodySmall,
-                color = KundliColors.TextMain,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}
-
-@Composable
-private fun TodaySkyMoversPreview(
-    movers: List<SkyMoverItem>,
-    onSeeAll: () -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text("LIVE SKY MOVERS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-            Text(
-                text = "All transits →",
-                style = MaterialTheme.typography.labelMedium,
-                color = KundliColors.Gold,
-                modifier = Modifier.clickable(onClick = onSeeAll),
-            )
-        }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            itemsIndexed(movers, key = { _, m -> m.planet.name }) { _, mover ->
-                Surface(
-                    color = KundliColors.Surface,
-                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .width(196.dp)
-                        .clickable(onClick = onSeeAll),
-                ) {
-                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(mover.planet.displayName, style = MaterialTheme.typography.titleSmall, color = KundliColors.Teal)
-                            Text("H${mover.houseFromLagna}", style = TelemetryNumberStyle, color = KundliColors.Gold)
-                        }
-                        Text(
-                            text = "${mover.signName} · Moon H${mover.houseFromMoon}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = KundliColors.TextMuted,
-                        )
-                        Text(
-                            text = mover.plainMeaning,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = KundliColors.TextMain,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-            }
         }
     }
 }

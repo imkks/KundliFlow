@@ -2,8 +2,10 @@ package com.kundliflow.app.ui.pages
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,6 +27,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,12 +37,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,7 +77,7 @@ fun StrengthsAndYogasPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -83,10 +85,22 @@ fun StrengthsAndYogasPage(
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = KundliColors.Gold)
                 }
-                Text("Strengths & Yogas", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                Text("STRENGTHS & YOGAS", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
             }
-            TextButton(onClick = onAskAboutStrengths) {
-                Text("Ask AI", color = KundliColors.Teal)
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                shape = RoundedCornerShape(999.dp),
+                modifier = Modifier.clickable(onClick = onAskAboutStrengths),
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = KundliColors.Gold, modifier = Modifier.size(14.dp))
+                    Text("Ask AI", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                }
             }
         }
 
@@ -94,69 +108,84 @@ fun StrengthsAndYogasPage(
         val peakSavHouse = remember(chart.houses) { chart.houses.maxByOrNull { it.savBindus } }
         val bhangaCount = remember(chart.doshaAudits) { chart.doshaAudits.count { it.bhangaCancelled } }
 
-        // Executive Summary Hero Card (Stitch Strengths & Yogas)
-        Surface(
-            color = KundliColors.Surface,
-            border = BorderStroke(1.dp, KundliColors.GoldHairline),
-            shape = RoundedCornerShape(18.dp),
+        // Executive Summary Hero (Stitch strengths.png)
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 6.dp),
+                .padding(horizontal = 20.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+            Text("● VEDIC ASTROLOGICAL AUDIT", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+            Text(
+                text = "ASTROLOGICAL POTENCY & CLASSICAL YOGAS",
+                style = MaterialTheme.typography.headlineSmall,
+                color = KundliColors.TextMain,
+            )
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text("EXECUTIVE SYNTHESIS", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                Column(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp),
+                ) {
                     Text(
                         text = buildString {
-                            append("${chart.activeYogas.size} Yogas")
-                            if (dominantPlanet != null) append(" · ${dominantPlanet.planet.displayName} leads")
-                            if (peakSavHouse != null) append(" · H${peakSavHouse.number} peak (${peakSavHouse.savBindus})")
+                            append("${chart.activeYogas.size} Major Auspicious Yogas")
+                            if (dominantPlanet != null) append(" · ${dominantPlanet.planet.displayName} ${String.format(Locale.US, "%.2fx", dominantPlanet.ratio)}")
+                            if (peakSavHouse != null) append(" · H${peakSavHouse.number} Peak (${peakSavHouse.savBindus})")
+                        },
+                        style = MaterialTheme.typography.labelMedium,
+                        color = KundliColors.Gold,
+                    )
+                    Text(
+                        text = if (bhangaCount > 0) {
+                            "$bhangaCount classical Dosha cancellation(s) verified by Bhanga · 337 Total SAV."
+                        } else {
+                            "Directional vitality (Shadbala), benefic conjunctions, and Ashtakavarga reserve capacity."
                         },
                         style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.TextMain,
+                        color = KundliColors.TextMuted,
                     )
-                    if (bhangaCount > 0) {
-                        Text(
-                            text = "$bhangaCount Dosha cancellation(s) verified by Bhanga",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = KundliColors.Teal,
-                        )
-                    }
                 }
             }
         }
 
-        TabRow(
-            selectedTabIndex = pagerState.currentPage,
-            containerColor = KundliColors.BgInk,
-            contentColor = KundliColors.Gold,
-            indicator = { pos ->
-                if (pagerState.currentPage < pos.size) {
-                    TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(pos[pagerState.currentPage]),
-                        color = KundliColors.Gold,
-                    )
-                }
-            },
+        // Unified 3-Segment Pill Tab Bar (Stitch strengths.png)
+        Surface(
+            color = KundliColors.SurfaceRecessed,
+            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 6.dp),
         ) {
-            tabs.forEachIndexed { idx, label ->
-                Tab(
-                    selected = pagerState.currentPage == idx,
-                    onClick = { scope.launch { pagerState.animateScrollToPage(idx) } },
-                    text = {
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (pagerState.currentPage == idx) KundliColors.Gold else KundliColors.TextMuted,
-                        )
-                    },
-                )
+            Row(modifier = Modifier.padding(4.dp)) {
+                tabs.forEachIndexed { idx, label ->
+                    val active = pagerState.currentPage == idx
+                    Surface(
+                        color = if (active) KundliColors.SurfaceAlt else Color.Transparent,
+                        border = if (active) BorderStroke(1.dp, KundliColors.GoldHairline) else null,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { scope.launch { pagerState.animateScrollToPage(idx) } },
+                    ) {
+                        Box(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (active) KundliColors.Gold else KundliColors.TextMuted,
+                                maxLines = 1,
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -169,6 +198,21 @@ fun StrengthsAndYogasPage(
                 1 -> PlanetaryPowerTab(chart)
                 else -> SoulAndMaitriTab(chart)
             }
+        }
+
+        // Bottom Solid Gold Ask AI CTA (Stitch strengths.png)
+        Button(
+            onClick = onAskAboutStrengths,
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .height(48.dp),
+        ) {
+            Icon(Icons.Rounded.AutoAwesome, contentDescription = null, modifier = Modifier.size(16.dp))
+            Spacer(Modifier.width(6.dp))
+            Text("Ask AI about My Strengths", style = MaterialTheme.typography.labelLarge)
         }
     }
 }
@@ -262,68 +306,121 @@ private fun PlanetaryPowerTab(chart: ChartUiState) {
     ) {
         Text("Shadbala Ratios (1.00x Classical Threshold)", style = MaterialTheme.typography.titleMedium, color = KundliColors.Gold)
 
-        // Horizontal Spotlight Cards
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(end = 6.dp)) {
+        // Wide Shadbala Spotlight Cards (Stitch strengths.png)
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 6.dp)) {
             items(sortedBars) { bar ->
+                val above = bar.ratio >= 1.0f
                 Surface(
                     color = KundliColors.Surface,
-                    border = BorderStroke(1.dp, if (bar.ratio >= 1.0f) KundliColors.Teal.copy(alpha = 0.45f) else KundliColors.GoldHairline),
-                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, if (above) KundliColors.Teal.copy(alpha = 0.45f) else KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.width(156.dp),
                 ) {
-                    Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(bar.planet.displayName, style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(bar.planet.displayName.uppercase(), style = MaterialTheme.typography.titleLarge, color = KundliColors.Gold)
+                            Surface(
+                                color = if (above) KundliColors.Teal else KundliColors.Gold,
+                                shape = RoundedCornerShape(999.dp),
+                            ) {
+                                Text(
+                                    text = String.format(Locale.US, "%.2fx", bar.ratio),
+                                    style = TelemetryNumberStyle,
+                                    color = KundliColors.OrbInk,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                )
+                            }
+                        }
                         Text(
-                            text = String.format(Locale.US, "%.2fx", bar.ratio),
-                            style = TelemetryNumberStyle,
-                            color = if (bar.ratio >= 1.0f) KundliColors.Teal else KundliColors.Gold,
+                            text = if (above) "Above 1.00× threshold" else "Developing vitality",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (above) KundliColors.Teal else KundliColors.TextMuted,
                         )
                     }
                 }
             }
         }
 
-        Surface(color = KundliColors.Surface, shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                sortedBars.forEach { bar ->
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(bar.planet.displayName, modifier = Modifier.width(68.dp), style = MaterialTheme.typography.bodySmall)
-                        LinearProgressIndicator(
-                            progress = { (bar.ratio / 1.6f).coerceIn(0f, 1f) },
-                            modifier = Modifier.weight(1f).height(8.dp).clip(RoundedCornerShape(4.dp)),
-                            color = if (bar.ratio >= 1.0f) KundliColors.Teal else KundliColors.Gold,
-                            trackColor = KundliColors.SurfaceAlt,
-                        )
-                        Text(String.format(Locale.US, "%.2fx", bar.ratio), style = TelemetryNumberStyle)
-                    }
-                }
-            }
-        }
-
-        // 2D Scrollable Ashtakvarga SAV 12-House Matrix
-        Text("Ashtakvarga SAV · 337 Bindus (Swipe Horizontally)", style = MaterialTheme.typography.titleMedium, color = KundliColors.Gold)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Surface(
+            color = KundliColors.Surface,
+            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            chart.houses.forEach { h ->
-                Surface(
-                    color = KundliColors.Surface,
-                    border = BorderStroke(1.dp, if (h.savBindus >= 30) KundliColors.Teal.copy(alpha = 0.5f) else KundliColors.SubtleDivider),
-                    shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier.width(86.dp),
-                ) {
-                    Column(modifier = Modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("H${h.number}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                        Text(h.signName.take(3), style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = "${h.savBindus}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = if (h.savBindus >= 30) KundliColors.Teal else KundliColors.TextMain,
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Graha & Rupa Strength", style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain)
+                    Text("Baseline: 1.00x", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                }
+                sortedBars.forEach { bar ->
+                    val barColor = when {
+                        bar.ratio >= 1.2f -> KundliColors.Teal
+                        bar.ratio >= 1.0f -> KundliColors.Gold
+                        else -> KundliColors.Amber
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(bar.planet.displayName, style = MaterialTheme.typography.bodySmall, color = if (bar.ratio >= 1.2f) KundliColors.Teal else KundliColors.TextMain)
+                            Text(String.format(Locale.US, "%.2fx", bar.ratio), style = TelemetryNumberStyle, color = barColor)
+                        }
+                        LinearProgressIndicator(
+                            progress = { (bar.ratio / 1.6f).coerceIn(0.05f, 1f) },
+                            modifier = Modifier.fillMaxWidth().height(7.dp).clip(RoundedCornerShape(4.dp)),
+                            color = barColor,
+                            trackColor = KundliColors.SurfaceRecessed,
                         )
-                        Text(if (h.savBindus >= 30) "Strong" else if (h.savBindus >= 25) "Steady" else "Gentle", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                    }
+                }
+            }
+        }
+
+        // 4x3 Samudaya Ashtakavarga Grid with House Life Themes (Stitch strengths.png)
+        val houseThemes = listOf("Self", "Wealth", "Valor", "Home", "Intellect", "Overcoming", "Alliance", "Depth", "Dharma", "Career", "Gains", "Release")
+        val peakHouseNum = remember(chart.houses) { chart.houses.maxByOrNull { it.savBindus }?.number }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Column {
+                Text("Samudaya Ashtakavarga", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                Text("337 Total Bindus · 28 Threshold Average", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+            }
+        }
+        chart.houses.sortedBy { it.number }.chunked(4).forEach { row4 ->
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                row4.forEach { h ->
+                    val isPeak = h.number == peakHouseNum
+                    val isStrong = h.savBindus >= 30
+                    val accent = when {
+                        isPeak -> KundliColors.Teal
+                        isStrong -> KundliColors.Gold
+                        else -> KundliColors.TextMain
+                    }
+                    Surface(
+                        color = if (isPeak) KundliColors.Teal.copy(alpha = 0.14f) else KundliColors.Surface,
+                        border = BorderStroke(1.dp, if (isPeak) KundliColors.Teal else if (isStrong) KundliColors.GoldHairline else KundliColors.SubtleDivider),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(vertical = 10.dp, horizontal = 6.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                        ) {
+                            Text(
+                                text = "H${h.number}" + if (isPeak) " ✦" else if (isStrong) " ★" else "",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = accent.copy(alpha = 0.85f),
+                            )
+                            Text("${h.savBindus}", style = MaterialTheme.typography.titleMedium, color = accent)
+                            Text(
+                                text = houseThemes.getOrElse(h.number - 1) { "" },
+                                style = MaterialTheme.typography.labelSmall,
+                                color = KundliColors.TextMuted,
+                                maxLines = 1,
+                            )
+                        }
                     }
                 }
             }

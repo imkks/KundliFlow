@@ -33,6 +33,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -151,12 +152,20 @@ private fun ChaptersSubPage(
     onJumpToTab: (Int) -> Unit,
 ) {
     var selectedSystem by remember { mutableStateOf(DashaSystem.VIMSHOTTARI) }
-    var showNextShiftDelta by remember { mutableStateOf(false) }
     val activeDasha = state.activeDashas[selectedSystem] ?: state.activeDashas.values.first()
-    val todayDay = LocalDate.now().dayOfMonth
-    val weekPreviewDays = remember(state.monthDays, todayDay) {
-        val upcoming = state.monthDays.filter { it.dayOfMonth >= todayDay }.take(7)
-        if (upcoming.isNotEmpty()) upcoming else state.monthDays.take(7)
+    val mahaPct = (activeDasha.mahadashaProgress.coerceIn(0f, 1f) * 100).toInt()
+    val antarPct = (activeDasha.antardashaProgress.coerceIn(0f, 1f) * 100).toInt()
+
+    // Compute upcoming Antardashas + next Mahadasha in classical Vimshottari order
+    val upcomingLords = remember(activeDasha.mahadashaLord, activeDasha.antardashaLord) {
+        val order = VIMSHOTTARI_HORIZON_ORDER.map { it.first }
+        val antarIdx = order.indexOfFirst { it.equals(activeDasha.antardashaLord, ignoreCase = true) }.coerceAtLeast(0)
+        val mahaIdx = order.indexOfFirst { it.equals(activeDasha.mahadashaLord, ignoreCase = true) }.coerceAtLeast(0)
+        listOf(
+            Triple(order[(antarIdx + 1) % order.size], "Upcoming Antardasha", false),
+            Triple(order[(antarIdx + 2) % order.size], "Following Sub-period", false),
+            Triple(order[(mahaIdx + 1) % order.size], "Next Mahadasha Transition", true),
+        )
     }
 
     Column(
@@ -164,29 +173,34 @@ private fun ChaptersSubPage(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 16.dp)
-            .padding(bottom = 112.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(bottom = 116.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        // Horizontal Dasha System Rail
+        // 1. Horizontal Dasha System Pill Rail (Stitch)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(DashaSystem.entries) { sys ->
-                FilterChip(
-                    selected = selectedSystem == sys,
-                    onClick = { selectedSystem = sys },
-                    label = { Text(sys.label) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = KundliColors.SurfaceAlt,
-                        selectedLabelColor = KundliColors.Gold,
-                    ),
-                )
+                val active = selectedSystem == sys
+                Surface(
+                    color = if (active) KundliColors.Gold.copy(alpha = 0.14f) else KundliColors.Surface,
+                    border = BorderStroke(1.dp, if (active) KundliColors.GoldHairline else KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(999.dp),
+                    modifier = Modifier.clickable { selectedSystem = sys },
+                ) {
+                    Text(
+                        text = if (active) "● ${sys.label}" else sys.label,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = if (active) KundliColors.Gold else KundliColors.TextMuted,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+                    )
+                }
             }
         }
 
-        // 1. Now Card with Pattern-style Circular Progress Rings
+        // 2. NOW · CHAPTER Hero Card (Stitch time_expansive.png)
         Surface(
             color = KundliColors.Surface,
             border = BorderStroke(1.dp, KundliColors.GoldHairline),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(22.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onOpenPeriodSubject(Subject.Period("current"), Rung.Explain) },
@@ -197,273 +211,398 @@ private fun ChaptersSubPage(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("NOW · ACTIVE CHAPTER", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                    Text("Read full →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
+                    Text("● NOW · CHAPTER", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                    Surface(
+                        color = KundliColors.SurfaceRecessed,
+                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                        shape = RoundedCornerShape(999.dp),
+                    ) {
+                        Text(
+                            text = activeDasha.mahadashaRange,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.TextMuted,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        )
+                    }
                 }
 
-                // Dual Circular Countdown Rings (Mahadasha + Antardasha)
-                Row(
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = "${activeDasha.mahadashaLord.uppercase()} MAHADASHA ·\n${activeDasha.antardashaLord.uppercase()} ANTARDASHA",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = KundliColors.TextMain,
+                    )
+                    Text(
+                        text = "Sub-period ${activeDasha.antardashaRange} · Pratyantar: ${activeDasha.pratyantarLord}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = KundliColors.Teal,
+                    )
+                }
+
+                // Dual Sleek Progress Bars (Maha Gold + Antar Teal)
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Maha: ${activeDasha.mahadashaLord}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                            Text("$mahaPct% elapsed", style = TelemetryNumberStyle, color = KundliColors.Gold)
+                        }
+                        LinearProgressIndicator(
+                            progress = { activeDasha.mahadashaProgress.coerceIn(0.04f, 1f) },
+                            modifier = Modifier.fillMaxWidth().height(7.dp).clip(RoundedCornerShape(4.dp)),
+                            color = KundliColors.Gold,
+                            trackColor = KundliColors.SurfaceRecessed,
+                        )
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Antar: ${activeDasha.antardashaLord}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
+                            Text("$antarPct% elapsed", style = TelemetryNumberStyle, color = KundliColors.Teal)
+                        }
+                        LinearProgressIndicator(
+                            progress = { activeDasha.antardashaProgress.coerceIn(0.04f, 1f) },
+                            modifier = Modifier.fillMaxWidth().height(7.dp).clip(RoundedCornerShape(4.dp)),
+                            color = KundliColors.Teal,
+                            trackColor = KundliColors.SurfaceRecessed,
+                        )
+                    }
+                }
+
+                // Recessed Pratyantar Sub-Ruler Pill
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
-                    ChapterRingStat(
-                        title = activeDasha.mahadashaLord,
-                        subtitle = "Mahadasha",
-                        rangeLabel = activeDasha.mahadashaRange,
-                        progress = activeDasha.mahadashaProgress,
-                        ringColor = KundliColors.Gold,
-                        modifier = Modifier.weight(1f),
-                    )
-                    ChapterRingStat(
-                        title = activeDasha.antardashaLord,
-                        subtitle = "Antardasha",
-                        rangeLabel = activeDasha.antardashaRange,
-                        progress = activeDasha.antardashaProgress,
-                        ringColor = KundliColors.Teal,
-                        modifier = Modifier.weight(1f),
+                    Text(
+                        text = "${activeDasha.pratyantarLord} Sub-ruler · Active micro-cycle steering daily emphasis.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = KundliColors.Teal,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                     )
                 }
 
-                Text(
-                    text = "Pratyantar: ${activeDasha.pratyantarLord}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = KundliColors.TextMuted,
-                )
-                Text(
-                    text = activeDasha.plainMeaning,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = KundliColors.TextMain,
-                )
+                // Left Gold-Bordered Editorial Quote Box (Stitch)
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Box(
+                            modifier = Modifier
+                                .width(3.dp)
+                                .height(88.dp)
+                                .background(KundliColors.Gold),
+                        )
+                        Text(
+                            text = activeDasha.plainMeaning,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = KundliColors.TextMain,
+                            modifier = Modifier.padding(14.dp),
+                        )
+                    }
+                }
             }
         }
 
-        // 2. Next Shift Interactive Card (1-line teaser visible + 1-tap expand for 3-row diff)
+        // 3. NEXT SHIFT "Diff-Only" Preview Card (Always visible 3-row diff — Stitch time_expansive.png!)
         Surface(
             color = KundliColors.Surface,
             border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-            shape = RoundedCornerShape(18.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { showNextShiftDelta = !showNextShiftDelta },
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("NEXT SHIFT", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
-                        Text(state.nextShift.shiftDate, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                    }
                     Text(
-                        text = if (showNextShiftDelta) "Hide ▲" else "Preview ▾",
+                        text = "NEXT SHIFT · ${state.nextShift.shiftDate.uppercase()}",
                         style = MaterialTheme.typography.labelMedium,
                         color = KundliColors.Gold,
-                    )
-                }
-                if (!showNextShiftDelta) {
-                    Text(
-                        text = "Wakes up: ${state.nextShift.wakesUp}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.TextMuted,
+                        modifier = Modifier.weight(1f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                }
-                AnimatedVisibility(visible = showNextShiftDelta) {
                     Surface(
-                        color = KundliColors.SurfaceAlt,
-                        shape = RoundedCornerShape(14.dp),
-                        modifier = Modifier.fillMaxWidth(),
+                        color = KundliColors.Gold.copy(alpha = 0.14f),
+                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                        shape = RoundedCornerShape(999.dp),
                     ) {
-                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            DeltaRow("Winds down", state.nextShift.windsDown)
-                            DeltaRow("Wakes up", state.nextShift.wakesUp)
-                            DeltaRow("House shift", state.nextShift.houseFocusShift)
-                        }
+                        Text(
+                            text = "Preview Diff",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.Gold,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        )
                     }
                 }
+                ShiftDiffRow("↘  Winds down", state.nextShift.windsDown, KundliColors.Amber)
+                ShiftDiffRow("↗  Wakes up", state.nextShift.wakesUp, KundliColors.Teal)
+                ShiftDiffRow("⇄  House shift", state.nextShift.houseFocusShift, KundliColors.Gold)
             }
         }
 
-        // 3. 2-Up Cross-Tab Bento Row (This Week's Rhythm + Sade Sati & Transits)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Surface(
-                color = KundliColors.Surface,
-                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                shape = RoundedCornerShape(18.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onJumpToTab(1) },
+        // 4. UPCOMING ANTARDASHAS Section (Stitch time_expansive.png)
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("THIS WEEK", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        weekPreviewDays.forEach { day ->
+                Text("UPCOMING ANTARDASHAS", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(999.dp),
+                ) {
+                    Text(
+                        text = "${activeDasha.mahadashaLord} Maha",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.Gold,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                    )
+                }
+            }
+            upcomingLords.forEach { (lord, subLabel, isMajor) ->
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, if (isMajor) KundliColors.GoldHairline else KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onOpenTimeMachinePage),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (isMajor) {
                             Box(
                                 modifier = Modifier
-                                    .size(12.dp)
-                                    .clip(CircleShape)
-                                    .background(day.band.color),
+                                    .width(4.dp)
+                                    .height(64.dp)
+                                    .background(KundliColors.Gold),
                             )
                         }
-                    }
-                    Text(
-                        text = state.monthTitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.TextMuted,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text("Almanac →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
-                }
-            }
-
-            Surface(
-                color = KundliColors.Surface,
-                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                shape = RoundedCornerShape(18.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onJumpToTab(2) },
-            ) {
-                Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text("SADE SATI", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
-                    Text(
-                        text = state.sadeSatiStatus,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = KundliColors.TextMain,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text("All ${state.skyMovers.size} transits →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                }
-            }
-        }
-
-        // 4. The Pattern-style Horizontal Swipeable Sky Movers Deck
-        if (state.skyMovers.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text("ACTIVE SKY MOVERS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-                    Text(
-                        text = "See all →",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = KundliColors.Gold,
-                        modifier = Modifier.clickable { onJumpToTab(2) },
-                    )
-                }
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(state.skyMovers.take(5), key = { it.planet.name }) { mover ->
-                        Surface(
-                            color = KundliColors.Surface,
-                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                            shape = RoundedCornerShape(18.dp),
+                        Row(
                             modifier = Modifier
-                                .width(224.dp)
-                                .clickable { onJumpToTab(2) },
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    Text(
-                                        text = "${mover.planet.displayName} in ${mover.signName}",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = KundliColors.Gold,
-                                    )
-                                    Text(
-                                        text = "H${mover.houseFromLagna}",
-                                        style = TelemetryNumberStyle,
-                                        color = KundliColors.Teal,
-                                    )
-                                }
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isMajor) KundliColors.Gold else KundliColors.Teal),
+                            )
+                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
-                                    text = "Moon House ${mover.houseFromMoon} · ${mover.kakshyaLabel}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = KundliColors.TextMuted,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
+                                    text = if (isMajor) "$lord Mahadasha Begins" else "$lord Antardasha",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = if (isMajor) KundliColors.Gold else KundliColors.TextMain,
                                 )
-                                Text(
-                                    text = mover.plainMeaning,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = KundliColors.TextMain,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
+                                Text(subLabel, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
                             }
+                            Text("Explore →", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
                         }
                     }
                 }
             }
         }
 
-        // 4b. 120-Year Vimshottari Mahadasha Horizon Ribbon (Stitch Time section)
+        // 5. 120-YEAR HORIZON RIBBON (Stitch time_expansive.png)
         if (selectedSystem == DashaSystem.VIMSHOTTARI) {
             MahadashaHorizonRibbon(
                 activeMahadashaLord = activeDasha.mahadashaLord,
+                activeRange = activeDasha.mahadashaRange,
                 activeProgress = activeDasha.mahadashaProgress,
                 onTapHorizon = onOpenTimeMachinePage,
             )
         }
 
-        // 5. Dedicated Full-Page Entry Card for Time-Machine & Milestones (with clickable chips)
+        // 6. TRANSITS & SKY MOVERS Vertical Cards + Sade Sati Status (Stitch time_expansive.png)
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("TRANSITS & SKY MOVERS", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                Surface(
+                    color = KundliColors.Teal.copy(alpha = 0.14f),
+                    border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.4f)),
+                    shape = RoundedCornerShape(999.dp),
+                    modifier = Modifier.clickable { onJumpToTab(2) },
+                ) {
+                    Text(
+                        text = "LIVE GOCHAR",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.Teal,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                    )
+                }
+            }
+
+            state.skyMovers.take(4).forEach { mover ->
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onJumpToTab(2) },
+                ) {
+                    Row(
+                        modifier = Modifier.padding(14.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Surface(
+                            color = KundliColors.SurfaceRecessed,
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.size(38.dp),
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(mover.planet.displayName.take(2).uppercase(), style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                            }
+                        }
+                        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text("${mover.planet.displayName} in ${mover.signName}", style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain)
+                            Text(
+                                text = "H${mover.houseFromLagna} natal · Moon H${mover.houseFromMoon} · ${mover.plainMeaning}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = KundliColors.TextMuted,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                        Surface(
+                            color = KundliColors.Teal.copy(alpha = 0.14f),
+                            shape = RoundedCornerShape(999.dp),
+                        ) {
+                            Text(
+                                text = "H${mover.houseFromLagna}",
+                                style = TelemetryNumberStyle,
+                                color = KundliColors.Teal,
+                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Sade Sati Status Card
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onJumpToTab(2) },
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Sade Sati Status", style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain)
+                        Text(state.sadeSatiStatus, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
+                    }
+                    Surface(
+                        color = KundliColors.Teal.copy(alpha = 0.14f),
+                        shape = RoundedCornerShape(999.dp),
+                    ) {
+                        Text(
+                            text = "Almanac →",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.Teal,
+                            modifier = Modifier
+                                .clickable { onJumpToTab(1) }
+                                .padding(horizontal = 10.dp, vertical = 5.dp),
+                        )
+                    }
+                }
+            }
+        }
+
+        // 7. TIME-MACHINE & MILESTONES Interactive Card (Stitch time_expansive.png)
         Surface(
-            color = KundliColors.SurfaceAlt,
+            color = KundliColors.Surface,
             border = BorderStroke(1.dp, KundliColors.GoldHairline),
-            shape = RoundedCornerShape(18.dp),
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onOpenTimeMachinePage),
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Time-Machine & Milestones", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                        Text(
-                            text = if (milestones.isNotEmpty()) "${milestones.size} saved milestones · Scrub any year 1950–2060" else "Revisit any past or future year (1950–2060)",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = KundliColors.TextMuted,
-                        )
+                        Text("TIME-MACHINE & MILESTONES", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                        Text("Test the math on any year (1950–2060)", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
                     }
                     Text("Open →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
                 }
+
                 if (milestones.isNotEmpty()) {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(milestones.take(6), key = { it.id }) { ms ->
-                            Surface(
-                                color = KundliColors.BgInk.copy(alpha = 0.65f),
-                                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                                shape = RoundedCornerShape(999.dp),
-                                modifier = Modifier.clickable(onClick = onOpenTimeMachinePage),
-                            ) {
-                                Text(
-                                    text = "${ms.eventDate.take(4)} · ${ms.title}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = KundliColors.Teal,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                )
+                    Text("SAVED MILESTONES", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                    milestones.take(4).chunked(2).forEach { pair ->
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            pair.forEach { ms ->
+                                Surface(
+                                    color = KundliColors.SurfaceRecessed,
+                                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable(onClick = onOpenTimeMachinePage),
+                                ) {
+                                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                        Text(ms.title, style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        Text("${ms.eventDate.take(4)} · ${ms.category}", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                                    }
+                                }
                             }
+                            if (pair.size == 1) Spacer(Modifier.weight(1f))
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ShiftDiffRow(
+    label: String,
+    value: String,
+    accent: Color,
+) {
+    Surface(
+        color = KundliColors.SurfaceRecessed,
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(label, style = MaterialTheme.typography.labelMedium, color = accent, modifier = Modifier.weight(0.38f))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodySmall,
+                color = KundliColors.TextMain,
+                modifier = Modifier.weight(0.62f),
+            )
         }
     }
 }
@@ -483,97 +622,72 @@ private val VIMSHOTTARI_HORIZON_ORDER = listOf(
 @Composable
 private fun MahadashaHorizonRibbon(
     activeMahadashaLord: String,
+    activeRange: String,
     activeProgress: Float,
     onTapHorizon: () -> Unit,
 ) {
-    Surface(
-        color = KundliColors.Surface,
-        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-        shape = RoundedCornerShape(18.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onTapHorizon),
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text("120-YEAR HORIZON RIBBON", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                Text("Time-Machine →", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
-            }
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                items(VIMSHOTTARI_HORIZON_ORDER, key = { it.first }) { (lord, years) ->
-                    val isActive = lord.equals(activeMahadashaLord, ignoreCase = true)
-                    val cardWidth = (56 + years * 3).dp
-                    Surface(
-                        color = if (isActive) KundliColors.Gold.copy(alpha = 0.16f) else KundliColors.SurfaceAlt,
-                        border = BorderStroke(
-                            1.dp,
-                            if (isActive) KundliColors.Gold else KundliColors.SubtleDivider,
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.width(cardWidth),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(2.dp),
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("120-YEAR HORIZON RIBBON", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+            Text("Scrub cycle", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+        }
+        Surface(
+            color = KundliColors.Surface,
+            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onTapHorizon),
+        ) {
+            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(VIMSHOTTARI_HORIZON_ORDER, key = { it.first }) { (lord, years) ->
+                        val isActive = lord.equals(activeMahadashaLord, ignoreCase = true)
+                        val cardWidth = (66 + years * 3).dp
+                        Surface(
+                            color = if (isActive) KundliColors.Gold.copy(alpha = 0.16f) else KundliColors.SurfaceRecessed,
+                            border = BorderStroke(
+                                if (isActive) 2.dp else 1.dp,
+                                if (isActive) KundliColors.Gold else KundliColors.SubtleDivider,
+                            ),
+                            shape = RoundedCornerShape(14.dp),
+                            modifier = Modifier.width(cardWidth),
                         ) {
-                            Text(
-                                text = lord,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = if (isActive) KundliColors.Gold else KundliColors.TextMain,
-                                maxLines = 1,
-                            )
-                            Text(
-                                text = if (isActive) "${(activeProgress * 100).toInt()}% · ${years}y" else "${years}y",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = if (isActive) KundliColors.Teal else KundliColors.TextMuted,
-                                maxLines = 1,
-                            )
+                            Column(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                if (isActive) {
+                                    Text("ACTIVE", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                                }
+                                Text(
+                                    text = lord,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = if (isActive) KundliColors.Gold else KundliColors.TextMain,
+                                    maxLines = 1,
+                                )
+                                Text(
+                                    text = if (isActive) "${years} yrs · ${(activeProgress * 100).toInt()}%" else "$years yrs",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (isActive) KundliColors.Teal else KundliColors.TextMuted,
+                                    maxLines = 1,
+                                )
+                            }
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ChapterRingStat(
-    title: String,
-    subtitle: String,
-    rangeLabel: String,
-    progress: Float,
-    ringColor: Color,
-    modifier: Modifier = Modifier,
-) {
-    val pct = (progress.coerceIn(0f, 1f) * 100).toInt()
-    Surface(
-        color = KundliColors.SurfaceAlt,
-        shape = RoundedCornerShape(14.dp),
-        modifier = modifier,
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(44.dp)) {
-                CircularProgressIndicator(
-                    progress = { progress.coerceIn(0.05f, 1f) },
-                    modifier = Modifier.size(44.dp),
-                    color = ringColor,
-                    trackColor = KundliColors.BgInk,
-                    strokeWidth = 4.dp,
-                )
-                Text("$pct%", style = MaterialTheme.typography.labelSmall, color = ringColor)
-            }
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(subtitle.uppercase(), style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
-                Text(title, style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(rangeLabel, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text("● $activeMahadashaLord ($activeRange)", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                    Text("Total span: 120 Years", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                }
             }
         }
     }
@@ -790,13 +904,5 @@ private fun TransitsSubPage(state: TimeTabState) {
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun DeltaRow(label: String, value: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(label, style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-        Text(value, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
     }
 }

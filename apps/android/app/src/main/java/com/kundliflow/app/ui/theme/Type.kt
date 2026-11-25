@@ -29,16 +29,30 @@ val KundliTypography = Typography(
     displaySmall = TextStyle(
         fontFamily = CinzelDisplayFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 32.sp,
-        lineHeight = 38.sp,
-        letterSpacing = 0.04.sp,
+        fontSize = 30.sp,
+        lineHeight = 36.sp,
+        letterSpacing = 1.2.sp,
     ),
-    headlineSmall = TextStyle(
+    headlineMedium = TextStyle(
         fontFamily = CinzelDisplayFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 22.sp,
         lineHeight = 28.sp,
-        letterSpacing = 0.03.sp,
+        letterSpacing = 0.9.sp,
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = CinzelDisplayFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 19.sp,
+        lineHeight = 25.sp,
+        letterSpacing = 0.8.sp,
+    ),
+    titleLarge = TextStyle(
+        fontFamily = CinzelDisplayFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 17.sp,
+        lineHeight = 23.sp,
+        letterSpacing = 0.6.sp,
     ),
     titleMedium = TextStyle(
         fontFamily = JakartaSansFamily,
@@ -46,11 +60,17 @@ val KundliTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 22.sp,
     ),
+    titleSmall = TextStyle(
+        fontFamily = JakartaSansFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+    ),
     bodyMedium = TextStyle(
         fontFamily = JakartaSansFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 15.sp,
-        lineHeight = 23.sp,
+        fontSize = 14.sp,
+        lineHeight = 21.sp,
     ),
     bodySmall = TextStyle(
         fontFamily = JakartaSansFamily,
@@ -58,11 +78,25 @@ val KundliTypography = Typography(
         fontSize = 13.sp,
         lineHeight = 19.sp,
     ),
+    labelLarge = TextStyle(
+        fontFamily = JakartaSansFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
+    ),
     labelMedium = TextStyle(
         fontFamily = JakartaSansFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
+        fontSize = 11.sp,
         lineHeight = 16.sp,
+        letterSpacing = 0.6.sp,
+    ),
+    labelSmall = TextStyle(
+        fontFamily = JakartaSansFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 10.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 0.7.sp,
     ),
 )
 

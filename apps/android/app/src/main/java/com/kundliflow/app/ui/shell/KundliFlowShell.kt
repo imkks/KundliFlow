@@ -163,17 +163,39 @@ fun KundliFlowShell(
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    // Drawer Brand Header
+                    // Drawer Brand Header (Stitch drawer.png)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            text = "KUNDLIFLOW",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = KundliColors.Gold,
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(KundliColors.SurfaceRecessed)
+                                    .border(1.5.dp, KundliColors.Gold, CircleShape),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text("✦", style = MaterialTheme.typography.labelLarge, color = KundliColors.Gold)
+                            }
+                            Column {
+                                Text(
+                                    text = "KUNDLIFLOW",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = KundliColors.TextMain,
+                                )
+                                Text(
+                                    text = "VEDIC CODEX",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = KundliColors.TextMuted,
+                                )
+                            }
+                        }
                         IconButton(onClick = { closeDrawerAnd { onNavigatePage(AppPage.SettingsAndVault) } }) {
                             Icon(
                                 imageVector = Icons.Rounded.Settings,
@@ -183,83 +205,101 @@ fun KundliFlowShell(
                         }
                     }
 
-                    // Active Profile Card
+                    // Active Profile Card (Stitch drawer.png: Cinzel name + inline Band pill + Edit >)
                     Surface(
-                        color = KundliColors.SurfaceAlt,
+                        color = KundliColors.SurfaceAlt.copy(alpha = 0.72f),
                         border = BorderStroke(1.dp, KundliColors.GoldHairline),
                         shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { closeDrawerAnd { onSelectDestination(MainDestination.Today) } },
                     ) {
-                        Row(
+                        Column(
                             modifier = Modifier.padding(14.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = activeProfileName,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = KundliColors.TextMain,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                                if (activeProfileSubtitle.isNotBlank()) {
-                                    Text(
-                                        text = activeProfileSubtitle,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = KundliColors.Teal,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
-                            }
-                            TextButton(
-                                onClick = { closeDrawerAnd { onNavigatePage(AppPage.SettingsAndVault) } },
-                                contentPadding = PaddingValues(horizontal = 8.dp),
-                            ) {
-                                Text("Edit", color = KundliColors.Gold)
-                            }
-                        }
-                    }
-
-                    // Live Sky Mini-Card (1-tap jump to Today)
-                    if (!liveSkyBandLabel.isNullOrBlank()) {
-                        Surface(
-                            color = liveSkyBandColor.copy(alpha = 0.10f),
-                            border = BorderStroke(1.dp, liveSkyBandColor.copy(alpha = 0.35f)),
-                            shape = RoundedCornerShape(14.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { closeDrawerAnd { onSelectDestination(MainDestination.Today) } },
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
                                     Text(
-                                        text = "SKY NOW · ${liveSkyBandLabel.uppercase()}",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = liveSkyBandColor,
+                                        text = activeProfileName.uppercase(),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        color = KundliColors.TextMain,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
                                     )
-                                    if (!liveSkySubtitle.isNullOrBlank()) {
-                                        Text(
-                                            text = liveSkySubtitle,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = KundliColors.TextMain,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
+                                    if (!liveSkyBandLabel.isNullOrBlank()) {
+                                        Surface(
+                                            color = liveSkyBandColor.copy(alpha = 0.16f),
+                                            border = BorderStroke(1.dp, liveSkyBandColor.copy(alpha = 0.45f)),
+                                            shape = RoundedCornerShape(999.dp),
+                                        ) {
+                                            Text(
+                                                text = "● $liveSkyBandLabel",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = liveSkyBandColor,
+                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                            )
+                                        }
                                     }
                                 }
-                                Text("→", style = MaterialTheme.typography.titleMedium, color = liveSkyBandColor)
+                                Surface(
+                                    color = KundliColors.SurfaceRecessed,
+                                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.clickable {
+                                        closeDrawerAnd { onNavigatePage(AppPage.SettingsAndVault) }
+                                    },
+                                ) {
+                                    Text(
+                                        text = "Edit >",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = KundliColors.Gold,
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                    )
+                                }
+                            }
+                            if (activeProfileSubtitle.isNotBlank()) {
+                                Text(
+                                    text = activeProfileSubtitle,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = KundliColors.TextMain.copy(alpha = 0.85f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                            if (!liveSkySubtitle.isNullOrBlank()) {
+                                Text(
+                                    text = liveSkySubtitle,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = KundliColors.TextMuted,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
                             }
                         }
                     }
 
-                    // Horizontal Orbit Profile Switcher Rail (zero dropdown!)
-                    Text("YOUR ORBIT", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                    // Horizontal Orbit Profile Switcher Rail
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text("YOUR ORBIT", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        Text(
+                            text = "${savedProfiles.size} charts cached",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.TextMuted,
+                        )
+                    }
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         contentPadding = PaddingValues(end = 4.dp),
@@ -335,139 +375,197 @@ fun KundliFlowShell(
                         }
                     }
 
-                    // Quick Preferences: Reading Depth + Chart Style
-                    Text("PREFERENCES", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        listOf("simple" to "Simple", "balanced" to "Balanced", "full" to "Full").forEach { (id, label) ->
-                            FilterChip(
-                                selected = detailLevel == id,
-                                onClick = { onChangeDetailLevel(id) },
-                                label = { Text(label) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = KundliColors.SurfaceAlt,
-                                    selectedLabelColor = KundliColors.Gold,
-                                ),
-                            )
+                    // Unified Segmented Reading Depth Bar (Stitch drawer.png)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text("READING DEPTH", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        Text(
+                            text = when (detailLevel) {
+                                "simple" -> "SIMPLE (L1)"
+                                "full" -> "FULL (L3)"
+                                else -> "BALANCED (L2)"
+                            },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.Gold,
+                        )
+                    }
+                    Surface(
+                        color = KundliColors.SurfaceRecessed,
+                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(modifier = Modifier.padding(3.dp)) {
+                            listOf("simple" to "Simple", "balanced" to "Balanced", "full" to "Full").forEach { (id, label) ->
+                                val active = detailLevel == id
+                                Surface(
+                                    color = if (active) KundliColors.SurfaceAlt else Color.Transparent,
+                                    border = if (active) BorderStroke(1.dp, KundliColors.GoldHairline) else null,
+                                    shape = RoundedCornerShape(9.dp),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable { onChangeDetailLevel(id) },
+                                ) {
+                                    Box(
+                                        modifier = Modifier.padding(vertical = 8.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Text(
+                                            text = label,
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = if (active) KundliColors.Gold else KundliColors.TextMuted,
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        listOf("NORTH" to "North Indian", "SOUTH" to "South Indian").forEach { (id, label) ->
-                            FilterChip(
-                                selected = chartStyle.equals(id, ignoreCase = true),
-                                onClick = { onChangeChartStyle(id) },
-                                label = { Text(label) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = KundliColors.SurfaceAlt,
-                                    selectedLabelColor = KundliColors.Teal,
-                                ),
-                            )
+
+                    // Unified 2-Way Chart Style Segmented Bar
+                    Surface(
+                        color = KundliColors.SurfaceRecessed,
+                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(modifier = Modifier.padding(3.dp)) {
+                            listOf("NORTH" to "North Indian", "SOUTH" to "South Indian").forEach { (id, label) ->
+                                val active = chartStyle.equals(id, ignoreCase = true)
+                                Surface(
+                                    color = if (active) KundliColors.SurfaceAlt else Color.Transparent,
+                                    border = if (active) BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.4f)) else null,
+                                    shape = RoundedCornerShape(9.dp),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable { onChangeChartStyle(id) },
+                                ) {
+                                    Box(
+                                        modifier = Modifier.padding(vertical = 7.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Text(
+                                            text = label,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = if (active) KundliColors.Teal else KundliColors.TextMuted,
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
 
                     HorizontalDivider(color = KundliColors.SubtleDivider)
 
-                    // Quick Access Section
-                    Text("QUICK ACCESS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                    // Codex & Specialist Studios (Stitch drawer.png rows with 36dp icon tiles + subtitles)
+                    Text("CODEX & SPECIALIST STUDIOS", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
                     DrawerPageItem(
-                        icon = Icons.Rounded.AutoAwesome,
-                        title = "Ask AI Copilot",
+                        icon = Icons.Rounded.WorkspacePremium,
+                        title = "Strengths, Yogas & SAV",
+                        subtitle = "Shadbala · 337 Bindus · Dignities",
+                        badgeText = if (activeYogasCount > 0) "$activeYogasCount" else null,
+                        badgeColor = KundliColors.Gold,
                         accent = KundliColors.Gold,
-                        onClick = { closeDrawerAnd(onOpenAsk) },
+                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.StrengthsAndYogas) } },
+                    )
+                    DrawerPageItem(
+                        icon = Icons.Rounded.Build,
+                        title = "Tools & Systems Studio",
+                        subtitle = "Chalit · KP Star-Lords · Varshaphal",
+                        accent = KundliColors.Gold,
+                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.ToolsStudio) } },
+                    )
+                    DrawerPageItem(
+                        icon = Icons.Rounded.Stars,
+                        title = "Discovery Constellation",
+                        subtitle = "24-Node Chart Journey",
+                        badgeText = "$discoveryLitCount/$discoveryTotalCount",
+                        badgeColor = KundliColors.Teal,
+                        accent = KundliColors.Teal,
+                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.DiscoveryMap) } },
+                    )
+                    DrawerPageItem(
+                        icon = Icons.Rounded.History,
+                        title = "Time-Machine & Milestones",
+                        subtitle = "1950–2060 Historical Calibration",
+                        accent = KundliColors.Gold,
+                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.TimeMachine) } },
                     )
                     DrawerPageItem(
                         icon = Icons.Rounded.Timeline,
-                        title = "Today's Wave & Panchang",
+                        title = "Today's Wave & Almanac",
+                        subtitle = "24-Hora Scrubber · Monthly Calendar",
                         accent = KundliColors.Teal,
                         onClick = { closeDrawerAnd(onOpenTodayWave) },
                     )
                     DrawerPageItem(
-                        icon = Icons.Rounded.CalendarMonth,
-                        title = "Monthly Almanac",
-                        accent = KundliColors.Gold,
-                        onClick = { closeDrawerAnd(onJumpToAlmanac) },
-                    )
-
-                    HorizontalDivider(color = KundliColors.SubtleDivider)
-
-                    // 2x2 Visual Studios Grid (AstroSage / CHANI pattern)
-                    Text("DEEP DIVE STUDIOS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        DrawerStudioTile(
-                            icon = Icons.Rounded.WorkspacePremium,
-                            title = "Yogas & SAV",
-                            subtitle = if (activeYogasCount > 0) "$activeYogasCount active" else "Strengths",
-                            accent = KundliColors.Gold,
-                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.StrengthsAndYogas) } },
-                            modifier = Modifier.weight(1f),
-                        )
-                        DrawerStudioTile(
-                            icon = Icons.Rounded.Build,
-                            title = "Tools Studio",
-                            subtitle = "KP · Varshaphala",
-                            accent = KundliColors.Teal,
-                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.ToolsStudio) } },
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        DrawerStudioTile(
-                            icon = Icons.Rounded.History,
-                            title = "Time-Machine",
-                            subtitle = "Past & Future",
-                            accent = KundliColors.Teal,
-                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.TimeMachine) } },
-                            modifier = Modifier.weight(1f),
-                        )
-                        DrawerStudioTile(
-                            icon = Icons.Rounded.Stars,
-                            title = "Discovery",
-                            subtitle = "$discoveryLitCount / $discoveryTotalCount lit",
-                            accent = KundliColors.Gold,
-                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.DiscoveryMap) } },
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-
-                    HorizontalDivider(color = KundliColors.SubtleDivider)
-
-                    // Learn & Vault Section
-                    Text("LEARN & VAULT", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-                    DrawerPageItem(
                         icon = Icons.AutoMirrored.Rounded.MenuBook,
                         title = "Plain English Glossary",
+                        subtitle = "7 Categories · Vedic Lexicon",
                         accent = KundliColors.TextMain,
                         onClick = { closeDrawerAnd { onNavigatePage(AppPage.Glossary) } },
                     )
                     DrawerPageItem(
                         icon = Icons.Rounded.Share,
-                        title = "Share 9:16 Cosmic Blueprint",
+                        title = "Share 9:16 Blueprint",
+                        subtitle = "Editorial Astro Wallpaper",
                         accent = KundliColors.Gold,
                         onClick = { closeDrawerAnd(onShareBlueprint) },
                     )
                     DrawerPageItem(
                         icon = Icons.Rounded.Settings,
-                        title = "Settings, Sync & Vault",
+                        title = "Settings & Data Vault",
+                        subtitle = "Local-First · JSON Export & Sync",
                         badgeText = if (!signedInEmail.isNullOrBlank()) "Synced" else "Local",
                         badgeColor = if (!signedInEmail.isNullOrBlank()) KundliColors.Teal else KundliColors.TextMuted,
                         accent = KundliColors.TextMuted,
                         onClick = { closeDrawerAnd { onNavigatePage(AppPage.SettingsAndVault) } },
                     )
 
-                    HorizontalDivider(color = KundliColors.SubtleDivider)
+                    Spacer(Modifier.height(4.dp))
 
-                    // Always-reachable Support Helplines (v3 §4.10)
-                    DrawerPageItem(
-                        icon = Icons.Rounded.FavoriteBorder,
-                        title = "Need support? (24/7 Helplines)",
-                        accent = KundliColors.Teal,
-                        onClick = { closeDrawerAnd(onOpenSupport) },
-                    )
+                    // Pinned Teal-Bordered Support Card (Stitch drawer.png)
+                    Surface(
+                        color = KundliColors.Teal.copy(alpha = 0.08f),
+                        border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.35f)),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { closeDrawerAnd(onOpenSupport) },
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(CircleShape)
+                                    .background(KundliColors.Teal.copy(alpha = 0.14f)),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(Icons.Rounded.FavoriteBorder, contentDescription = null, tint = KundliColors.Teal, modifier = Modifier.size(18.dp))
+                            }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("Need support?", style = MaterialTheme.typography.titleSmall, color = KundliColors.Teal)
+                                Text("24/7 Grounding & Helplines", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                            }
+                            Text(">", style = MaterialTheme.typography.bodyMedium, color = KundliColors.Teal)
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 2.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text("● Local Vault encrypted", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal.copy(alpha = 0.8f))
+                        Text("v5.0", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                    }
                 }
             }
         },
@@ -481,6 +579,7 @@ fun KundliFlowShell(
                 Column(modifier = Modifier.fillMaxSize()) {
                     TopHeaderBar(
                         profileName = activeProfileName,
+                        activeDestination = activeDestination,
                         showBackToTodayPill = showBackToTodayPill,
                         staleStatusLine = staleStatusLine,
                         onRefreshStale = onRefreshStale,
@@ -516,6 +615,7 @@ fun KundliFlowShell(
                     Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
                         TopHeaderBar(
                             profileName = activeProfileName,
+                            activeDestination = activeDestination,
                             showBackToTodayPill = showBackToTodayPill,
                             staleStatusLine = staleStatusLine,
                             onRefreshStale = onRefreshStale,
@@ -537,6 +637,7 @@ fun KundliFlowShell(
 private fun DrawerPageItem(
     icon: ImageVector,
     title: String,
+    subtitle: String = "",
     accent: Color,
     badgeText: String? = null,
     badgeColor: Color = KundliColors.Teal,
@@ -550,75 +651,58 @@ private fun DrawerPageItem(
             .clickable(onClick = onClick),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 7.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(icon, contentDescription = null, tint = accent, modifier = Modifier.size(20.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                color = KundliColors.TextMain,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-            )
-            if (!badgeText.isNullOrBlank()) {
-                Surface(
-                    color = badgeColor.copy(alpha = 0.14f),
-                    shape = RoundedCornerShape(999.dp),
+            Surface(
+                color = KundliColors.SurfaceRecessed,
+                border = BorderStroke(1.dp, accent.copy(alpha = 0.22f)),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.size(36.dp),
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(icon, contentDescription = null, tint = accent, modifier = Modifier.size(18.dp))
+                }
+            }
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     Text(
-                        text = badgeText,
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = KundliColors.TextMain,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    if (!badgeText.isNullOrBlank()) {
+                        Surface(
+                            color = badgeColor.copy(alpha = 0.16f),
+                            shape = RoundedCornerShape(999.dp),
+                        ) {
+                            Text(
+                                text = badgeText,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = badgeColor,
+                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp),
+                            )
+                        }
+                    }
+                }
+                if (subtitle.isNotBlank()) {
+                    Text(
+                        text = subtitle,
                         style = MaterialTheme.typography.labelSmall,
-                        color = badgeColor,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                        color = KundliColors.TextMuted,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun DrawerStudioTile(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    accent: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        color = KundliColors.SurfaceAlt,
-        border = BorderStroke(1.dp, accent.copy(alpha = 0.22f)),
-        shape = RoundedCornerShape(14.dp),
-        modifier = modifier.clickable(onClick = onClick),
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = accent,
-                modifier = Modifier.size(20.dp),
-            )
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall,
-                color = KundliColors.TextMain,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelSmall,
-                color = KundliColors.TextMuted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Text(">", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
         }
     }
 }
@@ -626,6 +710,7 @@ private fun DrawerStudioTile(
 @Composable
 private fun TopHeaderBar(
     profileName: String,
+    activeDestination: MainDestination,
     showBackToTodayPill: Boolean,
     staleStatusLine: String?,
     onRefreshStale: () -> Unit,
@@ -645,23 +730,56 @@ private fun TopHeaderBar(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.weight(1f),
             ) {
                 IconButton(onClick = onOpenDrawer) {
                     Icon(
                         imageVector = Icons.Rounded.Menu,
                         contentDescription = "Open navigation drawer",
-                        tint = KundliColors.Gold,
+                        tint = KundliColors.TextMain,
                     )
                 }
-                Text(
-                    text = profileName,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = KundliColors.TextMain,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable(onClick = onOpenDrawer)
-                        .padding(horizontal = 6.dp, vertical = 6.dp),
-                )
+                when (activeDestination) {
+                    MainDestination.Today -> {
+                        Surface(
+                            color = KundliColors.Surface,
+                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                            shape = RoundedCornerShape(999.dp),
+                            modifier = Modifier.clickable(onClick = onOpenDrawer),
+                        ) {
+                            Text(
+                                text = "${profileName.uppercase()}  ▾",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = KundliColors.TextMain,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
+                            )
+                        }
+                    }
+                    MainDestination.Chart -> {
+                        Column(modifier = Modifier.clickable(onClick = onOpenDrawer)) {
+                            Text("KUNDLI CODEX", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                            Text("$profileName · Vedic Workbench", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                        }
+                    }
+                    MainDestination.Time -> {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.clickable(onClick = onOpenDrawer),
+                        ) {
+                            Text("TIME", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                            Text("$profileName ▾", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                        }
+                    }
+                    MainDestination.Journal -> {
+                        Column(modifier = Modifier.clickable(onClick = onOpenDrawer)) {
+                            Text("JOURNAL & RHYTHMS", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                            Text("$profileName ▾", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        }
+                    }
+                }
 
                 AnimatedVisibility(visible = showBackToTodayPill) {
                     Surface(
@@ -690,12 +808,32 @@ private fun TopHeaderBar(
                 }
             }
 
-            IconButton(onClick = onOpenSearch) {
-                Icon(
-                    imageVector = Icons.Rounded.Search,
-                    contentDescription = "Search chart & glossary",
-                    tint = KundliColors.TextMain,
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                IconButton(onClick = onOpenSearch) {
+                    Icon(
+                        imageVector = Icons.Rounded.Search,
+                        contentDescription = "Search chart & glossary",
+                        tint = KundliColors.TextMain,
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(CircleShape)
+                        .background(KundliColors.Gold.copy(alpha = 0.16f))
+                        .border(1.5.dp, KundliColors.Gold, CircleShape)
+                        .clickable(onClick = onOpenDrawer),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = profileName.take(1).uppercase(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = KundliColors.Gold,
+                    )
+                }
             }
         }
 
@@ -738,7 +876,7 @@ private fun FloatingCapsuleDock(
             .height(72.dp),
         color = KundliColors.GlassDockIndigo,
         shape = RoundedCornerShape(36.dp),
-        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        border = BorderStroke(1.dp, KundliColors.GoldHairline),
         tonalElevation = 0.dp,
     ) {
         Row(
