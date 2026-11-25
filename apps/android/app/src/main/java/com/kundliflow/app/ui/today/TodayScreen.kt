@@ -61,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
+import com.kundliflow.app.ui.time.SkyMoverItem
 import java.time.LocalTime
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -90,6 +91,8 @@ fun TodayScreen(
     onOpenDiscoveryMap: () -> Unit = {},
     onTapExploreTopic: (String) -> Unit,
     onTapCitySwitcher: () -> Unit,
+    skyMovers: List<SkyMoverItem> = emptyList(),
+    onJumpToTransits: () -> Unit = {},
     externalOpenWave: Boolean = false,
     onExternalWaveHandled: () -> Unit = {},
 ) {
@@ -190,7 +193,15 @@ fun TodayScreen(
                 onOpenDiscoveryMap = onOpenDiscoveryMap,
             )
 
-            // 8. Explore Horizontal Cards Rail
+            // 8. Live Sky Movers Preview Rail (Stitch Today section)
+            if (skyMovers.isNotEmpty()) {
+                TodaySkyMoversPreview(
+                    movers = skyMovers.take(3),
+                    onSeeAll = onJumpToTransits,
+                )
+            }
+
+            // 9. Explore Horizontal Cards Rail
             ExploreTopicsReel(onTapTopic = onTapExploreTopic)
         }
     }
@@ -235,13 +246,34 @@ private fun TodayHeroCard(
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = sky.greeting,
-                style = MaterialTheme.typography.bodySmall,
-                color = KundliColors.TextMuted,
-                modifier = Modifier.align(Alignment.Start),
-            )
-            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = sky.greeting,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = KundliColors.TextMuted,
+                )
+                sky.panchang?.nakshatra?.takeIf { it.isNotBlank() }?.let { nak ->
+                    Surface(
+                        color = KundliColors.SurfaceAlt,
+                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                        shape = RoundedCornerShape(999.dp),
+                    ) {
+                        Text(
+                            text = nak,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.Gold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(12.dp))
 
             if (showConstructiveRedirect) {
                 Text(
@@ -258,20 +290,27 @@ private fun TodayHeroCard(
                     overflow = TextOverflow.Ellipsis,
                 )
             } else {
-                // Soft Band Ring
+                // Glowing Double-Ring Celestial Band Pill
                 Surface(
-                    color = sky.currentBand.color.copy(alpha = 0.14f),
-                    border = BorderStroke(1.5.dp, sky.currentBand.color),
-                    shape = RoundedCornerShape(32.dp),
+                    color = sky.currentBand.color.copy(alpha = 0.08f),
+                    border = BorderStroke(1.dp, sky.currentBand.color.copy(alpha = 0.35f)),
+                    shape = RoundedCornerShape(40.dp),
                 ) {
-                    Text(
-                        text = sky.currentBand.label,
-                        style = MaterialTheme.typography.displaySmall,
-                        color = sky.currentBand.color,
-                        modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp),
-                    )
+                    Surface(
+                        color = sky.currentBand.color.copy(alpha = 0.16f),
+                        border = BorderStroke(1.5.dp, sky.currentBand.color),
+                        shape = RoundedCornerShape(32.dp),
+                        modifier = Modifier.padding(5.dp),
+                    ) {
+                        Text(
+                            text = sky.currentBand.label,
+                            style = MaterialTheme.typography.displaySmall,
+                            color = sky.currentBand.color,
+                            modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp),
+                        )
+                    }
                 }
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(12.dp))
                 // Line 1: Hora + next shift (or Tomorrow opening after 19:00)
                 val line1 = if (isEveningAfter19 && sky.tomorrowOpeningSummary != null) {
                     sky.tomorrowOpeningSummary
@@ -306,6 +345,34 @@ private fun TodayHeroCard(
                         style = MaterialTheme.typography.labelMedium,
                         color = KundliColors.Gold,
                     )
+                }
+                // Compact Factor Breakdown Bar (Stitch Hero telemetry strip)
+                if (sky.activeFactors.isNotEmpty()) {
+                    Spacer(Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                    ) {
+                        sky.activeFactors.take(3).forEach { f ->
+                            val sign = if (f.value >= 0) "+" else ""
+                            val tint = when {
+                                f.value > 0 -> KundliColors.Teal
+                                f.value < 0 -> KundliColors.Amber
+                                else -> KundliColors.Gold
+                            }
+                            Surface(
+                                color = KundliColors.SurfaceAlt.copy(alpha = 0.85f),
+                                shape = RoundedCornerShape(999.dp),
+                            ) {
+                                Text(
+                                    text = "${f.name.split(" ").first()} $sign${f.value}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = tint,
+                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1033,7 +1100,7 @@ private fun DailyContextBentoSection(
             }
         }
 
-        // Inline 1-tap disclosure for Panchang
+        // Inline 1-tap disclosure: 2x2 Vedic Panchang Matrix + Solar & Rahu Kalam Strip (Stitch)
         AnimatedVisibility(visible = expandPanchang && sky.panchang != null) {
             sky.panchang?.let { p ->
                 Surface(
@@ -1042,11 +1109,32 @@ private fun DailyContextBentoSection(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text("TODAY'S PANCHANG · ${sky.cityName.uppercase()}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                        Text("Tithi: ${p.tithi} · Nakshatra: ${p.nakshatra}", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
-                        Text("Yoga: ${p.yoga} · Karana: ${p.karana}", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
-                        Text("Sunrise ${p.sunrise}  ·  Sunset ${p.sunset}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
+                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text("VEDIC PANCHANG · ${sky.cityName.uppercase()}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            PanchangMatrixCell("TITHI", p.tithi, Modifier.weight(1f))
+                            PanchangMatrixCell("NAKSHATRA", p.nakshatra, Modifier.weight(1f))
+                        }
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            PanchangMatrixCell("YOGA", p.yoga, Modifier.weight(1f))
+                            PanchangMatrixCell("KARANA", p.karana, Modifier.weight(1f))
+                        }
+                        Surface(
+                            color = KundliColors.BgInk.copy(alpha = 0.6f),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text("Sunrise ${p.sunrise} · Sunset ${p.sunset}", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                                if (sky.rahuKalamLabel.isNotBlank()) {
+                                    Text(sky.rahuKalamLabel, style = MaterialTheme.typography.labelSmall, color = KundliColors.Amber)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1097,6 +1185,83 @@ private fun DailyContextBentoSection(
                                 modifier = Modifier.padding(start = 10.dp),
                             )
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PanchangMatrixCell(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = KundliColors.BgInk.copy(alpha = 0.55f),
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier,
+    ) {
+        Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(label, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodySmall,
+                color = KundliColors.TextMain,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun TodaySkyMoversPreview(
+    movers: List<SkyMoverItem>,
+    onSeeAll: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("LIVE SKY MOVERS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+            Text(
+                text = "All transits →",
+                style = MaterialTheme.typography.labelMedium,
+                color = KundliColors.Gold,
+                modifier = Modifier.clickable(onClick = onSeeAll),
+            )
+        }
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            itemsIndexed(movers, key = { _, m -> m.planet.name }) { _, mover ->
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .width(196.dp)
+                        .clickable(onClick = onSeeAll),
+                ) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(mover.planet.displayName, style = MaterialTheme.typography.titleSmall, color = KundliColors.Teal)
+                            Text("H${mover.houseFromLagna}", style = TelemetryNumberStyle, color = KundliColors.Gold)
+                        }
+                        Text(
+                            text = "${mover.signName} · Moon H${mover.houseFromMoon}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.TextMuted,
+                        )
+                        Text(
+                            text = mover.plainMeaning,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = KundliColors.TextMain,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }

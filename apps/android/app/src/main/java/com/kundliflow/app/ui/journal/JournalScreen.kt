@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
+import com.kundliflow.app.ui.today.SkyBand
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -90,6 +92,26 @@ fun JournalScreen(
     }
 
     val patternStage = remember(entries) { JournalPatternsCalculator.computeCalibrationStage(entries) }
+    val bandAverages = remember(entries) {
+        SkyBand.entries.map { band ->
+            val matching = entries.filter { it.sky.band == band }
+            val avg = if (matching.isEmpty()) 0f else matching.map { it.mood }.average().toFloat()
+            Triple(band, avg, matching.size)
+        }
+    }
+    val dayBandByWeekday = remember(entries) {
+        val map = mutableMapOf<Int, SkyBand>()
+        val today = LocalDate.now()
+        val monday = today.minusDays((today.dayOfWeek.value - 1).toLong())
+        entries.forEach { e ->
+            val d = runCatching { LocalDate.parse(e.timestampLabel.take(10)) }.getOrNull()
+            if (d != null && !d.isBefore(monday) && !d.isAfter(monday.plusDays(6))) {
+                val idx = d.dayOfWeek.value - 1
+                if (!map.containsKey(idx)) map[idx] = e.sky.band
+            }
+        }
+        map
+    }
     var expandPatterns by remember { mutableStateOf(false) }
     var showPatternMath by remember { mutableStateOf(false) }
 
@@ -146,6 +168,41 @@ fun JournalScreen(
                             maxLines = if (expandPatterns) 10 else 3,
                             overflow = TextOverflow.Ellipsis,
                         )
+                        // Visual Band Comparison Bars (Stitch Calibration Explorer)
+                        if (entries.isNotEmpty()) {
+                            Spacer(Modifier.height(4.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                bandAverages.forEach { (band, avg, count) ->
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    ) {
+                                        Text(
+                                            text = band.label,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = band.color,
+                                            modifier = Modifier.weight(0.28f),
+                                        )
+                                        LinearProgressIndicator(
+                                            progress = { (avg / 5f).coerceIn(0.04f, 1f) },
+                                            modifier = Modifier
+                                                .weight(0.52f)
+                                                .height(6.dp)
+                                                .clip(RoundedCornerShape(3.dp)),
+                                            color = if (count > 0) band.color else KundliColors.SubtleDivider,
+                                            trackColor = KundliColors.SurfaceAlt,
+                                        )
+                                        Text(
+                                            text = if (count > 0) "${String.format(Locale.US, "%.1f", avg)}/5" else "—",
+                                            style = TelemetryNumberStyle,
+                                            color = KundliColors.TextMuted,
+                                            modifier = Modifier.weight(0.20f),
+                                        )
+                                    }
+                                }
+                            }
+                        }
                         if (expandPatterns && patternStage.fullUnlocked && patternStage.mathDetail != null) {
                             Spacer(Modifier.height(6.dp))
                             AnimatedVisibility(visible = showPatternMath) {
@@ -166,10 +223,11 @@ fun JournalScreen(
                 }
             }
 
-            // 2. Weekly Rhythm Dots (Monday reset, no streaks)
+            // 2. Weekly Rhythm Dots (Monday reset, color-coded by each day's SkyBand)
             item {
                 WeeklyRhythmCard(
                     daysLogged = daysLoggedThisWeek,
+                    dayBandByWeekday = dayBandByWeekday,
                     goal = weeklyGoal,
                 )
             }
@@ -301,11 +359,13 @@ fun JournalScreen(
 @Composable
 private fun WeeklyRhythmCard(
     daysLogged: Set<Int>,
+    dayBandByWeekday: Map<Int, SkyBand> = emptyMap(),
     goal: Int,
 ) {
     val labels = listOf("M", "T", "W", "T", "F", "S", "S")
     Surface(
         color = KundliColors.Surface,
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -318,11 +378,12 @@ private fun WeeklyRhythmCard(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 labels.forEachIndexed { idx, letter ->
                     val filled = daysLogged.contains(idx)
+                    val dotColor = dayBandByWeekday[idx]?.color ?: KundliColors.Teal
                     Box(
                         modifier = Modifier
                             .size(22.dp)
                             .clip(CircleShape)
-                            .background(if (filled) KundliColors.Teal else KundliColors.SurfaceAlt),
+                            .background(if (filled) dotColor else KundliColors.SurfaceAlt),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(

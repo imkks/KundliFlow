@@ -90,6 +90,48 @@ fun StrengthsAndYogasPage(
             }
         }
 
+        val dominantPlanet = remember(chart.shadbalaBars) { chart.shadbalaBars.maxByOrNull { it.ratio } }
+        val peakSavHouse = remember(chart.houses) { chart.houses.maxByOrNull { it.savBindus } }
+        val bhangaCount = remember(chart.doshaAudits) { chart.doshaAudits.count { it.bhangaCancelled } }
+
+        // Executive Summary Hero Card (Stitch Strengths & Yogas)
+        Surface(
+            color = KundliColors.Surface,
+            border = BorderStroke(1.dp, KundliColors.GoldHairline),
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 6.dp),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text("EXECUTIVE SYNTHESIS", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                    Text(
+                        text = buildString {
+                            append("${chart.activeYogas.size} Yogas")
+                            if (dominantPlanet != null) append(" · ${dominantPlanet.planet.displayName} leads")
+                            if (peakSavHouse != null) append(" · H${peakSavHouse.number} peak (${peakSavHouse.savBindus})")
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = KundliColors.TextMain,
+                    )
+                    if (bhangaCount > 0) {
+                        Text(
+                            text = "$bhangaCount Dosha cancellation(s) verified by Bhanga",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.Teal,
+                        )
+                    }
+                }
+            }
+        }
+
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = KundliColors.BgInk,

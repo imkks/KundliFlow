@@ -275,19 +275,32 @@ fun KundliFlowShell(
                                         closeDrawerAnd { onSelectProfile(prof.id) }
                                     },
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(46.dp)
-                                        .clip(CircleShape)
-                                        .background(if (isActive) KundliColors.SurfaceAlt else KundliColors.BgInk)
-                                        .border(if (isActive) 2.dp else 1.5.dp, ringColor, CircleShape),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Text(
-                                        text = prof.name.take(2).uppercase(),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = if (isActive) KundliColors.Gold else KundliColors.TextMain,
-                                    )
+                                Box(modifier = Modifier.size(48.dp)) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(46.dp)
+                                            .align(Alignment.Center)
+                                            .clip(CircleShape)
+                                            .background(if (isActive) KundliColors.SurfaceAlt else KundliColors.BgInk)
+                                            .border(if (isActive) 2.dp else 1.5.dp, ringColor, CircleShape),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Text(
+                                            text = prof.name.take(2).uppercase(),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = if (isActive) KundliColors.Gold else KundliColors.TextMain,
+                                        )
+                                    }
+                                    if (prof.todayBand != null) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(11.dp)
+                                                .align(Alignment.BottomEnd)
+                                                .clip(CircleShape)
+                                                .background(prof.todayBand.color)
+                                                .border(1.5.dp, KundliColors.Surface, CircleShape),
+                                        )
+                                    }
                                 }
                                 Spacer(Modifier.height(4.dp))
                                 Text(

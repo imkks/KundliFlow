@@ -535,6 +535,12 @@ private fun KundliFlowRootScreen(
                                 }
                             },
                             onTapCitySwitcher = { showTravelCityPicker = true },
+                            skyMovers = timeState?.skyMovers.orEmpty(),
+                            onJumpToTransits = {
+                                pendingTimeTab = 2
+                                activeDestination = MainDestination.Time
+                                showBackToTodayPill = true
+                            },
                             externalOpenWave = openTodayWaveSheet,
                             onExternalWaveHandled = { openTodayWaveSheet = false },
                         )
@@ -572,6 +578,14 @@ private fun KundliFlowRootScreen(
                             },
                             onOpenStrengthsPage = { currentPage = AppPage.StrengthsAndYogas },
                             onOpenToolsPage = { currentPage = AppPage.ToolsStudio },
+                            onAskAboutHouse = { houseNum ->
+                                askOriginContext = "Chart · House $houseNum"
+                                currentPage = AppPage.AskCopilot
+                            },
+                            onReflectInJournal = {
+                                activeDestination = MainDestination.Journal
+                                openJournalComposer = true
+                            },
                             onJumpToTimeTab = {
                                 activeDestination = MainDestination.Time
                                 showBackToTodayPill = false

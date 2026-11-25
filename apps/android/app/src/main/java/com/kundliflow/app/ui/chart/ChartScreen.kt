@@ -83,6 +83,8 @@ fun ChartScreen(
     onOpenSubject: (Subject, Rung) -> Unit,
     onOpenStrengthsPage: () -> Unit = {},
     onOpenToolsPage: () -> Unit = {},
+    onAskAboutHouse: (Int) -> Unit = {},
+    onReflectInJournal: () -> Unit = {},
     onJumpToTimeTab: () -> Unit,
 ) {
     var style by remember(initialStyle) { mutableStateOf(initialStyle) }
@@ -465,6 +467,26 @@ fun ChartScreen(
                                 Text("Decode 4-step")
                             }
                         }
+
+                        // Contextual Footer Actions (Stitch Chart workbench)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            TextButton(
+                                onClick = { onAskAboutHouse(currentHouseData.number) },
+                                contentPadding = PaddingValues(horizontal = 4.dp),
+                            ) {
+                                Text("✦ Ask AI about H${currentHouseData.number}", color = KundliColors.Gold)
+                            }
+                            TextButton(
+                                onClick = onReflectInJournal,
+                                contentPadding = PaddingValues(horizontal = 4.dp),
+                            ) {
+                                Text("Reflect in Journal →", color = KundliColors.Teal)
+                            }
+                        }
                     }
                 }
             }
@@ -575,6 +597,66 @@ fun ChartScreen(
                         Text("KP · Varshaphala", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
                     }
                     Text("Tools Studio →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
+                }
+            }
+        }
+
+        // 5b. 12-House Ashtakavarga SAV Mini-Grid (Stitch Chart section — tap any house to focus)
+        if (displayedChart.houses.size == 12) {
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                shape = RoundedCornerShape(18.dp),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text("ASHTAKAVARGA SAV (H1–H12)", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                        Text("28+ = strong", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                    }
+                    displayedChart.houses.sortedBy { it.number }.chunked(4).forEach { rowHouses ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            rowHouses.forEach { h ->
+                                val isSel = selectedHouse == h.number
+                                val binduColor = when {
+                                    h.savBindus >= 28 -> KundliColors.Teal
+                                    h.savBindus >= 25 -> KundliColors.Gold
+                                    else -> KundliColors.Amber
+                                }
+                                Surface(
+                                    color = if (isSel) KundliColors.SurfaceAlt else KundliColors.BgInk.copy(alpha = 0.55f),
+                                    border = BorderStroke(
+                                        1.dp,
+                                        if (isSel) KundliColors.Gold else binduColor.copy(alpha = 0.25f),
+                                    ),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable {
+                                            selectedHouse = h.number
+                                            viewMode = ChartViewMode.CHART
+                                            showAllFindings = false
+                                        },
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(vertical = 8.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                                    ) {
+                                        Text("H${h.number}", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                        Text("${h.savBindus}", style = TelemetryNumberStyle, color = binduColor)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

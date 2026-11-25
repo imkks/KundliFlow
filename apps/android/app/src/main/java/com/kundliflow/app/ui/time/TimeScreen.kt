@@ -125,7 +125,7 @@ fun TimeScreen(
             when (page) {
                 0 -> ChaptersSubPage(
                     state = state,
-                    milestonesCount = milestones.size,
+                    milestones = milestones,
                     onOpenPeriodSubject = onOpenPeriodSubject,
                     onOpenTimeMachinePage = onOpenTimeMachinePage,
                     onJumpToTab = { target -> scope.launch { pagerState.animateScrollToPage(target) } },
@@ -145,7 +145,7 @@ fun TimeScreen(
 @Composable
 private fun ChaptersSubPage(
     state: TimeTabState,
-    milestonesCount: Int,
+    milestones: List<MilestoneUi>,
     onOpenPeriodSubject: (Subject, Rung) -> Unit,
     onOpenTimeMachinePage: () -> Unit,
     onJumpToTab: (Int) -> Unit,
@@ -408,7 +408,16 @@ private fun ChaptersSubPage(
             }
         }
 
-        // 5. Dedicated Full-Page Entry Card for Time-Machine & Milestones
+        // 4b. 120-Year Vimshottari Mahadasha Horizon Ribbon (Stitch Time section)
+        if (selectedSystem == DashaSystem.VIMSHOTTARI) {
+            MahadashaHorizonRibbon(
+                activeMahadashaLord = activeDasha.mahadashaLord,
+                activeProgress = activeDasha.mahadashaProgress,
+                onTapHorizon = onOpenTimeMachinePage,
+            )
+        }
+
+        // 5. Dedicated Full-Page Entry Card for Time-Machine & Milestones (with clickable chips)
         Surface(
             color = KundliColors.SurfaceAlt,
             border = BorderStroke(1.dp, KundliColors.GoldHairline),
@@ -417,20 +426,115 @@ private fun ChaptersSubPage(
                 .fillMaxWidth()
                 .clickable(onClick = onOpenTimeMachinePage),
         ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Time-Machine & Milestones", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                        Text(
+                            text = if (milestones.isNotEmpty()) "${milestones.size} saved milestones · Scrub any year 1950–2060" else "Revisit any past or future year (1950–2060)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = KundliColors.TextMuted,
+                        )
+                    }
+                    Text("Open →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                }
+                if (milestones.isNotEmpty()) {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        items(milestones.take(6), key = { it.id }) { ms ->
+                            Surface(
+                                color = KundliColors.BgInk.copy(alpha = 0.65f),
+                                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                shape = RoundedCornerShape(999.dp),
+                                modifier = Modifier.clickable(onClick = onOpenTimeMachinePage),
+                            ) {
+                                Text(
+                                    text = "${ms.eventDate.take(4)} · ${ms.title}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = KundliColors.Teal,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private val VIMSHOTTARI_HORIZON_ORDER = listOf(
+    "Ketu" to 7,
+    "Venus" to 20,
+    "Sun" to 6,
+    "Moon" to 10,
+    "Mars" to 7,
+    "Rahu" to 18,
+    "Jupiter" to 16,
+    "Saturn" to 19,
+    "Mercury" to 17,
+)
+
+@Composable
+private fun MahadashaHorizonRibbon(
+    activeMahadashaLord: String,
+    activeProgress: Float,
+    onTapHorizon: () -> Unit,
+) {
+    Surface(
+        color = KundliColors.Surface,
+        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+        shape = RoundedCornerShape(18.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onTapHorizon),
+    ) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Time-Machine & Milestones", style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                    Text(
-                        text = if (milestonesCount > 0) "$milestonesCount saved milestones · Scrub any year 1950–2060" else "Revisit any past or future year (1950–2060)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.TextMuted,
-                    )
+                Text("120-YEAR HORIZON RIBBON", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                Text("Time-Machine →", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+            }
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                items(VIMSHOTTARI_HORIZON_ORDER, key = { it.first }) { (lord, years) ->
+                    val isActive = lord.equals(activeMahadashaLord, ignoreCase = true)
+                    val cardWidth = (56 + years * 3).dp
+                    Surface(
+                        color = if (isActive) KundliColors.Gold.copy(alpha = 0.16f) else KundliColors.SurfaceAlt,
+                        border = BorderStroke(
+                            1.dp,
+                            if (isActive) KundliColors.Gold else KundliColors.SubtleDivider,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.width(cardWidth),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                        ) {
+                            Text(
+                                text = lord,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = if (isActive) KundliColors.Gold else KundliColors.TextMain,
+                                maxLines = 1,
+                            )
+                            Text(
+                                text = if (isActive) "${(activeProgress * 100).toInt()}% · ${years}y" else "${years}y",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (isActive) KundliColors.Teal else KundliColors.TextMuted,
+                                maxLines = 1,
+                            )
+                        }
+                    }
                 }
-                Text("Open →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
             }
         }
     }
