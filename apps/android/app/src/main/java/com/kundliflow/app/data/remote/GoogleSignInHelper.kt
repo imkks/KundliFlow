@@ -45,8 +45,13 @@ object GoogleSignInHelper {
             } else {
                 Result.failure(IllegalStateException("Unexpected credential type returned by Google Sign-In."))
             }
-        } catch (_: GetCredentialCancellationException) {
-            Result.failure(IllegalStateException("Sign-in cancelled."))
+        } catch (e: GetCredentialCancellationException) {
+            val detail = e.errorMessage?.toString()?.takeIf { it.isNotBlank() }
+            Result.failure(
+                IllegalStateException(
+                    if (detail != null) "Sign-in cancelled ($detail)" else "Sign-in cancelled.",
+                ),
+            )
         } catch (_: NoCredentialException) {
             Result.failure(IllegalStateException("No Google account found on this device. Add a Gmail account in Android Settings."))
         } catch (e: GetCredentialException) {

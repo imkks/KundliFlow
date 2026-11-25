@@ -109,18 +109,20 @@ fun JournalScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // 1. Your Patterns Card (2-line collapsed by default, expands on tap)
+            // 1. Your Patterns Card (readable 3-line summary + 1-tap expand for full note & math)
             item {
                 Surface(
                     color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
                     shape = RoundedCornerShape(18.dp),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(top = 6.dp)
                         .clickable { expandPatterns = !expandPatterns },
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -132,17 +134,16 @@ fun JournalScreen(
                                 color = KundliColors.Gold,
                             )
                             Text(
-                                text = if (expandPatterns) "Less" else "More",
+                                text = if (expandPatterns) "Less ▲" else "Insights ▾",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = KundliColors.Teal,
                             )
                         }
-                        Spacer(Modifier.height(4.dp))
                         Text(
                             text = patternStage.body,
                             style = MaterialTheme.typography.bodySmall,
-                            color = KundliColors.TextMuted,
-                            maxLines = if (expandPatterns) 10 else 2,
+                            color = KundliColors.TextMain,
+                            maxLines = if (expandPatterns) 10 else 3,
                             overflow = TextOverflow.Ellipsis,
                         )
                         if (expandPatterns && patternStage.fullUnlocked && patternStage.mathDetail != null) {

@@ -131,6 +131,8 @@ private fun KundliFlowRootScreen(
     var showBackToTodayPill by remember { mutableStateOf(false) }
     var pendingChartTopic by remember { mutableStateOf<String?>(null) }
     var openJournalComposer by remember { mutableStateOf(false) }
+    var openTodayWaveSheet by remember { mutableStateOf(false) }
+    var pendingTimeTab by remember { mutableStateOf<Int?>(null) }
     var showSearchSheet by remember { mutableStateOf(false) }
     var showTravelCityPicker by remember { mutableStateOf(false) }
     var showManualAddOnboarding by remember { mutableStateOf(false) }
@@ -377,6 +379,17 @@ private fun KundliFlowRootScreen(
 
         AppPage.Shell -> {
             val activeOrbitItem = state.savedProfiles.firstOrNull { it.id == activeProfile?.id }
+            val liveSkySubtitle = remember(todaySky) {
+                if (todaySky == null) null
+                else buildString {
+                    append("${todaySky.currentHora.ruler.displayName} Hora")
+                    val chapter = todaySky.currentChapterSubtitle
+                    if (!chapter.isNullOrBlank()) {
+                        append(" · ")
+                        append(chapter)
+                    }
+                }
+            }
             KundliFlowShell(
                 windowSizeClass = windowSizeClass,
                 activeProfileName = activeProfile?.name ?: "Chart",
@@ -384,6 +397,12 @@ private fun KundliFlowRootScreen(
                 activeProfileId = activeProfile?.id ?: "",
                 savedProfiles = state.savedProfiles,
                 detailLevel = state.detailLevel,
+                chartStyle = state.chartStyle.name,
+                liveSkyBandLabel = todaySky?.currentBand?.label,
+                liveSkyBandColor = todaySky?.currentBand?.color ?: KundliColors.Gold,
+                liveSkySubtitle = liveSkySubtitle,
+                activeYogasCount = chartState?.activeYogas?.size ?: chartState?.activeYogaNames?.size ?: 0,
+                signedInEmail = state.signedInUser?.email,
                 discoveryLitCount = state.litNodeIds.size,
                 discoveryTotalCount = state.orderedDiscoveryNodes.size.coerceAtLeast(1),
                 activeDestination = activeDestination,
@@ -401,6 +420,24 @@ private fun KundliFlowRootScreen(
                 onSelectProfile = { viewModel.switchProfile(it) },
                 onAddProfile = { showManualAddOnboarding = true },
                 onChangeDetailLevel = { viewModel.setDetailLevel(it) },
+                onChangeChartStyle = { styleName ->
+                    val parsed = if (styleName.equals("SOUTH", ignoreCase = true)) {
+                        com.kundliflow.app.ui.chart.ChartStyle.SOUTH
+                    } else {
+                        com.kundliflow.app.ui.chart.ChartStyle.NORTH
+                    }
+                    viewModel.setChartStyle(parsed)
+                },
+                onOpenTodayWave = {
+                    activeDestination = MainDestination.Today
+                    showBackToTodayPill = false
+                    openTodayWaveSheet = true
+                },
+                onJumpToAlmanac = {
+                    pendingTimeTab = 1
+                    activeDestination = MainDestination.Time
+                    showBackToTodayPill = true
+                },
                 onNavigatePage = { page -> currentPage = page },
                 onShareBlueprint = { triggerShareBlueprint() },
                 onOpenSupport = { viewModel.openSupportHelplines() },
@@ -498,6 +535,8 @@ private fun KundliFlowRootScreen(
                                 }
                             },
                             onTapCitySwitcher = { showTravelCityPicker = true },
+                            externalOpenWave = openTodayWaveSheet,
+                            onExternalWaveHandled = { openTodayWaveSheet = false },
                         )
                     }
 
@@ -556,6 +595,8 @@ private fun KundliFlowRootScreen(
                                 openJournalComposer = true
                             },
                             onOpenTimeMachinePage = { currentPage = AppPage.TimeMachine },
+                            initialTabIndex = pendingTimeTab,
+                            onInitialTabConsumed = { pendingTimeTab = null },
                         )
                     }
                 }

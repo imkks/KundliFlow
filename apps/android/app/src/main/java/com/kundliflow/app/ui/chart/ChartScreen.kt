@@ -1,7 +1,6 @@
 package com.kundliflow.app.ui.chart
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,8 +28,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,6 +39,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -71,7 +69,7 @@ import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
 import kotlinx.coroutines.launch
 
-enum class InspectorDetent { Peek, Half, Full }
+enum class ChartViewMode(val label: String) { CHART("Chart"), TABLE("Table") }
 
 private val TOP_VARGAS = listOf(VargaType.D1, VargaType.D9, VargaType.D10, VargaType.D2, VargaType.D4)
 
@@ -92,9 +90,8 @@ fun ChartScreen(
     var selectedVarga by remember { mutableStateOf(VargaType.D1) }
     var selectedTopic by remember { mutableStateOf<String?>(null) }
     var selectedHouse by remember { mutableStateOf<Int?>(1) }
-    var inspectorMode by remember { mutableIntStateOf(0) } // 0 = Houses, 1 = Planets
-    var selectedPlanet by remember { mutableStateOf(PlanetId.MOON) }
-    var detent by remember { mutableStateOf(InspectorDetent.Peek) }
+    var viewMode by remember { mutableStateOf(ChartViewMode.CHART) }
+    var showAllFindings by remember { mutableStateOf(false) }
     var showAspectsOverlay by remember { mutableStateOf(false) }
 
     var showMoreVargasMenu by remember { mutableStateOf(false) }
@@ -105,8 +102,7 @@ fun ChartScreen(
     LaunchedEffect(initialTopic) {
         if (initialTopic != null) {
             selectedTopic = initialTopic
-            inspectorMode = 0
-            detent = InspectorDetent.Half
+            viewMode = ChartViewMode.CHART
             selectedHouse = when (initialTopic) {
                 "Career" -> 10
                 "Love" -> 7
@@ -136,43 +132,49 @@ fun ChartScreen(
         }
     }
 
-    val animatedCanvasSize by animateDpAsState(
-        targetValue = when (detent) {
-            InspectorDetent.Peek -> 296.dp
-            InspectorDetent.Half -> 184.dp
-            InspectorDetent.Full -> 0.dp
-        },
-        label = "chart_canvas_detent_size",
-    )
+    val currentHouseData = displayedChart.houses.firstOrNull { it.number == (selectedHouse ?: 1) }
+    val allPlanets = remember(displayedChart) { displayedChart.allPlanets() }
+    val topYoga = displayedChart.activeYogas.firstOrNull()
+    val bhangaCount = displayedChart.doshaAudits.count { it.bhangaCancelled }
+    val strongestPlanet = remember(displayedChart) { displayedChart.shadbalaBars.maxByOrNull { it.ratio } }
 
-    // Non-scrolling root so the pinned canvas and docked inspector stay visible together (v3/v4)
+    // Spacious vertical scroll root (v5: Chart|Table toggle + Expanded House Card + Bento Previews + Graha Strip)
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 96.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 112.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // 1. One-Line Header + Chart Options trigger (40 dp)
+        // 1. Header + [Chart | Table] Segmented Switch + Chart Options
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp),
+                .padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = if (reference == ChartReference.MOON) {
-                    "Chandra Kundli · Moon in ${displayedChart.moonSign}"
-                } else {
-                    "${displayedChart.ascendantSign} rising · Moon in ${displayedChart.moonSign}"
-                },
-                style = MaterialTheme.typography.titleMedium,
-                color = KundliColors.TextMain,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = if (reference == ChartReference.MOON) {
+                        "Chandra Kundli · Moon in ${displayedChart.moonSign}"
+                    } else {
+                        "${displayedChart.ascendantSign} rising · Moon in ${displayedChart.moonSign}"
+                    },
+                    style = MaterialTheme.typography.titleMedium,
+                    color = KundliColors.TextMain,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = "${selectedVarga.label} · ${selectedVarga.domain}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = KundliColors.TextMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             IconButton(onClick = { showOptionsSheet = true }) {
                 Icon(
                     imageVector = Icons.Rounded.Tune,
@@ -180,6 +182,47 @@ fun ChartScreen(
                     tint = KundliColors.Gold,
                 )
             }
+        }
+
+        // CHANI-style [Chart | Table] Segmented Toggle + Aspects quick toggle
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                shape = RoundedCornerShape(999.dp),
+            ) {
+                Row(modifier = Modifier.padding(3.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    ChartViewMode.entries.forEach { mode ->
+                        val active = viewMode == mode
+                        Surface(
+                            color = if (active) KundliColors.SurfaceAlt else KundliColors.Surface,
+                            border = if (active) BorderStroke(1.dp, KundliColors.GoldHairline) else null,
+                            shape = RoundedCornerShape(999.dp),
+                            modifier = Modifier.clickable { viewMode = mode },
+                        ) {
+                            Text(
+                                text = mode.label,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = if (active) KundliColors.Gold else KundliColors.TextMuted,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp),
+                            )
+                        }
+                    }
+                }
+            }
+            FilterChip(
+                selected = showAspectsOverlay,
+                onClick = { showAspectsOverlay = !showAspectsOverlay },
+                label = { Text(if (showAspectsOverlay) "Aspects ON" else "Aspects") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = KundliColors.SurfaceAlt,
+                    selectedLabelColor = KundliColors.Teal,
+                ),
+            )
         }
 
         if (teachMeStep in 1..3) {
@@ -190,29 +233,7 @@ fun ChartScreen(
             )
         }
 
-        // 2. Pinned 1:1 Kundli Canvas (smoothly scales to 55% at Half detent)
-        AnimatedVisibility(visible = detent != InspectorDetent.Full) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-                KundliChartCanvas(
-                    chart = displayedChart,
-                    style = style,
-                    selectedHouse = selectedHouse,
-                    highlightedHouses = highlightedHouses,
-                    showAspectsForSelectedHouse = showAspectsOverlay,
-                    onSelectHouse = {
-                        selectedHouse = it
-                        inspectorMode = 0
-                        if (detent == InspectorDetent.Peek) detent = InspectorDetent.Half
-                    },
-                    modifier = Modifier.size(animatedCanvasSize),
-                )
-            }
-        }
-
-        // 3. Horizontal Scroll Rail 1: Top-5 Vargas + [More v] Dropdown (D3..D60)
+        // Horizontal Rail 1: Top-5 Vargas + [More v] Dropdown (D3..D60)
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -265,281 +286,381 @@ fun ChartScreen(
             }
         }
 
-        // 4. Horizontal Scroll Rail 2: Perspective + Life Focus Topics
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            contentPadding = PaddingValues(end = 6.dp),
-        ) {
-            item {
-                FilterChip(
-                    selected = reference == ChartReference.LAGNA,
-                    onClick = { reference = ChartReference.LAGNA },
-                    label = { Text("Lagna") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = KundliColors.SurfaceAlt,
-                        selectedLabelColor = KundliColors.Teal,
-                    ),
-                )
-            }
-            item {
-                FilterChip(
-                    selected = reference == ChartReference.MOON,
-                    onClick = { reference = ChartReference.MOON },
-                    label = { Text("Moon") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = KundliColors.SurfaceAlt,
-                        selectedLabelColor = KundliColors.Teal,
-                    ),
-                )
-            }
-            items(listOf("All", "Career", "Love", "Money", "Home")) { topic ->
-                val isSelected = (topic == "All" && selectedTopic == null) || selectedTopic == topic
-                FilterChip(
-                    selected = isSelected,
-                    onClick = {
-                        selectedTopic = if (topic == "All") null else topic
-                        inspectorMode = 0
-                        selectedHouse = when (topic) {
-                            "Career" -> 10
-                            "Love" -> 7
-                            "Money" -> 2
-                            "Home" -> 4
-                            else -> selectedHouse ?: 1
-                        }
+        if (viewMode == ChartViewMode.CHART) {
+            // 2. Spacious 1:1 Kundli Canvas
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                KundliChartCanvas(
+                    chart = displayedChart,
+                    style = style,
+                    selectedHouse = selectedHouse,
+                    highlightedHouses = highlightedHouses,
+                    showAspectsForSelectedHouse = showAspectsOverlay,
+                    onSelectHouse = {
+                        selectedHouse = it
+                        showAllFindings = false
                     },
-                    label = { Text(topic) },
+                    modifier = Modifier.size(296.dp),
                 )
+            }
+
+            // 3. Perspective + Life Focus Lenses Rail
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                contentPadding = PaddingValues(end = 6.dp),
+            ) {
+                item {
+                    FilterChip(
+                        selected = reference == ChartReference.LAGNA,
+                        onClick = { reference = ChartReference.LAGNA },
+                        label = { Text("Lagna") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = KundliColors.SurfaceAlt,
+                            selectedLabelColor = KundliColors.Teal,
+                        ),
+                    )
+                }
+                item {
+                    FilterChip(
+                        selected = reference == ChartReference.MOON,
+                        onClick = { reference = ChartReference.MOON },
+                        label = { Text("Moon") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = KundliColors.SurfaceAlt,
+                            selectedLabelColor = KundliColors.Teal,
+                        ),
+                    )
+                }
+                items(listOf("All", "Career", "Love", "Money", "Home")) { topic ->
+                    val isSelected = (topic == "All" && selectedTopic == null) || selectedTopic == topic
+                    FilterChip(
+                        selected = isSelected,
+                        onClick = {
+                            selectedTopic = if (topic == "All") null else topic
+                            showAllFindings = false
+                            selectedHouse = when (topic) {
+                                "Career" -> 10
+                                "Love" -> 7
+                                "Money" -> 2
+                                "Home" -> 4
+                                else -> selectedHouse ?: 1
+                            }
+                        },
+                        label = { Text(topic) },
+                    )
+                }
+            }
+
+            // 4. Expanded Selected House Card (0 taps to read summary & top findings)
+            if (currentHouseData != null) {
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(18.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "HOUSE ${currentHouseData.number} · ${currentHouseData.signName.uppercase()}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = KundliColors.Gold,
+                                )
+                                Text(
+                                    text = "Lord ${currentHouseData.lord.displayName} in House ${currentHouseData.lordHouse}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = KundliColors.TextMain,
+                                )
+                            }
+                            Row {
+                                IconButton(
+                                    onClick = {
+                                        selectedHouse = if (currentHouseData.number <= 1) 12 else currentHouseData.number - 1
+                                        showAllFindings = false
+                                    },
+                                    modifier = Modifier.size(34.dp),
+                                ) {
+                                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, contentDescription = "Previous house", tint = KundliColors.Gold)
+                                }
+                                IconButton(
+                                    onClick = {
+                                        selectedHouse = if (currentHouseData.number >= 12) 1 else currentHouseData.number + 1
+                                        showAllFindings = false
+                                    },
+                                    modifier = Modifier.size(34.dp),
+                                ) {
+                                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = "Next house", tint = KundliColors.Gold)
+                                }
+                            }
+                        }
+
+                        Text(
+                            text = currentHouseData.summaryLine,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = KundliColors.TextMain,
+                        )
+
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            item { FactPillCard("Sign", currentHouseData.signName) }
+                            item { FactPillCard("Lord", "${currentHouseData.lord.displayName} (H${currentHouseData.lordHouse})") }
+                            item { FactPillCard("SAV Bindus", "${currentHouseData.savBindus} / 337") }
+                            if (displayedChart.liveTransitMoonHouse == currentHouseData.number) {
+                                item { FactPillCard("Live Moon", "Transiting today") }
+                            }
+                        }
+
+                        // Balanced progressive disclosure: show top 2 findings inline, 1-tap toggle for more
+                        val visibleFindings = if (showAllFindings) currentHouseData.findings else currentHouseData.findings.take(2)
+                        visibleFindings.forEach { f ->
+                            Surface(
+                                color = KundliColors.SurfaceAlt,
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                    Text(f.title, style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                                    Text(f.plainMeaning, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
+                                }
+                            }
+                        }
+
+                        if (currentHouseData.findings.size > 2) {
+                            TextButton(
+                                onClick = { showAllFindings = !showAllFindings },
+                                contentPadding = PaddingValues(0.dp),
+                            ) {
+                                Text(
+                                    text = if (showAllFindings) "Show fewer findings" else "Show all ${currentHouseData.findings.size} findings",
+                                    color = KundliColors.Teal,
+                                )
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            OutlinedButton(
+                                onClick = { onOpenSubject(Subject.House(currentHouseData.number), Rung.Explain) },
+                                modifier = Modifier.weight(1f),
+                            ) {
+                                Text("Full reading", color = KundliColors.Teal)
+                            }
+                            Button(
+                                onClick = { decoderHouseNumber = currentHouseData.number },
+                                modifier = Modifier.weight(1f),
+                                colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
+                            ) {
+                                Text("Decode 4-step")
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // CHANI-style Structured 9-Planet Placement Table
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Text("PLANETARY PLACEMENTS (${allPlanets.size})", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                    allPlanets.forEachIndexed { idx, pl ->
+                        if (idx > 0) HorizontalDivider(color = KundliColors.SubtleDivider)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onOpenSubject(Subject.Planet(pl.id), Rung.Explain) }
+                                .padding(vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "${pl.id.displayName} (${pl.shortGlyph})" + if (pl.vargottama) " ★" else "",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = KundliColors.TextMain,
+                                )
+                                Text(
+                                    text = "${pl.signName} · House ${pl.house} · ${pl.dignity}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = KundliColors.Teal,
+                                )
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(pl.degreeFormatted, style = TelemetryNumberStyle, color = KundliColors.Gold)
+                                Text("→", style = MaterialTheme.typography.bodyMedium, color = KundliColors.TextMuted)
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        // 5. 3-Detent Docked Inspector Sheet (Peek -> Half -> Full)
-        val currentHouseData = displayedChart.houses.firstOrNull { it.number == (selectedHouse ?: 1) }
-        val allPlanets = remember(displayedChart) { displayedChart.allPlanets() }
-        val currentPlanet = allPlanets.firstOrNull { it.id == selectedPlanet } ?: allPlanets.firstOrNull()
-
-        Surface(
-            color = KundliColors.Surface,
-            border = BorderStroke(1.dp, KundliColors.GoldHairline),
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+        // 5. 2-Up Natal Bento Cards (Glance + 1-Tap Deep Dive)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Column(
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.25f)),
+                shape = RoundedCornerShape(18.dp),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                    .weight(1f)
+                    .clickable(onClick = onOpenStrengthsPage),
             ) {
-                // Drag Handle + Detent Controls
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("YOGAS & DOSHAS", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
+                    Text(
+                        text = "${displayedChart.activeYogas.size} Active",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = KundliColors.TextMain,
+                    )
+                    Text(
+                        text = topYoga?.name ?: if (bhangaCount > 0) "$bhangaCount Bhanga cancelled" else "Tap to inspect",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = KundliColors.TextMuted,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text("Inspect →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                }
+            }
+
+            Surface(
+                color = KundliColors.Surface,
+                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                shape = RoundedCornerShape(18.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onOpenToolsPage),
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("SHADBALA PEAK", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                    Text(
+                        text = strongestPlanet?.planet?.displayName ?: "Strengths",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = KundliColors.TextMain,
+                    )
+                    if (strongestPlanet != null) {
+                        LinearProgressIndicator(
+                            progress = { (strongestPlanet.ratio / 1.8f).coerceIn(0.15f, 1f) },
+                            modifier = Modifier.fillMaxWidth().height(5.dp).clip(RoundedCornerShape(3.dp)),
+                            color = KundliColors.Gold,
+                            trackColor = KundliColors.SurfaceAlt,
+                        )
+                        Text(
+                            text = "${String.format(java.util.Locale.US, "%.2f", strongestPlanet.ratio)}× classical min",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = KundliColors.TextMuted,
+                        )
+                    } else {
+                        Text("KP · Varshaphala", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
+                    }
+                    Text("Tools Studio →", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
+                }
+            }
+        }
+
+        // 6. Swipeable Graha Strip (Horizontal Carousel for quick 1-tap planet readings)
+        if (viewMode == ChartViewMode.CHART && allPlanets.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            detent = when (detent) {
-                                InspectorDetent.Peek -> InspectorDetent.Half
-                                InspectorDetent.Half -> InspectorDetent.Full
-                                InspectorDetent.Full -> InspectorDetent.Peek
-                            }
-                        },
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(width = 36.dp, height = 4.dp)
-                            .clip(CircleShape)
-                            .background(KundliColors.Gold.copy(alpha = 0.55f)),
+                    Text("YOUR 9 GRAHAS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                    Text(
+                        text = "Table view →",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = KundliColors.Gold,
+                        modifier = Modifier.clickable { viewMode = ChartViewMode.TABLE },
                     )
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = when (detent) {
-                                InspectorDetent.Peek -> "Expand"
-                                InspectorDetent.Half -> "Full view"
-                                InspectorDetent.Full -> "Show chart"
-                            },
-                            style = MaterialTheme.typography.labelMedium,
-                            color = KundliColors.Gold,
-                        )
-                        Icon(
-                            imageVector = if (detent == InspectorDetent.Full) Icons.Rounded.KeyboardArrowDown else Icons.Rounded.KeyboardArrowUp,
-                            contentDescription = "Cycle inspector height",
-                            tint = KundliColors.Gold,
-                            modifier = Modifier.size(16.dp),
-                        )
-                    }
                 }
-
-                // Always-visible Peek Header Row (< House N · Sign · Lord >)
-                if (currentHouseData != null && inspectorMode == 0) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "House ${currentHouseData.number}, ${currentHouseData.signName} · Lord ${currentHouseData.lord.displayName}",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = KundliColors.TextMain,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            Text(
-                                text = currentHouseData.summaryLine,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = KundliColors.TextMuted,
-                                maxLines = if (detent == InspectorDetent.Peek) 1 else 3,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                        Row {
-                            IconButton(
-                                onClick = {
-                                    selectedHouse = if (currentHouseData.number <= 1) 12 else currentHouseData.number - 1
-                                },
-                                modifier = Modifier.size(34.dp),
-                            ) {
-                                Icon(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, contentDescription = "Previous house", tint = KundliColors.Gold)
-                            }
-                            IconButton(
-                                onClick = {
-                                    selectedHouse = if (currentHouseData.number >= 12) 1 else currentHouseData.number + 1
-                                },
-                                modifier = Modifier.size(34.dp),
-                            ) {
-                                Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = "Next house", tint = KundliColors.Gold)
-                            }
-                        }
-                    }
-                }
-
-                // Half & Full Detent Body (scrolls vertically cleanly inside the docked sheet)
-                if (detent != InspectorDetent.Peek) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
-                        // Mode Switcher
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            item {
-                                FilterChip(
-                                    selected = inspectorMode == 0,
-                                    onClick = { inspectorMode = 0 },
-                                    label = { Text("Houses (12)") },
-                                )
-                            }
-                            item {
-                                FilterChip(
-                                    selected = inspectorMode == 1,
-                                    onClick = { inspectorMode = 1 },
-                                    label = { Text("Planets (${allPlanets.size})") },
-                                )
-                            }
-                        }
-
-                        if (inspectorMode == 0 && currentHouseData != null) {
-                            // Horizontal 3-Fact Cards
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                item { FactPillCard("Sign", currentHouseData.signName) }
-                                item { FactPillCard("Lord", "${currentHouseData.lord.displayName} (H${currentHouseData.lordHouse})") }
-                                item { FactPillCard("SAV Bindus", "${currentHouseData.savBindus} / 337") }
-                                if (displayedChart.liveTransitMoonHouse == currentHouseData.number) {
-                                    item { FactPillCard("Live Moon", "Transiting today") }
-                                }
-                            }
-
-                            currentHouseData.findings.take(3).forEach { f ->
-                                Surface(
-                                    color = KundliColors.SurfaceAlt,
-                                    shape = RoundedCornerShape(12.dp),
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(allPlanets, key = { it.id.name }) { pl ->
+                        Surface(
+                            color = KundliColors.Surface,
+                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .width(136.dp)
+                                .clickable { onOpenSubject(Subject.Planet(pl.id), Rung.Explain) },
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Row(
                                     modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
-                                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                        Text(f.title, style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                                        Text(f.plainMeaning, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
-                                    }
-                                }
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                OutlinedButton(
-                                    onClick = { onOpenSubject(Subject.House(currentHouseData.number), Rung.Explain) },
-                                    modifier = Modifier.weight(1f),
-                                ) {
-                                    Text("Open reading", color = KundliColors.Teal)
-                                }
-                                Button(
-                                    onClick = { decoderHouseNumber = currentHouseData.number },
-                                    modifier = Modifier.weight(1f),
-                                    colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
-                                ) {
-                                    Text("Decode 4-step")
-                                }
-                            }
-                        } else if (inspectorMode == 1) {
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                items(allPlanets, key = { it.id.name }) { pl ->
-                                    FilterChip(
-                                        selected = currentPlanet?.id == pl.id,
-                                        onClick = {
-                                            selectedPlanet = pl.id
-                                            selectedHouse = pl.house
-                                        },
-                                        label = { Text("${pl.shortGlyph} H${pl.house}") },
+                                    Text(
+                                        text = pl.id.displayName,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = KundliColors.Gold,
+                                    )
+                                    Text(
+                                        text = "H${pl.house}",
+                                        style = TelemetryNumberStyle,
+                                        color = KundliColors.Teal,
                                     )
                                 }
-                            }
-                            if (currentPlanet != null) {
-                                Surface(
-                                    color = KundliColors.SurfaceAlt,
-                                    shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier.fillMaxWidth(),
-                                ) {
-                                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            Text("${currentPlanet.id.displayName} in ${currentPlanet.signName}", style = MaterialTheme.typography.titleMedium)
-                                            Text(currentPlanet.degreeFormatted, style = TelemetryNumberStyle, color = KundliColors.Gold)
-                                        }
-                                        Text(
-                                            text = "House ${currentPlanet.house} · ${currentPlanet.dignity}" +
-                                                if (currentPlanet.vargottama) " · ★ Vargottama" else "",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = KundliColors.Teal,
-                                        )
-                                        TextButton(
-                                            onClick = { onOpenSubject(Subject.Planet(currentPlanet.id), Rung.Explain) },
-                                            contentPadding = PaddingValues(0.dp),
-                                        ) {
-                                            Text("Open ${currentPlanet.id.displayName} reading →", color = KundliColors.Gold)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        HorizontalDivider(color = KundliColors.SubtleDivider)
-                        Text("DEEP DIVE PAGES", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            item {
-                                DeepDiveCard("Strengths & Yogas", "${displayedChart.activeYogas.size} active yogas · SAV", KundliColors.Teal, onOpenStrengthsPage)
-                            }
-                            item {
-                                DeepDiveCard("Tools & Systems", "Bhava · KP · Chalit · Annual", KundliColors.Gold, onOpenToolsPage)
-                            }
-                            item {
-                                DeepDiveCard("Chapters & Time", "Dashas & Transits", KundliColors.Gold, onJumpToTimeTab)
+                                Text(
+                                    text = "${pl.signName} · ${pl.degreeFormatted}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = KundliColors.TextMain,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Text(
+                                    text = pl.dignity + if (pl.vargottama) " ★" else "",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = KundliColors.TextMuted,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
                             }
                         }
                     }
                 }
+            }
+        }
+
+        // 7. Bridge to Time & Dashas
+        Surface(
+            color = KundliColors.SurfaceAlt,
+            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onJumpToTimeTab),
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("ACTIVE TIMING", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                    Text("See which houses your Dashas & Transits activate now", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
+                }
+                Text("Time →", style = MaterialTheme.typography.labelLarge, color = KundliColors.Teal)
             }
         }
     }
@@ -590,28 +711,6 @@ private fun FactPillCard(label: String, value: String) {
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
             Text(label, style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
             Text(value, style = MaterialTheme.typography.bodySmall, color = KundliColors.Gold)
-        }
-    }
-}
-
-@Composable
-private fun DeepDiveCard(
-    title: String,
-    subtitle: String,
-    accent: androidx.compose.ui.graphics.Color,
-    onClick: () -> Unit,
-) {
-    Surface(
-        color = KundliColors.BgInk,
-        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-        shape = RoundedCornerShape(14.dp),
-        modifier = Modifier
-            .width(156.dp)
-            .clickable(onClick = onClick),
-    ) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium, color = accent, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(subtitle, style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }

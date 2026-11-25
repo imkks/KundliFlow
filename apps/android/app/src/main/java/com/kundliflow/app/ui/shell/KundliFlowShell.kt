@@ -33,6 +33,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Book
 import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.History
@@ -42,10 +43,12 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Stars
+import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.material.icons.rounded.WbTwilight
 import androidx.compose.material.icons.rounded.WorkspacePremium
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -100,6 +103,12 @@ fun KundliFlowShell(
     activeProfileId: String = "",
     savedProfiles: List<OrbitProfileItem> = emptyList(),
     detailLevel: String = "balanced",
+    chartStyle: String = "NORTH",
+    liveSkyBandLabel: String? = null,
+    liveSkyBandColor: Color = KundliColors.Gold,
+    liveSkySubtitle: String? = null,
+    activeYogasCount: Int = 0,
+    signedInEmail: String? = null,
     discoveryLitCount: Int = 0,
     discoveryTotalCount: Int = 24,
     activeDestination: MainDestination,
@@ -111,6 +120,9 @@ fun KundliFlowShell(
     onSelectProfile: (String) -> Unit = {},
     onAddProfile: () -> Unit = {},
     onChangeDetailLevel: (String) -> Unit = {},
+    onChangeChartStyle: (String) -> Unit = {},
+    onOpenTodayWave: () -> Unit = {},
+    onJumpToAlmanac: () -> Unit = {},
     onNavigatePage: (AppPage) -> Unit = {},
     onShareBlueprint: () -> Unit = {},
     onOpenSupport: () -> Unit = {},
@@ -210,6 +222,42 @@ fun KundliFlowShell(
                         }
                     }
 
+                    // Live Sky Mini-Card (1-tap jump to Today)
+                    if (!liveSkyBandLabel.isNullOrBlank()) {
+                        Surface(
+                            color = liveSkyBandColor.copy(alpha = 0.10f),
+                            border = BorderStroke(1.dp, liveSkyBandColor.copy(alpha = 0.35f)),
+                            shape = RoundedCornerShape(14.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { closeDrawerAnd { onSelectDestination(MainDestination.Today) } },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text(
+                                        text = "SKY NOW · ${liveSkyBandLabel.uppercase()}",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = liveSkyBandColor,
+                                    )
+                                    if (!liveSkySubtitle.isNullOrBlank()) {
+                                        Text(
+                                            text = liveSkySubtitle,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = KundliColors.TextMain,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
+                                }
+                                Text("→", style = MaterialTheme.typography.titleMedium, color = liveSkyBandColor)
+                            }
+                        }
+                    }
+
                     // Horizontal Orbit Profile Switcher Rail (zero dropdown!)
                     Text("YOUR ORBIT", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
                     LazyRow(
@@ -274,45 +322,109 @@ fun KundliFlowShell(
                         }
                     }
 
-                    // Reading Depth Segmented Chips
-                    Text("READING DEPTH", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                    // Quick Preferences: Reading Depth + Chart Style
+                    Text("PREFERENCES", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         listOf("simple" to "Simple", "balanced" to "Balanced", "full" to "Full").forEach { (id, label) ->
                             FilterChip(
                                 selected = detailLevel == id,
                                 onClick = { onChangeDetailLevel(id) },
                                 label = { Text(label) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = KundliColors.SurfaceAlt,
+                                    selectedLabelColor = KundliColors.Gold,
+                                ),
+                            )
+                        }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        listOf("NORTH" to "North Indian", "SOUTH" to "South Indian").forEach { (id, label) ->
+                            FilterChip(
+                                selected = chartStyle.equals(id, ignoreCase = true),
+                                onClick = { onChangeChartStyle(id) },
+                                label = { Text(label) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = KundliColors.SurfaceAlt,
+                                    selectedLabelColor = KundliColors.Teal,
+                                ),
                             )
                         }
                     }
 
                     HorizontalDivider(color = KundliColors.SubtleDivider)
 
-                    // Direct Links to Full-Screen Pages
+                    // Quick Access Section
+                    Text("QUICK ACCESS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
                     DrawerPageItem(
-                        icon = Icons.Rounded.WorkspacePremium,
-                        title = "Strengths, Yogas & SAV",
+                        icon = Icons.Rounded.AutoAwesome,
+                        title = "Ask AI Copilot",
                         accent = KundliColors.Gold,
-                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.StrengthsAndYogas) } },
+                        onClick = { closeDrawerAnd(onOpenAsk) },
                     )
                     DrawerPageItem(
-                        icon = Icons.Rounded.Build,
-                        title = "Tools & Systems Studio",
+                        icon = Icons.Rounded.Timeline,
+                        title = "Today's Wave & Panchang",
                         accent = KundliColors.Teal,
-                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.ToolsStudio) } },
+                        onClick = { closeDrawerAnd(onOpenTodayWave) },
                     )
                     DrawerPageItem(
-                        icon = Icons.Rounded.Stars,
-                        title = "Discovery Map ($discoveryLitCount / $discoveryTotalCount)",
+                        icon = Icons.Rounded.CalendarMonth,
+                        title = "Monthly Almanac",
                         accent = KundliColors.Gold,
-                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.DiscoveryMap) } },
+                        onClick = { closeDrawerAnd(onJumpToAlmanac) },
                     )
-                    DrawerPageItem(
-                        icon = Icons.Rounded.History,
-                        title = "Time-Machine & Milestones",
-                        accent = KundliColors.Teal,
-                        onClick = { closeDrawerAnd { onNavigatePage(AppPage.TimeMachine) } },
-                    )
+
+                    HorizontalDivider(color = KundliColors.SubtleDivider)
+
+                    // 2x2 Visual Studios Grid (AstroSage / CHANI pattern)
+                    Text("DEEP DIVE STUDIOS", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        DrawerStudioTile(
+                            icon = Icons.Rounded.WorkspacePremium,
+                            title = "Yogas & SAV",
+                            subtitle = if (activeYogasCount > 0) "$activeYogasCount active" else "Strengths",
+                            accent = KundliColors.Gold,
+                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.StrengthsAndYogas) } },
+                            modifier = Modifier.weight(1f),
+                        )
+                        DrawerStudioTile(
+                            icon = Icons.Rounded.Build,
+                            title = "Tools Studio",
+                            subtitle = "KP · Varshaphala",
+                            accent = KundliColors.Teal,
+                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.ToolsStudio) } },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        DrawerStudioTile(
+                            icon = Icons.Rounded.History,
+                            title = "Time-Machine",
+                            subtitle = "Past & Future",
+                            accent = KundliColors.Teal,
+                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.TimeMachine) } },
+                            modifier = Modifier.weight(1f),
+                        )
+                        DrawerStudioTile(
+                            icon = Icons.Rounded.Stars,
+                            title = "Discovery",
+                            subtitle = "$discoveryLitCount / $discoveryTotalCount lit",
+                            accent = KundliColors.Gold,
+                            onClick = { closeDrawerAnd { onNavigatePage(AppPage.DiscoveryMap) } },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+
+                    HorizontalDivider(color = KundliColors.SubtleDivider)
+
+                    // Learn & Vault Section
+                    Text("LEARN & VAULT", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
                     DrawerPageItem(
                         icon = Icons.AutoMirrored.Rounded.MenuBook,
                         title = "Plain English Glossary",
@@ -327,7 +439,9 @@ fun KundliFlowShell(
                     )
                     DrawerPageItem(
                         icon = Icons.Rounded.Settings,
-                        title = "Settings, Sync & Data Vault",
+                        title = "Settings, Sync & Vault",
+                        badgeText = if (!signedInEmail.isNullOrBlank()) "Synced" else "Local",
+                        badgeColor = if (!signedInEmail.isNullOrBlank()) KundliColors.Teal else KundliColors.TextMuted,
                         accent = KundliColors.TextMuted,
                         onClick = { closeDrawerAnd { onNavigatePage(AppPage.SettingsAndVault) } },
                     )
@@ -411,6 +525,8 @@ private fun DrawerPageItem(
     icon: ImageVector,
     title: String,
     accent: Color,
+    badgeText: String? = null,
+    badgeColor: Color = KundliColors.Teal,
     onClick: () -> Unit,
 ) {
     Surface(
@@ -421,7 +537,7 @@ private fun DrawerPageItem(
             .clickable(onClick = onClick),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 11.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -430,6 +546,63 @@ private fun DrawerPageItem(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
                 color = KundliColors.TextMain,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+            if (!badgeText.isNullOrBlank()) {
+                Surface(
+                    color = badgeColor.copy(alpha = 0.14f),
+                    shape = RoundedCornerShape(999.dp),
+                ) {
+                    Text(
+                        text = badgeText,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = badgeColor,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DrawerStudioTile(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    accent: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = KundliColors.SurfaceAlt,
+        border = BorderStroke(1.dp, accent.copy(alpha = 0.22f)),
+        shape = RoundedCornerShape(14.dp),
+        modifier = modifier.clickable(onClick = onClick),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = accent,
+                modifier = Modifier.size(20.dp),
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = KundliColors.TextMain,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = KundliColors.TextMuted,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

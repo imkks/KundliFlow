@@ -1,6 +1,6 @@
-# KundliFlow Android — UX Review & Multi-Surface Wireframes (v4)
+# KundliFlow Android — UX Review & Multi-Surface Wireframes (v5)
 
-> **v4 Focus:** Complete UX review using **scroll-first 2-axis choreography** (horizontal + vertical scrolls & `HorizontalPager`) while keeping **compact Material 3 dropdowns only where genuinely useful** (rare settings or 15+ item pickers), paired with a native Android hierarchy of **Full-Screen Pages, a Left Navigation Drawer, a 3-Detent Docked Sheet, and Single-Purpose Modal Sheets** with full [`apps/web`](file:///Users/krish/Developer/MyAstro/apps/web/src) data parity.
+> **v5 Focus:** Balanced 3-tier progressive disclosure combining **spacious vertical scrolling** across all 4 primary tabs (`Today`, `Chart`, `Time`, `Journal`), **2-up interactive Bento cards**, **1-tap inline disclosures & segmented switches** (`[Chart | Table]`), **horizontal swipeable decks** (24-Hora ribbon, 9 Grahas, Sky Movers), **circular Dasha progress rings**, and an upgraded **Left Sidebar Command Center** (Live Sky Mini-Card, quick `North | South` chart style toggle, `Quick Access`, and a `2×2` Visual Studios Grid).
 
 ---
 
