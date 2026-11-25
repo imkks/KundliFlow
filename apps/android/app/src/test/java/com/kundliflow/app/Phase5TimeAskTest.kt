@@ -1,9 +1,12 @@
 package com.kundliflow.app
 
+import com.kundliflow.app.ui.ask.AskEvidenceResolver
 import com.kundliflow.app.ui.ask.AskSessionGrouper
 import com.kundliflow.app.ui.ask.AskSseEvent
 import com.kundliflow.app.ui.ask.AskSseParser
 import com.kundliflow.app.ui.ask.AskUiMessage
+import com.kundliflow.app.ui.subject.PlanetId
+import com.kundliflow.app.ui.subject.Subject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -50,5 +53,19 @@ class Phase5TimeAskTest {
         assertEquals(2, grouped.size)
         assertEquals("Topic C", grouped[0].contextTag)
         assertEquals("Topic B", grouped[1].contextTag)
+    }
+
+    @Test
+    fun `AskEvidenceResolver maps raw engine IDs into human labels and typed Subjects`() {
+        val h10Sat = AskEvidenceResolver.resolve("rule.h10.saturn")
+        assertEquals("H10 · Saturn", h10Sat.label)
+        assertEquals(Subject.House(10), h10Sat.subject)
+
+        val moon = AskEvidenceResolver.resolve("planet.moon")
+        assertEquals("Moon", moon.label)
+        assertEquals(Subject.Planet(PlanetId.MOON), moon.subject)
+
+        val dasha = AskEvidenceResolver.resolve("dasha.venus.saturn")
+        assertTrue(dasha.subject is Subject.Period)
     }
 }

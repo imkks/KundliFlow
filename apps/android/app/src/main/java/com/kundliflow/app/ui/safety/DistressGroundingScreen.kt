@@ -19,9 +19,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -142,7 +142,7 @@ fun DistressGroundingScreen(
                         ),
                     ) {
                         Icon(
-                            imageVector = if (service.dialUri != null) Icons.Rounded.Call else Icons.Rounded.OpenInNew,
+                            imageVector = if (service.dialUri != null) Icons.Rounded.Call else Icons.AutoMirrored.Rounded.OpenInNew,
                             contentDescription = "Reach ${service.name}",
                         )
                         Spacer(Modifier.width(6.dp))

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">KundliFlow</string>
+    <string name="widget_band_orb_label">Sky Band Orb (2×2)</string>
+    <string name="widget_band_orb_desc">Current Vedic sky band, active Hora ruler, and next shift time.</string>
+    <string name="widget_today_strip_label">Today Sky Strip (4×2)</string>
+    <string name="widget_today_strip_desc">Live sky band, best &amp; gentle windows, and 1-tap Check-in shortcut.</string>
+    <string name="notif_channel_calm_sky">Calm Daily Sky Summary</string>
 </resources>

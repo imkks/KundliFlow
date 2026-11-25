@@ -52,6 +52,16 @@ data class CheckInMoodSample(
 )
 
 @Immutable
+data class PanchangSummary(
+    val tithi: String,
+    val nakshatra: String,
+    val yoga: String,
+    val karana: String,
+    val sunrise: String,
+    val sunset: String,
+)
+
+@Immutable
 data class TodaySkyState(
     val greeting: String,
     val cityName: String,
@@ -68,6 +78,8 @@ data class TodaySkyState(
     val rahuKalamLabel: String,
     val bestWindowLabel: String,
     val goGentlyLabel: String,
+    val allHoras: List<HoraSlot> = emptyList(),
+    val panchang: PanchangSummary? = null,
 )
 
 sealed interface TodayDynamicSlot {

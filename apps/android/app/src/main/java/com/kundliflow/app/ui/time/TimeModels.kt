@@ -56,6 +56,8 @@ data class SkyMoverItem(
 data class TimeTabState(
     val activeDashas: Map<DashaSystem, ActiveDashaState>,
     val nextShift: NextShiftDelta,
+    val calendarYear: Int,
+    val calendarMonth: Int,
     val monthTitle: String,
     val monthDays: List<MonthDayCell>,
     val skyMovers: List<SkyMoverItem>,

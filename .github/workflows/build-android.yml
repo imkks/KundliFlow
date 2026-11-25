@@ -47,6 +47,9 @@ jobs:
 
       - name: Run unit tests & build Debug APK
         working-directory: apps/android
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY || secrets.VITE_GOOGLE_MAPS_API_KEY || vars.VITE_GOOGLE_MAPS_API_KEY || '' }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || vars.GOOGLE_CLIENT_ID || vars.VITE_GOOGLE_CLIENT_ID || '654362464468-7sdsra0madqrhmpntsamcbiuc707qccn.apps.googleusercontent.com' }}
         run: gradle testDebugUnitTest assembleDebug -PapiBaseUrl=https://129.225.104.43.sslip.io --no-daemon
 
       - name: Upload Debug APK artifact
