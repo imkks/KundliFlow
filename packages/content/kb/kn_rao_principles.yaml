@@ -1,0 +1,182 @@
+version: "1.0.0"
+items:
+  - id: kn_rao.pac_rule
+    type: concept_note
+    text: "PAC (Posited, Aspected, Conjunct): Never judge any planet or house in isolation. Always evaluate where it is Posited, what Aspects it (and what it aspects), and what is Conjunct with it."
+    themes: "methodology,interpretation,pac"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Laghu Parashari Ch. III, p. 37)"
+    reviewed: 1
+
+  - id: kn_rao.double_transit_retrograde
+    type: rule_statement
+    text: "Double Transit of Saturn & Jupiter (K.N. Rao): Major events (career rise, marriage, childbirth, elections) require BOTH transiting Saturn and Jupiter to occupy or aspect the target house or its lord. When either planet is retrograde, it also acts and aspects from the previous sign; transit signs with SAV below 25 fail or delay delivery."
+    planets: "saturn,jupiter"
+    themes: "timing,transits,double_transit,ashtakavarga"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (p. 88–94, 115, 145)"
+    reviewed: 1
+
+  - id: kn_rao.six_way_dasha
+    type: concept_note
+    text: "6-Way Dasha Evaluation: Always judge Mahadasha, Antardasha, and Pratyantar Dasha from (1) D1 Lagna, (2) MD lord in D1, (3) D9 Lagna and MD lord, (4) target Varga, (5) natural karakatwa, and (6) mutual 2/12 and 6/8 geometry."
+    themes: "dasha,vimshottari,timing"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (p. 31–32)"
+    reviewed: 1
+
+  - id: kn_rao.house_potency_rankings
+    type: classical_ref
+    text: "Laghu Parashari Relative House Potency: Tri-Shadaya malefics increase 3rd < 6th < 11th; neutral-baneful houses increase 2nd < 12th < 8th; Kendras strengthen 4th < 7th < 10th; Trikonas strengthen 1st < 5th < 9th. The 12th house from any house represents its exhaustion or expenditure."
+    houses: "1,2,3,4,5,6,7,8,9,10,11,12"
+    themes: "houses,functional_nature,laghu_parashari"
+    school: parashari
+    source: "Laghu Parashari Ch. II–III via K.N. Rao (p. 36–38)"
+    reviewed: 1
+
+  - id: kn_rao.dasha_own_ad_and_yogakaraka_exception
+    type: rule_statement
+    text: "Laghu/Madhya Parashari Dasha Quirks: (1) A planet rarely delivers its full primary result in its own Antardasha (MD=AD); it manifests in associated planets' ADs. (2) A Yogakaraka Antardasha inside a Malefic Mahadasha is exceedingly troublesome unless closely linked. (3) Inside a Yogakaraka MD, even a Maraka AD does not cancel ongoing Raja Yoga."
+    themes: "dasha,vimshottari,yogakaraka,antardasha"
+    school: parashari
+    source: "Madhya Parashari Ch. XIII via K.N. Rao (p. 68–70)"
+    reviewed: 1
+
+  - id: kn_rao.saturn_venus_and_rahu_venus_quirks
+    type: rule_statement
+    text: "Saturn-Venus & Rahu-Venus Dasha Subtleties: In Vimshottari, Saturn-Saturn behaves like Saturn-Venus and Venus-Venus behaves like Venus-Saturn. Rahu-Venus and Venus-Rahu carry extreme polarity—capable of dramatic elevation or abrupt upheaval—requiring close Varga and transit scrutiny."
+    planets: "saturn,venus,rahu"
+    themes: "dasha,vimshottari,antardasha"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (p. 69, 89)"
+    reviewed: 1
+
+  - id: kn_rao.difficult_star_mds
+    type: classical_ref
+    text: "Difficult 3rd, 5th, 7th & 23rd Star Dashas: From the birth Moon Nakshatra, Mahadashas ruled by the 3rd, 5th, and 7th star lords (Vipat, Pratyak, Naidhana) and the 23rd Nakshatra (Vainashika) tend to bring heightened tests, delays, or structural friction."
+    themes: "dasha,nakshatra,vimshottari,obstacles"
+    school: parashari
+    source: "Madhya Parashari Ch. VIII via K.N. Rao (p. 55–56)"
+    reviewed: 1
+
+  - id: kn_rao.debilitated_3_6_8_raja_yoga
+    type: rule_statement
+    text: "Debilitated 3rd/6th/8th Raja Yoga (K.N. Rao): Debilitated lords of the 3rd, 6th, or 8th houses—and debilitated planets placed in the 3rd, 6th, or 8th houses—frequently produce unexpected Raja Yoga and executive promotions. A one-way aspect between a Kendra and Trikona lord creates an Ardha-Raja Yoga (half Raja Yoga)."
+    houses: "3,6,8"
+    themes: "career_status,yogas,raja_yoga"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (p. 89, 93–94)"
+    reviewed: 1
+
+  - id: kn_rao.ten_level_maraka_hierarchy
+    type: classical_ref
+    text: "10-Level Descending Maraka Potency Hierarchy: (1) 2nd lord > (2) 7th lord > (3) 2nd occupant > (4) 2nd lord associate > (5) 7th occupant > (6) 7th lord associate > (7) 12th lord/occupant/associate > (8) Benefic AD in 12th MD > (9) 8th lord/occupant/associate > (10) 3rd/6th/11th lords. If Saturn or Rahu as 3/6/8/11/12 lord joins a Maraka, it takes over as primary agent. In political charts, Marakas often deliver career setback rather than physical crisis."
+    planets: "saturn,rahu"
+    houses: "2,7,8,12"
+    themes: "longevity,maraka,politics"
+    school: parashari
+    source: "Laghu Parashari Ch. VI via K.N. Rao (p. 46–47, 122–123)"
+    reviewed: 1
+
+  - id: kn_rao.education_counseling_formula
+    type: rule_statement
+    text: "K.N. Rao Educational Counseling Formula (>80% empirical accuracy): Do not rely primarily on the 4th house. Examine (1) the 5th house and 5th lord from Lagna plus its Nakshatra lord, and (2) the 5th house and 5th lord from Mercury. Tally the dominant planetary influences alongside the running Dasha to identify the native's exact academic and technical stream."
+    planets: "mercury"
+    houses: "5,4"
+    themes: "education,career_status,intellect"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. IV Ch. II, p. 162–163, 177)"
+    reviewed: 1
+
+  - id: kn_rao.marriage_timing_patterns
+    type: rule_statement
+    text: "K.N. Rao Marriage Timing Rules: Marriage triggers in MD/AD/PD of planets tied to the 1/7 and 4/10 axes (especially influenced by Mars or Venus in D9), confirmed by Double Transit on the 1/7 axis. On the wedding day itself, transiting Mars frequently aspects natal Venus. Unafflicted Jupiter in D1 or D9 Lagna rescues heavily delayed marriages. Classical 18th/33rd year widowhood combinations often manifest as divorce in modern contexts."
+    planets: "venus,mars,jupiter,moon"
+    houses: "1,7,4,10"
+    themes: "marriage,partnership,timing"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. III Ch. VI–VII, p. 132–148)"
+    reviewed: 1
+
+  - id: kn_rao.political_career_seven_rules
+    type: rule_statement
+    text: "7 Political Career Principles (K.N. Rao): (1) Jupiter-Sun royal dignity; (2) Gaja-Kesari popular appeal; (3) Saturn linked to 10th for mass mandate; (4) 4th house for Parliament/seat of power; (5) Rahu-Ketu maneuvering; (6) 8th house to break from prior career; (7) 12th house for transition. Prime Ministers show Saturn dominance while Presidents show equal or greater Jupiter. 7th lord or Saturn Pratyantar Dasha triggers entry or re-entry into public life. Always verify 6 of 10 non-political events first."
+    planets: "sun,jupiter,saturn,rahu,ketu"
+    houses: "4,7,8,10,12"
+    themes: "politics,career_status,public_life"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (p. 97, 178–190)"
+    reviewed: 1
+
+  - id: kn_rao.astro_psychology_diagnosis
+    type: concept_note
+    text: "Astro-Psychology Blind Diagnosis (K.N. Rao): Read acute mental stress from the active Dasha—6th lord AD aspecting 4th lord/5th house flags property/family disputes; MD and AD lords in mutual 6/8 in BOTH D1 and D9 signals sudden relationship collapse; Moon+Rahu with Mars aspect causes acute domestic tension, while Jupiter on 10th keeps external work normal (actionable counseling remedy: move out for work)."
+    planets: "moon,rahu,mars,jupiter"
+    houses: "4,5,6,8,10"
+    themes: "psychology,mind_emotion,relationships,counseling"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. IV Ch. III, p. 171–177)"
+    reviewed: 1
+
+  - id: kn_rao.crime_and_acquittal
+    type: rule_statement
+    text: "Litigation, Bandhana & Legal Acquittal Formula (K.N. Rao): Confinement/Bandhana risk rises when 6th+8th lords, afflicted Moon, retrograde Mercury, and equal planets in 2/12, 3/11, or 4/10 align under Saturn transit. Legal acquittal is classically triggered during the AD/PD of the 6th lord (or Rahu in 6th) when Jupiter influences the 10th house or 10th lord from Lagna or Moon."
+    planets: "jupiter,saturn,mercury,moon,rahu"
+    houses: "6,8,10,12"
+    themes: "disputes_litigation,legal,obstacles"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. I Ch. IV, p. 17–24)"
+    reviewed: 1
+
+  - id: kn_rao.shadvarga_disease_map
+    type: classical_ref
+    text: "Lagna + 6th Lord Shadvarga Medical Table (Madhya Parashari Ch. XIV): When Lagna lord conjoins 6th lord and falls >3 times in unfavorable Shadvargas, the dominant Shadvarga planet points to constitutional vulnerability—Sun: Pitta/heart; Moon: water/pleurisy/lungs; Mars: blood/inflammation; Mercury: Vayu/nerves; Jupiter: Kapha/metabolic/kidney; Venus: reproductive; Saturn: Sannipata/chronic neuromuscular."
+    houses: "1,6"
+    themes: "health_routine,medical_astrology"
+    school: parashari
+    source: "Madhya Parashari Ch. XIV via K.N. Rao (p. 73)"
+    reviewed: 1
+
+  - id: kn_rao.balarishta_4_4_4_karma
+    type: concept_note
+    text: "Balarishta 4+4+4 Karma Split: Early childhood health vulnerability follows a 3-stage karmic pattern—years 0 to 4 reflect maternal karma, years 4 to 8 paternal karma, and years 8 to 12 the child's own karma. Always cross-check parents' charts alongside the child's chart for pediatric crises."
+    houses: "1,4,5,9"
+    themes: "health_routine,children_progeny,karma"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. IV Ch. I–II, p. 150, 167–168)"
+    reviewed: 1
+
+  - id: kn_rao.birth_lagna_varga_overlay
+    type: concept_note
+    text: "Birth-Lagna Overlay on Vargas (Madhya Parashari Ch. XIV): In addition to reading each Varga from its own Ascendant, overlay Varga planets (D9, D3, D12, D30) onto the fixed D1 Birth Lagna; planets repeatedly landing in D1 houses 1, 4, 5, or 9 become strong supportive Antardasha deliverers."
+    houses: "1,4,5,9"
+    themes: "vargas,dasha,antardasha"
+    school: parashari
+    source: "Madhya Parashari Ch. XIV via K.N. Rao (p. 71–72)"
+    reviewed: 1
+
+  - id: kn_rao.propitiation_108_mantra
+    type: concept_note
+    text: "Parashari Propitiation & 108-Count Mantra Logic (K.N. Rao): 27 Nakshatras x 4 Padas = 108. Sincere daily recitation of Mrityunjaya Mantra, Vishnu Sahasranama, or Hanuman Chalisa paired with selfless charity (daan) softens severe karmic impacts into manageable scrapes; Parashara emphasizes mantra and daan over commercial gemstone rackets."
+    themes: "remedies,spirituality,mantra,ethics"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. III Ch. V, p. 124–131)"
+    reviewed: 1
+
+  - id: kn_rao.checklists_audit
+    type: concept_note
+    text: "K.N. Rao Three Standardized Checklists: Checklist I audits D1+D9+Vimshottari+Yogas; Checklist II checks D1/D9 crossovers (exalted in D1/debilitated in D9 red flag vs weak in D1/strong in D9 hidden strength), Vargottama, Retrograde PAC, Combustion, War, Durudhara, and mutual axes; Checklist III audits 1st/9th/10th from Lagna/Moon/Sun plus Leo (royalty) and Sagittarius (official seal) placements."
+    houses: "1,9,10"
+    themes: "methodology,checklists,audit"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (p. 82–86)"
+    reviewed: 1
+
+  - id: kn_rao.saints_passing_pattern
+    type: rule_statement
+    text: "Saints' Departure Pattern (K.N. Rao): Realized spiritual masters (Mahatmas) frequently leave the physical body during the Antardasha or Pratyantar Dasha of the 9th (dharma) or 12th (moksha) lord rather than conventional Marakas."
+    houses: "9,12"
+    themes: "spirituality,longevity,dasha"
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. III Ch. III, p. 109)"
+    reviewed: 1

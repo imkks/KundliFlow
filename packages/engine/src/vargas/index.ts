@@ -6,9 +6,13 @@ export const VARGA_TYPES = [
   'D2',
   'D3',
   'D4',
+  'D5',
+  'D6',
   'D7',
+  'D8',
   'D9',
   'D10',
+  'D11',
   'D12',
   'D16',
   'D20',
@@ -27,9 +31,13 @@ export const VARGA_LABELS: Record<VargaType, string> = {
   D2: 'D2 Hora (Wealth & Prosperity)',
   D3: 'D3 Drekkana (Siblings & Energy)',
   D4: 'D4 Chaturthamsha (Luck & Fixed Assets)',
+  D5: 'D5 Panchamsha (Fame, Power & Followers)',
+  D6: 'D6 Shashthamsha (Health, Debts & Litigation)',
   D7: 'D7 Saptamamsha (Children & Progeny)',
+  D8: 'D8 Ashtamsha (Sudden Troubles & Longevity)',
   D9: 'D9 Navamsha (Dharma, Spouse & Destiny)',
   D10: 'D10 Dashamamsha (Profession & Status)',
+  D11: 'D11 Rudramsha (Destruction, Sudden Gains & Victory)',
   D12: 'D12 Dwadashamamsha (Parents & Lineage)',
   D16: 'D16 Shodashamsha (Vehicles & Pleasures)',
   D20: 'D20 Vimshamsha (Spiritual Pursuits)',
@@ -93,12 +101,38 @@ export const calculateVargaSign = (lon: number, varga: VargaType): number => {
       return (signIndex + part * 3) % 12;
     }
 
+    case 'D5': {
+      // Panchamsha (5 parts of 6° each — Fame, Authority, Followers)
+      // Odd signs: Ar(0), Aq(10), Sg(8), Ge(2), Li(6)
+      // Even signs: Ta(1), Vi(5), Pi(11), Cp(9), Sc(7)
+      const part = Math.min(4, Math.floor(degInSign / 6));
+      const oddSeq = [0, 10, 8, 2, 6];
+      const evenSeq = [1, 5, 11, 9, 7];
+      return isOddSign ? oddSeq[part]! : evenSeq[part]!;
+    }
+
+    case 'D6': {
+      // Shashthamsha (6 parts of 5° each — Health, Debts, Litigation)
+      // Odd signs: start from Aries (0); Even signs: start from Libra (6)
+      const part = Math.min(5, Math.floor(degInSign / 5));
+      const startSign = isOddSign ? 0 : 6;
+      return (startSign + part) % 12;
+    }
+
     case 'D7': {
       // Saptamsha (7 parts of 4°17'08.57" each = 30/7)
       // Odd signs: start from same sign
       // Even signs: start from 7th sign (+6)
       const part = Math.min(6, Math.floor(degInSign / (30 / 7)));
       const startSign = isOddSign ? signIndex : (signIndex + 6) % 12;
+      return (startSign + part) % 12;
+    }
+
+    case 'D8': {
+      // Ashtamsha (8 parts of 3°45' = 3.75° each — Sudden Troubles & Longevity)
+      // Movable: start from Aries (0); Fixed: start from Sagittarius (8); Dual: start from Leo (4)
+      const part = Math.min(7, Math.floor(degInSign / 3.75));
+      const startSign = modality === 0 ? 0 : modality === 1 ? 8 : 4;
       return (startSign + part) % 12;
     }
 
@@ -122,6 +156,14 @@ export const calculateVargaSign = (lon: number, varga: VargaType): number => {
       // Even signs: start from 9th sign (+8)
       const part = Math.min(9, Math.floor(degInSign / 3));
       const startSign = isOddSign ? signIndex : (signIndex + 8) % 12;
+      return (startSign + part) % 12;
+    }
+
+    case 'D11': {
+      // Rudramsha (11 parts of 2°43'38.18" = 30/11° each — Destruction, Sudden Gains, Victory)
+      // Anti-zodiacal start from Aries: Ar->Ar(0), Ta->Pi(11), Ge->Aq(10), ..., Sc->Vi(5)
+      const part = Math.min(10, Math.floor(degInSign / (30 / 11)));
+      const startSign = (12 - signIndex) % 12;
       return (startSign + part) % 12;
     }
 

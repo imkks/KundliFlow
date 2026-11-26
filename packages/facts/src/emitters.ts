@@ -227,16 +227,42 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
       sourceModule: 'emitters.combustion',
     });
 
-    // Varga D9 & D10 + Vargottama
+    // Varga D9 & D10 + Vargottama + K.N. Rao Checklist II D1/D9 Crossover
     const d9SignIndex = calculateVargaSign(g.lon, 'D9');
     const d10SignIndex = calculateVargaSign(g.lon, 'D10');
     const isVargottama = d9SignIndex === g.signIndex;
+    const d9ExaltMap: Record<string, number> = { sun: 0, moon: 1, mars: 9, mercury: 5, jupiter: 3, venus: 11, saturn: 6 };
+    const d9DebilMap: Record<string, number> = { sun: 6, moon: 7, mars: 3, mercury: 11, jupiter: 9, venus: 5, saturn: 0 };
+    const d9Dignity =
+      d9ExaltMap[planet] === d9SignIndex
+        ? 'exalted'
+        : d9DebilMap[planet] === d9SignIndex
+        ? 'debilitated'
+        : SIGN_LORDS[d9SignIndex] === planet
+        ? 'own'
+        : 'neutral';
+    const d1D9Crossover =
+      dignity === 'exalted' && d9Dignity === 'debilitated'
+        ? 'd1_exalt_d9_debil'
+        : dignity === 'debilitated' && (d9Dignity === 'exalted' || d9Dignity === 'own')
+        ? 'd1_debil_d9_strong'
+        : isVargottama
+        ? 'vargottama'
+        : 'none';
 
     facts.push({
       id: `varga.d9.${planet}`,
       type: 'varga',
       subject: planet,
-      args: { planet, varga: 'D9', sign: SIGN_IDS[d9SignIndex]!, vargottama: isVargottama },
+      args: {
+        planet,
+        varga: 'D9',
+        sign: SIGN_IDS[d9SignIndex]!,
+        vargottama: isVargottama,
+        d9Dignity,
+        d1State: dignity,
+        crossover: d1D9Crossover,
+      },
       value: SIGN_IDS[d9SignIndex]!,
       houseFrom: { lagna: hLagna, moon: hMoon },
       sourceModule: 'vargas',
@@ -884,6 +910,261 @@ export function emitChartFacts(input: ChartWorkspaceInput): ChartFactSet {
       }
     } catch {
       // gracefully skip if partial mock
+    }
+  }
+
+  // 15. K.N. Rao Empirical & Laghu/Madhya Parashari Patterns (Astrology, Destiny & the Wheel of Time)
+  if (natal.lagna && natal.grahas?.sun && natal.grahas?.moon) {
+    const hOf = (p: PlanetId) => houseFromSign(natal.grahas[p].signIndex, lagnaSignIndex);
+    const lOf = (h: number): PlanetId => SIGN_LORDS[(lagnaSignIndex + h - 1) % 12]!;
+
+    // 15a. 22nd Drekkana Lord (K.N. Rao shortcut: place Lagna degree into 8th house)
+    const lagnaDeg = natal.lagna.degInSign ?? (natal.lagna.lon % 30);
+    const drekPart = lagnaDeg < 10 ? 0 : lagnaDeg < 20 ? 4 : 8; // 1st, 5th, or 9th from 8th sign
+    const eighthSign = (lagnaSignIndex + 7) % 12;
+    const drek22Sign = (eighthSign + drekPart) % 12;
+    const drek22Lord = SIGN_LORDS[drek22Sign]!;
+    facts.push({
+      id: 'kn_rao.drekkana_22',
+      type: 'kn_rao_pattern',
+      subject: drek22Lord,
+      args: {
+        patternKey: 'drekkana_22',
+        planet: drek22Lord,
+        sign: SIGN_IDS[drek22Sign]!,
+        house: hOf(drek22Lord),
+      },
+      value: drek22Lord,
+      houseFrom: { lagna: hOf(drek22Lord), moon: houseFromSign(natal.grahas[drek22Lord].signIndex, moonSignIndex) },
+      sourceModule: 'kn_rao.patterns',
+    });
+
+    // 15b. 23rd (Vainashika) Nakshatra from Moon
+    const vainashikaIdx = (natal.grahas.moon.nakshatraIndex + 22) % 27;
+    const vainashikaLord = NAKSHATRA_LORDS[vainashikaIdx]!;
+    facts.push({
+      id: 'kn_rao.vainashika_23',
+      type: 'kn_rao_pattern',
+      subject: vainashikaLord,
+      args: {
+        patternKey: 'vainashika_23',
+        planet: vainashikaLord,
+        nakshatraIndex: vainashikaIdx,
+      },
+      value: vainashikaLord,
+      houseFrom: { lagna: hOf(vainashikaLord), moon: houseFromSign(natal.grahas[vainashikaLord].signIndex, moonSignIndex) },
+      sourceModule: 'kn_rao.patterns',
+    });
+
+    // 15c. Debilitated 3rd/6th/8th lord OR debilitated planet in 3rd/6th/8th -> Empirical Raja Yoga
+    const dusthanaOr3 = new Set([3, 6, 8]);
+    const lords368 = new Set<PlanetId>([lOf(3), lOf(6), lOf(8)]);
+    for (const p of PLANET_IDS) {
+      if (p === 'rahu' || p === 'ketu') continue;
+      const g = natal.grahas[p];
+      if (getDignity(p, g) !== 'debilitated') continue;
+      const h = hOf(p);
+      if (dusthanaOr3.has(h) || lords368.has(p)) {
+        facts.push({
+          id: `kn_rao.debilitated_3_6_8_raja.${p}`,
+          type: 'kn_rao_pattern',
+          subject: p,
+          args: { patternKey: 'debilitated_3_6_8_raja', planet: p, house: h, sign: SIGN_IDS[g.signIndex]! },
+          value: true,
+          houseFrom: { lagna: h, moon: houseFromSign(g.signIndex, moonSignIndex) },
+          sourceModule: 'kn_rao.patterns',
+        });
+      }
+    }
+
+    // 15d. Special Benefic Exception: 2nd+7th double-maraka lord placed in 4th (Venus for Aries; Mars for Libra)
+    const l2 = lOf(2);
+    const l7 = lOf(7);
+    if (l2 === l7 && hOf(l2) === 4) {
+      facts.push({
+        id: 'kn_rao.double_maraka_4th_benefic',
+        type: 'kn_rao_pattern',
+        subject: l2,
+        args: { patternKey: 'double_maraka_4th_benefic', planet: l2, house: 4, sign: SIGN_IDS[natal.grahas[l2].signIndex]! },
+        value: true,
+        houseFrom: { lagna: 4, moon: houseFromSign(natal.grahas[l2].signIndex, moonSignIndex) },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+
+    // 15e. Sibling Birth-Order Thumb-Rule (~60%): 3rd lord in 11th OR 11th lord in 3rd
+    const l3 = lOf(3);
+    const l11 = lOf(11);
+    if (hOf(l3) === 11 || hOf(l11) === 3) {
+      facts.push({
+        id: 'kn_rao.sibling_order_3_11',
+        type: 'kn_rao_pattern',
+        subject: 'house3',
+        args: { patternKey: 'sibling_order_3_11', l3, l3House: hOf(l3), l11, l11House: hOf(l11) },
+        value: true,
+        houseFrom: { lagna: 3, moon: 3 },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+
+    // 15f. Adoption / Foreign or Unorthodox Guru: 9th lord in 8th OR 8th-9th exchange
+    const l8 = lOf(8);
+    const l9 = lOf(9);
+    if (hOf(l9) === 8 || (hOf(l9) === 8 && hOf(l8) === 9)) {
+      facts.push({
+        id: 'kn_rao.adoption_guru_9_8',
+        type: 'kn_rao_pattern',
+        subject: 'house9',
+        args: { patternKey: 'adoption_guru_9_8', l9, l8, isExchange: hOf(l8) === 9 },
+        value: true,
+        houseFrom: { lagna: 9, moon: 9 },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+
+    // 15g. Moon-Venus 1/7 Opposition (Relationship & Love-Affair Strain)
+    const moonToVen = houseFromSign(natal.grahas.venus.signIndex, natal.grahas.moon.signIndex);
+    if (moonToVen === 7) {
+      facts.push({
+        id: 'kn_rao.moon_venus_1_7',
+        type: 'kn_rao_pattern',
+        subject: 'house7',
+        args: { patternKey: 'moon_venus_1_7', planet: 'venus', house: hOf('venus') },
+        value: true,
+        houseFrom: { lagna: 7, moon: 7 },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+
+    // 15h. Jupiter "Ganga Water" Marriage Rescuer (Jupiter in D1 Lagna or D9 Lagna)
+    const d9LagnaSign = calculateVargaSign(natal.lagna.lon, 'D9');
+    const jupD9Sign = calculateVargaSign(natal.grahas.jupiter.lon, 'D9');
+    if (hOf('jupiter') === 1 || jupD9Sign === d9LagnaSign) {
+      facts.push({
+        id: 'kn_rao.jupiter_ganga_water',
+        type: 'kn_rao_pattern',
+        subject: 'house7',
+        args: {
+          patternKey: 'jupiter_ganga_water',
+          planet: 'jupiter',
+          inD1Lagna: hOf('jupiter') === 1,
+          inD9Lagna: jupD9Sign === d9LagnaSign,
+        },
+        value: true,
+        houseFrom: { lagna: 1, moon: houseFromSign(natal.grahas.jupiter.signIndex, moonSignIndex) },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+
+    // 15i. Political / Public Authority Markers (Leo Royalty, Sagittarius Official Seal, Jup-Sun, Sat-10th)
+    const leoOccupants = PLANET_IDS.filter((p) => natal.grahas[p].signIndex === 4);
+    if (leoOccupants.length > 0) {
+      facts.push({
+        id: 'kn_rao.leo_royalty',
+        type: 'kn_rao_pattern',
+        subject: 'house10',
+        args: { patternKey: 'leo_royalty', planets: leoOccupants.join(','), count: leoOccupants.length },
+        value: leoOccupants.length,
+        houseFrom: { lagna: houseFromSign(4, lagnaSignIndex), moon: houseFromSign(4, moonSignIndex) },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+    const sgOccupants = PLANET_IDS.filter((p) => natal.grahas[p].signIndex === 8);
+    if (sgOccupants.length > 0) {
+      facts.push({
+        id: 'kn_rao.sagittarius_seal',
+        type: 'kn_rao_pattern',
+        subject: 'house10',
+        args: { patternKey: 'sagittarius_seal', planets: sgOccupants.join(','), count: sgOccupants.length },
+        value: sgOccupants.length,
+        houseFrom: { lagna: houseFromSign(8, lagnaSignIndex), moon: houseFromSign(8, moonSignIndex) },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+    const jupSunDist = houseFromSign(natal.grahas.sun.signIndex, natal.grahas.jupiter.signIndex);
+    if (jupSunDist === 1 || jupSunDist === 7 || jupSunDist === 5 || jupSunDist === 9) {
+      facts.push({
+        id: 'kn_rao.political_jup_sun',
+        type: 'kn_rao_pattern',
+        subject: 'house10',
+        args: { patternKey: 'political_jup_sun', house: hOf('sun'), dist: jupSunDist },
+        value: true,
+        houseFrom: { lagna: 10, moon: 10 },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+    const satH = hOf('saturn');
+    const satAsp10 = [1, 3, 7, 10].some((off) => ((satH - 1 + off - 1) % 12) + 1 === 10);
+    if (satAsp10 || lOf(10) === 'saturn') {
+      facts.push({
+        id: 'kn_rao.political_sat_10',
+        type: 'kn_rao_pattern',
+        subject: 'house10',
+        args: { patternKey: 'political_sat_10', planet: 'saturn', house: satH },
+        value: true,
+        houseFrom: { lagna: 10, moon: houseFromSign(natal.grahas.saturn.signIndex, moonSignIndex) },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+
+    // 15j. Bandhana Equal-Planet Pair Check (2/12, 3/11, or 4/10 from Lagna with >= 1 planet each)
+    const countInHouse = (h: number) => PLANET_IDS.filter((p) => hOf(p) === h).length;
+    const bandhanaPairs: Array<[number, number]> = [[2, 12], [3, 11], [4, 10]];
+    const matchedBandhana = bandhanaPairs.filter(([a, b]) => {
+      const ca = countInHouse(a);
+      return ca >= 1 && ca === countInHouse(b);
+    });
+    if (matchedBandhana.length > 0) {
+      facts.push({
+        id: 'kn_rao.bandhana_equal_pairs',
+        type: 'kn_rao_pattern',
+        subject: 'house12',
+        args: {
+          patternKey: 'bandhana_equal_pairs',
+          pairs: matchedBandhana.map(([a, b]) => `${a}/${b}`).join(','),
+        },
+        value: matchedBandhana.length,
+        houseFrom: { lagna: 12, moon: 12 },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+
+    // 15k. Lagna-Specific Madhya Parashari Special Remarks (Table 19B)
+    const jupSatSame = natal.grahas.jupiter.signIndex === natal.grahas.saturn.signIndex;
+    const jupVenSame = natal.grahas.jupiter.signIndex === natal.grahas.venus.signIndex;
+    const moonMercSame = natal.grahas.moon.signIndex === natal.grahas.mercury.signIndex;
+    if ((lagnaSignIndex === 0 || lagnaSignIndex === 2) && jupSatSame) {
+      facts.push({
+        id: 'kn_rao.lagna_remark.jup_sat_ar_ge',
+        type: 'kn_rao_pattern',
+        subject: 'jupiter',
+        args: { patternKey: 'lagna_remark_jup_sat_ar_ge', lagna: SIGN_IDS[lagnaSignIndex]! },
+        value: true,
+        houseFrom: { lagna: hOf('jupiter'), moon: houseFromSign(natal.grahas.jupiter.signIndex, moonSignIndex) },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+    if (lagnaSignIndex === 4 && jupVenSame) {
+      facts.push({
+        id: 'kn_rao.lagna_remark.jup_ven_leo',
+        type: 'kn_rao_pattern',
+        subject: 'jupiter',
+        args: { patternKey: 'lagna_remark_jup_ven_leo', lagna: 'leo' },
+        value: true,
+        houseFrom: { lagna: hOf('jupiter'), moon: houseFromSign(natal.grahas.jupiter.signIndex, moonSignIndex) },
+        sourceModule: 'kn_rao.patterns',
+      });
+    }
+    if (lagnaSignIndex === 6 && moonMercSame) {
+      facts.push({
+        id: 'kn_rao.lagna_remark.moon_merc_libra',
+        type: 'kn_rao_pattern',
+        subject: 'moon',
+        args: { patternKey: 'lagna_remark_moon_merc_libra', lagna: 'libra' },
+        value: true,
+        houseFrom: { lagna: hOf('moon'), moon: 1 },
+        sourceModule: 'kn_rao.patterns',
+      });
     }
   }
 

@@ -126,13 +126,16 @@ describe('L3-M2: packages/tools VFS & ToolServer deterministic suite', () => {
       expect(server.read('/kakshya').items.length).toBeGreaterThan(0);
       expect(server.read('/vedha').items.length).toBeGreaterThan(0);
       expect(server.read('/sahams', 2, 20).items.length).toBeGreaterThan(0);
-      for (const lk of ['yogas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha', 'sahams'] as const) {
+      for (const lk of ['yogas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha', 'sahams', 'special_lagnas'] as const) {
         expect(server.inspect_natal_lore(lk).items.length).toBeGreaterThan(0);
       }
-      for (const dk of ['vimshottari', 'yogini', 'chara'] as const) {
+      for (const dk of ['vimshottari', 'yogini', 'chara', 'sudarshana'] as const) {
         expect(server.inspect_dashas(dk).items.length).toBeGreaterThan(0);
       }
-      expect(server.compare_perspectives(4).items.length).toBe(4);
+      expect(server.compare_perspectives(4).items.length).toBe(6);
+      expect(server.inspect_functional_roles().items.length).toBeGreaterThan(0);
+      expect(server.inspect_argala('4').items.length).toBeGreaterThan(0);
+      expect(server.inspect_remedies('general').items.length).toBeGreaterThan(0);
       expect(server.trace_dispositor_chain('house4').items.length).toBeGreaterThan(0);
       expect(server.inspect_panchang().items.length).toBe(2);
       expect(server.inspect_bhavas(4).items.length).toBe(1);

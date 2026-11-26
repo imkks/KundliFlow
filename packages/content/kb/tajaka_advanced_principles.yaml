@@ -1,0 +1,124 @@
+version: "1.0.0"
+items:
+  - id: tajaka_r20.subordination_law
+    type: concept_note
+    text: "Subordination Law of Varshaphala (K.N. Rao & M.S. Mehta): The Annual Horoscope cannot deliver what is not promised in the Birth Chart and Natal Dashas. Always synthesize Birth Chart + Natal Dasha + Parashari Vargas + Annual Chart together (3-System Synthesis: Vimshottari + Chara + Tajaka)."
+    themes: "tajaka,varshaphala,methodology,timing"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Varshaphala or Tajak, Foreword & Ch. XV)"
+    reviewed: 1
+
+  - id: tajaka_r20.four_point_synthesis
+    type: concept_note
+    text: "K.N. Rao's 4-Point Varshaphala Synthesis: (1) Prioritize Natal Chart, Natal Dashas, and Transits first; (2) Assess Annual Lagna and Lagna Lord strength/afflictions; (3) Check Luminaries (Sun & Moon) in Kendras/Trikonas vs Dusthanas/Rahu-Ketu axis; (4) Treat Pancha Vargeeya Bala (PVB) as primarily diagnostic for the 6 non-Sun planets because Annual Sun longitude is locked to Birth Sun."
+    planets: "sun,moon"
+    themes: "tajaka,varshaphala,pvb,synthesis"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. XV, p. 230–231)"
+    reviewed: 1
+
+  - id: tajaka_r20.tri_pataki_chakra
+    type: rule_statement
+    text: "Tri-Pataki Chakra (3x3 Flag Grid): Maps Annual Lagna onto the top-center flag and projects all 9 Birth Chart planets by Running Year Y = Completed_Years + 1 (Moon mod 9 fwd; Sun/Merc/Jup/Ven/Sat mod 4 fwd; Mars mod 6 fwd; Rahu/Ketu mod 6 REVERSE). Evaluate 3-line Vedha hitting Annual Lagna and Tri-Pataki Moon: Jupiter/Venus Vedha brings promotion, uplift, and victory; Mars/Saturn/Rahu/Ketu Vedha warns of strife, health strain, or setbacks."
+    planets: "moon,jupiter,venus,mars,saturn,rahu,ketu"
+    themes: "tajaka,varshaphala,tri_pataki,vedha"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. X, p. 181–185)"
+    reviewed: 1
+
+  - id: tajaka_r20.dwi_janma_year
+    type: rule_statement
+    text: "Dwi-Janma Year ('Year of Second Birth'): Triggered whenever Annual Lagna equals Birth Lagna, escalated by exact degree match or Birth Moon Nakshatra recurrence. Generally signals major reversal, health crisis, or profound reset unless buffered by strong Natal Dasha plus Annual Lagna Lord, Jupiter, Moon, Year Lord, and Muntha Lord free of 6/8/12."
+    houses: "1,6,8,12"
+    themes: "tajaka,varshaphala,dwi_janma,vulnerability"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. XI p. 190 & Ch. XV p. 246–249, 266)"
+    reviewed: 1
+
+  - id: tajaka_r20.moon_varsheswara_disqualification
+    type: rule_statement
+    text: "Tajaka Neelakanthi Moon Varsheswara Disqualification: Normally Moon is disqualified as Year Lord even if strongest and aspecting Lagna; skip to the next strongest aspecting candidate. Only two classical exceptions allow Moon: (1) Cancer rises in Annual Chart with Moon in Lagna and strongest of the 5 candidates; (2) Nighttime return where Moon is Trirashi Pati (Taurus/Pisces), strongest planet in the entire chart, and aspects Lagna."
+    planets: "moon"
+    themes: "tajaka,varsheshwara,neelakantha,pvb"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. VII, p. 135)"
+    reviewed: 1
+
+  - id: tajaka_r20.dual_school_pvb
+    type: concept_note
+    text: "Dual-School Tajaka PVB: PVR mode uses Parashari compound friendships, 3-tier PVB (30/15/7.5), and Parashari D3. Neelakantha/Mehta mode uses aspect-based friendships (5/9 & 3/11 Friend; 2/12 & 6/8 Neutral; 1/4/7/10 Enemy), 4-tier PVB (30/22.5/15/7.5), and Tajaka Sequential Drekkana (Chaldean order). Convergence of Varsheshwara across both schools yields highest predictive confidence."
+    themes: "tajaka,pvb,neelakantha,methodology"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. V, p. 96–109) & PVR Ch. 28"
+    reviewed: 1
+
+  - id: tajaka_r20.neelakanthi_delivery_gate
+    type: rule_statement
+    text: "Tajaka Neelakanthi Delivery Gate: A planet delivers its promised annual results only when it forms an applying Ithasala with the Year Lord (Varsheshwara) or Annual Lagna Lord. If it stands in separating Eesarpha with them, its promised manifestation is delayed or blocked during that solar year."
+    themes: "tajaka,ithasala,eesarpha,delivery"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. VII, p. 142)"
+    reviewed: 1
+
+  - id: tajaka_r20.annual_yogini_dasa
+    type: concept_note
+    text: "Annual Yogini Dasa (360-Day Cycle): Compresses the 36-year Yogini cycle to 1 solar year (Mangala 10d, Pingala 20d, Dhanya 30d, Bhramari 40d, Bhadrika 50d, Ulka 60d, Siddha 70d, Sankata 80d). Starting Yogini index = (Completed_Years + Birth_Moon_Nakshatra + 3) mod 8, with first balance from natal Moon's untraversed Nakshatra fraction."
+    themes: "tajaka,dasha,yogini,timing"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. VI, p. 127–129)"
+    reviewed: 1
+
+  - id: tajaka_r20.muntha_rahu_and_half_year
+    type: rule_statement
+    text: "Advanced Muntha Timing: (1) Rahu's Face (Mukha = untraversed degrees Rahu_deg -> 0°) on Muntha with benefics grants ambition/success, whereas Rahu's Back (30° -> Rahu_deg) or Ketu's Tail brings friction/setbacks. (2) Project Annual Muntha back into the Birth Chart: benefic links in Birth Chart favor the 1st half of the year; benefic links in Annual Chart favor the 2nd half."
+    planets: "rahu,ketu"
+    themes: "tajaka,muntha,timing"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. IV, p. 78–80)"
+    reviewed: 1
+
+  - id: tajaka_r20.saham_punya_common_and_malefic
+    type: rule_statement
+    text: "Saham Fructification Rules: Always check Punya Saham first as the year's fortune baseline. If the same planet rules a Saham in both Birth and Annual charts (Common Lordship), that Saham manifests strongly. Warning (Neelakantha): Harmful Sahams (Roga, Mrityu, Kali, Shatru) should be weak—strength makes them more destructive."
+    themes: "tajaka,sahams,punya_saham,fructification"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. IX, p. 163, 178–180)"
+    reviewed: 1
+
+  - id: tajaka_r20.patyayini_lagna_drekkana
+    type: rule_statement
+    text: "Patyayini Annual Ascendant Dasha Matrix: Movable Lagna gives Good results in 1st Drekkana (0–10°), Moderate in 2nd, Worst in 3rd. Fixed Lagna is Undesirable in 1st, Good in 2nd, Mixed in 3rd. Dual Lagna is Inauspicious in 1st, Medium in 2nd, Good in 3rd."
+    houses: "1"
+    themes: "tajaka,patyayini,drekkana,dasha"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. XII, p. 191)"
+    reviewed: 1
+
+  - id: tajaka_r20.crisis_and_neutralization_antidotes
+    type: rule_statement
+    text: "Annual Crisis Flags & Neutralization Antidotes: Major caution triggers include Annual Lagna = Birth 8th, combust Moon in 4/6/8/12 without Jupiter aspect, or L1+L8+Muntha Lord in 4/8/12. Key antidotes: (1) Strong Annual L1 in Kendra/Trikona; (2) Unafflicted Jupiter in Kendra/Trikona washing away Moon/Muntha/Lagna afflictions; (3) Sun and Mars in 3/6/11 from Muntha neutralizing Muntha evils."
+    planets: "jupiter,sun,mars,moon"
+    houses: "1,3,6,8,11,12"
+    themes: "tajaka,crisis,antidotes,health,vulnerability"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. XI, p. 186–190)"
+    reviewed: 1
+
+  - id: tajaka_r20.political_fightback_and_mars12
+    type: rule_statement
+    text: "K.N. Rao Annual Political Heuristics: (1) Strong 10th plus both Luminaries in Kendras indicates peak political authority; (2) Strong Annual 3rd and 6th houses empower political fightback and overcoming rivals (Indira Gandhi 1965–66, Vajpayee 1997–98); (3) Mars in Annual 12th signals foreign or behind-the-scenes intrigues; (4) Retrograde planets in an Annual Chart also operate and aspect from the previous sign."
+    planets: "mars,sun,moon,saturn"
+    houses: "3,6,10,12"
+    themes: "tajaka,politics,career,retrograde"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. XV, p. 241–245)"
+    reviewed: 1
+
+  - id: tajaka_r20.rashi_anta_and_graded_kamboola
+    type: concept_note
+    text: "Extended Neelakantha Tajaka Yogas: Rashi-Anta Muthasil allows a direct faster planet at 29°–30° to operate from the next sign to form Ithasala. Kamboola Yoga is graded across 14 tiers from Uttam-o-Uttam (Moon + both Yoga planets own/exalted) to Adham-Adham (all debilitated/enemy). Duphalikuttha elevates ambitions when a strong slower planet receives applying Ithasala from an unimpeded faster planet."
+    planets: "moon"
+    themes: "tajaka,yogas,kamboola,ithasala"
+    school: tajaka
+    source: "M.S. Mehta & K.N. Rao, Annual Horoscope (Ch. VIII, p. 150–159)"
+    reviewed: 1

@@ -90,5 +90,6 @@ export interface AskResult {
   response: ComposedAnswer;
   trace: string[];
   observedEvidenceIds: string[];
+  activeSkills?: string[];
   verifierErrors?: string[];
 }

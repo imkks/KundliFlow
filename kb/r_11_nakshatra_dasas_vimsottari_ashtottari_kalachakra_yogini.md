@@ -3,8 +3,8 @@ route_id: "R-11"
 module_name: "Nakshatra Dasas: Vimsottari, Ashtottari, Kalachakra & Yogini"
 dependencies: ["R-01", "R-04", "R-05", "R-10"]
 primary_source: "vedic_astro_textbook.pdf (PVR Ch. 16–17, p. 221–242; Ch. 24, p. 301–323; Tables 38–39, 42–52)"
-secondary_source: "Elements of Vedic Astrology (Charak Ch. XIV–XV; Tables XIV-1 to XIV-17)"
-conflict_policy: "Year length configurable (PVR uses 360-day Savana years for Nakshatra Dasas; Solar 365.2425 days as optional mode); include Vimsottari 4th/5th/8th star variations and Charak's Yogini Dasa as confirmatory tool"
+secondary_source: "Elements of Vedic Astrology (Charak Ch. XIV–XV) & K.N. Rao (Laghu/Madhya Parashari Dasha Subtleties & 6-Way Evaluation, R-19)"
+conflict_policy: "Year length configurable (PVR uses 360-day Savana years for Nakshatra Dasas; Solar 365.2425 days as optional mode); include Vimsottari 4th/5th/8th star variations, Charak's Yogini Dasa, and K.N. Rao's PD/Laghu-Parashari rules (R-19)"
 ---
 
 # Nakshatra Dasas: Vimsottari, Ashtottari, Kalachakra & Yogini
@@ -142,6 +142,7 @@ conflict_policy: "Year length configurable (PVR uses 360-day Savana years for Na
 ## 5. Interpretive Guidelines & Modifiers
 
 * **Rath's Tripod of Life (PVR Ch. 16.5.3):** Evaluate `MD` from **Sun** (soul/slow), `AD` from **Moon** (mind/medium) and `MD` lord, and `PD` from **Lagna** (body/fast). Planets in Ravi Yogas deliver in `MD`; Chandra Yogas in `AD`; Lagna Raja Yogas in `PD`.
+* **K.N. Rao's Laghu/Madhya Parashari Dasha Modifiers (Cross-Ref `R-19` Sec. 2.2 & 5):** Apply the **6-Way Dasha Evaluation** (`D1` Lagna, `MD` lord, `D9` Lagna/`MD` lord, domain Varga, *karakatwa*, `2/12` & `6/8` geometry), check **3rd/5th/7th & 23rd star difficult `MD`s** (Table `19A`), and watch key exceptions (`Yogakaraka AD in Malefic MD = exceedingly bad`, `Sat-Sat ≈ Sat-Ven`, `Rahu-Venus` volatility, and `Own-AD` non-delivery).
 * **Charak's Drekkana Timing Within Dasa (Charak Ch. XV):** Planet in 1st Drekkana ($0^\circ$–$10^\circ$) delivers in the early part of its Dasa; 2nd ($10^\circ$–$20^\circ$) in the middle; 3rd ($20^\circ$–$30^\circ$) in the end.
 * **Kalachakra + SAV Rule:** Always overlay the target Varga's `SAV` (`R-10`) onto Kalachakra Dasa signs—signs with $\ge 30$ points deliver peak periods in that Varga's domain.
 

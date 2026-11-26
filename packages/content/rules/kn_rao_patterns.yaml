@@ -1,0 +1,282 @@
+# K.N. Rao Empirical Predictive Patterns & Laghu/Madhya Parashari Level 2 Rules
+# Grounded in K.N. Rao — "Astrology, Destiny and the Wheel of Time" (Sections I–IV)
+version: "1.0.0"
+rules:
+  # --- Checklist II: D1 vs D9 Crossover Audits ---
+  - id: kn_rao.crossover.d1_exalt_d9_debil
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Checklist II, p. 83)"
+    reviewed: true
+    when:
+      all:
+        - fact: varga
+          crossover: d1_exalt_d9_debil
+    effect:
+      theme: self
+      polarity: mixed
+      base_strength: 62
+      statement: A planet exalted in the Rashi (D1) chart yet debilitated in Navamsha (D9) signals high surface promise that requires inner resilience during its Dasha, as deeper follow-through can feel tested.
+
+  - id: kn_rao.crossover.d1_debil_d9_strong
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Checklist II, p. 83)"
+    reviewed: true
+    when:
+      all:
+        - fact: varga
+          crossover: d1_debil_d9_strong
+    effect:
+      theme: self
+      polarity: supportive
+      base_strength: 68
+      statement: A planet debilitated in D1 yet exalted or in own sign in Navamsha (D9) carries hidden strength and late-blooming mastery, often turning early hurdles into durable achievement.
+
+  # --- Empirical Raja Yoga: Debilitated 3rd/6th/8th Lords or Occupants ---
+  - id: kn_rao.debilitated_3_6_8_raja
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. III Ch. I, p. 89, 93)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: debilitated_3_6_8_raja
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 72
+      statement: A debilitated planet owning or occupying the 3rd, 6th, or 8th house activates K.N. Rao's empirical Raja Yoga pattern, often catalyzing unexpected promotions and institutional rise during its periods.
+
+  # --- Madhya Parashari Special Benefic Flip: 2nd+7th Lord in 4th ---
+  - id: kn_rao.double_maraka_4th_benefic
+    kind: kn_rao_pattern
+    school: parashari
+    source: "Madhya Parashari Ch. XII via K.N. Rao (p. 67)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: double_maraka_4th_benefic
+    effect:
+      theme: home_mother
+      polarity: supportive
+      base_strength: 70
+      statement: Placement of the combined 2nd and 7th lord in the 4th house (such as Venus for Aries or Mars for Libra) flips classical Maraka tension into strong domestic comfort, assets, and period prosperity.
+
+  # --- Destiny Thumb-Rules: Siblings & Adoption / Foreign Guru ---
+  - id: kn_rao.sibling_order_3_11
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. IV Ch. II, p. 160)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: sibling_order_3_11
+    effect:
+      theme: courage_siblings
+      polarity: neutral
+      base_strength: 58
+      statement: The 3rd lord in the 11th house or the 11th lord in the 3rd links effort with elder-sibling networks and empirically correlates with being the eldest or youngest sibling in the family.
+
+  - id: kn_rao.adoption_guru_9_8
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. IV Ch. II, p. 160–162)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: adoption_guru_9_8
+    effect:
+      theme: luck_dharma
+      polarity: mixed
+      base_strength: 62
+      statement: The 9th lord placed in the 8th house (or exchanging with the 8th lord) often signals unconventional mentorship, spiritual initiation from a foreign or unorthodox tradition, or transformative shifts in paternal lineage.
+
+  # --- Marriage & Relationship Empirical Patterns ---
+  - id: kn_rao.moon_venus_1_7
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. III Ch. VI, p. 134)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: moon_venus_1_7
+    effect:
+      theme: partnership
+      polarity: challenging
+      base_strength: 60
+      statement: A 1/7 mutual opposition between Moon and Venus highlights emotional-relational polarity, calling for conscious communication and boundary clarity in romantic partnerships.
+
+  - id: kn_rao.jupiter_ganga_water
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. III Ch. VII, p. 140–145)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: jupiter_ganga_water
+    effect:
+      theme: partnership
+      polarity: supportive
+      base_strength: 72
+      statement: Jupiter occupying the D1 or D9 Lagna acts as a protective blessing ("Ganga water") over the 7th house, helping rescue delayed partnerships and sustaining dharmic harmony.
+
+  # --- Vulnerability Markers: 22nd Drekkana & 23rd Vainashika ---
+  - id: kn_rao.drekkana_22
+    kind: kn_rao_pattern
+    school: parashari
+    source: "Madhya Parashari Ch. VIII via K.N. Rao (p. 55–56)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: drekkana_22
+    effect:
+      theme: transformation_secrets
+      polarity: mixed
+      base_strength: 55
+      statement: The 22nd Drekkana lord (found by projecting the Lagna degree into the 8th house) marks a sensitive transformation planet whose Dashas and transits reward extra prudence and health discipline.
+
+  - id: kn_rao.vainashika_23
+    kind: kn_rao_pattern
+    school: parashari
+    source: "Madhya Parashari Ch. VIII via K.N. Rao (p. 55–56)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: vainashika_23
+    effect:
+      theme: health_routine
+      polarity: mixed
+      base_strength: 52
+      statement: The 23rd (Vainashika) Nakshatra from natal Moon identifies a sensitive star whose transits and planetary lord periods benefit from deliberate pacing and stress management.
+
+  # --- Political & Public Authority Markers (Checklist III & Sec. IV Ch. IV) ---
+  - id: kn_rao.leo_royalty
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Checklist III, p. 86)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: leo_royalty
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 58
+      statement: Planetary emphasis in Leo activates the classical signature of executive presence, personal dignity, and visible leadership stature.
+
+  - id: kn_rao.sagittarius_seal
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Checklist III, p. 86)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: sagittarius_seal
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 58
+      statement: Planetary emphasis in Sagittarius signifies the classical "royal seal," supporting formal titles, advisory credibility, and official or institutional authority.
+
+  - id: kn_rao.political_jup_sun
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. IV Ch. IV, p. 178–184)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: political_jup_sun
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 66
+      statement: Harmonious alignment between Jupiter and the Sun elevates institutional prestige, ethical authority, and prominence in public or executive spheres.
+
+  - id: kn_rao.political_sat_10
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. IV Ch. IV, p. 178–184)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: political_sat_10
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 64
+      statement: Saturn connecting with the 10th house or its lord builds durable organizational stamina, mass reach, and public accountability in career or civic life.
+
+  # --- Bandhana Equal-Pair Pattern ---
+  - id: kn_rao.bandhana_equal_pairs
+    kind: kn_rao_pattern
+    school: parashari
+    source: "K.N. Rao, Astrology, Destiny and the Wheel of Time (Sec. I Ch. IV, p. 17–18)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: bandhana_equal_pairs
+    effect:
+      theme: losses_retreat
+      polarity: mixed
+      base_strength: 54
+      statement: Equal planetary counts flanking symmetrical house pairs (2/12, 3/11, or 4/10) create a classical Bandhana framing—indicating periods of intense obligation, confinement to duty, or strict external boundaries.
+
+  # --- Lagna-Specific Madhya Parashari Special Remarks (Table 19B) ---
+  - id: kn_rao.lagna_remark.jup_sat_ar_ge
+    kind: kn_rao_pattern
+    school: parashari
+    source: "Madhya Parashari Ch. XVI via K.N. Rao (Table 19B, p. 78)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: lagna_remark_jup_sat_ar_ge
+    effect:
+      theme: luck_dharma
+      polarity: mixed
+      base_strength: 60
+      statement: For Aries or Gemini Lagna, conjunction of Jupiter with Saturn tempers Jupiter's smooth beneficence, requiring steady practical effort rather than expecting effortless fortune.
+
+  - id: kn_rao.lagna_remark.jup_ven_leo
+    kind: kn_rao_pattern
+    school: parashari
+    source: "Madhya Parashari Ch. XVI via K.N. Rao (Table 19B, p. 78)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: lagna_remark_jup_ven_leo
+    effect:
+      theme: career_status
+      polarity: mixed
+      base_strength: 58
+      statement: For Leo Lagna, a Jupiter-Venus association does not yield a standard Raja Yoga on its own and calls for balancing idealism with practical execution.
+
+  - id: kn_rao.lagna_remark.moon_merc_libra
+    kind: kn_rao_pattern
+    school: parashari
+    source: "Madhya Parashari Ch. XVI via K.N. Rao (Table 19B, p. 78)"
+    reviewed: true
+    when:
+      all:
+        - fact: kn_rao_pattern
+          pattern_key: lagna_remark_moon_merc_libra
+    effect:
+      theme: career_status
+      polarity: supportive
+      base_strength: 72
+      statement: For Libra Lagna, conjunction of 10th lord Moon and 9th lord Mercury forms a potent Dharma-Karmadhipati Raja Yoga linking intellect, fortune, and public success.

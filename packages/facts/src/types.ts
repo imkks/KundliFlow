@@ -30,7 +30,8 @@ export type FactType =
   | 'special_nakshatra'
   | 'kakshya'
   | 'vedha'
-  | 'saham';
+  | 'saham'
+  | 'kn_rao_pattern';
 
 export type Fact = {
   id: string; // readable and stable, e.g. placement.rahu, conj.rahu.venus, lord.house4

@@ -3,8 +3,8 @@ route_id: "R-15"
 module_name: "Tajaka (Varshaphala) Annual/Monthly/60-Hr Charts, 16 Yogas, Annual Dasas & Sudarsana Chakra"
 dependencies: ["R-01", "R-04", "R-11", "R-12"]
 primary_source: "vedic_astro_textbook.pdf (PVR Ch. 27–31, p. 379–427; Tables 71–76; Fig. 4; Charts 66–74)"
-secondary_source: "Elements of Vedic Astrology (Charak Ch. XXV, XXXI)"
-conflict_policy: "Cast all Tajaka charts at BIRTHPLACE coordinates using exact non-linear Lahiri Ayanamsha; Sudarsana Chakra Dasa links directly to Tajaka Annual/Monthly/60-Hr entry charts"
+secondary_source: "Elements of Vedic Astrology (Charak Ch. XXV, XXXI); Companion Advanced Module: R-20 (M.S. Mehta & K.N. Rao)"
+conflict_policy: "Cast all Tajaka charts at BIRTHPLACE coordinates using exact non-linear Lahiri Ayanamsha; expose TAJAKA_SCHOOL: PVR | NEELAKANTHA_MEHTA (see R-20 for Neelakantha variants, Tri-Pataki Chakra, Dwi-Janma Year & Annual House/Dasha rules)"
 ---
 
 # Tajaka (Varshaphala) Charts, 16 Yogas, Annual Dasas & Sudarsana Chakra
@@ -15,7 +15,7 @@ conflict_policy: "Cast all Tajaka charts at BIRTHPLACE coordinates using exact n
   * **Annual Chart (`Varsha Pravesh`):** Every $360^\circ$ of Sun's motion (1 solar year).
   * **Monthly Chart (`Maasa Pravesh`):** Every $30^\circ$ of Sun's motion (12 per year).
   * **Sixty-Hour Chart (`Shashti-Hora`):** Every $2^\circ 30'$ of Sun's motion (12 per month $\approx 2.5$ days).
-* **Subservience Rule:** Tajaka charts deliver events **only if** those events are already promised in the natal chart and supported by natal Dasas.
+* **Subservience Rule:** Tajaka charts deliver events **only if** those events are already promised in the natal chart and supported by natal Dasas. *(For Tri-Pataki Chakra, Dwi-Janma Year, Moon Varsheswara disqualification, Annual Yogini Dasa, 12-House Annual Interpretation, and K.N. Rao's 4-Point Varshaphala Synthesis, load companion module **`R-20`**.)*
 * **Sudarsana Chakra (`SC`):** 3 concentric rings showing all 12 houses simultaneously from **Lagna** (body), **Moon** (mind), and **Sun** (soul). Its 12-year Dasa (`1 yr MD / 1 mo AD / 2.5 day PD`) uses Tajaka Annual/Monthly/60-Hour charts as its **entry charts**.
 
 ---
@@ -25,9 +25,9 @@ conflict_policy: "Cast all Tajaka charts at BIRTHPLACE coordinates using exact n
 ### 2.1 Muntha & Tajaka Aspects / Deeptamsa Orbs (PVR Ch. 28.1–28.2)
 * **Muntha:** Progress natal Lagna forward by **1 sign per completed year**:
   $$\text{Muntha} = ((\text{Natal\_Lagna} + \text{Completed\_Years} - 1) \bmod 12) + 1$$
-  * *House Results from Annual Lagna:* `9, 10, 11` = excellent (prosperity/status/gains); `1, 2, 3, 5` = good; `6, 8, 12` = bad (illness/trouble/loss); `4` = disputes/loss of position; `7` = marital/hardship.
+  * *House Results from Annual Lagna:* `9, 10, 11` = excellent (prosperity/status/gains); `1, 2, 3, 5` = good; `6, 8, 12` = bad (illness/trouble/loss); `4` = disputes/loss of position; `7` = marital/hardship. *(See `R-20` for Rahu's Face/Back/Tail & Birth-Chart half-year Muntha timing.)*
 * **6 Tajaka Aspects:** `5/9` (Trine — strong benefic), `3/11` (Sextile — weak benefic), `4/10` (Square — weak malefic), `1` (Conjunction — strong malefic), `7` (Opposition — strong malefic), `2/12` (Semi-sextile — neutral).
-* **Deeptamsa (Aspect Orbs):** `Sun: 15°`, `Moon: 12°`, `Mars: 8°`, `Mercury: 7°`, `Jupiter: 9°`, `Venus: 7°`, `Saturn: 9°`.
+* **Deeptamsa (Aspect Orbs):** `Sun: 15°`, `Moon: 12°`, `Mars: 8°`, `Mercury: 7°`, `Jupiter: 9°`, `Venus: 7°`, `Saturn: 9°`. *(Note: `NEELAKANTHA_MEHTA` mode in `R-20` uses Mean Deeptamsa $(\text{Orb}_A + \text{Orb}_B)/2$.)*
 
 ### 2.2 Tajaka Strengths: Harsha, Pancha Vargeeya (`PVB`) & Dwadasa Vargeeya (`DVB`)
 1. **Harsha Bala (0–20 units, 4 × 5 units):**
@@ -35,22 +35,22 @@ conflict_policy: "Cast all Tajaka charts at BIRTHPLACE coordinates using exact n
    * *(2) Dignity:* Own or Exaltation sign (`+5`).
    * *(3) Gender-House:* Feminine (`Moon, Merc, Ven, Sat`) in `1,2,3,7,8,9`; Masculine (`Sun, Mars, Jup`) in `4,5,6,10,11,12` (`+5`).
    * *(4) Day/Night:* Day start $\rightarrow$ Masculine (`+5`); Night start $\rightarrow$ Feminine (`+5`).
-2. **Pancha Vargeeya Bala (`PVB`):** Sum 5 components and **divide by `4`**:
+2. **Pancha Vargeeya Bala (`PVB` — PVR 3-Tier Mode):** Sum 5 components and **divide by `4`**:
    * `Kshetra (D1)`: Own `30`, Friend `15`, Enemy `7.5`.
    * `Uchcha`: $\frac{\text{arc\_from\_debil}}{180^\circ} \times 20$.
    * `Hadda` (Table `72`): Own `15`, Friend `7.5`, Enemy `3.75`.
    * `Drekkana (D3)`: Own `10`, Friend `5`, Enemy `2.5`.
    * `Navamsa (D9)`: Own `5`, Friend `2.5`, Enemy `1.25`.
-   * *Scale:* `<5` weak, `5–10` ordinary, `10–15` strong, `15–20` very strong, `>20` extraordinary.
+   * *Scale:* `<5` weak, `5–10` ordinary, `10–15` strong, `15–20` very strong, `>20` extraordinary. *(See `R-20` for Neelakantha's 4-tier `PVB`, aspect-based friendships, and Tajaka sequential Drekkana table.)*
 3. **Dwadasa Vargeeya Bala (`DVB`):** Across `D1..D12`, compute `(count of Exalt/Own/Friend) - (count of Debil/Enemy)`.
 
 ### 2.3 Varsheswara (Lord of the Year) & Lord of the Month
 * **5 Candidates (Annual):** (1) Sign lord of Sun (day start) or Moon (night start) in annual chart; (2) Natal Lagna lord; (3) Muntha lord; (4) Annual Lagna lord; (5) Triraasi lord of Annual Lagna (Table `73`). *(Monthly adds Candidate 6: Varsheswara.)*
-* **Selection:** Shortlist candidates casting a **benefic Tajaka aspect** on Annual Lagna $\rightarrow$ pick highest **`PVB`** (tie-breaker: candidate appearing in more categories). Fallback: malefic aspect $\rightarrow$ highest `PVB` $\rightarrow$ Candidate 1.
+* **Selection (`PVR` Mode):** Shortlist candidates casting a **benefic Tajaka aspect** on Annual Lagna $\rightarrow$ pick highest **`PVB`** (tie-breaker: candidate appearing in more categories). Fallback: malefic aspect $\rightarrow$ highest `PVB` $\rightarrow$ Candidate 1. *(See `R-20` for `NEELAKANTHA_MEHTA` Moon disqualification & Muntha-lord fallback.)*
 
 ### 2.4 Sahams (36 Significant Points — Table 74)
 Formula format $A - B + C$ (daytime); **reverse to $B - A + C$ for nighttime** *unless marked "(same for day & night)"*.
-* **Mandatory $+30^\circ$ Arc Rule:** Start at $B$ and move zodiacally to $A$. If $C$ does **NOT** lie on that arc, **add $30^\circ$** to $(A - B + C) \bmod 360^\circ$.
+* **Mandatory $+30^\circ$ Arc Rule:** Start at $B$ and move zodiacally to $A$. If $C$ does **NOT** lie on that arc, **add $30^\circ$** to $(A - B + C) \bmod 360^\circ$. *(See `R-20` for Punya Saham priority, 6 fructification conditions, and Common Lordship rule.)*
 
 ### 2.5 The 16 Tajaka Yogas (PVR Ch. 29)
 Speed order (slowest $\rightarrow$ fastest): `Saturn < Rahu/Ketu < Jupiter < Mars < Sun < Venus < Mercury < Moon`.
@@ -65,7 +65,7 @@ Speed order (slowest $\rightarrow$ fastest): `Saturn < Rahu/Ketu < Jupiter < Mar
 5. **Nakta:** Two non-aspecting/non-Ithasala planets both form Ithasala with a **faster 3rd planet** (fulfillment via 3rd party).
 6. **Yamaya:** Same as Nakta, but bridged by a **slower 3rd planet** (fulfillment via 3rd party after delay).
 7. **Manahoo:** Mars or Saturn conjoins the faster planet of an Ithasala within its Deeptamsa $\rightarrow$ **cancels Ithasala**.
-8. **Kamboola:** Moon forms Ithasala with either/both planets in an Ithasala $\rightarrow$ **amplifies Ithasala**.
+8. **Kamboola:** Moon forms Ithasala with either/both planets in an Ithasala $\rightarrow$ **amplifies Ithasala** *(14 graded tiers in `R-20`)*.
 9. **Gairi-Kamboola:** Moon at $29^\circ$–$30^\circ$ forms Ithasala immediately upon entering next sign + has Ithasala with a strong planet (Moon not exalt/debil/own D9/D3/Hadda).
 10. **Khallasara:** Lagna lord sits in sign between Moon and planet $X$ with no Ithasala to either $\rightarrow$ destroys $X$'s significations.
 11. **Radda:** Ithasala involving a debilitated, combust, retrograde, or weak planet $\rightarrow$ **negates Ithasala**.
@@ -75,7 +75,7 @@ Speed order (slowest $\rightarrow$ fastest): `Saturn < Rahu/Ketu < Jupiter < Mar
 15. **Kutta:** Planet in Lagna aspected by own/exalt planet in Kendra/Panaphara $\rightarrow$ fulfills desires of Lagna occupant.
 16. **Durupha:** Ithasala between two weak/combust/retro/debilitated planets in Dusthanas (`6, 8, 12`) $\rightarrow$ powerless.
 
-### 2.6 Three Annual Dasas (PVR Ch. 30)
+### 2.6 Three Annual Dasas (PVR Ch. 30; + Annual Yogini in `R-20`)
 1. **Patyayini Dasa:** Sort `Lagna` + 7 planets by ascending degree-in-sign (`Krisamsa`). `Patyamsa` = consecutive differences (`first = krisamsa[0]`, `rest = krisamsa[i] - krisamsa[i-1]`). Sum of Patyamsas $= \max(\text{Krisamsa})$.
    $$\text{Days}_i = 365.2425 \times \frac{\text{Patyamsa}_i}{\max(\text{Krisamsa})}$$
    `AD`s start from `MD` planet itself using the same ratios. *(Works for Monthly charts too.)*
@@ -119,6 +119,7 @@ Speed order (slowest $\rightarrow$ fastest): `Saturn < Rahu/Ketu < Jupiter < Mar
 * `(BirthChart, TargetYear) --[SOLAR_RETURN]--> (TajakaAnnualChart, Muntha, Varsheswara)`
 * `(LagnaLord, SahamLord) --[ITHASALA_YOGA]--> (EventFulfillmentInYear)`
 * `(SC_DasaSign) --[EVALUATED_IN]--> (TajakaEntryChart)`
+* `(TajakaAnnualChart) --[EXTENDED_BY]--> (R-20: TriPataki, DwiJanma, AnnualRules)`
 
 ---
 

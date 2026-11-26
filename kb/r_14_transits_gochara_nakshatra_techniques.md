@@ -1,10 +1,10 @@
 ---
 route_id: "R-14"
-module_name: "Transits (Gochara), Divisional Transits, Kakshya, Sodhya Pinda & Nakshatra Techniques"
+module_name: "Transits (Gochara), Divisional Transits, Double Transit, Kakshya, Sodhya Pinda & Nakshatra Techniques"
 dependencies: ["R-01", "R-04", "R-05", "R-10"]
 primary_source: "vedic_astro_textbook.pdf (PVR Ch. 25–26, p. 326–376; Tables 53–70; Fig. 3; Charts 52–65)"
-secondary_source: "Elements of Vedic Astrology (Charak Ch. XXIX–XXX)"
-conflict_policy: "Transits are strictly subservient to Natal Promise and active Dasas; combine Gochara + Vedha + Murthi + Ashtakavarga/Kakshya + Divisional Transits for high precision"
+secondary_source: "Elements of Vedic Astrology (Charak Ch. XXIX–XXX) & K.N. Rao (Double Transit + Retrograde Previous-Sign Rule, R-19)"
+conflict_policy: "Transits are strictly subservient to Natal Promise and active Dasas; combine Double Transit (Saturn & Jupiter) + Gochara + Vedha + Murthi + Ashtakavarga/Kakshya + Divisional Transits for high precision"
 ---
 
 # Transits (Gochara), Divisional Transits, Kakshya, Sodhya Pinda & Nakshatra Techniques
@@ -12,6 +12,7 @@ conflict_policy: "Transits are strictly subservient to Natal Promise and active 
 ## 1. Core Concepts & Definitions
 
 * **Gochara (Transit):** Real-time planetary positions correlated against natal reference points (**Natal Moon / Janma Rasi** = mental state; **Lagna** = vitality/efforts; **Paaka Lagna** = physical body; **Arudhas** = material status; **Sahams** = specific events).
+* **Double Transit of Saturn & Jupiter (K.N. Rao — Cross-Ref `R-19` Sec. 2.1):** For major life events (career rise, marriage `1/7`, childbirth `5th/9th`, sibling birth `3rd`) to fructify, **both transiting Saturn AND transiting Jupiter** must simultaneously influence (occupy or aspect) the relevant house and/or its lord, gated by Ashtakavarga (`SAV >= 25–30`). **Critical Rule:** When Saturn or Jupiter is **retrograde**, treat it as also acting and aspecting from the **previous sign**.
 * **Divisional Transits (PVR Ch. 25.4):** All Vargas share the same 12-sign zodiac:
   1. **`Natal Varga × Transit D1` (Coarse Timing):** Shows when physical-plane transits trigger innate potential in a specific life domain (e.g., Transit D1 Jupiter over Natal D9 7th house $\rightarrow$ marriage).
   2. **`Natal D1 × Transit Varga` (Fine Timing):** Shows momentary transformation of physical potential into a domain event (e.g., Transit D11 Saturn over Natal D1 Sun).
@@ -67,14 +68,14 @@ If a transiting planet casts **Latta** onto the natal **Janma Nakshatra** (Moon'
 | :--- | :--- | :--- |
 | **Sun** | `3 (9), 6 (12), 10 (4), 11 (5)` | No Vedha with Saturn |
 | **Moon** | `1 (5), 3 (9), 6 (12), 7 (2), 10 (4), 11 (8)` | No Vedha with Mercury |
-| **Mars** | `3 (12), 6 (9), 11 (5)` | — |
+| **Mars** | `3 (12), 6 (9), 11 (5)` | Wedding-day Mars aspects natal Venus (`R-19`) |
 | **Mercury** | `2 (5), 4 (3), 6 (9), 8 (1), 10 (8), 11 (12)` | No Vedha with Moon |
-| **Jupiter** | `2 (12), 5 (4), 7 (3), 9 (10), 11 (8)` | — |
+| **Jupiter** | `2 (12), 5 (4), 7 (3), 9 (10), 11 (8)` | Retrograde acts from previous sign (`R-19`) |
 | **Venus** | `1 (8), 2 (7), 3 (1), 4 (10), 5 (9), 8 (5), 9 (11), 11 (6), 12 (3)` | — |
-| **Saturn** | `3 (12), 6 (9), 11 (5)` | `12th, 1st, 2nd` from Moon = **Sade-Sati** (7.5 yrs); No Vedha with Sun |
+| **Saturn** | `3 (12), 6 (9), 11 (5)` | `12th, 1st, 2nd` from Moon = **Sade-Sati** (7.5 yrs); No Vedha with Sun; Retrograde acts from previous sign (`R-19`) |
 
-### Table 60: Kakshya Lords (`3°45'` Each)
-| Arc | `0°–3°45'` | `3°45'–7°30'` | `7°30'–11°15'` | `11°15'–15°` | `15°–18°45'` | `18°45'–22°30'` | `22°30'–26°15'` | `26°15'–30°` |
+### Table 60: Kakshya Lords ($3^\circ 45'$ Each)
+| Arc | $0^\circ$–$3^\circ 45'$ | $3^\circ 45'$–$7^\circ 30'$ | $7^\circ 30'$–$11^\circ 15'$ | $11^\circ 15'$–$15^\circ$ | $15^\circ$–$18^\circ 45'$ | $18^\circ 45'$–$22^\circ 30'$ | $22^\circ 30'$–$26^\circ 15'$ | $26^\circ 15'$–$30^\circ$ |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Lord** | Saturn | Jupiter | Mars | Sun | Venus | Mercury | Moon | Lagna |
 
@@ -92,6 +93,7 @@ If a transiting planet casts **Latta** onto the natal **Janma Nakshatra** (Moon'
 ## 4. Entity Relationships (Graph Edges)
 
 * `(TransitPlanet, TransitRasi) --[ACTIVATES]--> (NatalHouse_In_D1_Or_Varga)`
+* `(TransitSaturn, TransitJupiter) --[DOUBLE_TRANSIT_ON]--> (TargetHouse | TargetLord) | CrossRef R-19`
 * `(TransitPlanet) --[HAS_BAV_AND_KAKSHYA_SCORE]--> (DailyFavorability)`
 * `(TransitPlanet) --[CASTS_LATTA_ON]--> (JanmaNakshatra | LagnaNakshatra) --> (SetbackInPlanetHouseDomain)`
 * `(TransitPlanet) --[SBC_VEDHA_ON]--> (NatalTithi, Vaara, SpecialNakshatra, HouseRasi)`

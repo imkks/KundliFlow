@@ -3,8 +3,8 @@ route_id: "R-16"
 module_name: "Birthtime Rectification (BTR), Sensitivity Math & Rational Predictive Validation"
 dependencies: ["R-03", "R-04", "R-11", "R-12", "R-15"]
 primary_source: "vedic_astro_textbook.pdf (PVR Ch. 32–33, p. 432–461; Charts 75–79)"
-secondary_source: "N/A (PVR Integrated Approach Standard)"
-conflict_policy: "Reject mechanical birth-quanta rectification formulas (Pranapada/Kunda fail the twins acid test); rectify strictly by matching known past events & personality across Vargas and Dasas"
+secondary_source: "K.N. Rao (Intensive 4-Varga PD Verification & 6/10 Non-Political Event Rule, R-19)"
+conflict_policy: "Reject mechanical birth-quanta rectification formulas (Pranapada/Kunda fail the twins acid test); rectify strictly by matching known past events & personality across Vargas and Dasas down to PD"
 ---
 
 # Birthtime Rectification (BTR), Sensitivity Math & Rational Validation
@@ -44,13 +44,13 @@ Let $m$ be the birthtime change in minutes ($+m$ = later birth, $-m$ = earlier b
 4. **Rasi Dasas (`D1`/Varga Narayana, Shoola, Drigdasa):** Robust against small $m$ unless Lagna (or a planet in a Varga) crosses a Rasi boundary.
 5. **Tajaka Charts:** A birthtime shift changing natal Lagna by $x^\circ$ shifts Tajaka Annual/Monthly Lagna by $\approx x^\circ$. Always use **exact non-linear Lahiri Ayanamsha** (since a $1'$ Sun error causes a $6^\circ$ Tajaka Lagna error).
 
-### 2.3 Pyramid Rectification Algorithm (PVR Ch. 32.3)
+### 2.3 Pyramid Rectification Algorithm (PVR Ch. 32.3 + K.N. Rao Intensive Verification `R-19`)
 Execute sequentially to narrow the birthtime interval $[t_{\min}, t_{\max}]$; **backtrack** if a higher Varga contradicts a lower choice:
 1. **Step 1 (Coarse Window — `D4` & `D9`):** Verify property/foreign travel (`D4`, $7.5^\circ$ span $\approx 30\text{ min}$) and marriage/inner nature/skills (`D9`, $3^\circ 20'$ span $\approx 13\text{m } 20\text{s}$).
 2. **Step 2 (Career Window — `D10`):** Verify profession, workplace (`A10`), and status (`AL`) (`D10`, $3^\circ$ span $\approx 12\text{ min}$).
 3. **Step 3 (Mental/Sub-conscious Window — `D24`, `D20`, `D27`):** Verify academic field/college (`D24`, $1^\circ 15'$ span $\approx 5\text{ min}$), spiritual path (`D20`, $1^\circ 30'$ $\approx 6\text{ min}$), and temperament (`D27`, $1^\circ 6' 40''$ $\approx 4.4\text{ min}$).
 4. **Step 4 (Fine Pinpointing — Sensitive Dasas & Special Lagnas):** Intersect inequalities from **Kalachakra Dasa** ($n \cdot m$ days), **Sudasa** ($6nm$ days), **Ghati Lagna** in `D10` ($1^\circ / 48\text{s}$), **Tajaka Annual Varga borders**, and `D40/D45/D60`.
-5. **Step 5 (Exact Re-Computation):** Because Lagna and Moon move non-uniformly, always re-cast the final chart at the rectified timestamp and verify against **at least 2–3 independent known past events**.
+5. **Step 5 (Intensive Verification — K.N. Rao Rule `R-19`):** Re-cast the final chart at the rectified timestamp and verify past events down to **Vimshottari `PD`** across at least **4 Divisional Charts** (`D9, D10, D3, D12`). For public/political figures, verify **at least 6 out of 10 non-political life events** (siblings, marriage, parents, education, health) before accepting the chart.
 
 ### 2.4 Statistical Lift Validation Formula (PVR Ch. 33.5)
 Before trusting any astrological rule $A$ for event $B$:

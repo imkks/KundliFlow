@@ -37,23 +37,35 @@ export interface VarshaphalResult {
   sahamsList: SahamResult[];
 }
 
-// Tajika Tri-Rasheesha (Triplicity Rulers) for Day / Night
-// Fire: Sun (day) / Jupiter (night)
-// Earth: Venus (day) / Moon (night)
-// Air: Saturn (day) / Mercury (night)
-// Water: Venus (day) / Mars (night)
+// PVR Table 73 / Classical Tajika Triraasi Lords (Day / Night)
 const TRI_RASHEESHA_DAY: Record<number, string> = {
-  0: 'sun', 4: 'sun', 8: 'sun', // Fire
-  1: 'venus', 5: 'venus', 9: 'venus', // Earth
-  2: 'saturn', 6: 'saturn', 10: 'saturn', // Air
-  3: 'venus', 7: 'venus', 11: 'venus', // Water
+  0: 'sun',     // Ar
+  1: 'venus',   // Ta
+  2: 'saturn',  // Ge
+  3: 'venus',   // Cn
+  4: 'jupiter', // Le
+  5: 'moon',    // Vi
+  6: 'mercury', // Li
+  7: 'mars',    // Sc
+  8: 'saturn',  // Sg
+  9: 'mars',    // Cp
+  10: 'jupiter',// Aq
+  11: 'moon',   // Pi
 };
 
 const TRI_RASHEESHA_NIGHT: Record<number, string> = {
-  0: 'jupiter', 4: 'jupiter', 8: 'jupiter',
-  1: 'moon', 5: 'moon', 9: 'moon',
-  2: 'mercury', 6: 'mercury', 10: 'mercury',
-  3: 'mars', 7: 'mars', 11: 'mars',
+  0: 'jupiter', // Ar
+  1: 'moon',    // Ta
+  2: 'mercury', // Ge
+  3: 'mars',    // Cn
+  4: 'sun',     // Le
+  5: 'venus',   // Vi
+  6: 'saturn',  // Li
+  7: 'venus',   // Sc
+  8: 'saturn',  // Sg
+  9: 'mars',    // Cp
+  10: 'jupiter',// Aq
+  11: 'moon',   // Pi
 };
 
 // Joy of House placement for Harsha Bala (Factor 1)
@@ -238,5 +250,200 @@ export function computeVarshaphal(
     harshaBala,
     isDayReturn,
     ...computeAnnualSahams(annualChart, isDayReturn, harshaBala),
+  };
+}
+
+export interface TajakaEntryChartResult {
+  mode: 'monthly' | '60hr';
+  label: string;
+  targetDateIso: string;
+  completedAge: number;
+  solarMonthNumber: number; // 1..12
+  subPeriodNumber?: number; // 1..12 for 60hr
+  targetSunLonDeg: number;
+  entryUtc: string;
+  entryLocal: string;
+  endUtc: string;
+  endLocal: string;
+  durationDays: number;
+  entryLagnaSign: string;
+  entryLagnaSignIndex: number;
+  munthaSign: string;
+  munthaSignIndex: number;
+  munthaHouseInChart: number;
+  munthaLord: string;
+  varaPati: string;
+  isDayReturn: boolean;
+  entryChart: NatalChart;
+  panchadhikari: Panchadhikari & { varsheshwara?: string };
+  periodLord: string;
+  periodLordReason: string;
+  harshaBala: Record<string, number>;
+  sahams: Record<string, SahamResult>;
+  sahamsList: SahamResult[];
+}
+
+function solveSunLongitudeJd(
+  eph: EphemerisProvider,
+  ayanamsaId: NatalChart['ayanamsa']['id'],
+  initialJd: number,
+  targetSunLon: number,
+): number {
+  let jd = initialJd;
+  for (let iter = 0; iter < 12; iter++) {
+    const ay = eph.ayanamsa(jd, ayanamsaId);
+    const sunTrop = eph.bodies(jd, ['sun']).sun.lon;
+    const sunSid = norm360(sunTrop - ay);
+    const err = angleDiff(sunSid, targetSunLon);
+    if (Math.abs(err) < 0.0001) break;
+    jd -= err / 0.9856;
+  }
+  return jd;
+}
+
+/**
+ * Computes Tajaka Monthly (Maasa Pravesh, every 30° of Sun motion) or
+ * 60-Hour (Shashti-Hora, every 2°30' of Sun motion) entry chart at birthplace coordinates
+ * covering targetDateIso (PVR Ch. 27–28 / R-15).
+ */
+export function computeTajakaEntryChart(
+  eph: EphemerisProvider,
+  natal: NatalChart,
+  mode: 'monthly' | '60hr',
+  targetDateIso: string,
+  annualVarsheshwara?: string,
+): TajakaEntryChartResult {
+  const natalSunLon = natal.grahas.sun.lon;
+  const parsed = DateTime.fromISO(targetDateIso, { zone: 'utc' });
+  const refDt = parsed.isValid
+    ? (targetDateIso.length <= 10 ? parsed.plus({ hours: 12 }) : parsed)
+    : DateTime.utc();
+  const targetJd = refDt.toMillis() / 86400000 + 2440587.5;
+
+  const ayNow = eph.ayanamsa(targetJd, natal.ayanamsa.id);
+  const sunNowSid = norm360(eph.bodies(targetJd, ['sun']).sun.lon - ayNow);
+  const deltaFromNatalSun = norm360(sunNowSid - natalSunLon);
+
+  const stepDeg = mode === 'monthly' ? 30 : 2.5;
+  const stepIndex = Math.floor(deltaFromNatalSun / stepDeg);
+  const solarMonthIndex = mode === 'monthly' ? stepIndex % 12 : Math.floor(stepIndex / 12) % 12;
+  const subPeriodIndex = mode === '60hr' ? stepIndex % 12 : undefined;
+
+  const targetSunLon = norm360(natalSunLon + stepIndex * stepDeg);
+  const nextSunLon = norm360(natalSunLon + (stepIndex + 1) * stepDeg);
+
+  const guessEntryJd = targetJd - (deltaFromNatalSun - stepIndex * stepDeg) / 0.9856;
+  const entryJd = solveSunLongitudeJd(eph, natal.ayanamsa.id, guessEntryJd, targetSunLon);
+  const nextJd = solveSunLongitudeJd(eph, natal.ayanamsa.id, entryJd + stepDeg / 0.9856, nextSunLon);
+
+  const entryUtc = DateTime.fromMillis((entryJd - 2440587.5) * 86400 * 1000, { zone: 'utc' });
+  const entryLocal = entryUtc.setZone(natal.time.tzId);
+  const endUtc = DateTime.fromMillis((nextJd - 2440587.5) * 86400 * 1000, { zone: 'utc' });
+  const endLocal = endUtc.setZone(natal.time.tzId);
+  const durationDays = Number((nextJd - entryJd).toFixed(2));
+
+  const entryChart = computePositions(
+    eph,
+    {
+      ...natal.time,
+      birthUtc: entryUtc.toISO()!,
+      birthLocal: entryLocal.toISO({ includeOffset: false })!,
+      julianDayUt: entryJd,
+    },
+    natal.place,
+    { ayanamsa: natal.ayanamsa.id, nodeType: 'mean' },
+  );
+
+  const completedAge = Math.max(0, Math.floor((entryJd - natal.time.julianDayUt) / 365.25636));
+  const natalLagnaIdx = natal.lagna?.signIndex ?? 0;
+  const annualMunthaIdx = (natalLagnaIdx + completedAge) % 12;
+  const monthlyMunthaIdx = (annualMunthaIdx + solarMonthIndex) % 12;
+  const munthaSignIndex =
+    mode === 'monthly'
+      ? monthlyMunthaIdx
+      : (monthlyMunthaIdx + (subPeriodIndex ?? 0)) % 12;
+
+  const entryLagnaIdx = entryChart.lagna?.signIndex ?? natalLagnaIdx;
+  const dow = entryLocal.weekday % 7;
+  const sunHouse = houseFromSign(entryChart.grahas.sun.signIndex, entryLagnaIdx);
+  const isDayReturn = sunHouse >= 7 && sunHouse <= 12;
+
+  const munthaLord = SIGN_LORDS[munthaSignIndex]!;
+  const janmaLagnesha = SIGN_LORDS[natalLagnaIdx]!;
+  const varshaLagnesha = SIGN_LORDS[entryLagnaIdx]!;
+  const triRasheesha = isDayReturn
+    ? TRI_RASHEESHA_DAY[entryLagnaIdx]!
+    : TRI_RASHEESHA_NIGHT[entryLagnaIdx]!;
+  const dinaRatriPati = isDayReturn
+    ? SIGN_LORDS[entryChart.grahas.sun.signIndex]!
+    : SIGN_LORDS[entryChart.grahas.moon.signIndex]!;
+
+  const harshaBala = computeHarshaBala(entryChart, isDayReturn);
+  const rawCandidates = [
+    munthaLord,
+    varshaLagnesha,
+    janmaLagnesha,
+    triRasheesha,
+    dinaRatriPati,
+    ...(annualVarsheshwara ? [annualVarsheshwara] : []),
+  ];
+  const uniqueCandidates = Array.from(new Set(rawCandidates));
+  const aspectingCandidates = uniqueCandidates.filter((cand) => {
+    const cg = (entryChart.grahas as Record<string, GrahaDetail>)[cand];
+    if (!cg) return false;
+    const h = houseFromSign(cg.signIndex, entryLagnaIdx);
+    return [1, 3, 4, 5, 7, 9, 10, 11].includes(h);
+  });
+  const eligible = aspectingCandidates.length > 0 ? aspectingCandidates : uniqueCandidates;
+
+  let periodLord = eligible[0]!;
+  let maxScore = -1;
+  let periodLordReason = '';
+  for (const cand of eligible) {
+    const score = harshaBala[cand] ?? 0;
+    if (score > maxScore) {
+      maxScore = score;
+      periodLord = cand;
+      periodLordReason = `${cand.toUpperCase()} has highest Harsha Bala (${score}/20 pts)${aspectingCandidates.includes(cand) ? ' and aspects Entry Lagna' : ''}`;
+    }
+  }
+
+  return {
+    mode,
+    label:
+      mode === 'monthly'
+        ? `Maasa Pravesh (Solar Month ${solarMonthIndex + 1} of Year ${completedAge + 1})`
+        : `Shashti-Hora 60-Hr Chart (Month ${solarMonthIndex + 1}, Sub-period ${(subPeriodIndex ?? 0) + 1})`,
+    targetDateIso: refDt.toISO()!.slice(0, 10),
+    completedAge,
+    solarMonthNumber: solarMonthIndex + 1,
+    subPeriodNumber: subPeriodIndex !== undefined ? subPeriodIndex + 1 : undefined,
+    targetSunLonDeg: Number(targetSunLon.toFixed(4)),
+    entryUtc: entryUtc.toISO()!,
+    entryLocal: entryLocal.toISO()!,
+    endUtc: endUtc.toISO()!,
+    endLocal: endLocal.toISO()!,
+    durationDays,
+    entryLagnaSign: SIGNS[entryLagnaIdx]!,
+    entryLagnaSignIndex: entryLagnaIdx,
+    munthaSign: SIGNS[munthaSignIndex]!,
+    munthaSignIndex,
+    munthaHouseInChart: houseFromSign(munthaSignIndex, entryLagnaIdx),
+    munthaLord,
+    varaPati: WEEKDAY_LORDS[dow]!,
+    isDayReturn,
+    entryChart,
+    panchadhikari: {
+      munthaLord,
+      janmaLagnesha,
+      varshaLagnesha,
+      triRasheesha,
+      dinaRatriPati,
+      ...(annualVarsheshwara ? { varsheshwara: annualVarsheshwara } : {}),
+    },
+    periodLord,
+    periodLordReason,
+    harshaBala,
+    ...computeAnnualSahams(entryChart, isDayReturn, harshaBala),
   };
 }

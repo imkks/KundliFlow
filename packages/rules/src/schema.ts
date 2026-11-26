@@ -22,6 +22,7 @@ export const RuleKindSchema = z.enum([
   'kakshya',
   'vedha',
   'saham',
+  'kn_rao_pattern',
 ]);
 export type RuleKind = z.infer<typeof RuleKindSchema>;
 
@@ -60,6 +61,8 @@ export const FactPredicateSchema = z.object({
   saham_id: z.string().optional(),
   saham_category: z.string().optional(),
   fructification: z.string().optional(),
+  pattern_key: z.string().optional(),
+  crossover: z.string().optional(),
 });
 export type FactPredicate = z.infer<typeof FactPredicateSchema>;
 

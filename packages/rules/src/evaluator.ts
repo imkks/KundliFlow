@@ -121,6 +121,8 @@ function matchPredicate(pred: FactPredicate, ctx: EvalContext): boolean {
     if (pred.saham_id !== undefined && f.args.id !== pred.saham_id && f.subject !== pred.saham_id) continue;
     if (pred.saham_category !== undefined && f.args.category !== pred.saham_category) continue;
     if (pred.fructification !== undefined && f.args.fructification !== pred.fructification) continue;
+    if (pred.pattern_key !== undefined && f.args.patternKey !== pred.pattern_key) continue;
+    if (pred.crossover !== undefined && f.args.crossover !== pred.crossover) continue;
 
     if (pred.state) {
       const stateVal = String(f.args.state ?? f.value ?? '');

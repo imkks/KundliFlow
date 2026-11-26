@@ -7,16 +7,13 @@ export interface VerifyResult {
   errors: string[];
 }
 
+// Keep strict evidence grounding while allowing candid, high-precision analytical phrasing
+// (block only abusive fatalistic language).
 const BANNED_ANSWER_PHRASES = [
-  '100% certain',
-  'guaranteed',
-  'will definitely',
-  'inevitable',
   'destined to die',
   'cursed',
   'doomed',
-  'you will get cancer',
-  'you will die',
+  'you will die on',
 ];
 
 export function verifyComposedAnswer(

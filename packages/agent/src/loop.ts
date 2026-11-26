@@ -2,8 +2,14 @@ import type { ChartWorkspace } from '@astro/facts';
 import type { KnowledgeBase } from '@astro/kb';
 import { renderHouse, type Finding } from '@astro/rules';
 import { EngineSession, ToolServer, type ToolResult } from '@astro/tools';
-import { DEEP_AGENT_SYSTEM_PROMPT, extractJsonObject } from './llm.js';
+import { buildDeepAgentSystemPrompt, extractJsonObject } from './llm.js';
 import { routeQuestion } from './router.js';
+import {
+  getAgentSkill,
+  renderActiveSkillBriefing,
+  renderSkillPlaybook,
+  routeSkills,
+} from './skills/index.js';
 import { verifyComposedAnswer } from './verifier.js';
 import {
   ComposedAnswerSchema,
@@ -66,11 +72,11 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
   {
     name: 'inspect_varga',
-    description: 'Inspect any divisional chart (D1, D2, D4, D7, D9, D10, D12, D20, D24, D60) and Vargottama status.',
+    description: 'Inspect any of the 20 divisional charts (D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, D11, D12, D16, D20, D24, D27, D30, D40, D45, D60) and Vargottama status.',
     parameters: {
       type: 'object',
       properties: {
-        varga: { type: 'string', description: 'e.g. D9, D10, D4, D7' },
+        varga: { type: 'string', description: 'e.g. D9, D10, D4, D5, D6, D7, D8, D11, D24' },
         planet: { type: 'string' },
       },
       required: ['varga'],
@@ -98,22 +104,27 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
   {
     name: 'inspect_natal_lore',
-    description: 'Inspect detected classical yogas, doshas, mutual aspects, Jaimini Chara Karakas, Avakahada, Ghatak, Upagrahas, Arudha Padas, or 36 Tajika Sahams (Punya, Vidya, Yasas, Artha, Karma, Vivaha, Rajya).',
+    description: 'Inspect detected classical yogas, doshas, mutual aspects, Jaimini Chara Karakas, Avakahada, Ghatak, Upagrahas, Arudha Padas, 36 Tajika Sahams, or Special Lagnas (BL, HL wealth, GL power, SL prosperity, Indu, Pranapada).',
     parameters: {
       type: 'object',
       properties: {
-        kind: { type: 'string', enum: ['yogas', 'doshas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha', 'sahams'] },
+        kind: {
+          type: 'string',
+          enum: ['yogas', 'doshas', 'aspects', 'karakas', 'avakahada', 'ghatak', 'upagrahas', 'arudha', 'sahams', 'special_lagnas'],
+        },
       },
       required: ['kind'],
     },
   },
   {
     name: 'inspect_arudhas',
-    description: 'Inspect 12 Jaimini Arudha Padas (AL public image, UL marriage endurance, A10 career status, A11 gains). Shows the perception / Maya layer.',
+    description: 'Inspect 12 Jaimini Bhava Arudha Padas (AL public image + 11th/12th/3rd/6th diagnostics, UL marriage endurance, A10 career status, A11 gains) and optional 9 Graha Arudhas (subjective perception plane) in D1 or ANY divisional chart (D9, D10, D16, D24, etc.).',
     parameters: {
       type: 'object',
       properties: {
-        target: { type: 'string', description: 'Optional code: AL, UL, A10, A11, A2, etc.' },
+        target: { type: 'string', description: 'Optional code (AL, UL, A10, A11, A2...) or planet name for Graha Arudha (sun..ketu)' },
+        varga: { type: 'string', description: 'Optional Varga chart (D1..D60), defaults to D1' },
+        includeGrahaArudhas: { type: 'boolean', description: 'Set true to include all 9 Graha Arudhas (subjective perception houses)' },
       },
     },
   },
@@ -129,13 +140,17 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
   {
     name: 'inspect_dashas',
-    description: 'Inspect Vimshottari, Yogini, or Jaimini Chara Dasha periods within an optional date window.',
+    description: 'Inspect Vimshottari (with MD-AD axis + Rath Tripod & Drekkana delivery), Yogini, Jaimini Chara, Sudarshana Chakra, Narayana Dasa (D1 or any Varga), Sudasa (wealth), Drigdasa (spirituality), Shoola Dasa (vulnerability), Kalachakra Dasa (Deha/Jeeva, Gati leaps & SAV), or Ashtottari Dasa (108y).',
     parameters: {
       type: 'object',
       properties: {
-        system: { type: 'string', enum: ['vimshottari', 'yogini', 'chara'] },
+        system: {
+          type: 'string',
+          enum: ['vimshottari', 'yogini', 'chara', 'sudarshana', 'narayana', 'sudasa', 'drigdasa', 'shoola', 'kalachakra', 'ashtottari'],
+        },
         from: { type: 'string', description: 'YYYY-MM-DD' },
         to: { type: 'string', description: 'YYYY-MM-DD' },
+        varga: { type: 'string', description: 'Optional Varga for Narayana Dasa, e.g. D1, D9, D10, D7, D4, D24' },
       },
       required: ['system'],
     },
@@ -160,10 +175,16 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
   {
     name: 'inspect_varshaphal',
-    description: 'Inspect Tajika Varshaphal (Solar Return annual chart, Varsha Lagna, Muntha, and Vara Pati) for a given calendar year.',
+    description: 'Inspect Tajaka Annual (Varsha Pravesh), Monthly (Maasa Pravesh, 30° Sun), or 60-Hour (Shashti-Hora, 2°30\' Sun) return charts integrating BOTH PVR (3-tier PVB + D1..D12 DVB) and Neelakantha/Mehta (4-tier aspect-based PVB + Sequential Drekkana + Moon Varsheswara disqualification), plus Tri-Pataki Chakra Vedha, Dwi-Janma Year, Muntha Rahu-axis/half-year rules, Annual Yogini/Patyayini/Mudda/Varsha Narayana Dasas, crisis flags & antidotes, Saham Common Lordship, and Ithasala/Kamboola/Rashi-Anta/Duphalikuttha yogas.',
     parameters: {
       type: 'object',
-      properties: { year: { type: 'number', description: 'Target year, e.g. 2026' } },
+      properties: {
+        year: { type: 'number', description: 'Target year for annual return, e.g. 2026' },
+        mode: { type: 'string', enum: ['annual', 'monthly', '60hr'], description: 'Return granularity: annual (default), monthly (Maasa Pravesh), or 60hr (Shashti-Hora)' },
+        targetDate: { type: 'string', description: 'YYYY-MM-DD target date for monthly or 60hr Tajaka entry charts' },
+        varga: { type: 'string', description: 'Optional Varga for Varsha Narayana Dasa (e.g. D1, D4, D9, D10, D24)' },
+        school: { type: 'string', enum: ['both', 'pvr', 'neelakantha'], description: 'Tajaka school comparison: both (default — shows convergence/divergence), pvr, or neelakantha' },
+      },
     },
   },
   {
@@ -196,11 +217,98 @@ export const DEEP_AGENT_TOOLS: ToolDefinition[] = [
   },
   {
     name: 'compare_perspectives',
-    description: 'Compare a house (1-12) simultaneously from Lagna, Chandra Lagna (Moon), Surya Lagna (Sun), and Karakamsa (D9 AK).',
+    description: 'Compare a house (1-12) simultaneously across Lagna (reality), Chandra Lagna (psychology), Surya Lagna, Arudha Lagna AL (perception/Maya), Paaka Lagna (delivery), and Karakamsa (D9 AK).',
     parameters: {
       type: 'object',
       properties: { house: { type: 'number' } },
       required: ['house'],
+    },
+  },
+  {
+    name: 'inspect_functional_roles',
+    description: 'Inspect Lagna-specific Functional Benefics, Functional Malefics, Yogakaraka, Marakas, Baadhaka Sthaana/Lord, Yogada (Lagna+HL/GL), Parivartana exchanges, and Varga cusp / birthtime sensitivity.',
+    parameters: {
+      type: 'object',
+      properties: {
+        planet: { type: 'string', description: 'Optional planet name to check a single planet role' },
+      },
+    },
+  },
+  {
+    name: 'inspect_argala',
+    description: 'Inspect Parashari Argala (decisive interventions 2nd/4th/11th/5th vs Virodhargala obstructions, Ketu reverse rule) and Jaimini Rasi Drishti on any house (1-12), planet (e.g. "saturn" for vocation), or Arudha Pada (AL, A10, UL).',
+    parameters: {
+      type: 'object',
+      properties: {
+        target: { type: 'string', description: 'House number "1".."12", planet name (e.g. "saturn"), or Arudha code (AL, A10, UL)' },
+      },
+      required: ['target'],
+    },
+  },
+  {
+    name: 'inspect_remedies',
+    description: 'Get rule-safe classical remedies: Functional-Benefic/Yogakaraka-only gemstones (explicitly excluding malefics/marakas), UL/A10 weekday fasting, Ishta Devata (12th from AK in D9), and constructive charity practices.',
+    parameters: {
+      type: 'object',
+      properties: {
+        domain: { type: 'string', description: 'Optional focus domain: career, marriage, spirituality, general' },
+      },
+    },
+  },
+  {
+    name: 'inspect_varga_analytics',
+    description: 'Composite Divisional Chart analytics: computes Divisional Ashtakavarga SAV (e.g. D10/D9/D24/D7/D4), Divisional Transits (Natal Varga x Transit D1), and active Varga Narayana Dasa in one call.',
+    parameters: {
+      type: 'object',
+      properties: {
+        varga: { type: 'string', description: 'Target Varga, e.g. D10, D9, D24, D7, D4' },
+      },
+      required: ['varga'],
+    },
+  },
+  {
+    name: 'inspect_longevity',
+    description: 'Inspect classical Ayurdaya (Three-Pair Alpayu/Madhyayu/Poornayu + Kakshya Vriddhi), Rudra, Trishoola Rasis, Maheswara, and Shoola Dasa vulnerability windows with AK/Jupiter protective shields.',
+    parameters: { type: 'object', properties: {} },
+  },
+  {
+    name: 'inspect_sbc',
+    description: 'Inspect Sarvatobhadra Chakra (9x9 grid 3-line Vedha on Janma/Karma/Abhisheka/Manasa stars, Lagna/Moon Rasis, and Special Tithis) plus Transit Murthis (Swarna/Rajata/Taamra/Loha).',
+    parameters: { type: 'object', properties: {} },
+  },
+  {
+    name: 'inspect_family_vargas',
+    description: 'Derive specific family member indicators from divisional charts: D12 parents (father/mother), D3 siblings (odd-forward/even-backward), D7 children, and D9 spouse.',
+    parameters: {
+      type: 'object',
+      properties: {
+        member: { type: 'string', description: 'Optional filter: father, mother, sibling, child, spouse, or varga D12/D3/D7/D9' },
+      },
+    },
+  },
+  {
+    name: 'inspect_kn_rao_audit',
+    description: 'Run K.N. Rao empirical audits: Checklists I-III (D1/D9 crossovers, 22nd Drekkana, 23rd Vainashika, Leo/Sg seal, Table 19B remarks), 10-Level Maraka Hierarchy, >80% Educational Counseling Formula (5th from Lagna+NakLord & Mercury), 7-Point Political Profile, and Astro-Psychology Blind Diagnosis.',
+    parameters: {
+      type: 'object',
+      properties: {
+        focus: {
+          type: 'string',
+          enum: ['all', 'checklists', 'education', 'politics', 'psychology', 'maraka'],
+          description: 'Optional targeted audit focus (default: all)',
+        },
+      },
+    },
+  },
+  {
+    name: 'load_skill',
+    description: 'Load a specialized Jyotish analysis playbook from the Deep Agent skill catalog when the user asks a multi-topic question beyond the auto-routed skill.',
+    parameters: {
+      type: 'object',
+      properties: {
+        skillId: { type: 'string', description: 'Skill ID from the catalog (e.g. remedies_guidance, career_vocation, birthtime_sensitivity)' },
+      },
+      required: ['skillId'],
     },
   },
   {
@@ -289,7 +397,26 @@ function describeToolForUser(tc: NativeToolCall): string {
     }
     case 'inspect_dashas': {
       const sys = String(a.system ?? 'vimshottari');
-      const label = sys === 'yogini' ? 'Yogini' : sys === 'chara' ? 'Jaimini Chara' : 'Vimshottari';
+      const label =
+        sys === 'yogini'
+          ? 'Yogini'
+          : sys === 'chara'
+          ? 'Jaimini Chara'
+          : sys === 'sudarshana'
+          ? 'Sudarshana Chakra'
+          : sys === 'narayana'
+          ? `${a.varga ? String(a.varga).toUpperCase() + ' ' : ''}Narayana`
+          : sys === 'sudasa'
+          ? 'Sudasa (Wealth)'
+          : sys === 'drigdasa'
+          ? 'Drigdasa (Spiritual)'
+          : sys === 'shoola'
+          ? 'Shoola'
+          : sys === 'kalachakra'
+          ? 'Kalachakra'
+          : sys === 'ashtottari'
+          ? 'Ashtottari'
+          : 'Vimshottari';
       return `Checking your ${label} Dasha timeline${a.from ? ` (${a.from} onward)` : ''}`;
     }
     case 'inspect_transits':
@@ -305,6 +432,8 @@ function describeToolForUser(tc: NativeToolCall): string {
         ghatak: 'Checking favourable amplifiers & Ghatak guardrails',
         upagrahas: 'Checking subtle Upagraha placements',
         arudha: 'Checking Arudha Padas (public image & perception)',
+        sahams: 'Checking 36 Tajika Sahams (sensitive fruition points)',
+        special_lagnas: 'Checking Special Lagnas (Hora, Ghati, Sree & Indu Lagna)',
       };
       return labels[kind] ?? `Inspecting ${kind}`;
     }
@@ -342,7 +471,27 @@ function describeToolForUser(tc: NativeToolCall): string {
     case 'inspect_journal_insights':
       return 'Reviewing your recent journal check-ins & sky snapshots';
     case 'compare_perspectives':
-      return `Comparing House ${a.house ?? 1} from Lagna, Moon, Sun & Karakamsa`;
+      return `Comparing House ${a.house ?? 1} across Lagna, Moon, Sun, AL & Paaka Lagna`;
+    case 'inspect_functional_roles':
+      return a.planet
+        ? `Checking Lagna-specific functional role of ${String(a.planet)}`
+        : 'Checking Functional Benefics, Yogakaraka, Baadhaka & birthtime sensitivity';
+    case 'inspect_argala':
+      return `Checking Argala interventions & Rasi Drishti on ${String(a.target ?? 'house 1')}`;
+    case 'inspect_remedies':
+      return 'Checking rule-safe classical remedies (functional benefics, fasting & Ishta Devata)';
+    case 'inspect_varga_analytics':
+      return `Analyzing ${String(a.varga ?? 'D10').toUpperCase()} Divisional SAV, Divisional Transits & Varga Narayana Dasa`;
+    case 'inspect_longevity':
+      return 'Checking Three-Pair Ayurdaya, Rudra, Trishoola Rasis & Shoola vulnerability windows';
+    case 'inspect_sbc':
+      return 'Scanning Sarvatobhadra Chakra 3-line Vedha, Special Tithis & Transit Murthis';
+    case 'inspect_family_vargas':
+      return `Checking family member divisional indicators${a.member ? ` (${String(a.member)})` : ''}`;
+    case 'inspect_kn_rao_audit':
+      return `Running K.N. Rao empirical audit${a.focus && a.focus !== 'all' ? ` (${String(a.focus)})` : ' (Checklists I–III & patterns)'}`;
+    case 'load_skill':
+      return `Loading specialized analysis playbook (${String(a.skillId ?? 'skill')})`;
     case 'trace_dispositor_chain':
       return `Tracing the dispositor chain for ${String(a.planetOrHouse ?? 'chart')}`;
     case 'window_scan':
@@ -376,11 +525,15 @@ async function executeToolCall(server: ToolServer, tc: NativeToolCall): Promise<
     case 'inspect_natal_lore':
       return server.inspect_natal_lore(a.kind ?? 'yogas');
     case 'inspect_arudhas':
-      return server.inspect_arudhas(a.target ? String(a.target) : undefined);
+      return server.inspect_arudhas(
+        a.target ? String(a.target) : undefined,
+        a.varga ? String(a.varga) : undefined,
+        typeof a.includeGrahaArudhas === 'boolean' ? a.includeGrahaArudhas : undefined,
+      );
     case 'inspect_karakas':
       return server.inspect_karakas(a.target ? String(a.target) : undefined);
     case 'inspect_dashas':
-      return server.inspect_dashas(a.system ?? 'vimshottari', a.from, a.to);
+      return server.inspect_dashas(a.system ?? 'vimshottari', a.from, a.to, a.varga ? String(a.varga) : undefined);
     case 'inspect_transits':
       return server.inspect_transits();
     case 'inspect_panchang':
@@ -388,7 +541,13 @@ async function executeToolCall(server: ToolServer, tc: NativeToolCall): Promise<
     case 'inspect_bhavas':
       return server.inspect_bhavas(a.house ? Number(a.house) : undefined);
     case 'inspect_varshaphal':
-      return await server.inspect_varshaphal(a.year ? Number(a.year) : undefined);
+      return await server.inspect_varshaphal(
+        a.year ? Number(a.year) : undefined,
+        a.mode === 'monthly' || a.mode === '60hr' ? a.mode : 'annual',
+        a.targetDate ? String(a.targetDate) : undefined,
+        a.varga ? String(a.varga) : undefined,
+        a.school === 'pvr' || a.school === 'neelakantha' ? a.school : 'both',
+      );
     case 'inspect_ashtakoota':
       return server.inspect_ashtakoota(Number(a.partnerMoonSignIndex ?? 0), Number(a.partnerMoonNakshatraIndex ?? 0));
     case 'inspect_muhurta':
@@ -397,6 +556,43 @@ async function executeToolCall(server: ToolServer, tc: NativeToolCall): Promise<
       return server.inspect_journal_insights(a.limit ? Number(a.limit) : 8);
     case 'compare_perspectives':
       return server.compare_perspectives(Number(a.house ?? 1));
+    case 'inspect_functional_roles':
+      return server.inspect_functional_roles(a.planet ? String(a.planet) : undefined);
+    case 'inspect_argala':
+      return server.inspect_argala(String(a.target ?? '1'));
+    case 'inspect_remedies':
+      return server.inspect_remedies(a.domain ? String(a.domain) : undefined);
+    case 'inspect_varga_analytics':
+      return server.inspect_varga_analytics(a.varga ? String(a.varga) : 'D10');
+    case 'inspect_longevity':
+      return server.inspect_longevity();
+    case 'inspect_sbc':
+      return server.inspect_sbc();
+    case 'inspect_family_vargas':
+      return server.inspect_family_vargas(a.member ? String(a.member) : undefined);
+    case 'inspect_kn_rao_audit':
+      return server.inspect_kn_rao_audit((a.focus as any) ?? 'all');
+    case 'load_skill': {
+      const skill = getAgentSkill(String(a.skillId ?? ''));
+      if (!skill) {
+        return {
+          items: [
+            {
+              id: 'skill.not_found',
+              kind: 'skill',
+              text: `Unknown skillId "${String(a.skillId ?? '')}". Choose a skillId from the catalog in the system prompt.`,
+              tokens: 18,
+            },
+          ],
+          budget: { stepsLeft: 1, tokensLeft: 1000 },
+        };
+      }
+      const text = renderSkillPlaybook(skill);
+      return {
+        items: [{ id: `skill.${skill.id}`, kind: 'skill', text, tokens: Math.ceil(text.length / 4) }],
+        budget: { stepsLeft: 1, tokensLeft: 1000 },
+      };
+    }
     case 'trace_dispositor_chain':
       return server.trace_dispositor_chain(String(a.planetOrHouse ?? 'sun'));
     case 'window_scan':
@@ -522,6 +718,21 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
   const maxTurns = deep ? 10 : 7;
   const server = new ToolServer(ws, kb, { maxSteps: maxTurns * 4, maxTokens: 12000 }, engineSession);
 
+  // Route domain + timescale Deep Agent Skill(s) for progressive disclosure
+  const skillRoute = routeSkills(question, routed.topicId, routed.riskClass);
+  const activeSkillIds = new Set<string>([
+    skillRoute.primarySkill.id,
+    ...skillRoute.secondarySkills.map((s) => s.id),
+  ]);
+  const skillBriefing = renderActiveSkillBriefing(skillRoute, routed.timeframe);
+  const systemPrompt = buildDeepAgentSystemPrompt(skillBriefing);
+  emitTrace(
+    'trace',
+    `Selected analysis skill: ${skillRoute.primarySkill.title} (${skillRoute.timescale})`,
+    0,
+    { activeSkills: Array.from(activeSkillIds), timescale: skillRoute.timescale },
+  );
+
   // Seed prior conversation evidence IDs so follow-up turns remain grounded
   const priorIds = history.flatMap((h) => h.evidenceIds ?? []);
   if (priorIds.length > 0) {
@@ -545,7 +756,7 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
       }
 
       const result = await llm.runAgentTurn({
-        systemPrompt: DEEP_AGENT_SYSTEM_PROMPT,
+        systemPrompt,
         messages,
         tools: DEEP_AGENT_TOOLS,
       });
@@ -560,6 +771,10 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
         // Execute all parallel tool calls requested in this turn (with per-tool error isolation)
         for (const tc of result.toolCalls) {
           emitTrace('tool_call', describeToolForUser(tc), turn, { name: tc.name, args: tc.args });
+          if (tc.name === 'load_skill' && tc.args?.skillId) {
+            const loaded = getAgentSkill(String(tc.args.skillId));
+            if (loaded) activeSkillIds.add(loaded.id);
+          }
           let compactText: string;
           try {
             const toolOut = await executeToolCall(server, tc);
@@ -632,6 +847,7 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
         response: finalComposed,
         trace,
         observedEvidenceIds: Array.from(server.getObservedEvidence().ids),
+        activeSkills: Array.from(activeSkillIds),
       };
     }
 
@@ -640,6 +856,7 @@ export async function runAgentQuery(opts: RunDeepAgentOptions): Promise<AskResul
       mode: 'level2_fallback',
       trace,
       observedEvidenceIds: Array.from(server.getObservedEvidence().ids),
+      activeSkills: Array.from(activeSkillIds),
       verifierErrors: lastVerifierErrors,
       response: buildLevel2Fallback(
         ws,

@@ -15,10 +15,13 @@ import {
   computePanchang,
   computePlanetaryAvasthas,
   computeShadbala,
+  computeSpecialLagnas,
   computeSripatiChalit,
+  computeSudarshanaChakra,
   computeTransits,
   computeUpagrahas,
   computeVarshaphal,
+  computeTajakaEntryChart,
   computeAnnualSahams,
   computeVimshottariDashas,
   computeYoginiDashas,
@@ -43,10 +46,13 @@ import {
   type NatalChart,
   type PanchangResult,
   type ShadbalaResult,
+  type SpecialLagnaPosition,
+  type SudarshanaChakraResult,
   type TransitOverview,
   type UpagrahaPosition,
   type VargaType,
   type VarshaphalResult,
+  type TajakaEntryChartResult,
   type VimshottariDashaTree,
   type YogaDetection,
   type YoginiDashaTree,
@@ -110,6 +116,7 @@ export class EngineSession {
   private _bhavas: HouseDossier[] | null = null;
   private _upagrahas: UpagrahaPosition[] | null = null;
   private _arudhas: ArudhaPadaItem[] | null = null;
+  private _specialLagnas: SpecialLagnaPosition[] | null = null;
   private _varshaphalCache = new Map<number, VarshaphalResult>();
   private _muhurtaCache = new Map<string, DayView>();
   private _eph: EphemerisProvider | null = null;
@@ -306,6 +313,20 @@ export class EngineSession {
     return this._arudhas;
   }
 
+  getSpecialLagnas(): SpecialLagnaPosition[] {
+    if (!this._specialLagnas) this._specialLagnas = computeSpecialLagnas(this.natal);
+    return this._specialLagnas;
+  }
+
+  getSudarshana(referenceDateIso?: string): SudarshanaChakraResult {
+    const birthMs = Date.parse(this.natal.time.birthUtc || this.natal.time.birthLocal);
+    const refMs = referenceDateIso ? Date.parse(referenceDateIso) : Date.now();
+    const ageYears = Number.isFinite(birthMs) && Number.isFinite(refMs)
+      ? Math.max(0, (refMs - birthMs) / (365.2425 * 86400 * 1000))
+      : 0;
+    return computeSudarshanaChakra(this.natal, ageYears);
+  }
+
   getAshtakoota(partnerMoonSignIndex: number, partnerMoonNakshatraIndex: number): AshtakootaResult {
     const m = this.natal.grahas.moon;
     return computeAshtakoota(
@@ -320,6 +341,24 @@ export class EngineSession {
     if (!this._eph) this._eph = await loadEphemeris('astronomy-engine');
     const res = computeVarshaphal(this._eph, this.natal, targetYear);
     this._varshaphalCache.set(targetYear, res);
+    return res;
+  }
+
+  private _tajakaEntryCache = new Map<string, TajakaEntryChartResult>();
+
+  async getTajakaEntryChart(
+    mode: 'monthly' | '60hr',
+    targetDateIso: string,
+  ): Promise<TajakaEntryChartResult> {
+    const dateKey = targetDateIso.slice(0, 10);
+    const cacheKey = `${mode}:${dateKey}`;
+    const cached = this._tajakaEntryCache.get(cacheKey);
+    if (cached) return cached;
+    if (!this._eph) this._eph = await loadEphemeris('astronomy-engine');
+    const yearNum = Number(dateKey.slice(0, 4)) || new Date().getUTCFullYear();
+    const annual = await this.getVarshaphal(yearNum);
+    const res = computeTajakaEntryChart(this._eph, this.natal, mode, targetDateIso, annual.varsheshwara);
+    this._tajakaEntryCache.set(cacheKey, res);
     return res;
   }
 

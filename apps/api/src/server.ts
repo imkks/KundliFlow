@@ -63,6 +63,10 @@ const CONCEPTS_PATH = path.join(ROOT_DIR, 'packages/content/kb/concepts.yaml');
 const LORE_PATH = path.join(ROOT_DIR, 'packages/content/kb/jyotish_lore.yaml');
 const NAKSHATRAS_PATH = path.join(ROOT_DIR, 'packages/content/kb/nakshatras.yaml');
 const PRINCIPLES_PATH = path.join(ROOT_DIR, 'packages/content/kb/yogas_and_principles.yaml');
+const MEDICAL_PATH = path.join(ROOT_DIR, 'packages/content/kb/medical_astrology.yaml');
+const MUHURTA_KB_PATH = path.join(ROOT_DIR, 'packages/content/kb/muhurta_principles.yaml');
+const KN_RAO_KB_PATH = path.join(ROOT_DIR, 'packages/content/kb/kn_rao_principles.yaml');
+const TAJAKA_ADV_KB_PATH = path.join(ROOT_DIR, 'packages/content/kb/tajaka_advanced_principles.yaml');
 
 function canAccessProfile(profile: { userId?: string | null } | null, authUser: { sub: string } | null): boolean {
   if (!profile) return false;
@@ -81,6 +85,10 @@ export function createApiServer() {
   kb.ingestConceptsFile(LORE_PATH);
   kb.ingestConceptsFile(NAKSHATRAS_PATH);
   kb.ingestConceptsFile(PRINCIPLES_PATH);
+  kb.ingestConceptsFile(MEDICAL_PATH);
+  kb.ingestConceptsFile(MUHURTA_KB_PATH);
+  kb.ingestConceptsFile(KN_RAO_KB_PATH);
+  kb.ingestConceptsFile(TAJAKA_ADV_KB_PATH);
 
   const defaultProvider = (process.env.EPHEMERIS_PROVIDER || 'swisseph') as any;
   const serverEphMap = new Map<string, any>();
