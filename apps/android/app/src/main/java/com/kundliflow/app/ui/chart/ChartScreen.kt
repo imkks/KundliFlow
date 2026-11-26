@@ -729,10 +729,18 @@ fun ChartScreen(
                     Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text("SHADBALA SPOTLIGHT", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMain)
-                            Text("Positional & Directional Ratio", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                            Text(
+                                text = "SHADBALA SPOTLIGHT",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = KundliColors.TextMain,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Text("Positional Ratio", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold, maxLines = 1, softWrap = false)
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
@@ -780,10 +788,18 @@ fun ChartScreen(
                     Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text("ASHTAKAVARGA SAV BINDU DISTRIBUTION", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMain)
-                            Text("Avg: 28", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                            Text(
+                                text = "ASHTAKAVARGA SAV BINDU DISTRIBUTION",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = KundliColors.TextMain,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Text("Avg: 28", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, maxLines = 1, softWrap = false)
                         }
                         displayedChart.houses.sortedBy { it.number }.chunked(6).forEach { row6 ->
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -838,11 +854,39 @@ fun ChartScreen(
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("SPECIALIST WORKBENCH (RUNG 3)", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
-                Text("DEEP CALCULATIONS", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = "DEEP CALCULATIONS · RUNG 3",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.Gold,
+                        maxLines = 1,
+                    )
+                    Text(
+                        text = "SPECIALIST WORKBENCH",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = KundliColors.TextMain,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(999.dp),
+                    modifier = Modifier.clickable(onClick = onOpenToolsPage),
+                ) {
+                    Text(
+                        text = "Open All →",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.Gold,
+                        maxLines = 1,
+                        softWrap = false,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    )
+                }
             }
             Surface(
                 color = KundliColors.Surface,
@@ -1043,16 +1087,37 @@ private fun WorkbenchRow(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 13.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(icon, contentDescription = null, tint = accent, modifier = Modifier.size(20.dp))
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(title, style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain)
-            Text(subtitle, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+        Surface(
+            color = KundliColors.SurfaceRecessed,
+            border = BorderStroke(1.dp, accent.copy(alpha = 0.28f)),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.size(38.dp),
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(icon, contentDescription = null, tint = accent, modifier = Modifier.size(19.dp))
+            }
         }
-        Text(">", style = MaterialTheme.typography.bodyMedium, color = KundliColors.TextMuted)
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = KundliColors.TextMain,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = KundliColors.TextMuted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        Text("›", style = MaterialTheme.typography.titleMedium, color = KundliColors.Gold)
     }
 }
 
