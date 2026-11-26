@@ -133,6 +133,7 @@ private fun KundliFlowRootScreen(
     var openJournalComposer by remember { mutableStateOf(false) }
     var openTodayWaveSheet by remember { mutableStateOf(false) }
     var pendingTimeTab by remember { mutableStateOf<Int?>(null) }
+    var pendingJournalTab by remember { mutableStateOf<Int?>(null) }
     var showSearchSheet by remember { mutableStateOf(false) }
     var showTravelCityPicker by remember { mutableStateOf(false) }
     var showManualAddOnboarding by remember { mutableStateOf(false) }
@@ -434,8 +435,8 @@ private fun KundliFlowRootScreen(
                     openTodayWaveSheet = true
                 },
                 onJumpToAlmanac = {
-                    pendingTimeTab = 1
-                    activeDestination = MainDestination.Time
+                    pendingJournalTab = 1
+                    activeDestination = MainDestination.Journal
                     showBackToTodayPill = true
                 },
                 onNavigatePage = { page -> currentPage = page },
@@ -537,7 +538,7 @@ private fun KundliFlowRootScreen(
                             onTapCitySwitcher = { showTravelCityPicker = true },
                             skyMovers = timeState?.skyMovers.orEmpty(),
                             onJumpToTransits = {
-                                pendingTimeTab = 2
+                                pendingTimeTab = 1
                                 activeDestination = MainDestination.Time
                                 showBackToTodayPill = true
                             },
@@ -560,6 +561,11 @@ private fun KundliFlowRootScreen(
                         onSubmitCheckIn = { mood, energy, kind, tags, note ->
                             viewModel.submitCheckIn(mood, energy, kind, tags, note)
                         },
+                        timeState = timeState,
+                        isCalendarLoading = state.isCalendarLoading,
+                        onChangeCalendarMonth = { y, m -> viewModel.loadCalendarMonth(y, m) },
+                        initialTabIndex = pendingJournalTab,
+                        onInitialTabConsumed = { pendingJournalTab = null },
                         externalOpenComposer = openJournalComposer,
                         onExternalComposerHandled = { openJournalComposer = false },
                     )
@@ -597,16 +603,10 @@ private fun KundliFlowRootScreen(
                         TimeScreen(
                             state = timeState,
                             milestones = state.milestones,
-                            isCalendarLoading = state.isCalendarLoading,
                             onOpenPeriodSubject = { subj, rung ->
                                 activeSubjectReadingOverride = null
                                 activeSubject = subj
                                 rungStack = listOf(rung)
-                            },
-                            onChangeCalendarMonth = { y, m -> viewModel.loadCalendarMonth(y, m) },
-                            onAddDateNote = {
-                                activeDestination = MainDestination.Journal
-                                openJournalComposer = true
                             },
                             onOpenTimeMachinePage = { currentPage = AppPage.TimeMachine },
                             initialTabIndex = pendingTimeTab,

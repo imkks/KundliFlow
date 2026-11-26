@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,14 +26,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -43,7 +35,6 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,24 +55,17 @@ import com.kundliflow.app.ui.subject.Subject
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun TimeScreen(
     state: TimeTabState,
     milestones: List<MilestoneUi>,
-    isCalendarLoading: Boolean = false,
     onOpenPeriodSubject: (Subject, Rung) -> Unit,
-    onChangeCalendarMonth: (year: Int, month: Int) -> Unit,
-    onAddDateNote: (dayOfMonth: Int) -> Unit,
     onOpenTimeMachinePage: () -> Unit = {},
     initialTabIndex: Int? = null,
     onInitialTabConsumed: () -> Unit = {},
 ) {
-    val tabs = listOf("Chapters", "Almanac", "Transits")
+    val tabs = listOf("Chapters", "Transits")
     val pagerState = rememberPagerState(pageCount = { tabs.size })
     val scope = rememberCoroutineScope()
 
@@ -132,12 +116,6 @@ fun TimeScreen(
                     onOpenPeriodSubject = onOpenPeriodSubject,
                     onOpenTimeMachinePage = onOpenTimeMachinePage,
                     onJumpToTab = { target -> scope.launch { pagerState.animateScrollToPage(target) } },
-                )
-                1 -> AlmanacSubPage(
-                    state = state,
-                    isCalendarLoading = isCalendarLoading,
-                    onChangeCalendarMonth = onChangeCalendarMonth,
-                    onAddDateNote = onAddDateNote,
                 )
                 else -> TransitsSubPage(state = state)
             }
@@ -474,7 +452,7 @@ private fun ChaptersSubPage(
                     color = KundliColors.Teal.copy(alpha = 0.14f),
                     border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.4f)),
                     shape = RoundedCornerShape(999.dp),
-                    modifier = Modifier.clickable { onJumpToTab(2) },
+                    modifier = Modifier.clickable { onJumpToTab(1) },
                 ) {
                     Text(
                         text = "LIVE GOCHAR",
@@ -492,7 +470,7 @@ private fun ChaptersSubPage(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onJumpToTab(2) },
+                        .clickable { onJumpToTab(1) },
                 ) {
                     Row(
                         modifier = Modifier.padding(14.dp),
@@ -540,7 +518,7 @@ private fun ChaptersSubPage(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onJumpToTab(2) },
+                    .clickable { onJumpToTab(1) },
             ) {
                 Row(
                     modifier = Modifier.padding(14.dp),
@@ -556,7 +534,7 @@ private fun ChaptersSubPage(
                         shape = RoundedCornerShape(999.dp),
                     ) {
                         Text(
-                            text = "Almanac →",
+                            text = "Transits →",
                             style = MaterialTheme.typography.labelSmall,
                             color = KundliColors.Teal,
                             modifier = Modifier
@@ -726,156 +704,6 @@ private fun MahadashaHorizonRibbon(
                 ) {
                     Text("● $activeMahadashaLord ($activeRange)", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
                     Text("Total span: 120 Years", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun AlmanacSubPage(
-    state: TimeTabState,
-    isCalendarLoading: Boolean,
-    onChangeCalendarMonth: (year: Int, month: Int) -> Unit,
-    onAddDateNote: (dayOfMonth: Int) -> Unit,
-) {
-    var selectedPurpose by remember { mutableStateOf("All") }
-    var selectedDay by remember(state.calendarYear, state.calendarMonth, state.monthDays) {
-        val today = LocalDate.now()
-        val defaultCell = if (today.year == state.calendarYear && today.monthValue == state.calendarMonth) {
-            state.monthDays.firstOrNull { it.dayOfMonth == today.dayOfMonth }
-        } else null
-        mutableStateOf(defaultCell ?: state.monthDays.firstOrNull())
-    }
-    val currentYm = YearMonth.of(state.calendarYear, state.calendarMonth)
-    val nearbyMonths = remember(state.calendarYear, state.calendarMonth) {
-        (-2L..3L).map { currentYm.plusMonths(it) }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 14.dp)
-            .padding(bottom = 100.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        // Horizontal Nearby-Months Rail
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            items(nearbyMonths) { ym ->
-                val active = ym.year == state.calendarYear && ym.monthValue == state.calendarMonth
-                FilterChip(
-                    selected = active,
-                    onClick = { onChangeCalendarMonth(ym.year, ym.monthValue) },
-                    label = {
-                        Text("${ym.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${ym.year}")
-                    },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = KundliColors.SurfaceAlt,
-                        selectedLabelColor = KundliColors.Gold,
-                    ),
-                )
-            }
-        }
-
-        // Purpose Filter Rail
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp), contentPadding = PaddingValues(end = 6.dp)) {
-            items(listOf("All", "Career", "Travel", "Finance", "Rest")) { purpose ->
-                FilterChip(
-                    selected = selectedPurpose == purpose,
-                    onClick = { selectedPurpose = purpose },
-                    label = { Text(purpose) },
-                )
-            }
-        }
-
-        // Month Calendar Surface
-        Surface(
-            color = KundliColors.Surface,
-            shape = RoundedCornerShape(18.dp),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    IconButton(onClick = {
-                        val prev = currentYm.minusMonths(1)
-                        onChangeCalendarMonth(prev.year, prev.monthValue)
-                    }) {
-                        Icon(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, contentDescription = "Previous month", tint = KundliColors.Gold)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(state.monthTitle, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                        if (isCalendarLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp, color = KundliColors.Gold)
-                        }
-                    }
-                    IconButton(onClick = {
-                        val next = currentYm.plusMonths(1)
-                        onChangeCalendarMonth(next.year, next.monthValue)
-                    }) {
-                        Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = "Next month", tint = KundliColors.Gold)
-                    }
-                }
-
-                state.monthDays.chunked(7).forEach { week ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        week.forEach { day ->
-                            val matches = selectedPurpose == "All" || day.purposes.contains(selectedPurpose)
-                            val isSelected = selectedDay?.dayOfMonth == day.dayOfMonth
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(
-                                        if (matches) day.band.color.copy(alpha = if (isSelected) 0.38f else 0.16f)
-                                        else KundliColors.BgInk,
-                                    )
-                                    .clickable { selectedDay = day },
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = "${day.dayOfMonth}",
-                                        style = TelemetryNumberStyle,
-                                        color = if (matches) KundliColors.TextMain else KundliColors.TextMuted,
-                                    )
-                                    if (day.hasNoteOrMilestone) {
-                                        Box(
-                                            modifier = Modifier.size(4.dp).clip(CircleShape).background(KundliColors.Gold),
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        repeat(7 - week.size) { Spacer(Modifier.weight(1f)) }
-                    }
-                }
-
-                selectedDay?.let { day ->
-                    Surface(
-                        color = KundliColors.SurfaceAlt,
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text("Day ${day.dayOfMonth} · ${day.band.label}", style = MaterialTheme.typography.titleMedium, color = day.band.color)
-                                Text(day.summary, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
-                            }
-                            TextButton(onClick = { onAddDateNote(day.dayOfMonth) }) {
-                                Text("+ Date Note", color = KundliColors.Gold)
-                            }
-                        }
-                    }
                 }
             }
         }

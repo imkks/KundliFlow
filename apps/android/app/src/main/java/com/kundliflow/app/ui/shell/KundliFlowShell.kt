@@ -190,7 +190,7 @@ fun KundliFlowShell(
                                     color = KundliColors.TextMain,
                                 )
                                 Text(
-                                    text = "VEDIC CODEX",
+                                    text = "VEDIC ASTROLOGY",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = KundliColors.TextMuted,
                                 )
@@ -459,8 +459,8 @@ fun KundliFlowShell(
 
                     HorizontalDivider(color = KundliColors.SubtleDivider)
 
-                    // Codex & Specialist Studios (Stitch drawer.png rows with 36dp icon tiles + subtitles)
-                    Text("CODEX & SPECIALIST STUDIOS", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                    // Explore & Specialist Studios (Stitch drawer.png rows with 36dp icon tiles + subtitles)
+                    Text("EXPLORE & SPECIALIST STUDIOS", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
                     DrawerPageItem(
                         icon = Icons.Rounded.WorkspacePremium,
                         title = "Strengths, Yogas & SAV",
@@ -759,7 +759,7 @@ private fun TopHeaderBar(
                     }
                     MainDestination.Chart -> {
                         Column(modifier = Modifier.clickable(onClick = onOpenDrawer)) {
-                            Text("KUNDLI CODEX", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                            Text("NATAL BLUEPRINT", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
                             Text("$profileName · Vedic Workbench", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
                         }
                     }

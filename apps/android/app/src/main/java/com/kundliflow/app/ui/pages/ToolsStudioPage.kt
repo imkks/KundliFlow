@@ -6,7 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,6 +33,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.FileUpload
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -39,6 +44,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -52,6 +58,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.chart.ChartHouseData
@@ -62,6 +71,7 @@ import com.kundliflow.app.ui.theme.TelemetryNumberStyle
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ToolsStudioPage(
     data: ToolsStudioData,
@@ -98,14 +108,23 @@ fun ToolsStudioPage(
                 .fillMaxWidth()
                 .height(56.dp)
                 .padding(horizontal = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = KundliColors.Gold)
                 }
-                Text("TOOLS & SYSTEMS", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                Text(
+                    text = "TOOLS & SYSTEMS",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = KundliColors.TextMain,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
             Surface(
                 color = KundliColors.Surface,
@@ -124,15 +143,37 @@ fun ToolsStudioPage(
             }
         }
 
-        // Editorial Workbench Hero Header (Stitch)
+        // Editorial Workbench Hero Header + Ephemeris Metadata Chips (Stitch tools_studio.png)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+                .padding(horizontal = 20.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Text("● SPECIALIST WORKBENCH · RUNG 3", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
             Text("CLASSICAL SYSTEMS & PRECISION TABLES", style = MaterialTheme.typography.headlineSmall, color = KundliColors.TextMain)
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                items(
+                    listOf(
+                        "Lahiri Ayanamsa" to KundliColors.Gold,
+                        "Sripati Bhava" to KundliColors.TextMuted,
+                        "True Node" to KundliColors.Teal,
+                    ),
+                ) { (tag, accent) ->
+                    Surface(
+                        color = KundliColors.SurfaceRecessed,
+                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                        shape = RoundedCornerShape(999.dp),
+                    ) {
+                        Text(
+                            text = "● $tag",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = accent,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        )
+                    }
+                }
+            }
         }
 
         // Horizontal Pill Track Navigation (Stitch)
@@ -140,7 +181,7 @@ fun ToolsStudioPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 20.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             itemsIndexed(tabs) { idx, label ->
@@ -166,12 +207,15 @@ fun ToolsStudioPage(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 when (page) {
-                    // 0. Bhava Chalit Sripati Midpoints
+                    // 0. Bhava Chalit Sripati Midpoints (12-House Table + Realignment Callout)
                     0 -> {
+                        val shiftsByChalitHouse = remember(data.chalitShifts) {
+                            data.chalitShifts.groupBy { it.chalitHouse }
+                        }
                         Surface(
                             color = KundliColors.Surface,
                             border = BorderStroke(1.dp, KundliColors.GoldHairline),
@@ -189,25 +233,109 @@ fun ToolsStudioPage(
                                         Text("BHAVA CHALIT SRIPATI", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
                                     }
                                     Surface(
-                                        color = KundliColors.Teal.copy(alpha = 0.14f),
+                                        color = if (data.chalitShifts.isEmpty()) KundliColors.Teal.copy(alpha = 0.14f) else KundliColors.Amber.copy(alpha = 0.16f),
+                                        border = BorderStroke(1.dp, if (data.chalitShifts.isEmpty()) KundliColors.Teal.copy(alpha = 0.4f) else KundliColors.Amber.copy(alpha = 0.45f)),
                                         shape = RoundedCornerShape(999.dp),
                                     ) {
                                         Text(
                                             text = "${data.chalitShifts.size} Shifted",
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = KundliColors.Teal,
+                                            color = if (data.chalitShifts.isEmpty()) KundliColors.Teal else KundliColors.Amber,
                                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                                         )
                                     }
                                 }
+
+                                // 12-House Sripati Table (Stitch tools_studio.png)
+                                if (houses.isNotEmpty()) {
+                                    Surface(
+                                        color = KundliColors.SurfaceRecessed,
+                                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                        shape = RoundedCornerShape(14.dp),
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                Text("HOUSE", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, modifier = Modifier.weight(0.22f))
+                                                Text("SIGN", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, modifier = Modifier.weight(0.32f))
+                                                Text("CHALIT SHIFT", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, textAlign = TextAlign.End, modifier = Modifier.weight(0.46f))
+                                            }
+                                            HorizontalDivider(color = KundliColors.SubtleDivider)
+                                            houses.sortedBy { it.number }.forEachIndexed { idx, h ->
+                                                val incoming = shiftsByChalitHouse[h.number].orEmpty()
+                                                val isShiftedRow = incoming.isNotEmpty()
+                                                if (idx > 0) HorizontalDivider(color = KundliColors.SubtleDivider.copy(alpha = 0.55f))
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .background(if (isShiftedRow) KundliColors.Teal.copy(alpha = 0.10f) else Color.Transparent)
+                                                        .padding(horizontal = 12.dp, vertical = 9.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                ) {
+                                                    Text(
+                                                        text = if (h.number == 1) "H1 Asc" else "H${h.number}",
+                                                        style = TelemetryNumberStyle,
+                                                        color = if (h.number == 1 || isShiftedRow) KundliColors.Gold else KundliColors.TextMain,
+                                                        modifier = Modifier.weight(0.22f),
+                                                    )
+                                                    Text(
+                                                        text = h.signName,
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = KundliColors.TextMain,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                        modifier = Modifier.weight(0.32f),
+                                                    )
+                                                    Box(
+                                                        modifier = Modifier.weight(0.46f),
+                                                        contentAlignment = Alignment.CenterEnd,
+                                                    ) {
+                                                        when {
+                                                            isShiftedRow -> Surface(
+                                                                color = KundliColors.Teal,
+                                                                shape = RoundedCornerShape(8.dp),
+                                                            ) {
+                                                                Text(
+                                                                    text = incoming.joinToString(", ") { "${it.planet.take(3)} (H${it.rashiHouse}→H${it.chalitHouse})" },
+                                                                    style = MaterialTheme.typography.labelSmall,
+                                                                    color = KundliColors.OrbInk,
+                                                                    maxLines = 1,
+                                                                    overflow = TextOverflow.Ellipsis,
+                                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                                                )
+                                                            }
+                                                            h.number == 1 -> Text("Native Anchor", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                                                            h.planets.isNotEmpty() -> Text(
+                                                                text = h.planets.joinToString(", ") { it.id.displayName.take(3) },
+                                                                style = MaterialTheme.typography.labelSmall,
+                                                                color = KundliColors.Gold,
+                                                                maxLines = 1,
+                                                                overflow = TextOverflow.Ellipsis,
+                                                            )
+                                                            else -> Text("Unchanged", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted.copy(alpha = 0.65f))
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Shifted Planet Details / Alignment Note
                                 if (data.chalitShifts.isEmpty()) {
                                     Surface(
                                         color = KundliColors.SurfaceRecessed,
+                                        border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.35f)),
                                         shape = RoundedCornerShape(14.dp),
                                         modifier = Modifier.fillMaxWidth(),
                                     ) {
                                         Text(
-                                            text = "All 9 planets remain anchored in their D1 Rashi houses under Sripati Bhava boundaries.",
+                                            text = "✦ All 9 planets remain anchored in their D1 Rashi houses under Sripati Bhava boundaries.",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = KundliColors.Teal,
                                             modifier = Modifier.padding(14.dp),
@@ -217,21 +345,18 @@ fun ToolsStudioPage(
                                     data.chalitShifts.forEach { shift ->
                                         Surface(
                                             color = KundliColors.SurfaceRecessed,
-                                            border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.35f)),
+                                            border = BorderStroke(1.dp, KundliColors.GoldHairline),
                                             shape = RoundedCornerShape(14.dp),
                                             modifier = Modifier.fillMaxWidth(),
                                         ) {
-                                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                                 Row(
                                                     modifier = Modifier.fillMaxWidth(),
                                                     horizontalArrangement = Arrangement.SpaceBetween,
                                                     verticalAlignment = Alignment.CenterVertically,
                                                 ) {
-                                                    Text(shift.planet, style = MaterialTheme.typography.titleSmall, color = KundliColors.Gold)
-                                                    Surface(
-                                                        color = KundliColors.Teal,
-                                                        shape = RoundedCornerShape(999.dp),
-                                                    ) {
+                                                    Text("✦ ${shift.planet} Realignment", style = MaterialTheme.typography.titleSmall, color = KundliColors.Gold)
+                                                    Surface(color = KundliColors.Teal, shape = RoundedCornerShape(999.dp)) {
                                                         Text(
                                                             text = "H${shift.rashiHouse} → H${shift.chalitHouse}",
                                                             style = TelemetryNumberStyle,
@@ -240,7 +365,7 @@ fun ToolsStudioPage(
                                                         )
                                                     }
                                                 }
-                                                Text(shift.meaning, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
+                                                Text(shift.meaning, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain.copy(alpha = 0.86f))
                                             }
                                         }
                                     }
@@ -267,9 +392,32 @@ fun ToolsStudioPage(
                                         Text("KRISHNAMURTI PADDHATI 249 SUB-DIVISIONS", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
                                         Text("STAR-LORD & SUB-LORD MATRICES", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
                                     }
+                                    Surface(
+                                        color = KundliColors.Teal.copy(alpha = 0.14f),
+                                        border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.35f)),
+                                        shape = RoundedCornerShape(999.dp),
+                                    ) {
+                                        Text(
+                                            text = "KP Ayanamsa",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = KundliColors.Teal,
+                                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                                        )
+                                    }
                                 }
                                 if (data.kpCusps.isEmpty()) {
-                                    Text("KP cusps require exact birth time.", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
+                                    Surface(
+                                        color = KundliColors.SurfaceRecessed,
+                                        shape = RoundedCornerShape(14.dp),
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        Text(
+                                            text = "KP cusps require an exact birth time to resolve sub-lord boundaries.",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = KundliColors.TextMuted,
+                                            modifier = Modifier.padding(14.dp),
+                                        )
+                                    }
                                 } else {
                                     data.kpCusps.forEach { cusp ->
                                         Surface(
@@ -278,28 +426,59 @@ fun ToolsStudioPage(
                                             shape = RoundedCornerShape(14.dp),
                                             modifier = Modifier.fillMaxWidth(),
                                         ) {
-                                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                                 Row(
                                                     modifier = Modifier.fillMaxWidth(),
                                                     horizontalArrangement = Arrangement.SpaceBetween,
                                                     verticalAlignment = Alignment.CenterVertically,
                                                 ) {
-                                                    Text("House ${cusp.house} Cusp · ${cusp.sign}", style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain)
+                                                    Text(
+                                                        text = "House ${cusp.house} Cusp · ${cusp.sign}",
+                                                        style = MaterialTheme.typography.titleSmall,
+                                                        color = KundliColors.TextMain,
+                                                        modifier = Modifier.weight(1f),
+                                                    )
                                                     Surface(
                                                         color = KundliColors.SurfaceAlt,
+                                                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
                                                         shape = RoundedCornerShape(8.dp),
                                                     ) {
                                                         Text(
                                                             text = "H${cusp.house}",
-                                                            style = MaterialTheme.typography.labelSmall,
+                                                            style = TelemetryNumberStyle,
                                                             color = KundliColors.Gold,
                                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                                                         )
                                                     }
                                                 }
-                                                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                                                    Text("Star: ${cusp.starLord}", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                                                    Text("Sub: ${cusp.subLord}", style = TelemetryNumberStyle, color = KundliColors.Teal)
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                                ) {
+                                                    Surface(
+                                                        color = KundliColors.Gold.copy(alpha = 0.12f),
+                                                        shape = RoundedCornerShape(8.dp),
+                                                        modifier = Modifier.weight(1f),
+                                                    ) {
+                                                        Text(
+                                                            text = "Star: ${cusp.starLord}",
+                                                            style = MaterialTheme.typography.labelMedium,
+                                                            color = KundliColors.Gold,
+                                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                                        )
+                                                    }
+                                                    Surface(
+                                                        color = KundliColors.Teal.copy(alpha = 0.12f),
+                                                        shape = RoundedCornerShape(8.dp),
+                                                        modifier = Modifier.weight(1f),
+                                                    ) {
+                                                        Text(
+                                                            text = "Sub: ${cusp.subLord}",
+                                                            style = TelemetryNumberStyle,
+                                                            color = KundliColors.Teal,
+                                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
@@ -309,7 +488,7 @@ fun ToolsStudioPage(
                         }
                     }
 
-                    // 2. Tajika Varshaphal (Annual Codex)
+                    // 2. Tajika Varshaphal (Annual Solar Return)
                     2 -> {
                         val nearbyYears = ((targetYear - 2)..(targetYear + 2)).toList()
                         Surface(
@@ -367,44 +546,78 @@ fun ToolsStudioPage(
 
                                 val vp = varshaphal
                                 if (vp != null) {
-                                    Surface(
-                                        color = KundliColors.SurfaceRecessed,
-                                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                                        shape = RoundedCornerShape(14.dp),
-                                        modifier = Modifier.fillMaxWidth(),
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                                     ) {
-                                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                            Text("VARSHESHWARA (YEAR LORD)", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
-                                            Text(vp.varsheshwara.uppercase(), style = MaterialTheme.typography.headlineSmall, color = KundliColors.Gold)
-                                            Text("Varsha Lagna: ${vp.varshaLagna}", style = MaterialTheme.typography.bodySmall, color = KundliColors.Teal)
+                                        Surface(
+                                            color = KundliColors.SurfaceRecessed,
+                                            border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                                            shape = RoundedCornerShape(14.dp),
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        ) {
+                                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                Text("VARSHESHWARA", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                                Text(vp.varsheshwara.uppercase(), style = MaterialTheme.typography.titleLarge, color = KundliColors.Gold)
+                                                Text("Lagna: ${vp.varshaLagna}", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                                            }
+                                        }
+                                        Surface(
+                                            color = KundliColors.SurfaceRecessed,
+                                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                            shape = RoundedCornerShape(14.dp),
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        ) {
+                                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                Text("MUNTHA FOCUS", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                                Text("HOUSE ${vp.munthaHouse}", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                                                Text(vp.munthaSign, style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                                            }
                                         }
                                     }
-                                    Surface(
-                                        color = KundliColors.SurfaceRecessed,
-                                        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-                                        shape = RoundedCornerShape(14.dp),
-                                        modifier = Modifier.fillMaxWidth(),
-                                    ) {
-                                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                            Text("MUNTHA FOCAL POSITION", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
-                                            Text("HOUSE ${vp.munthaHouse} · ${vp.munthaSign.uppercase()}", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
-                                        }
-                                    }
+
                                     OutlinedTextField(
                                         value = sahamQuery,
                                         onValueChange = { sahamQuery = it },
-                                        label = { Text("Filter 36 Sahams") },
+                                        placeholder = { Text("Filter 36 Sahams…", color = KundliColors.TextMuted) },
+                                        leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null, tint = KundliColors.Gold, modifier = Modifier.size(18.dp)) },
                                         singleLine = true,
+                                        shape = RoundedCornerShape(14.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedContainerColor = KundliColors.SurfaceRecessed,
+                                            unfocusedContainerColor = KundliColors.SurfaceRecessed,
+                                            focusedBorderColor = KundliColors.Gold,
+                                            unfocusedBorderColor = KundliColors.SubtleDivider,
+                                            focusedTextColor = KundliColors.TextMain,
+                                            unfocusedTextColor = KundliColors.TextMain,
+                                        ),
                                         modifier = Modifier.fillMaxWidth(),
                                     )
-                                    vp.sahams.filter {
+
+                                    val filteredSahams = vp.sahams.filter {
                                         sahamQuery.isBlank() || it.name.contains(sahamQuery, ignoreCase = true) || it.meaning.contains(sahamQuery, ignoreCase = true)
-                                    }.forEach { s ->
-                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            Text(s.name, style = MaterialTheme.typography.bodySmall, color = KundliColors.Gold)
-                                            Text("${s.sign} · ${s.degree}", style = TelemetryNumberStyle, color = KundliColors.TextMain)
+                                    }
+                                    filteredSahams.forEach { s ->
+                                        Surface(
+                                            color = KundliColors.SurfaceRecessed,
+                                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier.fillMaxWidth(),
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                                    Text(s.name, style = MaterialTheme.typography.titleSmall, color = KundliColors.Gold)
+                                                    if (s.meaning.isNotBlank()) {
+                                                        Text(s.meaning, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                                    }
+                                                }
+                                                Text("${s.sign} · ${s.degree}", style = TelemetryNumberStyle, color = KundliColors.Teal)
+                                            }
                                         }
-                                        HorizontalDivider(color = KundliColors.SubtleDivider)
                                     }
                                 } else {
                                     Text("Syncing annual Varshaphal chart for $targetYear…", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
@@ -483,7 +696,7 @@ fun ToolsStudioPage(
                     // 4. Bhava Dossier
                     4 -> {
                         var selectedH by remember { mutableIntStateOf(1) }
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(houses, key = { it.number }) { h ->
                                 val sel = selectedH == h.number
                                 Surface(
@@ -493,38 +706,100 @@ fun ToolsStudioPage(
                                     modifier = Modifier.clickable { selectedH = h.number },
                                 ) {
                                     Text(
-                                        text = "H${h.number} ${h.signName.take(3)}",
+                                        text = if (sel) "● H${h.number} ${h.signName.take(3)}" else "H${h.number} ${h.signName.take(3)}",
                                         style = MaterialTheme.typography.labelSmall,
                                         color = if (sel) KundliColors.Gold else KundliColors.TextMuted,
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
                                     )
                                 }
                             }
                         }
                         val hd = houses.firstOrNull { it.number == selectedH }
                         if (hd != null) {
-                            Surface(color = KundliColors.Surface, border = BorderStroke(1.dp, KundliColors.GoldHairline), shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Surface(
+                                color = KundliColors.Surface,
+                                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                                shape = RoundedCornerShape(20.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                     Text("HOUSE ${hd.number} · ${hd.signName.uppercase()}", style = MaterialTheme.typography.headlineSmall, color = KundliColors.Gold)
-                                    Text("Lord ${hd.lord.displayName} in H${hd.lordHouse} · SAV ${hd.savBindus} / 337", style = TelemetryNumberStyle, color = KundliColors.Teal)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    ) {
+                                        Surface(
+                                            color = KundliColors.SurfaceRecessed,
+                                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        ) {
+                                            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                                Text("HOUSE LORD", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                                Text("${hd.lord.displayName} in H${hd.lordHouse}", style = MaterialTheme.typography.titleSmall, color = KundliColors.Teal)
+                                            }
+                                        }
+                                        Surface(
+                                            color = KundliColors.SurfaceRecessed,
+                                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        ) {
+                                            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                                Text("SAV RESERVE", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                                Text("${hd.savBindus} / 337 Bindus", style = TelemetryNumberStyle, color = KundliColors.Gold)
+                                            }
+                                        }
+                                    }
                                     Text(hd.summaryLine, style = MaterialTheme.typography.bodyMedium, color = KundliColors.TextMain)
                                     if (hd.planets.isNotEmpty()) {
-                                        Text("Occupants: ${hd.planets.joinToString(", ") { "${it.id.displayName} (${it.degreeFormatted})" }}", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
+                                        FlowRow(
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                                        ) {
+                                            hd.planets.forEach { pl ->
+                                                Surface(
+                                                    color = KundliColors.SurfaceRecessed,
+                                                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                                                    shape = RoundedCornerShape(999.dp),
+                                                ) {
+                                                    Text(
+                                                        text = "${pl.id.displayName} · ${pl.degreeFormatted}",
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = KundliColors.Gold,
+                                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                             hd.findings.forEach { f ->
-                                Surface(color = KundliColors.SurfaceRecessed, border = BorderStroke(1.dp, KundliColors.SubtleDivider), shape = RoundedCornerShape(14.dp), modifier = Modifier.fillMaxWidth()) {
-                                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                        Text(f.title, style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                                        Text(f.plainMeaning, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
+                                Surface(
+                                    color = KundliColors.Surface,
+                                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) {
+                                    Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+                                        Box(
+                                            modifier = Modifier
+                                                .width(3.dp)
+                                                .fillMaxHeight()
+                                                .background(KundliColors.Gold),
+                                        )
+                                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                            Text(f.title, style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                                            Text(f.plainMeaning, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain.copy(alpha = 0.88f))
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
-                    // 5. Quant Telemetry Table
+                    // 5. Quant Telemetry Table (Aligned Columns + Status Badges)
                     else -> {
                         Surface(
                             color = KundliColors.Surface,
@@ -532,25 +807,100 @@ fun ToolsStudioPage(
                             shape = RoundedCornerShape(20.dp),
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                Text("PLANETARY DEGREES & VARGOTTAMA", style = MaterialTheme.typography.titleLarge, color = KundliColors.Gold)
-                                data.quantPlanetRows.forEachIndexed { idx, (planet, pos, flags) ->
-                                    if (idx > 0) HorizontalDivider(color = KundliColors.SubtleDivider)
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        Text(planet, style = MaterialTheme.typography.titleSmall, color = KundliColors.TextMain)
-                                        Text(pos, style = TelemetryNumberStyle, color = KundliColors.Gold)
-                                        Text(flags, style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text("SIDEREAL LONGITUDE & DIGNITY", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                                    Text("PLANETARY DEGREES & VARGOTTAMA", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                                }
+                                Surface(
+                                    color = KundliColors.SurfaceRecessed,
+                                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) {
+                                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Text("GRAHA", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, modifier = Modifier.weight(0.26f))
+                                            Text("POSITION", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, modifier = Modifier.weight(0.42f))
+                                            Text("STATUS", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted, textAlign = TextAlign.End, modifier = Modifier.weight(0.32f))
+                                        }
+                                        HorizontalDivider(color = KundliColors.SubtleDivider)
+                                        data.quantPlanetRows.forEachIndexed { idx, (planet, pos, flags) ->
+                                            if (idx > 0) HorizontalDivider(color = KundliColors.SubtleDivider.copy(alpha = 0.55f))
+                                            val highlight = flags.contains("Varg", true) || flags.contains("Exalt", true) || flags.contains("Own", true)
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                Text(
+                                                    text = planet,
+                                                    style = MaterialTheme.typography.titleSmall,
+                                                    color = KundliColors.TextMain,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    modifier = Modifier.weight(0.26f),
+                                                )
+                                                Text(
+                                                    text = pos,
+                                                    style = TelemetryNumberStyle,
+                                                    color = KundliColors.Gold,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    modifier = Modifier.weight(0.42f),
+                                                )
+                                                Box(
+                                                    modifier = Modifier.weight(0.32f),
+                                                    contentAlignment = Alignment.CenterEnd,
+                                                ) {
+                                                    if (flags.isNotBlank() && flags != "—") {
+                                                        Surface(
+                                                            color = if (highlight) KundliColors.Teal.copy(alpha = 0.16f) else KundliColors.SurfaceAlt,
+                                                            border = BorderStroke(1.dp, if (highlight) KundliColors.Teal.copy(alpha = 0.4f) else KundliColors.SubtleDivider),
+                                                            shape = RoundedCornerShape(8.dp),
+                                                        ) {
+                                                            Text(
+                                                                text = flags,
+                                                                style = MaterialTheme.typography.labelSmall,
+                                                                color = if (highlight) KundliColors.Teal else KundliColors.TextMuted,
+                                                                maxLines = 1,
+                                                                overflow = TextOverflow.Ellipsis,
+                                                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
+                                                            )
+                                                        }
+                                                    } else {
+                                                        Text("Direct", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted.copy(alpha = 0.7f))
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-                Spacer(Modifier.height(12.dp))
+
+                // Verification Footnote (Stitch tools_studio.png)
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(Icons.Rounded.VerifiedUser, contentDescription = null, tint = KundliColors.TextMuted, modifier = Modifier.size(15.dp))
+                    Text(
+                        text = "Validated against Swiss Ephemeris & classical BPHS calculations · Offline & encrypted on-device.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.TextMuted,
+                    )
+                }
+                Spacer(Modifier.height(10.dp))
             }
         }
 

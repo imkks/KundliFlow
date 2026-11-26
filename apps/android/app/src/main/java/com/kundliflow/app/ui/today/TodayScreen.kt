@@ -79,6 +79,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kundliflow.app.ui.subject.PlanetId
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
 import com.kundliflow.app.ui.time.SkyMoverItem
@@ -168,9 +169,12 @@ fun TodayScreen(
                 onTapAddNote = onOpenFullComposer,
             )
 
-            // 3. Single Dynamic Slot / "IN THE SKY TODAY" Card (Stitch)
+            // 3. Single Dynamic Slot / "IN THE SKY TODAY" Card (Stitch today_expansive.png)
+            val liveMoonMover = remember(skyMovers) { skyMovers.firstOrNull { it.planet == PlanetId.MOON } }
             DynamicSlotCardStitch(
                 slot = activeSlot,
+                sky = sky,
+                moonMover = liveMoonMover,
                 discoveryLitCount = discoveryLitCount,
                 discoveryTotalCount = discoveryTotalCount,
                 onTap = { onTapSlotAction(activeSlot) },
@@ -306,33 +310,49 @@ private fun TodayHeroCard(
                     textAlign = TextAlign.Center,
                 )
             } else {
-                // Signature Stitch Centered Glowing Circular Gradient Ring (176 dp)
+                // Signature Stitch Centered Glowing Circular Gradient Ring (196dp halo + 172dp ring)
                 Box(
-                    modifier = Modifier.size(176.dp),
+                    modifier = Modifier.size(196.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Canvas(modifier = Modifier.fillMaxSize()) {
-                        val radius = size.minDimension / 2f - 4.dp.toPx()
+                        val outerRadius = size.minDimension / 2f
+                        val ringRadius = outerRadius - 14.dp.toPx()
+                        // Soft ambient halo glow behind ring
                         drawCircle(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    bandColor.copy(alpha = 0.16f),
-                                    KundliColors.SurfaceRecessed.copy(alpha = 0.92f),
+                                    bandColor.copy(alpha = 0.22f),
+                                    KundliColors.Gold.copy(alpha = 0.08f),
+                                    Color.Transparent,
                                 ),
+                                radius = outerRadius,
                             ),
-                            radius = radius,
+                            radius = outerRadius,
                         )
+                        // Inner recessed orb fill
+                        drawCircle(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    bandColor.copy(alpha = 0.14f),
+                                    KundliColors.SurfaceRecessed.copy(alpha = 0.94f),
+                                ),
+                                radius = ringRadius,
+                            ),
+                            radius = ringRadius,
+                        )
+                        // Gold-to-Band sweep gradient stroke
                         drawCircle(
                             brush = Brush.sweepGradient(
                                 colors = listOf(
                                     KundliColors.Gold,
                                     bandColor,
-                                    bandColor.copy(alpha = 0.35f),
+                                    bandColor.copy(alpha = 0.45f),
                                     KundliColors.Gold.copy(alpha = 0.85f),
                                     KundliColors.Gold,
                                 ),
                             ),
-                            radius = radius,
+                            radius = ringRadius,
                             style = Stroke(width = 2.5.dp.toPx()),
                         )
                     }
@@ -679,69 +699,101 @@ private fun CheckInBarStitch(
 @Composable
 private fun DynamicSlotCardStitch(
     slot: TodayDynamicSlot,
+    sky: TodaySkyState,
+    moonMover: SkyMoverItem?,
     discoveryLitCount: Int,
     discoveryTotalCount: Int,
     onTap: () -> Unit,
     onDismiss: () -> Unit,
     onOpenDiscoveryMap: () -> Unit,
 ) {
-    val (eyebrow, title, body, accentColor) = when (slot) {
-        is TodayDynamicSlot.WelcomeBackDigest -> listOf(
-            "✦ WELCOME BACK · ${slot.daysAway} DAYS",
-            "What shifted while you were away",
-            slot.shiftSummary,
-            KundliColors.Gold,
-        )
-        is TodayDynamicSlot.AhaMomentComparison -> listOf(
-            "✦ SKY SNAPSHOT ANALYSIS",
-            slot.headline,
-            slot.detail,
-            KundliColors.Teal,
-        )
-        is TodayDynamicSlot.SundayWeeklyReview -> listOf(
-            "✦ WEEKLY PATTERN REVIEW",
-            slot.patternHeadline,
-            "${slot.entriesCountThisWeek} entries logged this week · Tap to review",
-            KundliColors.Teal,
-        )
-        is TodayDynamicSlot.LiveSkyEvent -> listOf(
-            "✦ IN THE SKY TODAY",
-            slot.title,
-            slot.detail,
-            KundliColors.Gold,
-        )
-        is TodayDynamicSlot.FirstWeekNudge -> listOf(
-            "✦ DAY ${slot.dayNumber} GUIDE",
-            slot.title,
-            slot.body,
-            KundliColors.Teal,
-        )
-        is TodayDynamicSlot.CuriosityNode -> listOf(
-            "✦ IN THE SKY TODAY",
-            slot.title,
-            slot.hookLine,
-            KundliColors.Gold,
-        )
-        is TodayDynamicSlot.ActTwoCycle -> listOf(
-            "✦ ${slot.cycleKind.uppercase()}",
-            slot.title,
-            slot.body,
-            KundliColors.Gold,
-        )
+    val liveMoonSub = remember(moonMover, sky.panchang) {
+        when {
+            moonMover != null -> "(IN HOUSE ${moonMover.houseFromLagna} · ${moonMover.signName.uppercase()})"
+            !sky.panchang?.nakshatra.isNullOrBlank() -> "(${sky.panchang!!.nakshatra.uppercase()})"
+            else -> null
+        }
+    }
+
+    val eyebrow: String
+    val headline: String
+    val goldSubline: String?
+    val body: String
+    val accent: Color
+    when (slot) {
+        is TodayDynamicSlot.WelcomeBackDigest -> {
+            eyebrow = "✦ WELCOME BACK · ${slot.daysAway} DAYS"
+            headline = "WHAT SHIFTED WHILE AWAY"
+            goldSubline = liveMoonSub
+            body = slot.shiftSummary
+            accent = KundliColors.Gold
+        }
+        is TodayDynamicSlot.AhaMomentComparison -> {
+            eyebrow = "✦ SKY SNAPSHOT ANALYSIS"
+            headline = slot.headline.uppercase()
+            goldSubline = null
+            body = slot.detail
+            accent = KundliColors.Teal
+        }
+        is TodayDynamicSlot.SundayWeeklyReview -> {
+            eyebrow = "✦ WEEKLY PATTERN REVIEW"
+            headline = slot.patternHeadline.uppercase()
+            goldSubline = "${slot.entriesCountThisWeek} ENTRIES LOGGED THIS WEEK"
+            body = "Tap to review how your rhythm aligned with this week's planetary hours."
+            accent = KundliColors.Teal
+        }
+        is TodayDynamicSlot.LiveSkyEvent -> {
+            eyebrow = "✦ IN THE SKY TODAY"
+            headline = slot.title.uppercase()
+            goldSubline = liveMoonSub
+            body = slot.detail
+            accent = KundliColors.Gold
+        }
+        is TodayDynamicSlot.FirstWeekNudge -> {
+            eyebrow = "✦ IN THE SKY TODAY · DAY ${slot.dayNumber}"
+            headline = slot.title.uppercase()
+            goldSubline = liveMoonSub
+            body = slot.body
+            accent = KundliColors.Gold
+        }
+        is TodayDynamicSlot.CuriosityNode -> {
+            eyebrow = "✦ IN THE SKY TODAY"
+            headline = slot.title.uppercase()
+            goldSubline = liveMoonSub
+            body = slot.hookLine
+            accent = KundliColors.Gold
+        }
+        is TodayDynamicSlot.ActTwoCycle -> {
+            eyebrow = "✦ IN THE SKY TODAY · ${slot.cycleKind.uppercase()}"
+            headline = slot.title.uppercase()
+            goldSubline = liveMoonSub
+            body = slot.body
+            accent = KundliColors.Gold
+        }
         TodayDynamicSlot.DistressOverride -> return
     }
 
-    val accent = accentColor as Color
     Surface(
         color = KundliColors.Surface,
-        border = BorderStroke(1.dp, accent.copy(alpha = 0.28f)),
-        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(1.dp, accent.copy(alpha = 0.34f)),
+        shape = RoundedCornerShape(22.dp),
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onTap),
     ) {
         Column(
-            modifier = Modifier.padding(18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .drawBehind {
+                    drawRect(
+                        Brush.radialGradient(
+                            colors = listOf(accent.copy(alpha = 0.09f), Color.Transparent),
+                            center = Offset(size.width * 0.88f, size.height * 0.32f),
+                            radius = size.width * 0.65f,
+                        ),
+                    )
+                }
+                .padding(18.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
@@ -749,7 +801,7 @@ private fun DynamicSlotCardStitch(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(eyebrow as String, style = MaterialTheme.typography.labelSmall, color = accent)
+                Text(eyebrow, style = MaterialTheme.typography.labelSmall, color = accent)
                 if (slot !is TodayDynamicSlot.CuriosityNode && slot !is TodayDynamicSlot.ActTwoCycle) {
                     Text(
                         text = "Dismiss",
@@ -761,35 +813,55 @@ private fun DynamicSlotCardStitch(
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.Top,
             ) {
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     Text(
-                        text = (title as String).uppercase(),
+                        text = headline,
                         style = MaterialTheme.typography.titleLarge,
                         color = KundliColors.TextMain,
                     )
+                    if (!goldSubline.isNullOrBlank()) {
+                        Text(
+                            text = goldSubline,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = KundliColors.Gold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                     Text(
-                        text = body as String,
+                        text = body,
                         style = MaterialTheme.typography.bodySmall,
-                        color = KundliColors.TextMuted,
+                        color = KundliColors.TextMain.copy(alpha = 0.84f),
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
                 Surface(
                     color = KundliColors.SurfaceRecessed,
-                    border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.35f)),
-                    shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier.size(48.dp),
+                    border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.45f)),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.size(54.dp),
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .drawBehind {
+                                drawCircle(
+                                    brush = Brush.radialGradient(
+                                        colors = listOf(KundliColors.Teal.copy(alpha = 0.22f), Color.Transparent),
+                                    ),
+                                )
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
                         Icon(
                             imageVector = Icons.Rounded.Bedtime,
                             contentDescription = null,
                             tint = KundliColors.Teal,
-                            modifier = Modifier.size(22.dp),
+                            modifier = Modifier.size(24.dp),
                         )
                     }
                 }
@@ -856,20 +928,37 @@ private fun TodayPanchangMatrixCard(
                 }
             }
 
-            // 2x2 Recessed Matrix (Equal-height flush rows via IntrinsicSize.Min)
+            // 2x2 Recessed Matrix (Equal-height flush rows with Stitch Cinzel headline + colored subtitle)
+            val tithiParts = remember(p?.tithi) {
+                val raw = p?.tithi.orEmpty().trim()
+                val tokens = raw.split(" ", limit = 2)
+                if (tokens.size == 2 && (tokens[0].equals("Shukla", true) || tokens[0].equals("Krishna", true))) {
+                    "${tokens[0].uppercase()} PAKSHA" to "${tokens[1]} · ${if (tokens[0].equals("Shukla", true)) "Waxing" else "Waning"}"
+                } else {
+                    raw.ifBlank { "COMPUTING…" }.uppercase() to "Lunar day"
+                }
+            }
+            val nakParts = remember(p?.nakshatra) {
+                val raw = p?.nakshatra.orEmpty().trim()
+                val segs = raw.split("·").map { it.trim() }
+                if (segs.size >= 2) segs[0].uppercase() to "${segs[1]} · Active"
+                else raw.ifBlank { "COMPUTING…" }.uppercase() to "Lunar Mansion"
+            }
             Row(
                 modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 PanchangMatrixTile(
                     label = "TITHI",
-                    value = p?.tithi ?: "Computing…",
+                    value = tithiParts.first,
+                    subtitle = tithiParts.second,
                     accent = KundliColors.Teal,
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 PanchangMatrixTile(
                     label = "NAKSHATRA",
-                    value = p?.nakshatra ?: "Computing…",
+                    value = nakParts.first,
+                    subtitle = nakParts.second,
                     accent = KundliColors.Gold,
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
@@ -880,13 +969,15 @@ private fun TodayPanchangMatrixCard(
             ) {
                 PanchangMatrixTile(
                     label = "YOGA",
-                    value = p?.yoga ?: "—",
+                    value = (p?.yoga ?: "—").uppercase(),
+                    subtitle = "Luni-solar union",
                     accent = KundliColors.Teal,
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 PanchangMatrixTile(
                     label = "KARANA",
-                    value = p?.karana ?: "—",
+                    value = (p?.karana ?: "—").uppercase(),
+                    subtitle = "Half-tithi flow",
                     accent = KundliColors.TextMuted,
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
@@ -967,6 +1058,7 @@ private fun TodayPanchangMatrixCard(
 private fun PanchangMatrixTile(
     label: String,
     value: String,
+    subtitle: String,
     accent: Color,
     modifier: Modifier = Modifier,
 ) {
@@ -977,23 +1069,23 @@ private fun PanchangMatrixTile(
         modifier = modifier,
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(13.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(label, style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
             Text(
                 text = value,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleMedium,
                 color = KundliColors.TextMain,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Box(
-                modifier = Modifier
-                    .width(24.dp)
-                    .height(2.dp)
-                    .clip(RoundedCornerShape(1.dp))
-                    .background(accent.copy(alpha = 0.65f)),
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = accent,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -1047,8 +1139,49 @@ private fun HoraRibbonAndWaveCard(
                 }
             }
 
-            // Horizontal Hora Cards (Active NOW tile gets crisp 2dp Gold Border!)
+            // Inline Mini Day-Wave Sparkline + Horizontal Hora Cards (Active NOW tile gets crisp 2dp Gold Border!)
             if (sky.hourlyWave.isNotEmpty()) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(34.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(KundliColors.SurfaceRecessed)
+                        .clickable(onClick = onOpenFullWave)
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                ) {
+                    val pts = sky.hourlyWave
+                    if (pts.size >= 2) {
+                        val stepX = size.width / (pts.size - 1).coerceAtLeast(1)
+                        val midY = size.height / 2f
+                        drawLine(
+                            color = KundliColors.SubtleDivider,
+                            start = Offset(0f, midY),
+                            end = Offset(size.width, midY),
+                            strokeWidth = 1.dp.toPx(),
+                        )
+                        val path = Path()
+                        pts.forEachIndexed { idx, pt ->
+                            val x = idx * stepX
+                            val norm = ((pt.score + 7f) / 14f).coerceIn(0f, 1f)
+                            val y = size.height * (1f - norm)
+                            if (idx == 0) path.moveTo(x, y) else path.lineTo(x, y)
+                        }
+                        drawPath(
+                            path = path,
+                            brush = Brush.horizontalGradient(listOf(KundliColors.Amber, KundliColors.Gold, KundliColors.Teal)),
+                            style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round),
+                        )
+                        val nowIdx = pts.indexOfFirst { it.hour == currentHour }
+                        if (nowIdx >= 0) {
+                            val pt = pts[nowIdx]
+                            val x = nowIdx * stepX
+                            val norm = ((pt.score + 7f) / 14f).coerceIn(0f, 1f)
+                            val y = size.height * (1f - norm)
+                            drawCircle(color = KundliColors.Gold, radius = 4.dp.toPx(), center = Offset(x, y))
+                        }
+                    }
+                }
                 LazyRow(
                     state = listState,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -1064,7 +1197,7 @@ private fun HoraRibbonAndWaveCard(
                             ),
                             shape = RoundedCornerShape(14.dp),
                             modifier = Modifier
-                                .width(136.dp)
+                                .width(142.dp)
                                 .clickable { onSelectHour(pt.hour) },
                         ) {
                             Column(
@@ -1086,13 +1219,21 @@ private fun HoraRibbonAndWaveCard(
                                         color = pt.band.color,
                                     )
                                 }
-                                Text(
-                                    text = "${pt.horaRuler.displayName} · ${pt.band.label}",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = if (isNow) KundliColors.TextMain else KundliColors.TextMuted,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = "${pt.horaRuler.displayName} · ",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = if (isNow) KundliColors.TextMain else KundliColors.TextMuted,
+                                        maxLines = 1,
+                                    )
+                                    Text(
+                                        text = pt.band.label,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = pt.band.color,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
                             }
                         }
                     }

@@ -166,7 +166,7 @@ fun DiscoveryMapPage(
                             style = MaterialTheme.typography.labelSmall,
                             color = KundliColors.Gold,
                         )
-                        Text("CODEX ACTIVE", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                        Text("CONSTELLATION ACTIVE", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),

@@ -509,7 +509,7 @@ fun SettingsAndVaultPage(
                 }
             }
 
-            // 3. CALCULATION & CODEX PREFERENCES Card (Stitch)
+            // 3. CALCULATION & READING PREFERENCES Card
             Surface(
                 color = KundliColors.Surface,
                 border = BorderStroke(1.dp, KundliColors.SubtleDivider),
@@ -518,7 +518,7 @@ fun SettingsAndVaultPage(
             ) {
                 Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text("VEDIC ENGINE & PRESENTATION", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
-                    Text("CALCULATION & CODEX PREFERENCES", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                    Text("CALCULATION & READING PREFERENCES", style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
 
                     Text("READING DEPTH", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
                     Surface(

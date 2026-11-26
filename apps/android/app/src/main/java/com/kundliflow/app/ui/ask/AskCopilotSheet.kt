@@ -857,7 +857,7 @@ private fun AssistantEditorialCard(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                // Card Header (Stitch: ✦ VEDIC CODEX SYNTHESIS)
+                // Card Header (✦ VEDIC CHART SYNTHESIS)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -874,7 +874,7 @@ private fun AssistantEditorialCard(
                             modifier = Modifier.size(15.dp),
                         )
                         Text(
-                            text = if (msg.responseType == "level2_fallback") "VEDIC CODEX · OFFLINE" else "VEDIC CODEX SYNTHESIS",
+                            text = if (msg.responseType == "level2_fallback") "VEDIC SYNTHESIS · OFFLINE" else "VEDIC CHART SYNTHESIS",
                             style = MaterialTheme.typography.labelSmall,
                             color = KundliColors.Gold,
                         )

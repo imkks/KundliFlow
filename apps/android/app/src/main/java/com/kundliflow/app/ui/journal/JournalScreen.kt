@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,27 +24,44 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,11 +70,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kundliflow.app.ui.theme.KundliColors
 import com.kundliflow.app.ui.theme.TelemetryNumberStyle
+import com.kundliflow.app.ui.time.TimeTabState
 import com.kundliflow.app.ui.today.SkyBand
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.Locale
 
 private fun humanDateHeader(isoDate: String): String = runCatching {
@@ -83,12 +106,28 @@ fun JournalScreen(
     weeklyGoal: Int,
     onTapSkySnapshot: (FrozenSkySnapshot) -> Unit,
     onSubmitCheckIn: (mood: Int, energy: Int, kind: String, tags: List<String>, note: String) -> Unit,
+    timeState: TimeTabState? = null,
+    isCalendarLoading: Boolean = false,
+    onChangeCalendarMonth: (year: Int, month: Int) -> Unit = { _, _ -> },
+    initialTabIndex: Int? = null,
+    onInitialTabConsumed: () -> Unit = {},
     externalOpenComposer: Boolean = false,
     onExternalComposerHandled: () -> Unit = {},
 ) {
+    val tabs = listOf("Reflections", "Almanac")
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    val scope = rememberCoroutineScope()
+
     var activeFilter by remember { mutableStateOf(JournalFilter.ALL) }
     var selectedTag by remember { mutableStateOf<String?>(null) }
     var showComposer by remember { mutableStateOf(false) }
+
+    LaunchedEffect(initialTabIndex) {
+        if (initialTabIndex != null && initialTabIndex in tabs.indices) {
+            pagerState.animateScrollToPage(initialTabIndex)
+            onInitialTabConsumed()
+        }
+    }
 
     if (externalOpenComposer && !showComposer) {
         showComposer = true
@@ -130,13 +169,54 @@ fun JournalScreen(
         if (activeFilter == JournalFilter.ENTRIES) emptyList() else milestones
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+    Column(modifier = Modifier.fillMaxSize()) {
+        TabRow(
+            selectedTabIndex = pagerState.currentPage,
+            containerColor = KundliColors.BgInk,
+            contentColor = KundliColors.Gold,
+            indicator = { tabPositions ->
+                if (pagerState.currentPage < tabPositions.size) {
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                        color = KundliColors.Gold,
+                    )
+                }
+            },
         ) {
+            tabs.forEachIndexed { idx, label ->
+                Tab(
+                    selected = pagerState.currentPage == idx,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(idx) } },
+                    text = {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (pagerState.currentPage == idx) KundliColors.Gold else KundliColors.TextMuted,
+                        )
+                    },
+                )
+            }
+        }
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1f).fillMaxWidth(),
+        ) { page ->
+            if (page == 1 && timeState != null) {
+                JournalAlmanacSubPage(
+                    state = timeState,
+                    isCalendarLoading = isCalendarLoading,
+                    onChangeCalendarMonth = onChangeCalendarMonth,
+                    onAddDateNote = { showComposer = true },
+                )
+            } else {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
             // 1. Your Sky Patterns · Calibration Explorer Card (Stitch journal_expansive.png)
             item {
                 val remaining = (30 - entries.size).coerceAtLeast(0)
@@ -423,6 +503,9 @@ fun JournalScreen(
             Text("+ Check in", style = MaterialTheme.typography.labelLarge)
         }
     }
+            }
+        }
+    }
 
     if (showComposer) {
         ProgressiveComposerSheet(
@@ -432,6 +515,185 @@ fun JournalScreen(
             },
             onDismiss = { showComposer = false },
         )
+    }
+}
+
+@Composable
+private fun JournalAlmanacSubPage(
+    state: TimeTabState,
+    isCalendarLoading: Boolean,
+    onChangeCalendarMonth: (year: Int, month: Int) -> Unit,
+    onAddDateNote: (dayOfMonth: Int) -> Unit,
+) {
+    var selectedPurpose by remember { mutableStateOf("All") }
+    var selectedDay by remember(state.calendarYear, state.calendarMonth, state.monthDays) {
+        val today = LocalDate.now()
+        val defaultCell = if (today.year == state.calendarYear && today.monthValue == state.calendarMonth) {
+            state.monthDays.firstOrNull { it.dayOfMonth == today.dayOfMonth }
+        } else null
+        mutableStateOf(defaultCell ?: state.monthDays.firstOrNull())
+    }
+    val currentYm = YearMonth.of(state.calendarYear, state.calendarMonth)
+    val nearbyMonths = remember(state.calendarYear, state.calendarMonth) {
+        (-2L..3L).map { currentYm.plusMonths(it) }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 14.dp)
+            .padding(bottom = 116.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        // Horizontal Nearby-Months Pill Rail
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(nearbyMonths) { ym ->
+                val active = ym.year == state.calendarYear && ym.monthValue == state.calendarMonth
+                Surface(
+                    color = if (active) KundliColors.Gold.copy(alpha = 0.16f) else KundliColors.Surface,
+                    border = BorderStroke(1.dp, if (active) KundliColors.Gold else KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(999.dp),
+                    modifier = Modifier.clickable { onChangeCalendarMonth(ym.year, ym.monthValue) },
+                ) {
+                    Text(
+                        text = "${if (active) "● " else ""}${ym.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${ym.year}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = if (active) KundliColors.Gold else KundliColors.TextMuted,
+                        modifier = Modifier.padding(horizontal = 13.dp, vertical = 7.dp),
+                    )
+                }
+            }
+        }
+
+        // Purpose Filter Pill Rail
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(end = 6.dp)) {
+            items(listOf("All", "Career", "Travel", "Finance", "Rest")) { purpose ->
+                val active = selectedPurpose == purpose
+                Surface(
+                    color = if (active) KundliColors.Teal.copy(alpha = 0.16f) else KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, if (active) KundliColors.Teal.copy(alpha = 0.55f) else KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(999.dp),
+                    modifier = Modifier.clickable { selectedPurpose = purpose },
+                ) {
+                    Text(
+                        text = purpose,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (active) KundliColors.Teal else KundliColors.TextMuted,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    )
+                }
+            }
+        }
+
+        // Month Calendar Surface
+        Surface(
+            color = KundliColors.Surface,
+            border = BorderStroke(1.dp, KundliColors.GoldHairline),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(onClick = {
+                        val prev = currentYm.minusMonths(1)
+                        onChangeCalendarMonth(prev.year, prev.monthValue)
+                    }) {
+                        Icon(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, contentDescription = "Previous month", tint = KundliColors.Gold)
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(state.monthTitle.uppercase(), style = MaterialTheme.typography.titleLarge, color = KundliColors.TextMain)
+                        if (isCalendarLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp, color = KundliColors.Gold)
+                        }
+                    }
+                    IconButton(onClick = {
+                        val next = currentYm.plusMonths(1)
+                        onChangeCalendarMonth(next.year, next.monthValue)
+                    }) {
+                        Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = "Next month", tint = KundliColors.Gold)
+                    }
+                }
+
+                // Day Grid
+                state.monthDays.chunked(7).forEach { week ->
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        week.forEach { day ->
+                            val matches = selectedPurpose == "All" || day.purposes.contains(selectedPurpose)
+                            val isSelected = selectedDay?.dayOfMonth == day.dayOfMonth
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(
+                                        if (matches) day.band.color.copy(alpha = if (isSelected) 0.34f else 0.14f)
+                                        else KundliColors.SurfaceRecessed,
+                                    )
+                                    .border(
+                                        width = if (isSelected) 1.5.dp else 1.dp,
+                                        color = if (isSelected) KundliColors.Gold else if (matches) day.band.color.copy(alpha = 0.35f) else KundliColors.SubtleDivider,
+                                        shape = RoundedCornerShape(10.dp),
+                                    )
+                                    .clickable { selectedDay = day },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = "${day.dayOfMonth}",
+                                        style = TelemetryNumberStyle,
+                                        color = if (matches) KundliColors.TextMain else KundliColors.TextMuted.copy(alpha = 0.5f),
+                                    )
+                                    if (day.hasNoteOrMilestone) {
+                                        Box(
+                                            modifier = Modifier.size(4.dp).clip(CircleShape).background(KundliColors.Gold),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        repeat(7 - week.size) { Spacer(Modifier.weight(1f)) }
+                    }
+                }
+
+                selectedDay?.let { day ->
+                    Surface(
+                        color = KundliColors.SurfaceRecessed,
+                        border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(14.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                Text("Day ${day.dayOfMonth} · ${day.band.label}", style = MaterialTheme.typography.titleSmall, color = day.band.color)
+                                Text(day.summary, style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMuted)
+                            }
+                            Surface(
+                                color = KundliColors.Gold.copy(alpha = 0.14f),
+                                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.clickable { onAddDateNote(day.dayOfMonth) },
+                            ) {
+                                Text(
+                                    text = "+ Note",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = KundliColors.Gold,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

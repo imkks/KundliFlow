@@ -240,7 +240,7 @@ fun OnboardingFlow(
                                 horizontalArrangement = Arrangement.spacedBy(5.dp),
                             ) {
                                 Icon(Icons.Rounded.Lock, contentDescription = null, tint = KundliColors.Teal, modifier = Modifier.size(13.dp))
-                                Text("Encrypted local codex · No central account required", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                                Text("Encrypted local vault · No central account required", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
                             }
                         }
                         if (!authMessage.isNullOrBlank()) {
