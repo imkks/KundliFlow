@@ -2,8 +2,10 @@ package com.kundliflow.app.ui.onboarding
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -14,13 +16,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -28,6 +36,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -127,67 +137,149 @@ fun OnboardingFlow(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
-        LinearProgressIndicator(
-            progress = { step / 6f },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp)),
-            color = KundliColors.Gold,
-            trackColor = KundliColors.Surface,
-        )
+        // Serene Brand Header & Celestial Progress Track (Stitch onboarding.png)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+                    .background(KundliColors.SurfaceRecessed)
+                    .border(1.5.dp, KundliColors.Gold, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("✦", style = MaterialTheme.typography.headlineSmall, color = KundliColors.Gold)
+            }
+            Text("KUNDLIFLOW", style = MaterialTheme.typography.headlineMedium, color = KundliColors.TextMain)
+            Text(
+                text = "A quiet Vedic almanac grounded in your exact sky",
+                style = MaterialTheme.typography.bodySmall,
+                color = KundliColors.TextMuted,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text("STEP $step OF 6", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                Text("Natal Horizon", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+            }
+            LinearProgressIndicator(
+                progress = { step / 6f },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = KundliColors.Gold,
+                trackColor = KundliColors.Surface,
+            )
+        }
 
         when (step) {
             1 -> {
-                Text("KundliFlow", style = MaterialTheme.typography.displaySmall, color = KundliColors.Gold)
-                Text(
-                    "A calm personal almanac—calculated with classical Vedic precision, revealed one layer at a time.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = KundliColors.TextMain,
-                )
-                if (signedInUser != null) {
-                    Surface(
-                        color = KundliColors.SurfaceAlt,
-                        border = BorderStroke(1.dp, KundliColors.Teal),
-                        shape = RoundedCornerShape(14.dp),
-                        modifier = Modifier.fillMaxWidth(),
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(18.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Column(modifier = Modifier.padding(14.dp)) {
-                            Text("Signed in for Cloud Sync", style = MaterialTheme.typography.labelMedium, color = KundliColors.Teal)
-                            Text("${signedInUser.name} · ${signedInUser.email}", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
+                        if (signedInUser != null) {
+                            Surface(
+                                color = KundliColors.SurfaceRecessed,
+                                border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.55f)),
+                                shape = RoundedCornerShape(14.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Column(modifier = Modifier.padding(14.dp)) {
+                                    Text("● SIGNED IN FOR CLOUD SYNC", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                                    Text("${signedInUser.name} · ${signedInUser.email}", style = MaterialTheme.typography.bodySmall, color = KundliColors.TextMain)
+                                }
+                            }
+                            Button(
+                                onClick = {
+                                    if (name.isBlank()) name = signedInUser.name
+                                    step = 2
+                                },
+                                shape = RoundedCornerShape(14.dp),
+                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
+                            ) {
+                                Text("Continue as ${signedInUser.name} →", style = MaterialTheme.typography.labelLarge)
+                            }
+                        } else {
+                            Button(
+                                onClick = onSignInWithGoogle,
+                                enabled = !authBusy,
+                                shape = RoundedCornerShape(14.dp),
+                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = KundliColors.SurfaceRecessed, contentColor = KundliColors.TextMain),
+                                border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                            ) {
+                                Text(if (authBusy) "Connecting to Google…" else "Continue with Google (Sync across devices)")
+                            }
+                            Text("or continue privately on this device", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                            Button(
+                                onClick = { step = 2 },
+                                shape = RoundedCornerShape(14.dp),
+                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
+                            ) {
+                                Text("✦ Start Privately (Local-First) →", style = MaterialTheme.typography.labelLarge)
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                            ) {
+                                Icon(Icons.Rounded.Lock, contentDescription = null, tint = KundliColors.Teal, modifier = Modifier.size(13.dp))
+                                Text("Encrypted local codex · No central account required", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
+                            }
+                        }
+                        if (!authMessage.isNullOrBlank()) {
+                            Text(authMessage, style = MaterialTheme.typography.bodySmall, color = KundliColors.Teal, textAlign = TextAlign.Center)
                         }
                     }
                 }
-                Spacer(Modifier.height(12.dp))
-                if (signedInUser == null) {
-                    Button(
-                        onClick = onSignInWithGoogle,
-                        enabled = !authBusy,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
+
+                // Local-First Privacy Architecture Card (Stitch onboarding.png)
+                Surface(
+                    color = KundliColors.Surface,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(18.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.Top,
                     ) {
-                        Text(if (authBusy) "Connecting to Google…" else "Continue with Google (Gmail)")
+                        Surface(
+                            color = KundliColors.SurfaceRecessed,
+                            border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.35f)),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.size(36.dp),
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(Icons.Rounded.VerifiedUser, contentDescription = null, tint = KundliColors.Teal, modifier = Modifier.size(18.dp))
+                            }
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Text("Local-First Privacy Architecture", style = MaterialTheme.typography.titleSmall, color = KundliColors.Teal)
+                            Text(
+                                text = "Your birth coordinates and reflections remain strictly private on this device. Computed via Swiss Ephemeris Lahiri.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = KundliColors.TextMuted,
+                            )
+                        }
                     }
-                    OutlinedButton(
-                        onClick = { step = 2 },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text("Continue as Guest (Local-First)", color = KundliColors.Teal)
-                    }
-                } else {
-                    Button(
-                        onClick = {
-                            if (name.isBlank()) name = signedInUser.name
-                            step = 2
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
-                    ) {
-                        Text("Continue as ${signedInUser.name}")
-                    }
-                }
-                if (!authMessage.isNullOrBlank()) {
-                    Text(authMessage, style = MaterialTheme.typography.bodySmall, color = KundliColors.Teal)
                 }
             }
 
@@ -225,61 +317,110 @@ fun OnboardingFlow(
             }
 
             3 -> {
-                Text("Birth Details", style = MaterialTheme.typography.headlineSmall, color = KundliColors.TextMain)
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Name") },
-                    placeholder = { Text("Priya") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                )
-                Text("Time Certainty", style = MaterialTheme.typography.labelMedium, color = KundliColors.TextMuted)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("exact" to "Exact", "approx" to "Approx ±15m", "unknown" to "Unknown (Moon)").forEach { (id, label) ->
-                        FilterChip(selected = timeCertainty == id, onClick = { timeCertainty = id }, label = { Text(label) })
-                    }
-                }
-                BirthDatePickerField(
-                    birthDateIso = birthDate,
-                    onDateSelected = { birthDate = it },
-                )
-                if (timeCertainty != "unknown") {
-                    BirthTimePickerField(
-                        birthTimeHms = birthTime,
-                        allowSeconds = timeCertainty == "exact",
-                        onTimeSelected = { birthTime = it },
-                    )
-                }
-
-                // Google Places + GPS + Offline City Picker Trigger + Live Lat/Lon/TZ Pill
                 Surface(
                     color = KundliColors.Surface,
                     border = BorderStroke(1.dp, KundliColors.GoldHairline),
-                    shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { showPlacePicker = true },
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Text("Birth City (Google Places / GPS)", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
-                        Spacer(Modifier.height(4.dp))
-                        Text(selectedPlace.name, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
-                        Text(
-                            text = String.format(Locale.US, "%.2f°, %.2f° · %s", selectedPlace.lat, selectedPlace.lon, selectedPlace.tzId),
-                            style = TelemetryNumberStyle,
-                            color = KundliColors.Teal,
+                    Column(
+                        modifier = Modifier.padding(18.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text("EXACT EPHEMERIS INPUTS", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                            Text("YOUR BIRTH SKY", style = MaterialTheme.typography.headlineSmall, color = KundliColors.Gold)
+                        }
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text("Full Name") },
+                            placeholder = { Text("Priya Sharma") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
                         )
-                    }
-                }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text("TIME CERTAINTY", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                            Text("affects Lagna accuracy", style = MaterialTheme.typography.labelSmall, color = KundliColors.TextMuted)
+                        }
+                        // Unified 3-Segment Certainty Track (Stitch onboarding.png)
+                        Surface(
+                            color = KundliColors.SurfaceRecessed,
+                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Row(modifier = Modifier.padding(3.dp)) {
+                                listOf("exact" to "● Exact", "approx" to "±15 mins", "unknown" to "Unknown").forEach { (id, label) ->
+                                    val active = timeCertainty == id
+                                    Surface(
+                                        color = if (active) KundliColors.SurfaceAlt else Color.Transparent,
+                                        border = if (active) BorderStroke(1.dp, KundliColors.GoldHairline) else null,
+                                        shape = RoundedCornerShape(9.dp),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable { timeCertainty = id },
+                                    ) {
+                                        Box(
+                                            modifier = Modifier.padding(vertical = 8.dp),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            Text(
+                                                text = label,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = if (active) KundliColors.Gold else KundliColors.TextMuted,
+                                                maxLines = 1,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
-                TextButton(onClick = { showAyanamsaPicker = !showAyanamsaPicker }) {
-                    Text("Ayanamsa: ${ayanamsa.uppercase()} ▾", color = KundliColors.TextMuted)
-                }
-                if (showAyanamsaPicker) {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        listOf("lahiri", "kp_new", "kp_old", "raman", "yukteshwar").forEach { ay ->
-                            FilterChip(selected = ayanamsa == ay, onClick = { ayanamsa = ay }, label = { Text(ay.uppercase()) })
+                        BirthDatePickerField(
+                            birthDateIso = birthDate,
+                            onDateSelected = { birthDate = it },
+                        )
+                        if (timeCertainty != "unknown") {
+                            BirthTimePickerField(
+                                birthTimeHms = birthTime,
+                                allowSeconds = timeCertainty == "exact",
+                                onTimeSelected = { birthTime = it },
+                            )
+                        }
+
+                        // Recessed Birth City Picker + Coordinates Bar
+                        Surface(
+                            color = KundliColors.SurfaceRecessed,
+                            border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                            shape = RoundedCornerShape(14.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showPlacePicker = true },
+                        ) {
+                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                Text("BIRTH CITY (PLACES / GPS)", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                                Text(selectedPlace.name, style = MaterialTheme.typography.titleMedium, color = KundliColors.TextMain)
+                                Text(
+                                    text = String.format(Locale.US, "%.2f° N, %.2f° E · %s · %s", selectedPlace.lat, selectedPlace.lon, selectedPlace.tzId, ayanamsa.uppercase()),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = KundliColors.Teal,
+                                )
+                            }
+                        }
+
+                        TextButton(onClick = { showAyanamsaPicker = !showAyanamsaPicker }) {
+                            Text("Ayanamsa: ${ayanamsa.uppercase()} ▾", color = KundliColors.TextMuted)
+                        }
+                        if (showAyanamsaPicker) {
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                listOf("lahiri", "kp_new", "kp_old", "raman", "yukteshwar").forEach { ay ->
+                                    FilterChip(selected = ayanamsa == ay, onClick = { ayanamsa = ay }, label = { Text(ay.uppercase()) })
+                                }
+                            }
                         }
                     }
                 }
@@ -300,10 +441,11 @@ fun OnboardingFlow(
                             selectedPlace,
                         )
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = KundliColors.Gold, contentColor = KundliColors.OrbInk),
                 ) {
-                    Text("Calculate Chart")
+                    Text("✦ Reveal My Natal Sky →", style = MaterialTheme.typography.labelLarge)
                 }
             }
 

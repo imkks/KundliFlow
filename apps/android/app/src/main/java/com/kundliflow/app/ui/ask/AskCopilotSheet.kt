@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -282,13 +283,15 @@ private fun AskCopilotBody(
                 }
                 Column {
                     Text(
-                        text = "Ask · $profileName",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = KundliColors.TextMain,
+                        text = "ASK AI COPILOT",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = KundliColors.Gold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = originContextLabel,
-                        style = MaterialTheme.typography.labelMedium,
+                        text = "✦ ${originContextLabel.uppercase()}",
+                        style = MaterialTheme.typography.labelSmall,
                         color = KundliColors.Teal,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -669,18 +672,42 @@ private fun AskZeroStateWelcome(
             )
         }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Grounded in $profileName's chart",
-                style = MaterialTheme.typography.headlineSmall,
-                color = KundliColors.TextMain,
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = "Every answer cites your verified houses, Dashas, and classical rules.",
-                style = MaterialTheme.typography.bodySmall,
-                color = KundliColors.TextMuted,
-            )
+        Surface(
+            color = KundliColors.Surface,
+            border = BorderStroke(1.dp, KundliColors.GoldHairline),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(
+                modifier = Modifier.padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("✦ GROUNDED IN NATAL & TRANSIT ENGINE", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
+                    Icon(Icons.Rounded.Verified, contentDescription = null, tint = KundliColors.Teal, modifier = Modifier.size(18.dp))
+                }
+                Surface(
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                    shape = RoundedCornerShape(999.dp),
+                ) {
+                    Text(
+                        text = "● $profileName · Local Level-1 Lahiri Ephemeris",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = KundliColors.Teal,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                    )
+                }
+                Text(
+                    text = "Cites your verified houses, Dashas, Ashtakvarga SAV, and 537 classical Jyotish rules. Zero generic horoscope filler.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = KundliColors.TextMuted,
+                )
+            }
         }
 
         val starterPrompts = listOf(
@@ -812,37 +839,46 @@ private fun AssistantEditorialCard(
     val resolvedEvidence = remember(msg.evidenceIds) { msg.evidenceIds.map { AskEvidenceResolver.resolve(it) } }
 
     Surface(
-        color = KundliColors.BgInk,
-        border = BorderStroke(1.dp, KundliColors.SubtleDivider),
-        shape = RoundedCornerShape(topStart = 4.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 18.dp),
+        color = KundliColors.Surface,
+        border = BorderStroke(1.dp, KundliColors.GoldHairline),
+        shape = RoundedCornerShape(18.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            // Card Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+            Box(
+                modifier = Modifier
+                    .width(3.5.dp)
+                    .fillMaxHeight()
+                    .background(KundliColors.Gold),
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
+                // Card Header (Stitch: ✦ VEDIC CODEX SYNTHESIS)
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    Icon(
-                        imageVector = if (resolvedEvidence.isNotEmpty()) Icons.Rounded.Verified else Icons.Rounded.AutoAwesome,
-                        contentDescription = null,
-                        tint = KundliColors.Teal,
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Text(
-                        text = if (msg.responseType == "level2_fallback") "FROM YOUR CHART · OFFLINE" else "FROM YOUR CHART",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = KundliColors.Teal,
-                    )
-                }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (resolvedEvidence.isNotEmpty()) Icons.Rounded.Verified else Icons.Rounded.AutoAwesome,
+                            contentDescription = null,
+                            tint = KundliColors.Gold,
+                            modifier = Modifier.size(15.dp),
+                        )
+                        Text(
+                            text = if (msg.responseType == "level2_fallback") "VEDIC CODEX · OFFLINE" else "VEDIC CODEX SYNTHESIS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = KundliColors.Gold,
+                        )
+                    }
                 var showCardMenu by remember { mutableStateOf(false) }
                 Box {
                     IconButton(
@@ -928,31 +964,33 @@ private fun AssistantEditorialCard(
                     }
                 }
                 Surface(
-                    color = KundliColors.Surface,
-                    shape = RoundedCornerShape(16.dp),
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.Teal.copy(alpha = 0.45f)),
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.clickable(onClick = onJumpToTiming),
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
                     ) {
-                        Icon(Icons.Rounded.Schedule, contentDescription = null, tint = KundliColors.Gold, modifier = Modifier.size(14.dp))
-                        Text("Timing", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                        Icon(Icons.Rounded.Schedule, contentDescription = null, tint = KundliColors.Teal, modifier = Modifier.size(14.dp))
+                        Text("Timeline Shift →", style = MaterialTheme.typography.labelSmall, color = KundliColors.Teal)
                     }
                 }
                 Surface(
-                    color = KundliColors.Surface,
-                    shape = RoundedCornerShape(16.dp),
+                    color = KundliColors.SurfaceRecessed,
+                    border = BorderStroke(1.dp, KundliColors.GoldHairline),
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.clickable(onClick = onOpenReflect),
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
                     ) {
                         Icon(Icons.Rounded.EditNote, contentDescription = null, tint = KundliColors.Gold, modifier = Modifier.size(14.dp))
-                        Text("Reflect", style = MaterialTheme.typography.labelMedium, color = KundliColors.Gold)
+                        Text("Reflect in Journal", style = MaterialTheme.typography.labelSmall, color = KundliColors.Gold)
                     }
                 }
             }
@@ -961,15 +999,19 @@ private fun AssistantEditorialCard(
             AnimatedVisibility(visible = showBecause) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     resolvedEvidence.forEach { chip ->
-                        FilterChip(
-                            selected = false,
-                            onClick = { onTapEvidence(chip.subject) },
-                            label = { Text(chip.label) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = KundliColors.SurfaceAlt,
-                                labelColor = KundliColors.TextMain,
-                            ),
-                        )
+                        Surface(
+                            color = KundliColors.SurfaceRecessed,
+                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
+                            shape = RoundedCornerShape(999.dp),
+                            modifier = Modifier.clickable { onTapEvidence(chip.subject) },
+                        ) {
+                            Text(
+                                text = "✦ ${chip.label}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = KundliColors.TextMain,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            )
+                        }
                     }
                 }
             }
@@ -980,14 +1022,15 @@ private fun AssistantEditorialCard(
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     msg.followUps.take(2).forEach { fq ->
                         Surface(
-                            color = KundliColors.Surface,
+                            color = KundliColors.SurfaceRecessed,
+                            border = BorderStroke(1.dp, KundliColors.SubtleDivider),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable { onTapFollowUp(fq) },
                         ) {
                             Text(
-                                text = "↳ $fq",
+                                text = "✦ $fq",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = KundliColors.Gold,
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -995,6 +1038,7 @@ private fun AssistantEditorialCard(
                         }
                     }
                 }
+            }
             }
         }
     }
